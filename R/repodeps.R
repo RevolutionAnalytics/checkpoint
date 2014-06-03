@@ -1,4 +1,7 @@
 #' Get repository dependencies
+#' 
+#' This function first determines packages used in your repo, then recursively gets dependencies
+#' of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}). 
 #'
 #' @import miniCRAN packrat
 #' @export

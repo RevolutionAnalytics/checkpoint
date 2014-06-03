@@ -12,7 +12,8 @@ repodeps(repo = getwd(), simplify = FALSE)
 A named list of packages, named by the package that requires said dependencies
 }
 \description{
-Get repository dependencies
+This function first determines packages used in your repo, then recursively gets dependencies
+of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}).
 }
 \examples{
 repodeps(repo="~/myrepo")
