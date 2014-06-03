@@ -16,7 +16,7 @@ pkgurls <- function(pkgs)
   type <- class(pkgs)
   switch(type, 
          data.frame = geturlsdf(pkgs),
-         character = geturlsdf(data.frame(do.call(rbind, strsplit(x, "_")))))
+         character = geturlsdf(data.frame(do.call(rbind, strsplit(pkgs, "_")))))
 }
 
 geturlsdf <- function(x){

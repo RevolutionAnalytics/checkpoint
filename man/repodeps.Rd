@@ -3,22 +3,29 @@
 \alias{repodeps}
 \title{Get repository dependencies}
 \usage{
-repodeps(repo = getwd(), simplify = FALSE)
+repodeps(repo = getwd(), simplify = FALSE, ...)
 }
 \arguments{
-\item{repo}{A path to a RRT repository; defaults to current working directory.}
+\item{repo}{(character) A path to a RRT repository; defaults to current working directory.}
+
+\item{simplify}{(logical) If TRUE, simplify list to a vector with all unique packages.}
 }
 \value{
 A named list of packages, named by the package that requires said dependencies
 }
 \description{
-This function first determines packages used in your repo, then recursively gets dependencies
+This function first determines packages used in the repo, then recursively gets dependencies
 of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}).
+Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE:
+Enhances not working right now.
 }
 \examples{
+\dontrun{
 repodeps(repo="~/myrepo")
 repodeps(repo="~/myrepo", simplify=TRUE)
 setwd("~/myrepo")
 repodeps()
+repodeps(repo="~/myrepo", simplify=TRUE, enhances=TRUE)
+}
 }
 
