@@ -3,12 +3,14 @@
 \alias{repodeps}
 \title{Get repository dependencies}
 \usage{
-repodeps(repo = getwd(), simplify = FALSE, ...)
+repodeps(repo = getwd(), simplify = FALSE, base = TRUE, ...)
 }
 \arguments{
 \item{repo}{(character) A path to a RRT repository; defaults to current working directory.}
 
 \item{simplify}{(logical) If TRUE, simplify list to a vector with all unique packages.}
+
+\item{base}{(logical) If TRUE, return base R packages, if FALSE, don't return them.}
 }
 \value{
 A named list of packages, named by the package that requires said dependencies
