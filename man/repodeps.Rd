@@ -11,6 +11,8 @@ repodeps(repo = getwd(), simplify = FALSE, base = TRUE, ...)
 \item{simplify}{(logical) If TRUE, simplify list to a vector with all unique packages.}
 
 \item{base}{(logical) If TRUE, return base R packages, if FALSE, don't return them.}
+
+\item{...}{Further args passed on to \code{miniCRAN::pkgDep}}
 }
 \value{
 A named list of packages, named by the package that requires said dependencies
@@ -24,10 +26,14 @@ Enhances not working right now.
 \examples{
 \dontrun{
 repodeps(repo="~/newrepo")
-repodeps(repo="~/myrepo", simplify=TRUE)
-setwd("~/myrepo")
+repodeps(repo="~/newrepo", simplify=TRUE)
+
+# defaults to working directory
+setwd("~/newrepo")
 repodeps()
-repodeps(repo="~/myrepo", simplify=TRUE, enhances=TRUE)
+
+# Get Suggests too, not retrieved by default
+repodeps(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
 }
 }
 

@@ -8,9 +8,9 @@ rrt_init(repo, verbose = TRUE, rprofile = NULL)
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
 
-\item{verbose}{}
+\item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 
-\item{rprofile}{(list) pass in a list of options to include in the .Rprofile file for the repo. (Default)}
+\item{rprofile}{(list) pass in a list of options to include in the .Rprofile file for the repo.}
 }
 \value{
 Files written to the user system, with informative messages on progress
@@ -20,7 +20,8 @@ This function initiates a repository.
 }
 \examples{
 \dontrun{
-rrt_init(repo="~/newrepo")
+rrt_init(repo="~/testrepo")
+rrt_refresh(repo="~/testrepo")
 }
 }
 

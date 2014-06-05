@@ -3,14 +3,16 @@
 \alias{installPkgs}
 \title{Function to install pkgs}
 \usage{
-installPkgs(x, lib, recursive = FALSE)
+installPkgs(x, lib, recursive = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{x}{}
+\item{x}{(character) A vector of package names. If NULL, none installed, and message prints}
 
-\item{lib}{}
+\item{lib}{(character) Library location, a directory}
 
-\item{recursive}{}
+\item{recursive}{(logical) Recursively install packages?}
+
+\item{verbose}{(logical) Inherited from call to rrt_init or rrt_refresh}
 }
 \description{
 Function to install pkgs

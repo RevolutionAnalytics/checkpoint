@@ -78,14 +78,14 @@ deps_by_ext <- function(file, dir) {
          r = deps.R(file),
          rmd = deps.Rmd(file),
          rnw = deps.Rnw(file),
-         rpres = dep.Rpres(file),
+         rpres = deps.Rpres(file),
          txt = deps.txt(file),
          #           md = deps.md(file),
          stop("Unrecognized file type '", file, "'")
   )
 }
 
-deps.Rmd <- dep.Rpres <- function(file) {
+deps.Rmd <- deps.Rpres <- function(file) {
   if (require("knitr")) {
     tempfile <- tempfile()
     on.exit(unlink(tempfile))

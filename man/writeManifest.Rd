@@ -9,7 +9,7 @@ writeManifest(repository, librar, packs, repoid)
 Writes a RRT manifest file to disc
 }
 \description{
-Function to write manifest file
+# FIXME: check for existence of manifest file first, and combine with old info, if any
 }
 \keyword{internal}
 
