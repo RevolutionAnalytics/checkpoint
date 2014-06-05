@@ -20,6 +20,7 @@ current_osx <- function(pkg, ver){
 }
 
 getarchive <- function(repos = getOption("repos")){
+  ## FIXME: this gzcon call throws error on linux, states unspported URL scheme
   con <- gzcon(url(sprintf("%s/src/contrib/Meta/archive.rds", repos), "rb"))
   on.exit(close(con))
   readRDS(con)
@@ -43,36 +44,20 @@ dir.create(pkgPath)
 download.packages(pkgs, destdir = pkgPath, type = 'source')
 
 #### generate metadata PACKAGES and PACKAGES.gz files
-tools::write_PACKAGES(pkgPath)
-
-### convert to JSON
-library("jsonlite")
-pkgsinfo <- readLines(file.path(pkgPath, "PACKAGES"))
-pkgstarts <- grep("Package: ", pkgsinfo)
-pkgends <- which(vapply(pkgsinfo, nchar, 1, USE.NAMES = FALSE)==0)
-out <- list()
-for(i in seq_along(pkgstarts)){
-  tmp <- pkgsinfo[ pkgstarts[i] : pkgends[i]-1 ]
-  tmp <- tmp[!vapply(tmp, nchar, 1)==0]
-  out[[i]] <- tmp
+# tools::write_PACKAGES(pkgPath)
+availpkgs <- available.packages()
+extractpkginfo <- function(pkg){
+  tmp <- availpkgs[pkg,]
+  tmp <- tmp[!names(tmp) %in% "Repository"]
+  list(package=tmp[["Package"]], description=as.list(tmp[!is.na(tmp)]))
 }
-extractpkginfo <- function(x){
-  res <- do.call(c, lapply(x, function(y){
-    res <- strsplit(y, ":\\s")[[1]]
-    ll <- list(res[2])
-    names(ll) <- res[1]
-    ll
-  }))
-  list(package=res$Package, description=res)
-}
-# 
-aslist <- lapply(out, extractpkginfo)
+aslist <- lapply(pkgs, extractpkginfo)
 
 ### add more metadata to the json (as list), then write again to json
 #### get archive data
 archive <- getarchive()
 
-#### load RRT
+#### load RRT to use pkgurls function
 library("RRT")
 
 allpkgs <- lapply(aslist, function(x){
@@ -88,12 +73,11 @@ allpkgs <- lapply(aslist, function(x){
   )
 })
 
-# pkgsinfo <- gsub("\\s+", " ", paste(pkgsinfo, sep = "", collapse = " "))
-# json <- toJSON(extractpkginfo(out[[2]]), pretty = TRUE)
+### Convert to JSON
+library("jsonlite")
 json <- toJSON(allpkgs, auto_unbox = TRUE)
-# cat(json)
 
-### write JSON to disk
+### Write JSON to disk
 mran_json <- file.path(pkgPath, sprintf("mran_json_%s.json", Sys.Date()))
 on.exit(close(mran_json))
 writeLines(json, mran_json)
