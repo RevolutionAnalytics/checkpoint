@@ -5,28 +5,31 @@
 #' Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE: 
 #' Enhances not working right now.
 #'
-#' @import miniCRAN packrat
+#' @import miniCRAN
 #' @export
 #' 
 #' @param repo (character) A path to a RRT repository; defaults to current working directory.
 #' @param simplify (logical) If TRUE, simplify list to a vector with all unique packages.
 #' @param base (logical) If TRUE, return base R packages, if FALSE, don't return them.
+#' @param ... Further args passed on to \code{miniCRAN::pkgDep}
 #' 
 #' @return A named list of packages, named by the package that requires said dependencies
 #' @examples \dontrun{
-#' repodeps(repo="~/myrepo")
-#' repodeps(repo="~/myrepo", simplify=TRUE)
-#' setwd("~/myrepo")
-#' repodeps()
-#' repodeps(repo="~/myrepo", simplify=TRUE, enhances=TRUE)
+#' repodeps(repo="~/newrepo")
+#' repodeps(repo="~/newrepo", simplify=TRUE)
+#' 
+#' # defaults to working directory
+#' setwd("~/newrepo")
+#' repodeps() 
+#' 
+#' # Get Suggests too, not retrieved by default
+#' repodeps(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
 #' }
 
 repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
 {
-  # Get packages used in the repo using appDependencies from packrat
-  ## Note, appDependencies not exported from packrat, so ::: needed, probably a different solution later
-  pkgs_used <- packrat:::appDependencies(repo)
-  pkgs_used <- pkgs_used[!grepl("packrat", pkgs_used)]
+  # Get packages used in the repository
+  pkgs_used <- rrt_deps(repo)
   
   # Get package dependencies using miniCRAN
   pkg_deps <- lapply(pkgs_used, pkgDep, ...)

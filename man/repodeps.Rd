@@ -23,7 +23,7 @@ Enhances not working right now.
 }
 \examples{
 \dontrun{
-repodeps(repo="~/myrepo")
+repodeps(repo="~/newrepo")
 repodeps(repo="~/myrepo", simplify=TRUE)
 setwd("~/myrepo")
 repodeps()
