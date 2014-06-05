@@ -1,21 +1,21 @@
 ## Generate metadata for marmoset server
 
 ### some funcctions to use below
-current_windows <- function(pkg){
-  uri <- 'http://cran.r-project.org/bin/windows/contrib/%s/%s_1.8.1.zip'
+current_windows <- function(pkg, ver){
+  uri <- 'http://cran.r-project.org/bin/windows/contrib/%s/%s_%s.zip'
   list(
-    'R3.2' = sprintf(uri, 3.2, pkg),
-    'R3.1' = sprintf(uri, 3.1, pkg),
-    'R3.0' = sprintf(uri, 3.0, pkg)
+    'R3.2' = sprintf(uri, "3.2", pkg, ver),
+    'R3.1' = sprintf(uri, "3.1", pkg, ver),
+    'R3.0' = sprintf(uri, "3.0", pkg, ver)
   )
 }
 
-current_osx <- function(pkg){
-  uri <- 'http://cran.r-project.org/bin/macosx/contrib/%s/%s_1.8.1.zip'
+current_osx <- function(pkg, ver){
+  uri <- 'http://cran.r-project.org/bin/macosx/contrib/%s/%s_%s.tgz'
   list(
-    'R3.1' = sprintf(uri, 3.1, pkg),
-    'R3.0' = sprintf(uri, 3.0, pkg),
-    'R3.1_mavericks' = sprintf('http://cran.r-project.org/bin/macosx/mavericks/contrib/3.1/%s_1.8.1.tgz', pkg)
+    'R3.1' = sprintf(uri, "3.1", pkg, ver),
+    'R3.0' = sprintf(uri, "3.0", pkg, ver),
+    'R3.1_mavericks' = sprintf('http://cran.r-project.org/bin/macosx/mavericks/contrib/3.1/%s_%s.tgz', pkg, ver)
   )
 }
 
@@ -36,7 +36,7 @@ archive_source <- function(pkg, archive){
 
 ### define things
 pkgs <- c("plyr","reshape2","ggplot2")
-pkgPath <- "~/testingrtt2"
+pkgPath <- "~/testingrtt3"
 dir.create(pkgPath)
 
 ### download packages
@@ -83,8 +83,8 @@ allpkgs <- lapply(aslist, function(x){
     snapshotDiffId = "19293838-12312323",
     compatibitlityCheck = NULL,
     source = archive_source(x$package, archive),
-    windows = current_windows(x$package),
-    osx = current_osx(x$package)
+    windows = current_windows(x$package, x$description$Version),
+    osx = current_osx(x$package, x$description$Version)
   )
 })
 
@@ -95,4 +95,5 @@ json <- toJSON(allpkgs, auto_unbox = TRUE)
 
 ### write JSON to disk
 mran_json <- file.path(pkgPath, sprintf("mran_json_%s.json", Sys.Date()))
+on.exit(close(mran_json))
 writeLines(json, mran_json)
