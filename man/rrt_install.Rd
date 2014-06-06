@@ -12,6 +12,8 @@ rrt_install(repo, verbose = TRUE)
 rrt_install(repo="~/testrepo")}
 }
 \description{
-Install packages
+Installs packages to your local repository. Performs some checks to make sure your repo is a
+RRT repository, and the rrt dir exists with your repository, then installs packages not already
+installed.
 }
 
