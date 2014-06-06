@@ -11,6 +11,7 @@
 #' @examples \dontrun{
 #' rrt_init(repo="~/testrepo")
 #' rrt_refresh(repo="~/testrepo")
+#' rrt_install(repo="~/testrepo")
 #' }
 
 rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
@@ -42,8 +43,8 @@ rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
   mssg(verbose, "Looking for packages used in your repository...")
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE)
   
-  # install packages in a private location for this project
-  installPkgs(pkgs, lib, verbose)
+  # get packages in a private location for this project
+  getPkgs(x = pkgs, lib = lib, verbose = verbose)
   
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
@@ -89,9 +90,9 @@ rrt_refresh <- function(repo, verbose=TRUE)
   mssg(verbose, "Looking for packages used in your repository...")
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE)
   
-  # install packages in a private location for this project
-  mssg(verbose, "Installing new packages...")
-  installPkgs(pkgs, lib, verbose)
+  # get packages in a private location for this project
+  mssg(verbose, "Getting new packages...")
+  getPkgs(pkgs, lib, verbose)
   
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
@@ -109,9 +110,9 @@ rrt_refresh <- function(repo, verbose=TRUE)
 #' @param recursive (logical) Recursively install packages?
 #' @param verbose (logical) Inherited from call to rrt_init or rrt_refresh
 #' @examples \dontrun{
-#' installPkgs()
+#' getPkgs()
 #' }
-installPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE){
+getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE){
   # check for existence of pkg, subset only those that need to be installed
   #     files <- list.files(lib, recursive = TRUE)
   pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
@@ -119,11 +120,69 @@ installPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE){
     installedpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
     pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
   }
+  
+  # Make local repo of packages
   if(!is.null(pkgs2install) || length(pkgs2install) == 0){  
     # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
     makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
   } else { 
     return(mssg(verbose, "No packages found - none installed"))
+  }
+}
+
+#' Install packages
+#' 
+#' Installs packages to your local repository. Performs some checks to make sure your repo is a
+#' RRT repository, and the rrt dir exists with your repository, then installs packages not already
+#' installed.
+#' 
+#' @export
+#' @param repo A repository path
+#' @param verbose Print messages
+#' rrt_install(repo="~/testrepo")
+rrt_install <- function(repo, verbose=TRUE)
+{  
+  repoid <- digest(repo)
+  if(is.null(repo)) repo <- getwd()
+  
+  # check to make sure repo exists
+  mssg(verbose, "Checking to make sure repository exists...")
+  if(!file.exists(repo)){ # only create if file doesn't exist already
+    stop(sprintf("Repository %s doesn't exist", repo))
+  }
+  
+  # check for rrt directory in the repo, and stop if it doesn't exist
+  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
+  lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
+  present <- list.dirs(repo)[-1]
+  if(!all(grepl("rrt", present))){
+    stop("rrt directory doesn't exist")
+  }
+  
+  pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
+  
+  mssg(verbose, "Looking for packages used in your repository...")
+  x <- repodeps(repo, simplify = TRUE, base=FALSE)
+  
+  if(!file.exists(pkgslist)) { 
+    mssg(verbose, "Getting new packages...")
+    pkgs2install <- getPkgs(x, lib, verbose)
+  } else {
+#     installedpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
+    installedpkgs <- list.files(lib)
+    installedpkgs <- installedpkgs[!installedpkgs %in% "src"]
+    pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
+  }
+  
+  if(length(pkgs2install)==0){
+    mssg(verbose, "No packages found to install")
+  } else {
+    ## FIXME, check if already installed
+    mssg(verbose, "Installing packages...")
+    allpkgs <- list.files(file.path(lib, "src/contrib"), full.names = TRUE)
+    names(allpkgs) <- gsub("_[0-9].+", "", list.files(file.path(lib, "src/contrib")))
+    pkgswithpath <- unname(sapply(pkgs2install, function(x) allpkgs[grepl(x, names(allpkgs))]))
+    install.packages(pkgswithpath, lib = lib, repos=NULL, type = "source")
   }
 }
 
