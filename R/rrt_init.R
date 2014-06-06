@@ -19,10 +19,7 @@ rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
   # create repo id using digest
   repoid <- digest(repo)
   if(is.null(repo)) repo <- getwd()
-  
-  # Write to .Renviron (or .Rprofile?) the path to the list of RRT repositories
-  ###
-  
+
   # create repo
   mssg(verbose, "Checking to make sure repository exists...")
   if(!file.exists(repo)){ # only create if file doesn't exist already
@@ -49,6 +46,9 @@ rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
   writeManifest(repo, lib, pkgs, repoid)
+  
+  # Write repo log file
+  rrt_repos_write(repo, repoid)
 
   # Write new .Rprofile file
   if(is.null(rprofile)){
@@ -114,19 +114,21 @@ rrt_refresh <- function(repo, verbose=TRUE)
 #' }
 getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE){
   # check for existence of pkg, subset only those that need to be installed
-  #     files <- list.files(lib, recursive = TRUE)
-  pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
-  if(!file.exists(pkgslist)) { pkgs2install <- x } else {
-    installedpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
-    pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
-  }
-  
-  # Make local repo of packages
-  if(!is.null(pkgs2install) || length(pkgs2install) == 0){  
-    # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
-    makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
-  } else { 
-    return(mssg(verbose, "No packages found - none installed"))
+  if(is.null(x)){ NULL } else {
+    
+    pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
+    if(!file.exists(pkgslist)) { pkgs2install <- x } else {
+      installedpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
+      pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
+    }
+    
+    # Make local repo of packages
+    if(!is.null(pkgs2install) || length(pkgs2install) == 0){  
+      # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
+      makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
+    } else { 
+      return(mssg(verbose, "No packages found - none installed"))
+    }
   }
 }
 
