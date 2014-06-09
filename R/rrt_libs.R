@@ -51,6 +51,10 @@ rrt_repos_list <- function(repoid=NULL){
   } else { stop("You have no rrt repos") } 
 }
 
+#' Print rrtrepos class
+#' @method print rrtrepos
+#' @export
+#' @rdname rrtrepos
 print.rrtrepos <- function(x){
   repos <- sapply(x, "[[", "repo")
   repoids <- paste(sapply(x, "[[", "RepoID"), collapse = ", ")
