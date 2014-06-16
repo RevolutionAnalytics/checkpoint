@@ -1,7 +1,7 @@
 #' Browse rrt libraries
 #'
 #' Open up a dashboard in your default browse.
-#' 
+#'
 #' @import whisker
 #' @export
 #' @param repoid Respository id, default is NULL, so gets all repos
@@ -33,6 +33,7 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE){
 
 template <-
   '<!DOCTYPE html>
+    <html style="background-color: #ecf0f1;">
       <head>
         <meta charset="utf-8">
         <title>RRT - Dashboard</title>
@@ -47,36 +48,36 @@ template <-
 
       <body>
 
-      <div class="container">
-
-      <center><h2><i class="fa fa-list-ul"></i>  RRT Dashboard</h2></center>
-
-      <table class="table table-striped table-hover table-responsive" align="center">
-      	<thead>
-      		<tr>
-      			<th>RepoID</th>
-            <th>RepoDir</th>
-      			<th>InstalledWith</th>
-            <th>InstalledFrom</th>
-            <th>RRT_ver</th>
-            <th>R_ver</th>
-            <th>DateCreated</th>
-      		</tr>
-      	</thead>
-      	<tbody>
-        {{#repos}}
-          <tr>
-            <td><a href="{{singlepage}}" class="btn btn-info btn-xs">{{RepoID}}</a></td>
-            <td>{{repo}}</td>
-            <td>{{InstalledWith}}</td>
-            <td>{{InstalledFrom}}</td>
-            <td>{{RRT_version}}</td>
-            <td>{{R_version}}</td>
-            <td>{{DateCreated}}</td>
-          </tr>
-        {{/repos}}
-        </tbody>
-      </table>
+      <div style="background-color: #ecf0f1;">
+        <div class="container">
+        <center><h2><i class="fa fa-list-ul"></i>  RRT Dashboard</h2></center>
+        <table class="table table-hover table-responsive" align="center">
+        	<thead>
+        		<tr>
+        			<th>RepoID</th>
+              <th>RepoDir</th>
+        			<th>InstalledWith</th>
+              <th>InstalledFrom</th>
+              <th>RRT_ver</th>
+              <th>R_ver</th>
+              <th>DateCreated</th>
+        		</tr>
+        	</thead>
+        	<tbody>
+          {{#repos}}
+            <tr>
+              <td><a href="{{singlepage}}" class="btn btn-info btn-xs">{{RepoID}}</a></td>
+              <td>{{repo_root}}</td>
+              <td>{{InstalledWith}}</td>
+              <td>{{InstalledFrom}}</td>
+              <td>{{RRT_version}}</td>
+              <td>{{R_version}}</td>
+              <td>{{DateCreated}}</td>
+            </tr>
+          {{/repos}}
+          </tbody>
+        </table>
+        </div>
       </div>
 
       <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -87,6 +88,7 @@ template <-
 
 template_onepage <-
   '<!DOCTYPE html>
+    <html style="background-color: #ecf0f1;">
         <head>
         <meta charset="utf-8">
         <title>RRT - Dashboard</title>
@@ -97,28 +99,32 @@ template_onepage <-
         <!-- Le styles -->
         <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
         <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+        <style>
+        background-color: #ecf0f1;
+        </style>
+
         </head>
 
         <body>
 
-        <center><h2><i class="fa fa-list-ul"></i>  RRT Dashboard - {{#single}} {{RepoID}} {{/single}}</h2></center>
-
-        <div class="jumbotron" span>
-
-          {{#single}}
-          <ul>
-            <li>RepoID: {{RepoID}}</li>
-            <li>Repo directory: {{repo}}</li>
-            <li>RRT Installed with: {{InstalledWith}}</li>
-            <li>RRT Installed from: {{InstalledFrom}}</li>
-            <li>RRT version: {{RRT_version}}</li>
-            <li>R version: {{R_version}}</li>
-            <li>Date repo created: {{DateCreated}}</li>
-            <li>Packages installed: {{Packages}}</li>
-            <li>System requirements: {{SystemRequirements}}</li>
-          </ul>
-          {{/single}}
-
+        <div style="background-color: #ecf0f1;">
+          <center><h2><i class="fa fa-list-ul"></i>  RRT Dashboard - {{#single}} {{RepoID}} {{/single}}</h2></center>
+          <div class="container">
+            {{#single}}
+            <ul style="list-style-type: none;">
+              <li><h4><button class="btn btn-xs btn-success">RepoID:</button> {{RepoID}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Repo directory:</button> {{repo_root}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">RRT Installed with:</button> {{InstalledWith}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">RRT Installed from:</button> {{InstalledFrom}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">RRT version:</button> {{RRT_version}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">R version:</button> {{R_version}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Date repo created:</button> {{DateCreated}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Packages installed:</button> {{Packages}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">System requirements:</button> {{SystemRequirements}}</h4></li>
+            </ul>
+            {{/single}}
+          </div>
         </div>
 
         <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>

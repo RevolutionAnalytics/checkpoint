@@ -4,9 +4,19 @@
 #' @keywords internal
 #' @param repo Respository path
 #' @param repoid Repository id
-#' @examples
+#' 
+#' @details This function is used internally to write a .rrt file in your home directory, and 
+#' within that file writes a list of all RRT repositories. 
+#' 
+#' If for some reason your .rrt file gets deleted, you can also use this function to rewrite that 
+#' file and its contents. Ideally you could make a vector or list of all your RRT repositories 
+#' and pass those in an apply like functon to this function, like 
+#' \code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
+#' 
+#' @examples \dontrun{
 #' rrt_repos_write(repo="~/testrepo/")
-rrt_repos_write <- function(repo, repoid){
+#' }
+rrt_repos_write <- function(repo, repoid=NULL){
   gg <- file.path(Sys.getenv("HOME"), ".rrt")
   append <- if(file.exists(gg)) TRUE else FALSE
   out <- tryCatch(rrt_repos_list(), error=function(e) e)
@@ -18,6 +28,10 @@ rrt_repos_write <- function(repo, repoid){
 #       cat(c("\n", sprintf("repo: %s", infofile), info, "__end__"), file = gg, sep = "\n", append = append)
   } else {
     existingrepoids <- names(out)
+    if(is.null(repoid)){
+      linez <- readLines(file.path(repo, "rrt", "rrt_manifest.txt"))
+      repoid <- strsplit(linez[grep("RepoID", linez)], ":\\s")[[1]][[2]]
+    }
     if(repoid %in% existingrepoids){ NULL } else {
       infofile <- file.path(repo, "rrt", "rrt_manifest.txt")
       info <- readLines(infofile)
@@ -50,9 +64,18 @@ rrt_repos_list <- function(repoid=NULL){
       out[[i]] <- do.call(c, lapply(tmp, function(y){ yy <- strsplit(y, ":")[[1]]; zz <- yy[2]; zz <- gsub('\\s+', '', zz); names(zz) <- yy[1]; as.list(zz) }))
     }
     names(out) <- vapply(out, "[[", "", "RepoID")
+    
+    # get other info from each repo's local manifest file
+    out <- lapply(out, function(x){ 
+      tmp <- readLines(x$repo)
+      tmp2 <- do.call(c, lapply(tmp, function(y){ yy <- strsplit(y, ":")[[1]]; zz <- yy[2]; zz <- gsub('\\s+', '', zz); names(zz) <- yy[1]; as.list(zz) }))
+      tmp2$repo_root <- sub("/rrt/rrt_manifest.txt", "", x[['repo']])
+      c(x['repo'], tmp2)
+    })
+    
     class(out) <- 'rrtrepos'
     if(is.null(repoid)) out  else out[[repoid]]
-  } else { stop("You have no rrt repos") } 
+  } else { stop("You have no rrt repos or your .rrt file does not exist.\nIf the latter, run rrt_repos_write() with paths for each RRT repository.") } 
 }
 
 #' Print rrtrepos class

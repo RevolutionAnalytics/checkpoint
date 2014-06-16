@@ -3,7 +3,7 @@
 \alias{rrt_repos_write}
 \title{Write rrt libraries to user's .Rprofile file}
 \usage{
-rrt_repos_write(repo, repoid)
+rrt_repos_write(repo, repoid = NULL)
 }
 \arguments{
 \item{repo}{Respository path}
@@ -13,8 +13,19 @@ rrt_repos_write(repo, repoid)
 \description{
 Write rrt libraries to user's .Rprofile file
 }
+\details{
+This function is used internally to write a .rrt file in your home directory, and
+within that file writes a list of all RRT repositories.
+
+If for some reason your .rrt file gets deleted, you can also use this function to rewrite that
+file and its contents. Ideally you could make a vector or list of all your RRT repositories
+and pass those in an apply like functon to this function, like
+\code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
+}
 \examples{
+\dontrun{
 rrt_repos_write(repo="~/testrepo/")
+}
 }
 \keyword{internal}
 

@@ -223,7 +223,7 @@ writeManifest <- function(repository, librar, packs, repoid){
   rver <- sprintf("R_version: %s", paste0(as.character(R.version[c('major','minor')]), collapse="."))
   pkgsloc <- sprintf("PkgsInstalledAt: %s", librar)
   sysreq <- sprintf("SystemRequirements: %s", paste0(rtt_compact(getsysreq(packs)), collapse = "\n") )
-  pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ","))
+  pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
   date <- sprintf("DateCreated: %s", format(Sys.time(), "%Y-%M-%d"))
   info <- c(installedwith, installedfrom, rrtver, rver, date, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
