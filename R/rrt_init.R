@@ -14,9 +14,12 @@
 #' rrt_init(repo="~/testrepo")
 #' rrt_refresh(repo="~/testrepo")
 #' rrt_install(repo="~/testrepo")
+#' 
+#' # Optionally, do an interactive repo intitialization
+#' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=TRUE)
+rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
@@ -26,9 +29,26 @@ rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=TRUE)
     message("\nRepository path (default: home directory + repository name):")
     defaultpath <- file.path(Sys.getenv("HOME"), reponame)
     repo <- rrt_readline(defaultpath)
-  } else { 
-    if(is.null(repo)) 
+  } else {
+    if(is.null(repo)){
       stop("You need to specify a repository path and name")
+    } else {
+      reponame <- strsplit("~/testrepo", "/")[[1]][length(strsplit("~/testrepo", "/")[[1]])]
+    }
+  }
+  
+  if(interactive){
+    message("\nRepository author(s) (default: left blank):")
+    author <- rrt_readline()
+    message("\nRepo license (default: MIT):")
+    license <- rrt_readline("MIT")
+    message("\nRepo description (default: left blank):")
+    description <- rrt_readline()  
+    message("\nRepo remote git or svn repo (default: left blank):")
+    remote <- rrt_readline()
+  } else {
+    author <- description <- remote <- ""
+    license <- "MIT"
   }
   
   # create repo id using digest
@@ -60,7 +80,7 @@ rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=TRUE)
   
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
-  writeManifest(reponame, repo, lib, pkgs, repoid, author, license, description, remote)
+  writeManifest(repo, lib, pkgs, repoid, reponame, author, license, description, remote)
   
   # Write repo log file
   rrt_repos_write(repo, repoid)
@@ -235,7 +255,13 @@ getsysreq <- function(x)
 #' @export
 #' @keywords internal
 #' @return Writes a RRT manifest file to disc
-writeManifest <- function(repository, librar, packs, repoid){
+writeManifest <- function(repository, librar, packs, repoid, reponame, author, license, description, remote){
+  reponame <- sprintf("Repository name: %s", reponame)
+  author <- sprintf("Authors: %s", author)
+  license <- sprintf("License: %s", license)
+  description <- sprintf("Description: %s", description)
+  remote <- sprintf("Remote: %s", remote)
+  
   infofile <- file.path(repository, "rrt", "rrt_manifest.txt")
   installedwith <- "InstalledWith: RRT"
   installedfrom <- "InstalledFrom: source"
@@ -245,9 +271,8 @@ writeManifest <- function(repository, librar, packs, repoid){
   sysreq <- sprintf("SystemRequirements: %s", paste0(rtt_compact(getsysreq(packs)), collapse = "\n") )
   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
-  date <- sprintf("DateCreated: %s", format(Sys.time(), "%Y-%M-%d"))
-  info <- c(installedwith, installedfrom, rrtver, rver, date, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
+  date <- sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d"))
+  info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtver, 
+            rver, date, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
   cat(info, file = infofile, sep = "\n")
 }
-
-# writeManifest(reponame, repo, lib, pkgs, repoid, author, license, description, remote)
