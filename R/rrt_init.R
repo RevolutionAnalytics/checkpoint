@@ -6,6 +6,8 @@
 #' @export
 #' @template rrt
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
+#' @param interactive (logical) If TRUE (default), function asks you for input for each item, 
+#' otherwise, defaults are used.
 #' 
 #' @return Files written to the user system, with informative messages on progress
 #' @examples \dontrun{
@@ -14,8 +16,21 @@
 #' rrt_install(repo="~/testrepo")
 #' }
 
-rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
+rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=TRUE)
 {
+  if(interactive){
+    message("\nRepository name (default: random name generated):")
+    randomname <- paste0(sample(letters, 10), collapse = "")
+    reponame <- rrt_readline(randomname)
+    
+    message("\nRepository path (default: home directory + repository name):")
+    defaultpath <- file.path(Sys.getenv("HOME"), reponame)
+    repo <- rrt_readline(defaultpath)
+  } else { 
+    if(is.null(repo)) 
+      stop("You need to specify a repository path and name")
+  }
+  
   # create repo id using digest
   repoid <- digest(repo)
   if(is.null(repo)) repo <- getwd()
@@ -45,7 +60,7 @@ rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
   
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
-  writeManifest(repo, lib, pkgs, repoid)
+  writeManifest(reponame, repo, lib, pkgs, repoid, author, license, description, remote)
   
   # Write repo log file
   rrt_repos_write(repo, repoid)
@@ -61,6 +76,11 @@ rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
   }
   
   message("\n>>> RRT initialization completed.")
+}
+
+rrt_readline <- function(default=""){
+  tmp <- readline()
+  if(nchar(tmp) == 0) default else tmp
 }
 
 #' Refresh package - look for any new packages used and install those in rrt library
@@ -229,3 +249,5 @@ writeManifest <- function(repository, librar, packs, repoid){
   info <- c(installedwith, installedfrom, rrtver, rver, date, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
   cat(info, file = infofile, sep = "\n")
 }
+
+# writeManifest(reponame, repo, lib, pkgs, repoid, author, license, description, remote)
