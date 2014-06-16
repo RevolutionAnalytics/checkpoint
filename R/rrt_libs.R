@@ -24,7 +24,7 @@ rrt_repos_write <- function(repo, repoid){
   }
 }
 
-#' Read rrt libraries to user's .Rprofile file
+#' Read rrt libraries from user's .Rprofile file
 #' 
 #' @export
 #' @param repoid Respository id, default is NULL, so gets all repos

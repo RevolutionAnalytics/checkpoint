@@ -11,7 +11,8 @@ BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
     miniCRAN,
     digest,
-    knitr
+    knitr,
+    whisker
 Suggests:
     testthat,
     roxygen2

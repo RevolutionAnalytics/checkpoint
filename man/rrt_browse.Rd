@@ -3,12 +3,15 @@
 \alias{rrt_browse}
 \title{Browse rrt libraries}
 \usage{
-rrt_browse(repoid = NULL, output = NULL)
+rrt_browse(repoid = NULL, output = NULL, browse = TRUE)
 }
 \arguments{
 \item{repoid}{Respository id, default is NULL, so gets all repos}
 
 \item{output}{File to output RRT dashboard file to.}
+
+\item{browse}{(logical) If TRUE (default), web page opens in your default browse. If FALSE, html
+file written to disk and path to that file printed to console.}
 }
 \description{
 Open up a dashboard in your default browse.
