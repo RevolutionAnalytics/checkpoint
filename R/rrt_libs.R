@@ -13,13 +13,17 @@ rrt_repos_write <- function(repo, repoid){
   if("error" %in% class(out)){
       infofile <- file.path(repo, "rrt", "rrt_manifest.txt")
       info <- readLines(infofile)
-      cat(c("\n", sprintf("repo: %s", infofile), info, "__end__"), file = gg, sep = "\n", append = append)
+      repoidline <- info[grep("RepoID", info)]
+      cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
+#       cat(c("\n", sprintf("repo: %s", infofile), info, "__end__"), file = gg, sep = "\n", append = append)
   } else {
     existingrepoids <- names(out)
     if(repoid %in% existingrepoids){ NULL } else {
       infofile <- file.path(repo, "rrt", "rrt_manifest.txt")
       info <- readLines(infofile)
-      cat(c("\n", sprintf("repo: %s", infofile), info, "__end__"), file = gg, sep = "\n", append = append)
+      repoidline <- info[grep("RepoID", info)]
+      cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
+#       cat(c("\n", sprintf("repo: %s", infofile), info, "__end__"), file = gg, sep = "\n", append = append)
     }
   }
 }
