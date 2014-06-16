@@ -21,7 +21,7 @@ rrt_init <- function(repo, verbose=TRUE, rprofile=NULL)
   if(is.null(repo)) repo <- getwd()
 
   # create repo
-  mssg(verbose, "Checking to make sure repository exists...")
+  mssg(verbose, "Checking to see if repository exists already...")
   if(!file.exists(repo)){ # only create if file doesn't exist already
     mssg(verbose, sprintf("Creating repository %s", repo))
     dir.create(repo)
