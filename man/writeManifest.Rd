@@ -3,8 +3,8 @@
 \alias{writeManifest}
 \title{Function to write manifest file}
 \usage{
-writeManifest(repository, librar, packs, repoid, reponame, author, license,
-  description, remote)
+writeManifest(repository, librar, packs, repoid, reponame = "", author = "",
+  license = "", description = "", remote = "")
 }
 \value{
 Writes a RRT manifest file to disc
