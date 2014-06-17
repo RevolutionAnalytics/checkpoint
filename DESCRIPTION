@@ -13,6 +13,7 @@ Imports:
     digest,
     knitr,
     whisker,
-    testthat
+    testthat,
+    devtools
 Suggests:
     roxygen2
