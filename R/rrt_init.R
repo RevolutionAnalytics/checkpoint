@@ -255,7 +255,7 @@ getsysreq <- function(x)
 #' @export
 #' @keywords internal
 #' @return Writes a RRT manifest file to disc
-writeManifest <- function(repository, librar, packs, repoid, reponame, author, license, description, remote){
+writeManifest <- function(repository, librar, packs, repoid, reponame="", author="", license="", description="", remote=""){
   reponame <- sprintf("Repository name: %s", reponame)
   author <- sprintf("Authors: %s", author)
   license <- sprintf("License: %s", license)
