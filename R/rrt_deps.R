@@ -43,7 +43,7 @@
 rrt_deps <- function(repo = NULL, fileext = NULL, verbose = TRUE){
   if(is.null(repo)) repo <- getwd()
   repo <- path.expand(repo)
-  unique(repo_deps(dir = repo))
+  as.vector(unique(repo_deps(dir = repo)))
 }
 
 # detect all package dependencies for a repo

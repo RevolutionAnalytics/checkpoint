@@ -42,10 +42,14 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
   
   # remove base R pkgs
   if(!base){
+    availpkgs <- available.packages(contrib.url(getOption("repos"), "source"))
     pkg_deps <- pkg_deps[!sapply(pkg_deps, function(x){
-      zz <- packageDescription(x)["Priority"]
-      if(!is.null(zz[['Priority']]) && zz[['Priority']] == "base") TRUE else FALSE
+      zz <- tryCatch(availpkgs[x,]["Priority"], error=function(e) e)
+      if("error" %in% class(zz)) { FALSE } else {
+        if(!is.na(zz[['Priority']]) && zz[['Priority']] == "base") TRUE else FALSE
+      }
     })]
+    pkg_deps <- pkg_deps[!pkg_deps %in% c('stats','utils','grDevices','graphics','methods','grid')]
   }
   
   return(pkg_deps)

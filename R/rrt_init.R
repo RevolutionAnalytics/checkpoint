@@ -73,7 +73,7 @@ rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
   
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
-  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE)
+  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
   
   # get packages in a private location for this project
   getPkgs(x = pkgs, lib = lib, verbose = verbose)
@@ -128,7 +128,7 @@ rrt_refresh <- function(repo, verbose=TRUE)
   
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
-  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE)
+  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
   
   # get packages in a private location for this project
   mssg(verbose, "Getting new packages...")
@@ -204,7 +204,7 @@ rrt_install <- function(repo, verbose=TRUE)
   pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
   
   mssg(verbose, "Looking for packages used in your repository...")
-  x <- repodeps(repo, simplify = TRUE, base=FALSE)
+  x <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
   
   if(!file.exists(pkgslist)) { 
     mssg(verbose, "Getting new packages...")
@@ -223,8 +223,24 @@ rrt_install <- function(repo, verbose=TRUE)
     mssg(verbose, "Installing packages...")
     allpkgs <- list.files(file.path(lib, "src/contrib"), full.names = TRUE)
     names(allpkgs) <- gsub("_[0-9].+", "", list.files(file.path(lib, "src/contrib")))
+    allpkgs <- allpkgs[!grepl("PACKAGES", allpkgs)]
     pkgswithpath <- unname(sapply(pkgs2install, function(x) allpkgs[grepl(x, names(allpkgs))]))
-    install.packages(pkgswithpath, lib = lib, repos=NULL, type = "source")
+    pkgswithpath <- pkgswithpath[!sapply(pkgswithpath, length) == 0]
+    if(length(pkgswithpath) == 0){
+      mssg(verbose, "No packages found to install")
+    } else {
+      pkgswithpath <- unlist(pkgswithpath)
+      try_install <- function(x){
+        pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
+        install.packages(x, lib = lib, repos=NULL, type = "source")
+        if(!file.exists(file.path(lib, pkgname))){
+          mssg(verbose, "Installation from source failed, trying binary package version...")
+          download.packages(pkgname, destdir = file.path(lib, "src/contrib"))
+          install.packages(pkgname, lib = lib)
+        }
+      }
+      lapply(pkgswithpath, try_install)
+    }
   }
 }
 
