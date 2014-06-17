@@ -149,6 +149,7 @@ rrt_refresh <- function(repo, verbose=TRUE)
 #' @param lib (character) Library location, a directory
 #' @param recursive (logical) Recursively install packages?
 #' @param verbose (logical) Inherited from call to rrt_init or rrt_refresh
+#' @param install (logical) Install packages or just download packages. Not used yet...
 #' @examples \dontrun{
 #' getPkgs()
 #' }
@@ -249,9 +250,10 @@ rrt_install <- function(repo, verbose=TRUE)
 #' @export
 #' @param x (character) Name of package. One to many in a vector or list
 #' @keywords internal
-#' @examples
+#' @examples \dontrun{
 #' getsysreq('RCurl')
 #' getsysreq(c('RCurl','doMC','ggplot2','XML','rgdal'))
+#' }
 
 getsysreq <- function(x)
 {

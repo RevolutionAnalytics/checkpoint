@@ -17,6 +17,8 @@ file written to disk and path to that file printed to console.}
 Open up a dashboard in your default browse.
 }
 \examples{
+\dontrun{
 rrt_browse()
+}
 }
 

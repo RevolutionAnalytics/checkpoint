@@ -46,11 +46,12 @@ rrt_repos_write <- function(repo, repoid=NULL){
 #' 
 #' @export
 #' @param repoid Respository id, default is NULL, so gets all repos
-#' @examples
+#' @examples \dontrun{
 #' (repos <- rrt_repos_list())
 #' names(repos)
 #' rrt_repos_list(names(repos)[1])
 #' rrt_repos_list(names(repos)[2])
+#' }
 rrt_repos_list <- function(repoid=NULL){
   gg <- file.path(Sys.getenv("HOME"), ".rrt")
   if(file.exists(gg)){
@@ -81,8 +82,10 @@ rrt_repos_list <- function(repoid=NULL){
 #' Print rrtrepos class
 #' @method print rrtrepos
 #' @export
-#' @rdname rrtrepos
-print.rrtrepos <- function(x){
+#' @param x Input
+#' @param ... not used
+#' @rdname rrt_repos_list
+print.rrtrepos <- function(x, ...){
   repos <- sapply(x, "[[", "repo")
   repoids <- paste(sapply(x, "[[", "RepoID"), collapse = ", ")
   cat(sprintf("No. repos: %s", length(repos)), "\n")

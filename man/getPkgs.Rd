@@ -13,6 +13,8 @@ getPkgs(x, lib, recursive = FALSE, verbose = TRUE, install = TRUE)
 \item{recursive}{(logical) Recursively install packages?}
 
 \item{verbose}{(logical) Inherited from call to rrt_init or rrt_refresh}
+
+\item{install}{(logical) Install packages or just download packages. Not used yet...}
 }
 \description{
 Function to install pkgs

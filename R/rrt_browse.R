@@ -8,8 +8,9 @@
 #' @param output File to output RRT dashboard file to.
 #' @param browse (logical) If TRUE (default), web page opens in your default browse. If FALSE, html
 #' file written to disk and path to that file printed to console.
-#' @examples
+#' @examples \dontrun{
 #' rrt_browse()
+#' }
 
 rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE){
 
