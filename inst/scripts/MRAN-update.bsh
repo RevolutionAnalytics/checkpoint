@@ -46,9 +46,9 @@ WWW_HOME="/MRAN/www"
 #RUN THE DIFF
 #use the variables created above to compare the last two snapshots, send to the public facing diffs directory
 
-echo "Diffed Snapshots:" > $WWW_HOME/www/diffs/RRT_$DATE.txt
+echo "Diffed Snapshots:" > $WWW_HOME/diffs/RRT_$DATE.txt
 
-echo $LAST >> $WWW_HOME/www/diffs/RRT_$DATE.txt
+echo $LAST >> $WWW_HOME/diffs/RRT_$DATE.txt
 
 echo $CURRENT >> $WWW_HOME/diffs/RRT_$DATE.txt
 
