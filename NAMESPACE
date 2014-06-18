@@ -3,6 +3,7 @@
 S3method(print,rrtrepos)
 export(getPkgs)
 export(getsysreq)
+export(pkgs_marmoset)
 export(pkgurls)
 export(repodeps)
 export(rrt_browse)
