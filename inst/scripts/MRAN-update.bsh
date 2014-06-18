@@ -1,0 +1,57 @@
+#/bin/bash
+#This is the Marmoset R Archive Network (MRAN) update script
+#We use ZFS for snapshots
+
+#rrt-user account works with dates and times in GMT via ~/.profile, we set it again here so that is made clear
+export TZ="GMT"
+
+
+#use ISO standard for date, underscore for date time seperator, no colon for hour minute seperation
+#example: 2014-06-16_2300
+DATE=$(date +"%Y-%m-%d_%H%M")
+
+#define MRAN home
+MRAN_HOME="/MRAN/RRT"
+
+#create MRAN from the master CRAN server in Vienna
+#start with current packages
+rsync -rtlzv --delete-before cran.r-project.org::CRAN/contrib/main/*.tar.gz $MRAN_HOME/ > /tmp/MRAN-current-rsync-download.log
+rsync -rtlzv --delete-before cran.r-project.org::CRAN/contrib/main/PACKAGES $MRAN_HOME/
+rsync -rtlzv --delete-before cran.r-project.org::CRAN/contrib/main/PACKAGES.gz $MRAN_HOME/
+
+#now get archived versions of all packages and place them in the same location as the current versions
+#rsync -rtlzv --delete-before cran.r-project.org::CRAN/src/contrib/Archive/ $MRAN_HOME/ > /tmp/MRAN-archive-rsync-download.log
+
+
+#take a new snapshot after the rsync process is finished
+#use date format for snapshot name
+sudo zfs snapshot marmoset/RRT@$DATE
+
+
+#SETUP THE DIFFS
+#get the name of the last two snapshots in zfs and send to a temporary file
+sudo zfs list -t snapshot | tail -n 2 | cut -d " " -f -1 > /tmp/tempdiffs.txt
+
+#head the first line of the temp file to get the name of the second to last snapshot, send to new temp file
+LAST=$(head -n 1 /tmp/tempdiffs.txt)
+
+
+#tail the last line of the temp file to get the name of the most recent snapshot, send to new temp file
+CURRENT=$(tail -n 1 /tmp/tempdiffs.txt)
+
+
+#define WWW home
+WWW_HOME="/MRAN/www"
+
+#RUN THE DIFF
+#use the variables created above to compare the last two snapshots, send to the public facing diffs directory
+
+echo "Diffed Snapshots:" > $WWW_HOME/diffs/RRT_$DATE.txt
+
+echo $LAST >> $WWW_HOME/diffs/RRT_$DATE.txt
+
+echo $CURRENT >> $WWW_HOME/diffs/RRT_$DATE.txt
+
+echo "Diff Contents:" >> $WWW_HOME/diffs/RRT_$DATE.txt
+
+sudo zfs diff $LAST $CURRENT >> $WWW_HOME/diffs/RRT_$DATE.txt
