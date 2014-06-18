@@ -110,8 +110,8 @@ archive <- getarchive()
 allpkgs <- lapply(aslist, function(x){
   list(package=x$package,
     description=x$description,
-    snapshotId = 123456,
-    snapshotDate = "2014-06-05",
+    snapshotId = dirtoget,
+    snapshotDate = dirtoget,
     snapshotDiffId = "19293838-12312323",
     compatibitlityCheck = NULL,
     source = archive_source(x$package, archive),
@@ -122,57 +122,14 @@ allpkgs <- lapply(aslist, function(x){
 
 ### Convert to JSON
 library("jsonlite")
-json <- toJSON(allpkgs, auto_unbox = TRUE)
+jsonallpkgs <- lapply(allpkgs, function(x) toJSON(x, auto_unbox = TRUE))
 
 ### Write JSON to disk
-mran_json <- sprintf("/MRAN/RRT/www/metadata/logs/mran_json_%s.json", Sys.Date())
-on.exit(close(mran_json))
-writeLines(json, mran_json)
-
-message(sprintf("json metadata file written to %s", mran_json))
-
-# generate metadata.html file
-
-template_metadata <-
-  '<!DOCTYPE html>
-    <head>
-      <meta charset="utf-8">
-      <title>Marmoset</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="description" content="Marmoset">
-      <meta name="author" content="RRT">
-
-      <!-- Le styles -->
-      <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-      <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-    </head>
-    <body>
-      <div>
-        <div class="container">
-        <center><h1>Marmoset Metadata</h1></center>
-
-        <center><h3>Marmoset holds metadata from each 12 hr snapshot of CRAN. Right now it only holds basic metadata, but will hold other metadata in the future.</h3></center>
-
-        <h2>Metadata by date</h2>
-        <ul>
-        {{#jsonfiles}}
-          <li><a href="logs/{{filename}}">{{filename}}</a></li>
-        {{/jsonfiles}}
-        </ul>
-        </div>
-      </div>
-      <center><h4>Developed by <a href="http://www.revolutionanalytics.com/">Revolution Analytics</a></h4></center>
-      <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-      <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    </body>
-    </html>'
-
-library("whisker")
-jsonfiles <- list.files("/MRAN/RRT/www/metadata/logs")
-names(jsonfiles) <- rep("filename", length(jsonfiles))
-rendered <- whisker.render(template_metadata)
-output <- "/MRAN/RRT/www/metadata/index.html"
-write(rendered, file = output)
-
-## Run on server
-# Rscript --vanilla -e "source('/home/sckott/scripts/generate_metadata.R')"
+now <- Sys.Date()
+dircreate <- sprintf("/MRAN/www/metadata/logs/%s", dirtoget)
+dir.create(dircreate)
+for(i in seq_along(jsonallpkgs)){
+  path <- sprintf("/MRAN/www/metadata/logs/%s/%s.json", dirtoget, allpkgs[[i]]$package)
+  on.exit(close(path))
+  writeLines(jsonallpkgs[[i]], path)
+}
