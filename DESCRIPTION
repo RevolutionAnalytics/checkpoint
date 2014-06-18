@@ -8,6 +8,7 @@ Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
 License: GPL-2
 URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
+VignetteBuilder: knitr
 Imports:
     miniCRAN,
     digest,
