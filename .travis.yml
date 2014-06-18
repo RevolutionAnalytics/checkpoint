@@ -7,7 +7,7 @@ before_install:
 
 install:
 - ./travis-tool.sh install_deps
-- ./travis-tool.sh github_package rstudio/packrat andrie/miniCRAN
+- ./travis-tool.sh github_package rstudio/packrat andrie/miniCRAN ropensci/git2r
 
 script: ./travis-tool.sh run_tests
 
