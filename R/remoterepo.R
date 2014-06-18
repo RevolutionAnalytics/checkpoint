@@ -1,6 +1,6 @@
-#' Create a Github repo
+#' Create a Github repository
 #' 
-#' @import httr RJSONIO
+#' @import httr RJSONIO assertthat
 #' @export
 #' 
 #' @param name (character) Required. The name of the repository
@@ -19,25 +19,27 @@
 #' @param auto_init	(boolean)	Pass true to create an initial commit with empty README. Default: 
 #' false
 #' @param gitignore_template	(character)	Desired language or platform .gitignore template to 
-#' apply. Use the name of the template without the extension. For example, “Haskell”. Ignored 
+#' apply. Use the name of the template without the extension. For example, 'Haskell'. Ignored 
 #' if the auto_init parameter is not provided.
 #' @param license_template	(character)	Desired LICENSE template to apply. Use the name of the 
-#' template without the extension. For example, “mit” or “mozilla”. Ignored if the auto_init 
+#' template without the extension. For example, 'mit' or 'mozilla'. Ignored if the auto_init 
 #' parameter is not provided.
+#' @param browse (logical) If TRUE, at the end of the function the new repo is opened in your 
+#' default browser
+#' @param ... Further curl options passed on to httr::POST  
 #' 
 #' @examples \dontrun{
 #' rrt_github(name="yeppers_peppers", description='some comments')
-#' rrt_bitbucket(name="thingsandstuff", description="some comments")
 #' }
 
 rrt_github <- function(name, description = "", homepage = "", private = FALSE, 
   has_issues=TRUE, has_wiki=TRUE, has_downloads=TRUE, team_id=NULL, auto_init=FALSE, 
-  gitignore_template = NULL, license_template = NULL, verbose=TRUE, browse=TRUE, ...)
+  gitignore_template = NULL, license_template = NULL, browse=TRUE, ...)
 {
   get_credentials("github")
   headers <- add_headers(`User-Agent` = "Dummy", `Accept` = 'application/vnd.github.v3+json')
   auth  <- authenticate(getOption("github.username"), getOption("github.password"), type = "basic")
-  args <- compact(list(name=name, description=description, homepage=homepage, private=private,
+  args <- rtt_compact(list(name=name, description=description, homepage=homepage, private=private,
                        has_issues=has_issues, has_wiki=has_wiki, has_downloads=has_downloads, 
                        team_id=team_id, auto_init=auto_init, gitignore_template=gitignore_template, 
                        license_template=license_template))
@@ -57,36 +59,34 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
 #' @import httr RJSONIO
 #' @export
 #' 
-#' @param scm The source control manager for the repository. This is either hg or git.
-#' @param has_wiki A boolean indicating if the repository has a wiki.
+#' @param name Required. Name of the repository
 #' @param description A string containing the repository's description.
-#' @param links An array of related objects.
-#' @param updated_on A date timestamp of the last update to this repository.
+#' @param private A boolean indicating if a repository is private or public.
 #' @param fork_policy Control the rules for forking this repository. See Details
-#' @param created_on An ISO-8601 date timestamp of this repository's creation date.
-#' @param owner The owner's account.
-#' @param size The size of the repository in bytes.
-#' @param parent The parent repository this repository was forked off (only present on forks). This is a repository object itself.
 #' @param has_issues A boolean indicating a repository has an issue tracker.
-#' @param is_private A boolean indicating if a repository is private or public.
-#' @param full_name The unique key into the repository. This key has the format: {owner}/{repo_slug}
-#' @param name The display name of the repository.
-#' @param language The main (programming) language of the repository source files.
+#' @param has_wiki A boolean indicating if the repository has a wiki.
+#' @param website Any website to go in the repository metadata
+#' @param browse (logical) If TRUE, at the end of the function the new repo is opened in your 
+#' default browser
+#' @param ... Further curl options passed on to httr::POST  
 #' 
 #' @details Available values for fork_policy parameter are:
 #' \itemize{
-#' \item allow_forks: unrestricted forking
-#' \item no_public_forks: restrict forking to private forks (forks cannot be made public later)
-#' \item no_forks: deny all forking
+#'  \item allow_forks: unrestricted forking
+#'  \item no_public_forks: restrict forking to private forks (forks cannot be made public later)
+#'  \item no_forks: deny all forking
 #' }
 #' 
-#' @rdname rrt_github
+#' @examples \dontrun{
+#' rrt_bitbucket(name="thingsandstuff", description="some comments")
+#' }
+
 rrt_bitbucket <- function(name, description = "", private = FALSE, fork_policy = "allow_forks",
-  has_issues=TRUE, has_wiki=TRUE, website="", verbose=TRUE, browse=TRUE, ...)
+  has_issues=TRUE, has_wiki=TRUE, website="", browse=TRUE, ...)
 {
   get_credentials("bitbucket")
   auth  <- authenticate(getOption("bitbucket.username"), getOption("bitbucket.password"), type = "basic")
-  args <- compact(list(name=name, description=description, is_private=private, scm="git",
+  args <- rtt_compact(list(name=name, description=description, is_private=private, scm="git",
             fork_policy=fork_policy, has_issues=has_issues, has_wiki=has_wiki, website=website))
   url2 <- file.path("https://bitbucket.org/api/2.0/repositories", getOption("bitbucket.username"), name)
   response <- POST(url = url2, body = RJSONIO::toJSON(args), config = auth)

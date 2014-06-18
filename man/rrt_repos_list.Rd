@@ -16,8 +16,6 @@ rrt_repos_list(repoid = NULL)
 
 \item{repoid}{Repository id}
 
-\item{repoid}{Respository id, default is NULL, so gets all repos}
-
 \item{x}{Input}
 
 \item{...}{not used}

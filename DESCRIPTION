@@ -19,6 +19,7 @@ Imports:
     devtools,
     git2r,
     httr,
-    RJSONIO
+    RJSONIO,
+    assertthat
 Suggests:
     roxygen2
