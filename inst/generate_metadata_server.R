@@ -10,11 +10,17 @@
 # R CMD INSTALL devtools_1.5.tar.gz
 # R CMD INSTALL jsonlite_0.9.8.tar.gz
 #
-sudo su - \
-  -c "R -e \"install.packages(c('devtools','jsonlite'), lib='/usr/lib/R/library/', repos='http://cran.us.r-project.org', dependencies=TRUE)\""
+# sudo su - \
+#   -c "R -e \"install.packages(c('devtools','jsonlite'), lib='/usr/local/lib/R/library/', repos='http://cran.us.r-project.org', dependencies=TRUE)\""
 #
 # su - \
 #   -c "R -e \"install.packages(c('devtools','jsonlite'), lib='/usr/lib/R/library/', repos='http://cran.us.r-project.org', dependencies=TRUE)\""
+
+# Load packages
+library("plyr")
+
+# set mirror
+options(repos=structure(c(CRAN="http://cran.r-project.org/")))
 
 # get package urls
 pkgurls <- function(pkgs)
@@ -64,32 +70,38 @@ getarchive <- function(repos = getOption("repos")){
 }
 
 archive_source <- function(pkg, archive){
-  archivelist <- archive[[pkg]]
-  nn <- rownames(archivelist)
-  nn <- gsub(sprintf("%s/|\\.tar\\.gz", pkg), "", nn)
-  tmp <- pkgurls(nn)
-  names(tmp) <- gsub(sprintf("%s_|\\.tar\\.gz", pkg, pkg), "", nn)
-  as.list(tmp)
+  archivelist <- tryCatch(archive[[pkg]], error=function(e) e)
+  if(is.null(archivelist)){ NULL } else {
+    nn <- rownames(archivelist)
+    nn <- gsub(sprintf("%s/|\\.tar\\.gz", pkg), "", nn)
+    tmp <- pkgurls(nn)
+    names(tmp) <- gsub(sprintf("%s_|\\.tar\\.gz", pkg, pkg), "", nn)
+    as.list(tmp)
+  }
 }
 
 ### define things
-pkgs <- c("plyr","reshape2","ggplot2")
-pkgPath <- "~/testingrtt3"
-dir.create(pkgPath)
+dirs <- list.files("/MRAN/RRT/.zfs/snapshot")
+dirtoget <- dirs[length(dirs)]
+pkgswithver <- list.files(file.path("/MRAN/RRT/.zfs/snapshot", dirtoget))
+justpkgnames <- sapply(pkgswithver, function(x) strsplit(x, "_")[[1]][[1]], USE.NAMES=FALSE)
 
 ### download packages
 #### NOTE: note sure we really need to do this...
 # download.packages(pkgs, destdir = pkgPath, type = 'source')
 
-#### generate metadata PACKAGES and PACKAGES.gz files
+#### get metadata from CRAN
 # tools::write_PACKAGES(pkgPath)
 availpkgs <- available.packages(contrib.url(getOption("repos"), "source"))
 extractpkginfo <- function(pkg){
-  tmp <- availpkgs[pkg,]
-  tmp <- tmp[!names(tmp) %in% "Repository"]
-  list(package=tmp[["Package"]], description=as.list(tmp[!is.na(tmp)]))
+  tmp <- tryCatch(availpkgs[pkg,], error=function(e) e)
+  if("error" %in% class(tmp) || is.null(tmp)){ NULL } else {
+    tmp <- tmp[!names(tmp) %in% "Repository"]
+    list(package=tmp[["Package"]], description=as.list(tmp[!is.na(tmp)]))
+  }
 }
-aslist <- lapply(pkgs, extractpkginfo)
+aslist <- lapply(justpkgnames, extractpkginfo)
+aslist <- compact(aslist)
 
 ### add more metadata to the json (as list), then write again to json
 #### get archive data
@@ -98,8 +110,8 @@ archive <- getarchive()
 allpkgs <- lapply(aslist, function(x){
   list(package=x$package,
     description=x$description,
-    snapshotId = 123456,
-    snapshotDate = "2014-06-05",
+    snapshotId = dirtoget,
+    snapshotDate = dirtoget,
     snapshotDiffId = "19293838-12312323",
     compatibitlityCheck = NULL,
     source = archive_source(x$package, archive),
@@ -109,10 +121,15 @@ allpkgs <- lapply(aslist, function(x){
 })
 
 ### Convert to JSON
-library("jsonlite", lib.loc = '/usr/local/lib/R/site-library')
-json <- toJSON(allpkgs, auto_unbox = TRUE)
+library("jsonlite")
+jsonallpkgs <- lapply(allpkgs, function(x) toJSON(x, auto_unbox = TRUE))
 
 ### Write JSON to disk
-mran_json <- file.path(pkgPath, sprintf("mran_json_%s.json", Sys.Date()))
-on.exit(close(mran_json))
-writeLines(json, mran_json)
+now <- Sys.Date()
+dircreate <- sprintf("/MRAN/www/metadata/logs/%s", dirtoget)
+dir.create(dircreate)
+for(i in seq_along(jsonallpkgs)){
+  path <- sprintf("/MRAN/www/metadata/logs/%s/%s.json", dirtoget, allpkgs[[i]]$package)
+  on.exit(close(path))
+  writeLines(jsonallpkgs[[i]], path)
+}

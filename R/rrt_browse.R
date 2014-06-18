@@ -8,14 +8,19 @@
 #' @param output File to output RRT dashboard file to.
 #' @param browse (logical) If TRUE (default), web page opens in your default browse. If FALSE, html
 #' file written to disk and path to that file printed to console.
-#' @examples
+#' @examples \dontrun{
 #' rrt_browse()
+#' }
 
-rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE){
+rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
+{
+  if(is.null(output))
+    output <- tempfile(fileext=".html")
 
   repos <- rrt_repos_list(repoid=repoid)
   names(repos) <- NULL
   for(i in seq_along(repos)) repos[[i]]$singlepage <- tempfile(fileext=".html")
+  for(i in seq_along(repos)) repos[[i]]$homepage <- output
 
   rendered <- whisker.render(template)
   for(i in seq_along(repos)){
@@ -23,10 +28,6 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE){
     tmp <- whisker.render(template_onepage)
     write(tmp, file = repos[[i]]$singlepage)
   }
-#   rendered <- gsub("&lt;em&gt;", "<b>", rendered)
-#   rendered <- gsub("&lt;/em&gt;", "</b>", rendered)
-  if(is.null(output))
-    output <- tempfile(fileext=".html")
   write(rendered, file = output)
   if(browse) browseURL(output) else message(output)
 }
@@ -109,11 +110,15 @@ template_onepage <-
         <body>
 
         <div style="background-color: #ecf0f1;">
-          <center><h2><i class="fa fa-list-ul"></i>  RRT Dashboard - {{#single}} {{RepoID}} {{/single}}</h2></center>
+          {{#single}}
+          <center><h2><a href="{{homepage}}"><i class="fa fa-list-ul"></i></a>  RRT Dashboard - {{#single}} {{RepoID}} {{/single}}</h2></center>
           <div class="container">
-            {{#single}}
             <ul style="list-style-type: none;">
-              <li><h4><button class="btn btn-xs btn-success">RepoID:</button> {{RepoID}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Repo Name:</button> {{RepositoryName}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Authors:</button> {{Authors}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">License:</button> {{License}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Description:</button> {{Description}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Remote:</button> {{Remote}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">Repo directory:</button> {{repo_root}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">RRT Installed with:</button> {{InstalledWith}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">RRT Installed from:</button> {{InstalledFrom}}</h4></li>

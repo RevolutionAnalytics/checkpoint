@@ -3,7 +3,8 @@
 \alias{rrt_init}
 \title{Initiate a RRT repository.}
 \usage{
-rrt_init(repo, verbose = TRUE, rprofile = NULL)
+rrt_init(repo = NULL, verbose = TRUE, rprofile = NULL,
+  interactive = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
@@ -11,6 +12,9 @@ rrt_init(repo, verbose = TRUE, rprofile = NULL)
 \item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 
 \item{rprofile}{(list) pass in a list of options to include in the .Rprofile file for the repo.}
+
+\item{interactive}{(logical) If TRUE (default), function asks you for input for each item,
+otherwise, defaults are used.}
 }
 \value{
 Files written to the user system, with informative messages on progress
@@ -23,6 +27,9 @@ This function initiates a repository.
 rrt_init(repo="~/testrepo")
 rrt_refresh(repo="~/testrepo")
 rrt_install(repo="~/testrepo")
+
+# Optionally, do an interactive repo intitialization
+rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 }
 }
 

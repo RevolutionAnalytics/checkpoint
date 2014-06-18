@@ -12,8 +12,10 @@ getsysreq(x)
 Function to get system requireqments, if any, from installed packages
 }
 \examples{
+\dontrun{
 getsysreq('RCurl')
 getsysreq(c('RCurl','doMC','ggplot2','XML','rgdal'))
+}
 }
 \keyword{internal}
 

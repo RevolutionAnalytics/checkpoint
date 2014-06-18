@@ -3,17 +3,23 @@
 \alias{rrt_compat}
 \title{Local test for package compatibility}
 \usage{
-rrt_compat(repo)
+rrt_compat(repo, what = "check", verbose = TRUE)
 }
 \arguments{
 \item{repo}{Repository path}
 
-\item{what}{What to test, one or more of install, tests, examples.}
+\item{what}{What to test, one or more of check, tests, examples, or udpate. \code{match.arg} is
+used internally so unique abbreviations can be used.}
+
+\item{verbose}{(logical) Print messages (default) or not}
 }
 \description{
-Local test for package compatibility
+Currently, these checks, tests, etc. are run just on the packages used in your code in the
+repository tested - not the dependencies of the packages you use.
 }
 \examples{
+\dontrun{
 rrt_compat(repo="~/testrepo")
+}
 }
 
