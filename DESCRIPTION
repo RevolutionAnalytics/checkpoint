@@ -20,7 +20,8 @@ Imports:
     devtools,
     httr,
     RJSONIO,
-    assertthat
+    assertthat,
+    XML
 Suggests:
     roxygen2
 Enhances: git2r
