@@ -5,22 +5,32 @@
 #rrt-user account works with dates and times in GMT via ~/.profile, we set it again here so that is made clear
 export TZ="GMT"
 
-
 #use ISO standard for date, underscore for date time seperator, no colon for hour minute seperation
 #example: 2014-06-16_2300
 DATE=$(date +"%Y-%m-%d_%H%M")
 
+#SETUP THE RSYNC
 #define MRAN home
 MRAN_HOME="/MRAN/RRT"
 
-#create MRAN from the master CRAN server in Vienna
-#start with current packages
-rsync -rtlzv --delete-before cran.r-project.org::CRAN/contrib/main/*.tar.gz $MRAN_HOME/ > /tmp/MRAN-current-rsync-download.log
-rsync -rtlzv --delete-before cran.r-project.org::CRAN/contrib/main/PACKAGES $MRAN_HOME/
-rsync -rtlzv --delete-before cran.r-project.org::CRAN/contrib/main/PACKAGES.gz $MRAN_HOME/
+#define staging area home
+STAGING_HOME=/MRAN/staging
 
-#now get archived versions of all packages and place them in the same location as the current versions
-#rsync -rtlzv --delete-before cran.r-project.org::CRAN/src/contrib/Archive/ $MRAN_HOME/ > /tmp/MRAN-archive-rsync-download.log
+#create MRAN from the master CRAN server in Vienna
+
+#part ONE, create MRAN by getting all archived versions of all packages first. These are sorted into dirs by CRAN
+rsync -rtzv --exclude=README cran.r-project.org::CRAN/src/contrib/Archive/ $MRAN_HOME/ > /tmp/MRAN-archive-rsync-download.log
+
+#part TWO, current package versions, stage into temporary holding dir
+rsync -rtzv --delete-before cran.r-project.org::CRAN/contrib/main/*.tar.gz $STAGING_HOME/ > /tmp/MRAN-current-rsync-download.log
+
+#part THREE, create a directory for all current packages that do not already have a dir in MRAN.
+cd $STAGING_HOME
+#You will get warnings about dirs that already exist
+for file in *.tar.gz; do dirname=$(echo $file | sed 's/_.*//'); mkdir $MRAN_HOME/$dirname; done
+
+#part FOUR, copy the files from the staging area to respective dirs in MRAN_HOME, preserving the timestamps 
+for file in *.tar.gz; do dirname=$(echo $file | sed 's/_.*//'); cp --preserve $file $MRAN_HOME/$dirname/; done
 
 
 #take a new snapshot after the rsync process is finished
@@ -30,17 +40,15 @@ sudo zfs snapshot marmoset/RRT@$DATE
 
 #SETUP THE DIFFS
 #get the name of the last two snapshots in zfs and send to a temporary file
-sudo zfs list -t snapshot | tail -n 2 | cut -d " " -f -1 > /tmp/tempdiffs.txt
+sudo zfs list -r marmoset/RRT -t snapshot | tail -n 2 | cut -d " " -f -1 > /tmp/tempdiffs.txt
 
 #head the first line of the temp file to get the name of the second to last snapshot, send to new temp file
 LAST=$(head -n 1 /tmp/tempdiffs.txt)
 
-
 #tail the last line of the temp file to get the name of the most recent snapshot, send to new temp file
 CURRENT=$(tail -n 1 /tmp/tempdiffs.txt)
 
-
-#define WWW home
+#define www home
 WWW_HOME="/MRAN/www"
 
 #RUN THE DIFF
