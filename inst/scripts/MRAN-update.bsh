@@ -40,7 +40,7 @@ sudo zfs snapshot marmoset/RRT@$DATE
 
 #SETUP THE DIFFS
 #get the name of the last two snapshots in zfs and send to a temporary file
-sudo zfs list -t snapshot | tail -n 2 | cut -d " " -f -1 > /tmp/tempdiffs.txt
+sudo zfs list -r marmoset/RRT -t snapshot | tail -n 2 | cut -d " " -f -1 > /tmp/tempdiffs.txt
 
 #head the first line of the temp file to get the name of the second to last snapshot, send to new temp file
 LAST=$(head -n 1 /tmp/tempdiffs.txt)
