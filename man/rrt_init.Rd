@@ -3,8 +3,8 @@
 \alias{rrt_init}
 \title{Initiate a RRT repository.}
 \usage{
-rrt_init(repo = getwd(), verbose = TRUE, rprofile = NULL,
-  interactive = FALSE)
+rrt_init(repo = getwd(), marmoset = FALSE, snapdate = NULL,
+  verbose = TRUE, rprofile = NULL, interactive = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}

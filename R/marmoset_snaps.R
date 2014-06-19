@@ -53,7 +53,7 @@ marmoset_diffs <- function(diff=NULL)
 
 #' Get available package level metadata from Marmoset
 #' 
-#' @import httr XML
+#' @import httr RJSONIO
 #' @export
 #' @param snapshot A Marmoset snapshot. Defaults to most recent snapshot
 #' @param package Required. A package name
@@ -72,4 +72,29 @@ marmoset_pkg_metadata <- function(snapshot=NULL, package)
     stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
   text <- content(res, as = "text")
   RJSONIO::fromJSON(text, simplifyWithNames = FALSE)  
+}
+
+
+#' Get available package versions from Marmoset
+#' 
+#' @import httr RJSONIO
+#' @export
+#' @param snapshot A Marmoset snapshot. Defaults to most recent snapshot
+#' @param package Required. A package name
+#' @examples \dontrun{
+#' marmoset_pkg_avail(snapshot="2014-06-19_0136", package="plyr")
+#' }
+
+marmoset_pkg_avail <- function(snapshot=NULL, package)
+{
+  if(is.null(snapshot)) snapshot <- suppressMessages(marmoset_snaps()[1])
+  
+  url <- sprintf("http://marmoset.revolutionanalytics.com/snapshots/%s/%s/", snapshot, package)
+  res <- GET(url)
+  if(res$status_code > 202) 
+    stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
+  text <- content(res, as = "text")
+  vers <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
+  vers <- gsub(sprintf(".tar.gz|%s_", package), "", vers)
+  return( vers )
 }

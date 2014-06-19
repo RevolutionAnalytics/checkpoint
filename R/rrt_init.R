@@ -13,13 +13,14 @@
 #' @examples \dontrun{
 #' rrt_init(repo="~/testrepo")
 #' rrt_refresh(repo="~/testrepo")
+#' rrt_refresh(repo="~/testrepo", marmoset=TRUE)
 #' rrt_install(repo="~/testrepo")
 #'
 #' # Optionally, do an interactive repo intitialization
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), verbose=TRUE, rprofile=NULL, interactive=FALSE)
+rrt_init <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
@@ -77,7 +78,7 @@ rrt_init <- function(repo=getwd(), verbose=TRUE, rprofile=NULL, interactive=FALS
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
 
   # get packages in a private location for this project
-  getPkgs(x = pkgs, lib = lib, verbose = verbose)
+  getPkgs(x = pkgs, lib = lib, verbose = verbose, marmoset = marmoset, snapdate = snapdate)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
@@ -108,7 +109,7 @@ rrt_readline <- function(default=""){
 #'
 #' @export
 #' @template rrt
-rrt_refresh <- function(repo=getwd(), verbose=TRUE)
+rrt_refresh <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRUE)
 {
   repoid <- digest(repo)
 
@@ -134,7 +135,7 @@ rrt_refresh <- function(repo=getwd(), verbose=TRUE)
 
   # get packages in a private location for this project
   mssg(verbose, "Getting new packages...")
-  getPkgs(pkgs, lib, verbose)
+  getPkgs(x = pkgs, lib = lib, verbose = verbose, marmoset = marmoset, snapdate = snapdate)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
@@ -155,7 +156,7 @@ rrt_refresh <- function(repo=getwd(), verbose=TRUE)
 #' @examples \dontrun{
 #' getPkgs()
 #' }
-getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE){
+getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, marmoset=FALSE, snapdate=NULL){
   # check for existence of pkg, subset only those that need to be installed
   if(is.null(x)){ NULL } else {
 
@@ -167,8 +168,19 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE){
 
     # Make local repo of packages
     if(!is.null(pkgs2install) || length(pkgs2install) == 0){
-      # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
-      makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
+      if(!marmoset){
+        # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
+        makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
+      } else {
+        if(is.null(snapdate)) snapdate <- Sys.Date()
+        snapdate <- "2014-06-19"
+#         snapdate <- as.POSIXct(Sys.Date())
+#         format(snapdate, tz="Europe/London", usetz=TRUE)
+        pkgloc <- file.path(lib, "src/contrib")
+        setwd(lib)
+        dir.create("src/contrib", recursive = TRUE)
+        pkgs_marmoset(date=snapdate, pkgs=pkgs2install, outdir=pkgloc)
+      }
     } else {
       return(mssg(verbose, "No packages found - none installed"))
     }

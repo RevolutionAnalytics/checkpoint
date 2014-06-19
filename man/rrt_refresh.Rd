@@ -3,7 +3,8 @@
 \alias{rrt_refresh}
 \title{Refresh package - look for any new packages used and install those in rrt library}
 \usage{
-rrt_refresh(repo = getwd(), verbose = TRUE)
+rrt_refresh(repo = getwd(), marmoset = FALSE, snapdate = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}

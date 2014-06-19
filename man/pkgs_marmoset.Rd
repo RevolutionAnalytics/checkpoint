@@ -3,12 +3,10 @@
 \alias{pkgs_marmoset}
 \title{Install from Marmoset server}
 \usage{
-pkgs_marmoset(date = NULL, user = "sckott", outdir = NULL, pkgs = NULL)
+pkgs_marmoset(date = NULL, pkgs = NULL, outdir = NULL)
 }
 \arguments{
 \item{date}{Date as "year-month-day" (YY-MM-DD)}
-
-\item{user}{User name}
 
 \item{outdir}{Output directory}
 
@@ -19,10 +17,12 @@ Install from Marmoset server
 }
 \examples{
 \dontrun{
-pkgs_marmoset(date='2014-06-17', user='sckott', outdir="~/marmoset_snaps/stuff/",
-   pkgs=c("plyr_1.8.1","ggplot2_1.0.0"))
-pkgs_marmoset(date='2014-06-17', user='sckott', outdir="~/marmoset_snaps/stuff/",
-   pkgs="rgbif_0.6.2")
+# By default installs most recent version
+pkgs_marmoset(date='2014-06-19', pkgs=c("plyr","ggplot2"), outdir="~/marmoset_snaps/stuff/")
+
+
+pkgs_marmoset(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/marmoset_snaps/stuff/")
+pkgs_marmoset(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/marmoset_snaps/stuff/")
 }
 }
 
