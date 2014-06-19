@@ -26,6 +26,7 @@ This function initiates a repository.
 \dontrun{
 rrt_init(repo="~/testrepo")
 rrt_refresh(repo="~/testrepo")
+rrt_refresh(repo="~/testrepo", marmoset=TRUE)
 rrt_install(repo="~/testrepo")
 
 # Optionally, do an interactive repo intitialization

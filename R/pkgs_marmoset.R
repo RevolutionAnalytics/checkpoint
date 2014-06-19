@@ -37,11 +37,14 @@ pkgs_marmoset <- function(date=NULL, pkgs=NULL, outdir=NULL)
   # parse versions from pkgs
   foo <- function(x){
     vers <- marmoset_pkg_avail(snapshot=snapshot_use, package=x[[1]])
-    names(vers) <- as.numeric(gsub("\\.", "", vers))
-    verssorted <- sort(vers)
+    splitvers <- vapply(vers, strsplit, list(1), "\\.")
+    df <- data.frame(do.call(rbind, splitvers), stringsAsFactors = FALSE)
+    df <- colClasses(df, "numeric")
+    df <- sort_df(df, c("X1","X2","X3"))
     pkgver <- tryCatch(x[[2]], error=function(e) e)
     if('error' %in% class(pkgver)) { 
-      pkgveruse <- unname(verssorted[length(verssorted)])
+      pkgveruse <- row.names(df[nrow(df),])
+#       pkgveruse <- unname(verssorted[length(verssorted)])
     } else {
       pkgveruse <- if(pkgver %in% vers) pkgver else unname(verssorted[length(verssorted)])
     }
@@ -53,7 +56,7 @@ pkgs_marmoset <- function(date=NULL, pkgs=NULL, outdir=NULL)
   
   tmppkgsfileloc <- tempfile()
   cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
-  cmd <- sprintf('rsync -rtv --files-from=%s sckott@marmoset.revolutionanalytics.com:/MRAN/RRT/.zfs/snapshot/%s %s', 
+  cmd <- sprintf('rsync -rtvh --progress --files-from=%s marmoset.revolutionanalytics.com::MRAN-snapshots/%s %s', 
                  tmppkgsfileloc, snapshot_use, outdir)
   setwd(outdir)
   mvcmd <- sprintf("mv %s .", paste(pkgpaths, collapse = " "))
@@ -61,4 +64,23 @@ pkgs_marmoset <- function(date=NULL, pkgs=NULL, outdir=NULL)
   system(cmd)
   system(mvcmd)
   system(rmcmd)
+  tools::write_PACKAGES(outdir)
+}
+
+
+colClasses <- function (d, colClasses) 
+{
+  colClasses <- rep(colClasses, len = length(d))
+  d[] <- lapply(seq_along(d), function(i) switch(colClasses[i], 
+            numeric = as.numeric(d[[i]]), character = as.character(d[[i]]), 
+            Date = as.Date(d[[i]], origin = "1970-01-01"), POSIXct = as.POSIXct(d[[i]], 
+                  origin = "1970-01-01"), factor = as.factor(d[[i]]), 
+            as(d[[i]], colClasses[i])))
+  d
+}
+
+sort_df <- function (data, vars = names(data)){
+  if (length(vars) == 0 || is.null(vars)) 
+    return(data)
+  data[do.call("order", data[, vars, drop = FALSE]), , drop = FALSE]
 }
