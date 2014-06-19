@@ -29,8 +29,8 @@ cd $STAGING_HOME
 #You will get warnings about dirs that already exist
 for file in *.tar.gz; do dirname=$(echo $file | sed 's/_.*//'); mkdir $MRAN_HOME/$dirname; done
 
-#part FOUR, copy the files from the staging area to respective dirs in MRAN_HOME, preserving the timestamps 
-for file in *.tar.gz; do dirname=$(echo $file | sed 's/_.*//'); cp --preserve $file $MRAN_HOME/$dirname/; done
+#part FOUR, copy the files with rsync from local staging area to respective dirs in MRAN_HOME, preserving the original timestamps 
+for file in *.tar.gz; do dirname=$(echo $file | sed 's/_.*//'); rsync -rtv $file $MRAN_HOME/$dirname/; done > /tmp/MRAN-staging-rsync.log
 
 
 #take a new snapshot after the rsync process is finished
