@@ -18,9 +18,9 @@ Imports:
     whisker,
     testthat,
     devtools,
-    git2r,
     httr,
     RJSONIO,
     assertthat
 Suggests:
-    roxygen2
+    roxygen2,
+    git2r
