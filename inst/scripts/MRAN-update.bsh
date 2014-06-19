@@ -19,7 +19,7 @@ STAGING_HOME=/MRAN/staging
 #create MRAN from the master CRAN server in Vienna
 
 #part ONE, create MRAN by getting all archived versions of all packages first. These are sorted into dirs by CRAN
-rsync -rtzv --delete-before --exclude=README cran.r-project.org::CRAN/src/contrib/Archive/ $MRAN_HOME/ > /tmp/MRAN-archive-rsync-download.log
+rsync -rtzv --exclude=README cran.r-project.org::CRAN/src/contrib/Archive/ $MRAN_HOME/ > /tmp/MRAN-archive-rsync-download.log
 
 #part TWO, current package versions, stage into temporary holding dir
 rsync -rtzv --delete-before cran.r-project.org::CRAN/contrib/main/*.tar.gz $STAGING_HOME/ > /tmp/MRAN-current-rsync-download.log
