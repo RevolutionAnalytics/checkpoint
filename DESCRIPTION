@@ -1,6 +1,8 @@
 Package: RRT
 Title: R Reproducibility Toolkit
-Description: R Reproducibility Toolkit
+Description: R Reproducibility Toolkit. Get git2r from
+    https://github.com/ropensci/git2r and get miniCRAN from
+    https://github.com/andrie/miniCRAN
 Version: 0.0.7
 Date: 2014-06-18
 Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
@@ -16,6 +18,9 @@ Imports:
     whisker,
     testthat,
     devtools,
-    git2r
+    httr,
+    RJSONIO,
+    assertthat
 Suggests:
     roxygen2
+Enhances: git2r

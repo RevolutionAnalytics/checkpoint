@@ -38,7 +38,6 @@ rrt_repos_write <- function(repo, repoid=NULL){
 #' @title Read rrt libraries from user's .Rprofile file
 #' 
 #' @export
-#' @param repoid Respository id, default is NULL, so gets all repos
 #' 
 #' @details This function is used internally to write a .rrt file in your home directory, and 
 #' within that file writes a list of all RRT repositories. 
