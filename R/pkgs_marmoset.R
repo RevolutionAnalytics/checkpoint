@@ -18,8 +18,9 @@ pkgs_marmoset <- function(date=NULL, user="sckott", outdir=NULL, pkgs=NULL)
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
   
   # get available snapshots
-  availcmd <- sprintf('ssh %s@marmoset.revolutionanalytics.com "ls /MRAN/RRT/.zfs/snapshot/"', user)
-  availsnaps <- system(availcmd, intern = TRUE)
+#   availcmd <- sprintf('ssh %s@marmoset.revolutionanalytics.com "ls /MRAN/RRT/.zfs/snapshot/"', user)
+#   availsnaps <- system(availcmd, intern = TRUE)
+  availsnaps <- marmoset_snaps()
   
   if(is.null(date)) date <- Sys.Date()
   snapshots <- grep(date, availsnaps, value = TRUE)
