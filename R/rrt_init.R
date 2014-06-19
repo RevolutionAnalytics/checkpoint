@@ -66,6 +66,8 @@ rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   present <- list.dirs(repo)
+  ## ignore git dir
+  present <- present[!grepl(".git", present)]
   if(!all(grepl("rrt", present))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)
@@ -109,8 +111,8 @@ rrt_readline <- function(default=""){
 #' @template rrt
 rrt_refresh <- function(repo, verbose=TRUE)
 {
-  repoid <- digest(repo)
   if(is.null(repo)) repo <- getwd()
+  repoid <- digest(repo)
 
   # check to make sure repo exists
   mssg(verbose, "Checking to make sure repository exists...")
@@ -122,6 +124,8 @@ rrt_refresh <- function(repo, verbose=TRUE)
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   present <- list.dirs(repo)[-1]
+  ## ignore git dir
+  present <- present[!grepl(".git", present)]
   if(!all(grepl("rrt", present))){
     stop("rrt directory doesn't exist")
   }
@@ -198,6 +202,8 @@ rrt_install <- function(repo, verbose=TRUE)
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   present <- list.dirs(repo)[-1]
+  ## ignore git dir
+  present <- present[!grepl(".git", present)]
   if(!all(grepl("rrt", present))){
     stop("rrt directory doesn't exist")
   }

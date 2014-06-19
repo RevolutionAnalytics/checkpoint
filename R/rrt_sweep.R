@@ -1,19 +1,19 @@
-#' Clean out installed packages in your repository
+#' Clean out installed packages and their sources in your repository
 #' 
 #' @import digest
 #' @export
-#' @param repo Repository path
+#' @param repo Repository path, Defaults to the current working directory
+#' @param pkgs A vector of package names
 #' @param verbose (logical) Print messages (default) or not
 #' @examples \dontrun{
+#' rrt_refresh(repo="~/testrepo")
 #' rrt_sweep(repo="~/testrepo")
 #' }
 
-rrt_sweep <- function(repo, verbose=TRUE)
+rrt_sweep <- function(repo=getwd(), pkgs = NULL, verbose=TRUE)
 {  
-  # setup
   ## create repo id using digest
   repoid <- digest(repo)
-  if(is.null(repo)) repo <- getwd()
   
   ## check for repo
   mssg(verbose, "Checking to make sure repository exists...")
@@ -33,14 +33,19 @@ rrt_sweep <- function(repo, verbose=TRUE)
   pathtoremove <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   dirstoremove <- list.files(pathtoremove, full.names = TRUE, recursive = FALSE)
   srctoremove <- grep("src", dirstoremove, value = TRUE)
-  pkgnames <- list.files(pathtoremove, recursive = FALSE)
-  pkgnames <- pkgnames[!pkgnames %in% "src"]
+  if(is.null(pkgs)){
+    pkgnames <- list.files(pathtoremove, recursive = FALSE)
+    pkgnames <- pkgnames[!pkgnames %in% "src"]
+  } else { pkgnames <- pkgs }
   
-  # remove all packages and source tar balls
   ## remove src (source files)
   unlink(srctoremove, recursive = TRUE)
-  ## remove installed packages
-  remove.packages(pkgnames, pathtoremove)
-
-  cat("Your repository packages successfully removed:", pkgnames, sep = "\n")
+  cat("Package sources removed", sep = "\n")
+  
+  if(length(pkgnames) == 0){ cat("No installed packages to remove :)") } else {
+    ## remove installed packages
+    remove.packages(pkgnames, pathtoremove)
+    
+    cat("Your repository packages successfully removed:", pkgnames, sep = "\n")
+  }
 }
