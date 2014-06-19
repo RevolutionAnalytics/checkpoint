@@ -87,7 +87,10 @@ marmoset_pkg_metadata <- function(snapshot=NULL, package)
 
 marmoset_pkg_avail <- function(snapshot=NULL, package)
 {
-  if(is.null(snapshot)) snapshot <- suppressMessages(marmoset_snaps()[1])
+  if(is.null(snapshot)){
+    gg <- suppressMessages(marmoset_snaps())
+    snapshot <- gg[length(gg)]
+  }
   
   url <- sprintf("http://marmoset.revolutionanalytics.com/snapshots/%s/%s/", snapshot, package)
   res <- GET(url)

@@ -21,7 +21,8 @@ Imports:
     httr,
     RJSONIO,
     assertthat,
-    XML
+    XML,
+    plyr
 Suggests:
     roxygen2
 Enhances: git2r

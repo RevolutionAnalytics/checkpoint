@@ -1,5 +1,6 @@
 #' Install from Marmoset server
 #' 
+#' @importFrom plyr rbind.fill
 #' @export
 #' @param date Date as "year-month-day" (YY-MM-DD)
 #' @param outdir Output directory
@@ -38,7 +39,9 @@ pkgs_marmoset <- function(date=NULL, pkgs=NULL, outdir=NULL)
   foo <- function(x){
     vers <- marmoset_pkg_avail(snapshot=snapshot_use, package=x[[1]])
     splitvers <- vapply(vers, strsplit, list(1), "\\.")
-    df <- data.frame(do.call(rbind, splitvers), stringsAsFactors = FALSE)
+    df <- data.frame(do.call(rbind.fill, lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))), stringsAsFactors = FALSE)
+    df[is.na(df)] <- 0
+    row.names(df) <- names(splitvers)
     df <- colClasses(df, "numeric")
     df <- sort_df(df, c("X1","X2","X3"))
     pkgver <- tryCatch(x[[2]], error=function(e) e)
