@@ -22,5 +22,5 @@ Imports:
     RJSONIO,
     assertthat
 Suggests:
-    roxygen2,
-    git2r
+    roxygen2
+Enhances: git2r
