@@ -90,9 +90,10 @@ rrt_init <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRUE, 
   # Write new .Rprofile file
   if(is.null(rprofile)){
     rprofilepath <- file.path(repo, ".Rprofile")
+    mirror <- 'options(repos=structure(c(CRAN="http://cran.revolutionanalytics.com/")))'
     libpaths <- sprintf('.libPaths("%s")', lib)
-    startupmssg <- sprintf("cat('Starting repo from RRT repository: %s')", repoid)
-    cat(c(libpaths, startupmssg), file=rprofilepath, sep="\n")
+    msg <- sprintf("cat('    Starting repo from RRT repository: %s \n    Packages will be installed in and loaded from this repository\n    To go back to a non-RRT environment, start R outside an RRT repository\n    Report any bugs/feature requests at https://github.com/RevolutionAnalytics/RRT\n\n')", repoid)
+    cat(c(mirror, libpaths, msg), file=rprofilepath, sep="\n")
   } else {
     NULL # fixme: add ability to write options to the rprofile file
   }
@@ -198,7 +199,7 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, marmose
 #' @param verbose Print messages
 #' rrt_install(repo="~/testrepo")
 rrt_install <- function(repo=getwd(), verbose=TRUE)
-{
+{  
   repoid <- digest(repo)
 
   # check to make sure repo exists
@@ -231,6 +232,9 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
     installedpkgs <- installedpkgs[!installedpkgs %in% "src"]
     pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
   }
+  
+  basepkgs <- c('tools','methods','utils','stats')
+  pkgs2install <- pkgs2install[!pkgs2install %in% basepkgs]
 
   if(length(pkgs2install)==0){
     mssg(verbose, "No packages found to install")
@@ -248,6 +252,8 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
       pkgswithpath <- unlist(pkgswithpath)
       try_install <- function(x){
         pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
+#         installfrom <- file.path(lib, "src/contrib")
+#         install.packages(x, lib = lib, repos=NULL, type = "source")
         install.packages(x, lib = lib, repos=NULL, type = "source")
         if(!file.exists(file.path(lib, pkgname))){
           mssg(verbose, "Installation from source failed, trying binary package version...")
