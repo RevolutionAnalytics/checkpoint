@@ -14,7 +14,7 @@ WWW_HOME=/MRAN/www
 #export date stamped zfs snasphot information to public facing area
 
 echo "raw ZFS file system usage for $DATE" > $WWW_HOME/accounting.txt
-sudo zfs list marmoset/RRT
+sudo zfs list marmoset/RRT > $WWW_HOME/accounting.txt
 echo "####-----------------####
 echo "Snapshot accounting info for $DATE" >> $WWW_HOME/accounting.txt
 sudo zfs list -r -t snapshot marmoset/RRT >> $WWW_HOME/accounting.txt
