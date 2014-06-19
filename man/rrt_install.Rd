@@ -3,7 +3,7 @@
 \alias{rrt_install}
 \title{Install packages}
 \usage{
-rrt_install(repo, verbose = TRUE)
+rrt_install(repo = getwd(), verbose = TRUE)
 }
 \arguments{
 \item{repo}{A repository path}

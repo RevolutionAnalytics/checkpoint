@@ -3,7 +3,7 @@
 \alias{rrt_init}
 \title{Initiate a RRT repository.}
 \usage{
-rrt_init(repo = NULL, verbose = TRUE, rprofile = NULL,
+rrt_init(repo = getwd(), verbose = TRUE, rprofile = NULL,
   interactive = FALSE)
 }
 \arguments{

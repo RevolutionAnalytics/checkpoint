@@ -19,7 +19,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
+rrt_init <- function(repo=getwd(), verbose=TRUE, rprofile=NULL, interactive=FALSE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
@@ -53,7 +53,6 @@ rrt_init <- function(repo=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
 
   # create repo id using digest
   repoid <- digest(repo)
-  if(is.null(repo)) repo <- getwd()
 
   # create repo
   mssg(verbose, "Checking to see if repository exists already...")
@@ -109,9 +108,8 @@ rrt_readline <- function(default=""){
 #'
 #' @export
 #' @template rrt
-rrt_refresh <- function(repo, verbose=TRUE)
+rrt_refresh <- function(repo=getwd(), verbose=TRUE)
 {
-  if(is.null(repo)) repo <- getwd()
   repoid <- digest(repo)
 
   # check to make sure repo exists
@@ -187,10 +185,9 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE){
 #' @param repo A repository path
 #' @param verbose Print messages
 #' rrt_install(repo="~/testrepo")
-rrt_install <- function(repo, verbose=TRUE)
+rrt_install <- function(repo=getwd(), verbose=TRUE)
 {
   repoid <- digest(repo)
-  if(is.null(repo)) repo <- getwd()
 
   # check to make sure repo exists
   mssg(verbose, "Checking to make sure repository exists...")
