@@ -13,7 +13,7 @@
 #' rrt_compat(repo="~/testrepo")
 #' }
 
-rrt_compat <- function(repo, what = 'check', verbose=TRUE)
+rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 {
   # Check for appropriate values of what
   what <- match.arg(what, c('check','tests','examples','update'), TRUE)
@@ -21,7 +21,6 @@ rrt_compat <- function(repo, what = 'check', verbose=TRUE)
   # setup
   ## create repo id using digest
   repoid <- digest(repo)
-  if(is.null(repo)) repo <- getwd()
   
   ## check for repo
   mssg(verbose, "Checking to make sure repository exists...")

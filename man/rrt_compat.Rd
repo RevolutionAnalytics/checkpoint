@@ -3,7 +3,7 @@
 \alias{rrt_compat}
 \title{Local test for package compatibility}
 \usage{
-rrt_compat(repo, what = "check", verbose = TRUE)
+rrt_compat(repo = getwd(), what = "check", verbose = TRUE)
 }
 \arguments{
 \item{repo}{Repository path}
