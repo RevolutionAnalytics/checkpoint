@@ -335,8 +335,19 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   sysreq <- sprintf("SystemRequirements: %s", paste0(rtt_compact(getsysreq(packs)), collapse = "\n") )
   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
-  date <- sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d"))
+  datecheck <- check4date_created(x=infofile)
+  date_created <- if(is.null(datecheck)) sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d")) else datecheck
+  date_updated <- sprintf("DateUpdated: %s", format(Sys.time(), "%Y-%m-%d"))
+  
   info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtver,
-            rver, date, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
+            rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
   cat(info, file = infofile, sep = "\n")
+}
+
+check4date_created <- function(x){
+  if(file.exists(x)){
+    info <- readLines(x)
+    dcline <- grep("DateCreated", info, value = TRUE)
+    if(length(dcline) > 0) dcline else NULL
+  } else { NULL }
 }
