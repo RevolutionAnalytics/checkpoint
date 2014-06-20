@@ -1,4 +1,4 @@
-# /usr/bin Rscript
+# /usr/local/bin/Rscript
 
 ## Generate metadata for marmoset server
 # Load packages
