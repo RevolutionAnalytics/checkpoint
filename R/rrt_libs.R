@@ -14,7 +14,7 @@ rrt_repos_write <- function(repo, repoid=NULL){
   append <- if(file.exists(gg)) TRUE else FALSE
   out <- tryCatch(rrt_repos_list(), error=function(e) e)
   if("error" %in% class(out)){
-      infofile <- file.path(repo, "rrt", "rrt_manifest.txt")
+      infofile <- file.path(repo, "rrt", "rrt_manifest.yml")
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
@@ -22,11 +22,11 @@ rrt_repos_write <- function(repo, repoid=NULL){
   } else {
     existingrepoids <- names(out)
     if(is.null(repoid)){
-      linez <- readLines(file.path(repo, "rrt", "rrt_manifest.txt"))
+      linez <- readLines(file.path(repo, "rrt", "rrt_manifest.yml"))
       repoid <- strsplit(linez[grep("RepoID", linez)], ":\\s")[[1]][[2]]
     }
     if(repoid %in% existingrepoids){ NULL } else {
-      infofile <- file.path(repo, "rrt", "rrt_manifest.txt")
+      infofile <- file.path(repo, "rrt", "rrt_manifest.yml")
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
@@ -72,7 +72,7 @@ rrt_repos_list <- function(repoid=NULL){
       if(file.exists(x$repo)){
         tmp <- readLines(x$repo)
         tmp2 <- do.call(c, lapply(tmp, function(y){ yy <- strsplit(y, ":")[[1]]; zz <- yy[2]; zz <- gsub('\\s+', '', zz); names(zz) <- yy[1]; as.list(zz) }))
-        tmp2$repo_root <- sub("/rrt/rrt_manifest.txt", "", x[['repo']])
+        tmp2$repo_root <- sub("/rrt/rrt_manifest.yml", "", x[['repo']])
         c(x['repo'], tmp2, missing=FALSE)
       } else {
         addfields <- c(RepositoryName = NA, Authors = NA, License = NA, Description = NA, Remote = NA, InstalledWith = NA, InstalledFrom = NA, RRT_version = NA, R_version = NA, DateCreated = NA, PkgsInstalledAt = NA, x['RepoID'], Packages = NA, SystemRequirements = NA, repo_root = NA)
@@ -115,7 +115,7 @@ print.rrtrepos <- function(x, ...){
     idmisstodf <- list()
     for(i in seq_along(idmiss_list)){
       tmp <- idmiss_list[[i]]$repo
-      tmp <- sub("/rrt/rrt_manifest.txt", "", tmp)
+      tmp <- sub("/rrt/rrt_manifest.yml", "", tmp)
       idmisstodf[[i]] <- c(tmp, names(idmiss_list[i]))
     }
     dfmiss <- data.frame(do.call(rbind, idmisstodf), stringsAsFactors = FALSE)

@@ -6,8 +6,27 @@
 writeManifest(repository, librar, packs, repoid, reponame = "", author = "",
   license = "", description = "", remote = "")
 }
+\arguments{
+\item{repository}{Repository root path}
+
+\item{librar}{Library to install packages in}
+
+\item{packs}{Packages used in the repository}
+
+\item{repoid}{Respository ID}
+
+\item{reponame}{Repository name}
+
+\item{author}{Authors, comma separated}
+
+\item{license}{License, e.g., MIT}
+
+\item{description}{Character description of repository}
+
+\item{remote}{Remote git/svn/mercurial repository}
+}
 \value{
-Writes a RRT manifest file to disc
+Writes a RRT manifest file ("rrt_manifest.yml") to disk
 }
 \description{
 # FIXME: check for existence of manifest file first, and combine with old info, if any

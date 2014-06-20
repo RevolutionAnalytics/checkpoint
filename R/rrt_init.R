@@ -305,16 +305,28 @@ getsysreq <- function(x)
 #' # FIXME: check for existence of manifest file first, and combine with old info, if any
 #'
 #' @export
+#' @param repository Repository root path
+#' @param librar Library to install packages in 
+#' @param packs Packages used in the repository
+#' @param repoid Respository ID
+#' @param reponame Repository name
+#' @param author Authors, comma separated
+#' @param license License, e.g., MIT
+#' @param description Character description of repository
+#' @param remote Remote git/svn/mercurial repository
+#' 
 #' @keywords internal
-#' @return Writes a RRT manifest file to disc
-writeManifest <- function(repository, librar, packs, repoid, reponame="", author="", license="", description="", remote=""){
+#' @return Writes a RRT manifest file ("rrt_manifest.yml") to disk
+writeManifest <- function(repository, librar, packs, repoid, reponame="", author="", 
+  license="", description="", remote="")
+{
   reponame <- sprintf("RepositoryName: %s", reponame)
   author <- sprintf("Authors: %s", author)
   license <- sprintf("License: %s", license)
   description <- sprintf("Description: %s", description)
   remote <- sprintf("Remote: %s", remote)
 
-  infofile <- file.path(repository, "rrt", "rrt_manifest.txt")
+  infofile <- file.path(repository, "rrt", "rrt_manifest.yml")
   installedwith <- "InstalledWith: RRT"
   installedfrom <- "InstalledFrom: source"
   rrtver <- sprintf("RRT_version: %s", packageVersion("RRT"))
