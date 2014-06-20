@@ -4,23 +4,29 @@
 #'
 #' @import digest miniCRAN
 #' @export
-#' @template rrt
+#' 
+#' @param repo (character) A path to create a RRT repository; defaults to current working directory.
+#' @param mran (logical) If TRUE, packages are installed from the MRAN server. See 
+#' \url{http://marmoset.revolutionanalytics.com/} for more information.
+#' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
+#' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
 #' @param interactive (logical) If TRUE (default), function asks you for input for each item,
 #' otherwise, defaults are used.
 #'
-#' @return Files written to the user system, with informative messages on progress
+#' @return Files written to the user's machine, with informative messages on progress
+#' 
 #' @examples \dontrun{
 #' rrt_init(repo="~/testrepo")
 #' rrt_refresh(repo="~/testrepo")
-#' rrt_refresh(repo="~/testrepo", marmoset=TRUE)
+#' rrt_refresh(repo="~/testrepo", mran=TRUE)
 #' rrt_install(repo="~/testrepo")
 #'
 #' # Optionally, do an interactive repo intitialization
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
+rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
@@ -78,7 +84,7 @@ rrt_init <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRUE, 
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
 
   # get packages in a private location for this project
-  getPkgs(x = pkgs, lib = lib, verbose = verbose, marmoset = marmoset, snapdate = snapdate)
+  getPkgs(x = pkgs, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
@@ -110,7 +116,7 @@ rrt_readline <- function(default=""){
 #'
 #' @export
 #' @template rrt
-rrt_refresh <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRUE)
+rrt_refresh <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE)
 {
   repoid <- digest(repo)
 
@@ -136,7 +142,7 @@ rrt_refresh <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRU
 
   # get packages in a private location for this project
   mssg(verbose, "Getting new packages...")
-  getPkgs(x = pkgs, lib = lib, verbose = verbose, marmoset = marmoset, snapdate = snapdate)
+  getPkgs(x = pkgs, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
@@ -157,7 +163,7 @@ rrt_refresh <- function(repo=getwd(), marmoset=FALSE, snapdate=NULL, verbose=TRU
 #' @examples \dontrun{
 #' getPkgs()
 #' }
-getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, marmoset=FALSE, snapdate=NULL){
+getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FALSE, snapdate=NULL){
   # check for existence of pkg, subset only those that need to be installed
   if(is.null(x)){ NULL } else {
 
@@ -169,7 +175,7 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, marmose
 
     # Make local repo of packages
     if(!is.null(pkgs2install) || length(pkgs2install) == 0){
-      if(!marmoset){
+      if(!mran){
         # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
         makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
       } else {

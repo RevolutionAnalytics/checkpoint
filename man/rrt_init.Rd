@@ -3,11 +3,16 @@
 \alias{rrt_init}
 \title{Initiate a RRT repository.}
 \usage{
-rrt_init(repo = getwd(), marmoset = FALSE, snapdate = NULL,
-  verbose = TRUE, rprofile = NULL, interactive = FALSE)
+rrt_init(repo = getwd(), mran = FALSE, snapdate = NULL, verbose = TRUE,
+  rprofile = NULL, interactive = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
+
+\item{mran}{(logical) If TRUE, packages are installed from the MRAN server. See
+\url{http://marmoset.revolutionanalytics.com/} for more information.}
+
+\item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
 
 \item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 
@@ -17,7 +22,7 @@ rrt_init(repo = getwd(), marmoset = FALSE, snapdate = NULL,
 otherwise, defaults are used.}
 }
 \value{
-Files written to the user system, with informative messages on progress
+Files written to the user's machine, with informative messages on progress
 }
 \description{
 This function initiates a repository.
@@ -26,7 +31,7 @@ This function initiates a repository.
 \dontrun{
 rrt_init(repo="~/testrepo")
 rrt_refresh(repo="~/testrepo")
-rrt_refresh(repo="~/testrepo", marmoset=TRUE)
+rrt_refresh(repo="~/testrepo", mran=TRUE)
 rrt_install(repo="~/testrepo")
 
 # Optionally, do an interactive repo intitialization

@@ -4,7 +4,7 @@
 \title{Function to install pkgs}
 \usage{
 getPkgs(x, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
-  marmoset = FALSE, snapdate = NULL)
+  mran = FALSE, snapdate = NULL)
 }
 \arguments{
 \item{x}{(character) A vector of package names. If NULL, none installed, and message prints}

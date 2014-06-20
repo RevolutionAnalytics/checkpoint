@@ -1,4 +1,4 @@
-#' Install from Marmoset server
+#' Install from MRAN server
 #'
 #' @importFrom plyr rbind.fill
 #' @export
@@ -7,10 +7,10 @@
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
 #' @examples \dontrun{
 #' # By default installs most recent version
-#' pkgs_mran(date='2014-06-19', pkgs=c("plyr","ggplot2"), outdir="~/marmoset_snaps/stuff/")
+#' pkgs_mran(date='2014-06-19', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/stuff/")
 #'
-#' pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/marmoset_snaps/stuff/")
-#' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/marmoset_snaps/stuff/")
+#' pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/mran_snaps/stuff/")
+#' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
 #' }
 
 pkgs_mran <- function(date=NULL, pkgs=NULL, outdir=NULL)
@@ -19,8 +19,6 @@ pkgs_mran <- function(date=NULL, pkgs=NULL, outdir=NULL)
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
 
   # get available snapshots
-#   availcmd <- sprintf('ssh %s@marmoset.revolutionanalytics.com "ls /MRAN/RRT/.zfs/snapshot/"', user)
-#   availsnaps <- system(availcmd, intern = TRUE)
   availsnaps <- suppressMessages(mran_snaps())
 
   if(is.null(date)) date <- Sys.Date()

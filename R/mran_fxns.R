@@ -1,4 +1,4 @@
-#' Get available snapshots from Marmoset
+#' Get available snapshots from MRAN
 #'
 #' @import httr XML
 #' @export
@@ -18,17 +18,17 @@ mran_snaps <- function(){
   return( snaps )
 }
 
-#' Get available diffs from Marmoset
+#' Get available diffs from MRAN
 #'
 #' @import httr XML
 #' @export
-#' @param diff Optional. (character) A diff date-time stamp of a Marmoset diff.
+#' @param diff Optional. (character) A diff date-time stamp of a MRAN diff.
 #' @examples \dontrun{
 #' mran_diffs()
 #'
 #' # An individual diff
 #' mran_diffs(diff="2014-06-19_0136")
-#' 
+#'
 #' diffs <- mran_diffs()
 #' mran_diffs(diffs[length(diffs)-1])
 #' }
@@ -54,11 +54,11 @@ mran_diffs <- function(diff=NULL)
   }
 }
 
-#' Get available package level metadata from Marmoset
+#' Get available package level metadata from MRAN
 #'
 #' @import httr RJSONIO
 #' @export
-#' @param snapshot A Marmoset snapshot. Defaults to most recent snapshot
+#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @param package Required. A package name
 #' @examples \dontrun{
 #' mran_pkg_metadata(package="plyr")
@@ -78,15 +78,15 @@ mran_pkg_metadata <- function(snapshot=NULL, package)
 }
 
 
-#' Get available package versions from Marmoset
+#' Get available package versions from MRAN
 #'
 #' @import httr RJSONIO
 #' @export
-#' @param snapshot A Marmoset snapshot. Defaults to most recent snapshot
+#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @param package Required. A package name
 #' @examples \dontrun{
 #' mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr")
-#' 
+#'
 #' # Example of differences in available versions between snapshots for the package MPSEM
 #' snaps <- mran_snaps()
 #' mran_pkg_avail(snaps[length(snaps)-1], package="MPSEM")

@@ -3,7 +3,7 @@
 \alias{rrt_refresh}
 \title{Refresh package - look for any new packages used and install those in rrt library}
 \usage{
-rrt_refresh(repo = getwd(), marmoset = FALSE, snapdate = NULL,
+rrt_refresh(repo = getwd(), mran = FALSE, snapdate = NULL,
   verbose = TRUE)
 }
 \arguments{
