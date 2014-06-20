@@ -180,7 +180,7 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, marmose
         pkgloc <- file.path(lib, "src/contrib")
         setwd(lib)
         dir.create("src/contrib", recursive = TRUE)
-        pkgs_marmoset(date=snapdate, pkgs=pkgs2install, outdir=pkgloc)
+        pkgs_mran(date=snapdate, pkgs=pkgs2install, outdir=pkgloc)
       }
     } else {
       return(mssg(verbose, "No packages found - none installed"))
@@ -199,7 +199,7 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, marmose
 #' @param verbose Print messages
 #' rrt_install(repo="~/testrepo")
 rrt_install <- function(repo=getwd(), verbose=TRUE)
-{  
+{
   repoid <- digest(repo)
 
   # check to make sure repo exists
@@ -232,7 +232,7 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
     installedpkgs <- installedpkgs[!installedpkgs %in% "src"]
     pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
   }
-  
+
   basepkgs <- c('tools','methods','utils','stats')
   pkgs2install <- pkgs2install[!pkgs2install %in% basepkgs]
 
