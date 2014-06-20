@@ -3,8 +3,8 @@ Title: R Reproducibility Toolkit
 Description: R Reproducibility Toolkit. Get git2r from
     https://github.com/ropensci/git2r and get miniCRAN from
     https://github.com/andrie/miniCRAN
-Version: 0.0.8
-Date: 2014-06-19
+Version: 0.0.9
+Date: 2014-06-20
 Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
     email = "myrmecocystus@gmail.com")
 License: GPL-2
