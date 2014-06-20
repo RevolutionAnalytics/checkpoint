@@ -63,7 +63,7 @@ rrt_repos_list <- function(repoid=NULL){
     for(i in seq_along(start)){
       tmp <- hh[start[i] : end[i]]
       tmp <- tmp[-length(tmp)]
-      out[[i]] <- do.call(c, lapply(tmp, function(y){ yy <- strsplit(y, ":")[[1]]; zz <- yy[2]; zz <- gsub('\\s+', '', zz); names(zz) <- yy[1]; as.list(zz) }))
+      out[[i]] <- do.call(c, lapply(tmp, function(y){ yy <- strsplit(y, ": ")[[1]]; zz <- yy[2]; zz <- gsub('\\s+', '', zz); names(zz) <- yy[1]; as.list(zz) }))
     }
     names(out) <- vapply(out, "[[", "", "RepoID")
 
