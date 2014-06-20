@@ -21,6 +21,32 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
   names(repos) <- NULL
   for(i in seq_along(repos)) repos[[i]]$singlepage <- tempfile(fileext=".html")
   for(i in seq_along(repos)) repos[[i]]$homepage <- output
+  for(i in seq_along(repos)) repos[[i]]$Packages <- gsub(",", ", ", repos[[i]]$Packages)
+
+  # get check results, if any, for each repository
+  bb <- lapply(repos, function(x){
+    tmp <- tryCatch(readRDS(file.path(x$repo_root, "rrt/check_result.rds")), error=function(e) e)
+    if("error" %in% class(tmp)) NA else tmp
+  })
+  names(bb) <- vapply(repos, "[[", "", "RepoID")
+  for(i in seq_along(repos)){
+    tt <- bb[[ repos[[i]]$RepoID ]]
+    ttt <- if(is.data.frame(tt)){
+      tt <- lapply(rowSplit(tt), as.list)
+      names(tt) <- NULL
+      checktab <- whisker.render(checktemplate)
+      checktab <- gsub("<td>TRUE", '<td class="success">TRUE', checktab)
+      gsub("<td>NA", '<td class="info">NA', checktab)
+    } else { 
+      '
+      <div style="background-color: #ecf0f1;">
+        <div class="container">
+          <h4><button class="btn btn-xs btn-success">Checks:</button> none</h4>
+        </div>
+      </div>'
+    }
+    repos[[i]]$checkres <- ttt
+  }
 
   rendered <- whisker.render(template)
   for(i in seq_along(repos)){
@@ -128,12 +154,57 @@ template_onepage <-
               <li><h4><button class="btn btn-xs btn-success">Packages installed:</button> {{Packages}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">System requirements:</button> {{SystemRequirements}}</h4></li>
             </ul>
-            {{/single}}
           </div>
         </div>
+
+        {{{checkres}}}
+        {{/single}}
 
         <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
         <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
         </body>
         </html>'
+
+
+
+checktemplate <- '
+<div style="background-color: #ecf0f1;">
+        <div class="container">
+
+  <div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          Checks
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+        <div class="container">
+          <table class="table table-hover table-responsive" align="center">
+                <thead>
+                  <tr>
+                    <th>Package</th>
+                    <th>Check Result</th>
+                    <th>Test Result</th>
+                    <th>Update</th>
+                  </tr>
+                </thead>
+        <tbody>
+        {{#tt}}
+        <tr>
+        <td>{{pkg}}</td>
+        <td>{{check_result}}</td>
+        <td>{{testfile}}</td>
+        <td>{{update}}</td>
+        </tr>
+        {{/tt}}
+        </tbody>
+            </table>
+      </div>
+      </div>
+  </div>
+</div>
+'

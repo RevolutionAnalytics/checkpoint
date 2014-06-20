@@ -41,6 +41,7 @@ default, but you can run them by passing on args to \code{devtools::run_examples
 \dontrun{
 rrt_refresh()
 rrt_compat(what="update")
+rrt_compat(what=c("update","check"))
 }
 }
 \seealso{

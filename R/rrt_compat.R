@@ -36,6 +36,7 @@
 #' @examples \dontrun{
 #' rrt_refresh()
 #' rrt_compat(what="update")
+#' rrt_compat(what=c("update","check"))
 #' }
 
 rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
@@ -72,15 +73,15 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
     names(checksres) <- pkgnames
     check <- ldply(checksres)
     names(check) <- c('pkg','check_result')
-  }
+  } else { check <- data.frame(pkg=pkgnames, check_result=NA, , stringsAsFactors = FALSE) }
   
   # run tests
   if("tests" %in% what){
     testrepo(pkgs, repo=repo, verbose=verbose)
     tfiles <- list.files(file.path(repo, "rrt", "tests"), full.names = TRUE)
     cat(tfiles, file = compatfile, sep = "\n")
-    tdf <- data.frame(pkg=pkgnames, tfiles, stringsAsFactors = FALSE)
-  }
+    tdf <- data.frame(pkg=pkgnames, testfile=tfiles, stringsAsFactors = FALSE)
+  } else { tdf <- data.frame(pkg=pkgnames, testfile=NA, stringsAsFactors = FALSE) }
   
   # run examples
   if("examples" %in% what){
