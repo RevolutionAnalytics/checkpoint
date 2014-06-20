@@ -9,6 +9,11 @@ rrt_refresh(repo = getwd(), mran = FALSE, snapdate = NULL,
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
 
+\item{mran}{(logical) If TRUE, packages are installed from the MRAN server. See
+\url{http://marmoset.revolutionanalytics.com/} for more information.}
+
+\item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
+
 \item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 }
 \description{

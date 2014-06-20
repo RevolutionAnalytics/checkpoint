@@ -115,7 +115,11 @@ rrt_readline <- function(default=""){
 #' Refresh package - look for any new packages used and install those in rrt library
 #'
 #' @export
-#' @template rrt
+#' @param repo (character) A path to create a RRT repository; defaults to current working directory.
+#' @param mran (logical) If TRUE, packages are installed from the MRAN server. See 
+#' \url{http://marmoset.revolutionanalytics.com/} for more information.
+#' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
+#' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 rrt_refresh <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE)
 {
   repoid <- digest(repo)
@@ -160,6 +164,9 @@ rrt_refresh <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE)
 #' @param recursive (logical) Recursively install packages?
 #' @param verbose (logical) Inherited from call to rrt_init or rrt_refresh
 #' @param install (logical) Install packages or just download packages. Not used yet...
+#' @param mran (logical) If TRUE, packages are installed from the MRAN server. See 
+#' \url{http://marmoset.revolutionanalytics.com/} for more information.
+#' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
 #' @examples \dontrun{
 #' getPkgs()
 #' }

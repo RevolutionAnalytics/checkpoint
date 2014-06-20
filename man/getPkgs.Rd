@@ -16,6 +16,11 @@ getPkgs(x, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
 \item{verbose}{(logical) Inherited from call to rrt_init or rrt_refresh}
 
 \item{install}{(logical) Install packages or just download packages. Not used yet...}
+
+\item{mran}{(logical) If TRUE, packages are installed from the MRAN server. See
+\url{http://marmoset.revolutionanalytics.com/} for more information.}
+
+\item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
 }
 \description{
 Function to install pkgs
