@@ -4,6 +4,7 @@
 #' repository tested - not the dependencies of the packages you use. 
 #' 
 #' @import testthat devtools digest
+#' @importFrom plyr ldply
 #' @export
 #' 
 #' @details You can see a visual breakdown of check results using \link{rrt_browse} if you have run this 
@@ -23,7 +24,7 @@
 #' default, but you can run them by passing on args to \code{devtools::run_examples()}.
 #'
 #' \bold{update:} We check for any available updates on CRAN for your packages using 
-#' \code{old.packages}. NULL is returned if no updates available.  
+#' \code{old.packages}. NA is returned if no updates available.  
 #' 
 #' @param repo Repository path. Defaults to your working directory.
 #' @param what What to test, one or more of check, tests, examples, or udpate. \code{match.arg} is
@@ -39,11 +40,15 @@
 
 rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 {
+  # write check file
+  compatfile <- file.path(repo, "rrt/rrt_check.txt")
+  cat("", file = compatfile)
+  
   # Check for appropriate values of what
   what <- match.arg(what, c('check','tests','examples','update'), TRUE)
   
   # set defaults
-  checksres <- testsres <- egsres <- oldpkgs <- NULL
+  checksres <- testsres <- egsres <- oldpkgs <- "passed"
   
   ## create repo id using digest
   repoid <- digest(repo)
@@ -63,32 +68,39 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   
   # check: R CMD CHECK via devtools::check
   if("check" %in% what){
-    checksres <- lapply(pkgs, checkintmprepo, verbose=verbose)
+    checksres <- lapply(pkgs, checkrepo, repo=repo, verbose=verbose)
     names(checksres) <- pkgnames
+    check <- ldply(checksres)
+    names(check) <- c('pkg','check_result')
   }
   
   # run tests
   if("tests" %in% what){
-#     testpaths <- file.path(lib, pkgnames)
-#     lapply(pkgnames, test_package)
-    testsres <- "not done yet"
+    testrepo(pkgs, repo=repo, verbose=verbose)
+    tfiles <- list.files(file.path(repo, "rrt", "tests"), full.names = TRUE)
+    cat(tfiles, file = compatfile, sep = "\n")
+    tdf <- data.frame(pkg=pkgnames, tfiles, stringsAsFactors = FALSE)
   }
   
   # run examples
   if("examples" %in% what){
 #     lapply(pkgs, run_examples)
-    egsres <- "not done yet"
+    egsres <- NULL
   }
 
   # check for packages that need updating
   if("update" %in% what){
     oldpkgs <- old.packages(lib)
     oldpkgs <- oldpkgs[,c('Package','Installed','ReposVer')]
+    if(!is.null(oldpkgs)){
+      update <- data.frame(hh[,c('Package','Installed','ReposVer')], stringsAsFactors = FALSE, row.names = NULL)
+    } else { update <- data.frame(pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
   }
-
-  res <- list(check=checksres, tests=testsres, examples=egsres, update=oldpkgs)
-  compatfile <- file.path(repo, "rrt/rrt_check.txt")
-  cat(res, file = compatfile)
+#   compatfile <- file.path(repo, "rrt/rrt_check.txt")
+#   cat(c(check, tests, examples, update), file = compatfile)
+  df <- merge(check, tdf, by="pkg")
+  df <- merge(df, update, by="pkg")
+  saveRDS(df, file = file.path(repo, "rrt", "check_result.rds"))
   
   message("Tests complete!")
 }
@@ -121,11 +133,27 @@ getpkgnames <- function(zzz){
     strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]], USE.NAMES = FALSE)
 }
 
-checkintmprepo <- function(x, verbose){
+checkrepo <- function(x, repo, verbose){
   pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
   tmpdir <- tempdir()
   untar(x, exdir = tmpdir)
   mssg(verbose, sprintf("Checking %s", pkgname))
+  checkdir <- file.path(repo, "rrt/check")
+  dir.create(checkdir)
+  checkout <- sprintf("--output=%s", checkdir)
   check(file.path(tmpdir, pkgname), document = FALSE, doc_clean = FALSE, cleanup = FALSE, force_suggests = FALSE,
-        args = c('--no-manual','--no-vignettes','--no-build-vignettes','--no-examples','--no-tests'))
+#         args = c('--no-manual','--no-vignettes','--no-build-vignettes', checkout))
+        args = c('--no-manual','--no-vignettes','--no-build-vignettes','--no-examples','--no-tests', checkout))
+}
+
+testrepo <- function(x, repo, verbose){
+  tmpdir <- file.path(repo, "rrt", "tests", "tmp")# create temporary directory
+  dir.create(tmpdir, recursive = TRUE)
+  testit <- function(y){
+    untar(y, exdir = tmpdir)
+    pkg <- sub("_.+", "", strsplit(y, "/")[[1]][length(strsplit(y, "/")[[1]])])
+    capture.output(test_dir(file.path(tmpdir, sprintf("%s/tests", pkg))), file = paste0(repo, "/rrt/tests/", pkg, ".txt"))
+  }
+  lapply(x, testit)
+  unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
 }

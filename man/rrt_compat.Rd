@@ -35,7 +35,7 @@ package we return TRUE, otherwise we link to a report for the tests.
 default, but you can run them by passing on args to \code{devtools::run_examples()}.
 
 \bold{update:} We check for any available updates on CRAN for your packages using
-\code{old.packages}. NULL is returned if no updates available.
+\code{old.packages}. NA is returned if no updates available.
 }
 \examples{
 \dontrun{
