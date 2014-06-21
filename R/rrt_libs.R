@@ -129,7 +129,7 @@ print.rrtrepos <- function(x, ...){
   cat(wrap("RRT repos in .rrt file, but repo not found: \n\n", width = 80), "\n\n")
   print(dfmiss)
   cat("\n\n")
-  cat("Heads up -> To get details for a single RRT repo: rrt_repos_list('path/to/repo')")
+  cat("Heads up -> To get details for a single RRT repo: rrt_repos_list('<repoid>')\n\n")
 }
 
 wrap <- function (..., indent = 0, width=getOption("width")) {

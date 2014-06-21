@@ -33,20 +33,10 @@ rrt_init("~/onemorerepo")
 
 ```
 ## Checking to see if repository exists already...
-## Creating repository ~/onemorerepo
 ## Checing to make sure rrt directory exists inside your repository...
 ## Creating rrt directory ~/onemorerepo/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0
 ## Looking for packages used in your repository...
 ## Writing repository manifest...
-```
-
-```
-## Warning: cannot open file
-## '/Users/sacmac/mynewrepository/rrt/rrt_manifest.txt': No such file or
-## directory
-```
-
-```
 ## 
 ## >>> RRT initialization completed.
 ```
@@ -135,13 +125,51 @@ rrt_repos_list()
 ```
 
 ```
-## Warning: cannot open file
-## '/Users/sacmac/mynewrepository/rrt/rrt_manifest.txt': No such file or
-## directory
-```
-
-```
-## Error: cannot open the connection
+## Number of RRT repos: 16 
+## 
+## RRT repos : 
+## 
+##                                                   path
+## 1                   ~/howdydoody//rrt/rrt_manifest.txt
+## 2                    ~/alfjafkaf//rrt/rrt_manifest.txt
+## 3                     ~/whatwhat//rrt/rrt_manifest.txt
+## 4                     ~/testrepo//rrt/rrt_manifest.txt
+## 5                    ~/somestuff//rrt/rrt_manifest.txt
+## 6  /Users/sacmac/asdfasdfasdfasdf/rrt/rrt_manifest.txt
+## 7       /Users/sacmac/somenewrepo/rrt/rrt_manifest.txt
+## 8             /Users/sacmac/beans/rrt/rrt_manifest.txt
+## 9                    ~/legomyrepo/rrt/rrt_manifest.txt
+## 10                  ~/onemorerepo/rrt/rrt_manifest.txt
+## 11         /Users/sacmac/testrepo/rrt/rrt_manifest.txt
+## 12         /Users/sacmac/anewrepo/rrt/rrt_manifest.txt
+## 13         /Users/sacmac/heythere/rrt/rrt_manifest.txt
+## 14                 ~/somethingnew/rrt/rrt_manifest.txt
+## 15                           /Users/sacmac/newmanifest
+##                              repoid
+## 1  29307e120a662d571bfd9fa1395f426e
+## 2  277c8be765b8fa66fb8180204459d408
+## 3  8ebc7000ea66165b24ba492d99a729fc
+## 4  543e3adeb00dfec82628addcb2dffbb4
+## 5  4177de12146511bf69a6d6cec69eb8d2
+## 6  1a6f0d8a387c0854464d260da141a9ea
+## 7  0b34a89dda7b251d24c39fd90bf9881c
+## 8  af25ed8693f5d69e539dc118268ccbf0
+## 9  1944a6826bee36f5925f1d13f11c6dc6
+## 10 704f6ace5fb5703ea7058fd219cc95d3
+## 11 543e3adeb00dfec82628addcb2dffbb4
+## 12 ae8b9eaca9c68168b2dac7212bee47d5
+## 13 db54771f0654d019ba7b1d9948d35442
+## 14 9658990759fde6802982f8536bcea3d9
+## 15 e3912e3cf041f1f9b0b7a38f642a3d33
+## 
+## 
+## RRT repos in .rrt file, but repo not found: 
+## 
+##                                     path                           repoid
+## 1 ~/mynewrepository/rrt/rrt_manifest.txt 837809181e43446a37f550c0ef38c125
+## 
+## 
+## Heads up -> To get details for a single RRT repo: rrt_repos_list('<repoid>')
 ```
 
 Get details for a single repository
@@ -152,13 +180,41 @@ rrt_repos_list()[[1]]
 ```
 
 ```
-## Warning: cannot open file
-## '/Users/sacmac/mynewrepository/rrt/rrt_manifest.txt': No such file or
-## directory
-```
-
-```
-## Error: cannot open the connection
+## $repo
+## [1] "~/howdydoody//rrt/rrt_manifest.txt"
+## 
+## $InstalledWith
+## [1] "RRT"
+## 
+## $InstalledFrom
+## [1] "source"
+## 
+## $RRT_version
+## [1] "0.0.1"
+## 
+## $R_version
+## [1] "3.1.0"
+## 
+## $DateCreated
+## [1] "2014-20-16"
+## 
+## $PkgsInstalledAt
+## [1] "/Users/sacmac/howdydoody//rrt/lib/x86_64-apple-darwin13.1.0/3.1.0"
+## 
+## $RepoID
+## [1] "29307e120a662d571bfd9fa1395f426e"
+## 
+## $Packages
+## [1] "colorspace,dichromat,digest,ggplot2,gtable,labeling,MASS,munsell,plyr,proto,RColorBrewer,Rcpp,reshape2,scales,stringr,lattice"
+## 
+## $SystemRequirements
+## [1] ""
+## 
+## $repo_root
+## [1] "~/howdydoody//rrt/rrt_manifest.txt"
+## 
+## $missing
+## [1] FALSE
 ```
 
 ### Starting R from a repo
