@@ -25,7 +25,12 @@ otherwise, defaults are used.}
 Files written to the user's machine, with informative messages on progress
 }
 \description{
-This function initiates a repository.
+This function initiates a repository. You can run this function to start a new repository,
+without any work done yet, creating a new folder and RRT files, or you can initiate a RRT
+repository inside an existing project/folder you already have. If the latter, we don't alter
+your files at all, but simply write a few files needed for RRT to work properly. By detault
+repo initialization is done interactively, so that you can choose your settings or accept
+reasonable defaults.
 }
 \examples{
 \dontrun{
