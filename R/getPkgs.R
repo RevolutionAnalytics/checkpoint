@@ -1,7 +1,7 @@
 #' Function to install pkgs
 #'
 #' @import miniCRAN
-#' @export
+#' 
 #' @param x (character) A vector of package names. If NULL, none installed, and message prints
 #' @param lib (character) Library location, a directory
 #' @param recursive (logical) Recursively install packages?
@@ -10,6 +10,9 @@
 #' @param mran (logical) If TRUE, packages are installed from the MRAN server. See 
 #' \url{http://marmoset.revolutionanalytics.com/} for more information.
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
+#' 
+#' @keywords internal
+#' 
 #' @examples \dontrun{
 #' getPkgs()
 #' }

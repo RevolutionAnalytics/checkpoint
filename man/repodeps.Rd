@@ -36,4 +36,5 @@ repodeps()
 repodeps(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
 }
 }
+\keyword{internal}
 

@@ -30,4 +30,5 @@ Function to install pkgs
 getPkgs()
 }
 }
+\keyword{internal}
 

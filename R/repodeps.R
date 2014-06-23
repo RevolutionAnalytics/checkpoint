@@ -13,6 +13,7 @@
 #' @param base (logical) If TRUE, return base R packages, if FALSE, don't return them.
 #' @param ... Further args passed on to \code{miniCRAN::pkgDep}
 #' 
+#' @keywords internal
 #' @return A named list of packages, named by the package that requires said dependencies
 #' @examples \dontrun{
 #' repodeps(repo="~/newrepo")
