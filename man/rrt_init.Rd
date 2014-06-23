@@ -43,4 +43,7 @@ rrt_install(repo="~/testrepo")
 rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 }
 }
+\seealso{
+\link{rrt_refresh}, \link{rrt_install}
+}
 

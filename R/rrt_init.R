@@ -18,6 +18,8 @@
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
 #' @param interactive (logical) If TRUE (default), function asks you for input for each item,
 #' otherwise, defaults are used.
+#' 
+#' @seealso \link{rrt_refresh}, \link{rrt_install}
 #'
 #' @return Files written to the user's machine, with informative messages on progress
 #' 

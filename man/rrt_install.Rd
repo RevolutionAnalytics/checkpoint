@@ -8,12 +8,19 @@ rrt_install(repo = getwd(), verbose = TRUE)
 \arguments{
 \item{repo}{A repository path}
 
-\item{verbose}{Print messages
-rrt_install(repo="~/testrepo")}
+\item{verbose}{Print messages}
 }
 \description{
 Installs packages to your local repository. Performs some checks to make sure your repo is a
 RRT repository, and the rrt dir exists with your repository, then installs packages not already
 installed.
+}
+\examples{
+\dontrun{
+rrt_install(repo="~/testrepo")
+}
+}
+\seealso{
+\link{rrt_init}, \link{rrt_refresh}
 }
 

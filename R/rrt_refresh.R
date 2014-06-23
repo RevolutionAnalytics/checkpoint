@@ -1,11 +1,25 @@
 #' Refresh package - look for any new packages used and install those in rrt library
 #'
 #' @export
+#' 
 #' @param repo (character) A path to create a RRT repository; defaults to current working directory.
 #' @param mran (logical) If TRUE, packages are installed from the MRAN server. See 
 #' \url{http://marmoset.revolutionanalytics.com/} for more information.
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
+#' 
+#' @seealso \link{rrt_init}, \link{rrt_install}
+#' 
+#' @examples \dontrun{
+#' rrt_init(repo="~/testrepo")
+#' rrt_refresh(repo="~/testrepo")
+#' rrt_refresh(repo="~/testrepo", mran=TRUE)
+#' rrt_install(repo="~/testrepo")
+#'
+#' # Optionally, do an interactive repo intitialization
+#' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
+#' }
+
 rrt_refresh <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE)
 {
   repoid <- digest(repo)

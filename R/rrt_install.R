@@ -7,7 +7,13 @@
 #' @export
 #' @param repo A repository path
 #' @param verbose Print messages
+#' 
+#' @seealso \link{rrt_init}, \link{rrt_refresh}
+#' 
+#' @examples \dontrun{
 #' rrt_install(repo="~/testrepo")
+#' }
+
 rrt_install <- function(repo=getwd(), verbose=TRUE)
 {
   repoid <- digest(repo)

@@ -19,4 +19,18 @@ rrt_refresh(repo = getwd(), mran = FALSE, snapdate = NULL,
 \description{
 Refresh package - look for any new packages used and install those in rrt library
 }
+\examples{
+\dontrun{
+rrt_init(repo="~/testrepo")
+rrt_refresh(repo="~/testrepo")
+rrt_refresh(repo="~/testrepo", mran=TRUE)
+rrt_install(repo="~/testrepo")
+
+# Optionally, do an interactive repo intitialization
+rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
+}
+}
+\seealso{
+\link{rrt_init}, \link{rrt_install}
+}
 
