@@ -2,7 +2,6 @@
 
 S3method(print,rrtrepos)
 export(getPkgs)
-export(getsysreq)
 export(mran_diffs)
 export(mran_pkg_avail)
 export(mran_pkg_metadata)
