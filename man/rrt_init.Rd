@@ -4,7 +4,7 @@
 \title{Initiate a RRT repository.}
 \usage{
 rrt_init(repo = getwd(), mran = FALSE, snapdate = NULL, verbose = TRUE,
-  rprofile = NULL, interactive = FALSE)
+  rprofile = NULL, interactive = TRUE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}

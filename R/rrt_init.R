@@ -31,7 +31,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
+rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=TRUE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
