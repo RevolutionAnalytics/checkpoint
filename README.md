@@ -30,11 +30,11 @@ library("devtools")
 devtools::install_github("andrie/miniCRAN")
 ```
 
-_Optionally_, install `git2r` to use git from within R. `git2r` is in Enhances in `RRT`, so you don't need it to install `RRT`
+<!-- _Optionally_, install `git2r` to use git from within R. `git2r` is in Enhances in `RRT`, so you don't need it to install `RRT`
 
 ```coffee
 devtools::install_github("ropensci/git2r")
-```
+``` -->
 
 Then install `RRT`
 
