@@ -35,7 +35,7 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
   pkgs_used <- pkgs_used[!pkgs_used %in% 'RRT']
   
   # Get package dependencies using miniCRAN
-  pkg_deps <- lapply(pkgs_used, pkgDep, ...)
+  pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, ...)
   names(pkg_deps) <- pkgs_used
   
   if(simplify){
@@ -58,10 +58,11 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
   return(pkg_deps)
 }
 
-pkgDep_try <- function(x, ...){
+pkgDep_try <- function(x, repo=NULL, ...){
+  # FIXME - currently only works for Github
   tmp <- tryCatch(pkgDep(x, ...), error=function(e) e)
   if(!"error" %in% class(tmp)){ tmp } else {
-    pkg_deps_noncran(x)
+    pkg_deps_noncran(repo, x)
   }
 }
 
@@ -69,14 +70,49 @@ pkg_deps_noncran <- function(repo, x){
   ### FIXME: if we index non-CRAN packages on MRAN, we could easily search MRAN instead of the mess below
   # look for package mention in manifest, return message if not
   manfile <- file.path(repo, "rrt/rrt_manifest.yml")
-  if(!file.exists(manfile)){ tt <- "not found" } else {  
+  if(!file.exists(manfile)){ out <- "not found" } else {  
     tt <- yaml.load_file(manfile)
-    nn <- grep("Github|MRAN|Bitbucket|Bioconductor|Gitorious", tt, value = TRUE)
-    agrep(x, nn)
+    nn <- tt[names(tt) %in% c("Github","MRAN","Bitbucket","Bioconductor","Gitorious")]
+    trymatch <- lapply(nn, function(y) y[sapply(y, function(z) grepl(x, z))])
+    if(all(sapply(trymatch, length)==0)){ out <- "not found" } else {
+      out <- trymatch[!sapply(trymatch, length)==0]
+    }
   }
-  if(){ 
-    
+  if(!out == "not found"){
+    from <- tolower(names(out))
+    from <- match.arg(from, c('github','mran','bitbucket','bioconductor','gitorious'))
+    switch(from, 
+           github = get_desc_github(out[[1]]))
   } else {
     sprintf("%s not found - make sure to specify info in the manifest file at %s", x, manfile)
   }
+}
+
+get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FALSE){
+#   GET /repos/:owner/:repo/contents/:path
+  url <- "https://api.github.com/repos/%s/%s/contents/DESCRIPTION"
+  ur <- strsplit(userrepo, "/")[[1]]
+  url <- sprintf(url, ur[[1]], ur[[2]])
+  res <- GET(url)
+  if(res$headers$statusmessage == "OK"){
+    tt <- content(res, as = "parsed")$content
+    txt <- paste(lapply(strsplit(tt, "\n")[[1]], RCurl::base64Decode, mode="character"), collapse = "")
+    fields <- yaml.load(txt)
+    out <- if(depends) c(fields[['Depends']], fields[['Imports']])
+    out <- if(suggests) c(out, fields[['Suggests']]) else out
+    out <- if(enhances) c(out, fields[['Enhances']]) else out
+    tmp <- as.vector(sapply(out, function(bb) gsub("\\s", "", strsplit(bb, ",")[[1]]), USE.NAMES = FALSE))
+    tmp2 <- do.call(c, as.list(tmp))
+    tmp3 <- parse_pkg_ver(tmp2)
+    # remove R
+    tmp4 <- tmp3[!sapply(tmp3, function(w) any(w %in% "R"))]
+    vapply(tmp4, function(x) x[[1]], "")
+  } else { "No DESCRIPTION file found" }
+}
+
+parse_pkg_ver <- function(input){
+  lapply(input, function(v){
+    tmp <- gsub("[)]", "", strsplit(v, "[(]")[[1]])
+    if(length(tmp)==1) c(tmp, "NA") else tmp
+  })
 }
