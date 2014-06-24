@@ -3,12 +3,12 @@
 \alias{mran_pkg_metadata}
 \title{Get available package level metadata from MRAN}
 \usage{
-mran_pkg_metadata(snapshot = NULL, package)
+mran_pkg_metadata(package, snapshot = NULL)
 }
 \arguments{
-\item{snapshot}{A MRAN snapshot. Defaults to most recent snapshot}
-
 \item{package}{Required. A package name}
+
+\item{snapshot}{A MRAN snapshot. Defaults to most recent snapshot}
 }
 \description{
 Get available package level metadata from MRAN

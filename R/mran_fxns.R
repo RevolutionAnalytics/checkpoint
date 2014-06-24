@@ -58,21 +58,24 @@ mran_diffs <- function(diff=NULL)
 #'
 #' @import httr RJSONIO
 #' @export
-#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @param package Required. A package name
+#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @examples \dontrun{
 #' mran_pkg_metadata(package="plyr")
 #' }
 
-mran_pkg_metadata <- function(snapshot=NULL, package)
+mran_pkg_metadata <- function(package, snapshot=NULL)
 {
-  if(is.null(snapshot)) snapshot <- suppressMessages(mran_snaps()[1])
-  snapshot <- "2014-06-17_2300" # forcing to only available metadata for now
+  if(is.null(snapshot)){
+    gg <- suppressMessages(mran_snaps())
+    snapshot <- gg[length(gg)]
+  }
+#   snapshot <- "2014-06-17_2300" # forcing to only available metadata for now
 
   url <- sprintf("http://marmoset.revolutionanalytics.com/metadata/logs/%s/%s.json", snapshot, package)
   res <- GET(url)
   if(res$status_code > 202)
-    stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
+    stop(sprintf("%s - Package not found, you don't have an internet connection, or other error...", res$status_code))
   text <- content(res, as = "text")
   RJSONIO::fromJSON(text, simplifyWithNames = FALSE)
 }
@@ -82,8 +85,8 @@ mran_pkg_metadata <- function(snapshot=NULL, package)
 #'
 #' @import httr RJSONIO
 #' @export
-#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @param package Required. A package name
+#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @examples \dontrun{
 #' mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr")
 #'
@@ -93,7 +96,7 @@ mran_pkg_metadata <- function(snapshot=NULL, package)
 #' mran_pkg_avail(snaps[length(snaps)-2], package="MPSEM")
 #' }
 
-mran_pkg_avail <- function(snapshot=NULL, package)
+mran_pkg_avail <- function(package, snapshot=NULL)
 {
   if(is.null(snapshot)){
     gg <- suppressMessages(mran_snaps())
@@ -103,7 +106,7 @@ mran_pkg_avail <- function(snapshot=NULL, package)
   url <- sprintf("http://marmoset.revolutionanalytics.com/snapshots/%s/%s/", snapshot, package)
   res <- GET(url)
   if(res$status_code > 202)
-    stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
+    stop(sprintf("%s - Package not found, you don't have an internet connection, or other error...", res$status_code))
   text <- content(res, as = "text")
   vers <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
   vers <- gsub(sprintf(".tar.gz|%s_", package), "", vers)

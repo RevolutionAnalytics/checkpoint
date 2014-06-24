@@ -3,12 +3,12 @@
 \alias{mran_pkg_avail}
 \title{Get available package versions from MRAN}
 \usage{
-mran_pkg_avail(snapshot = NULL, package)
+mran_pkg_avail(package, snapshot = NULL)
 }
 \arguments{
-\item{snapshot}{A MRAN snapshot. Defaults to most recent snapshot}
-
 \item{package}{Required. A package name}
+
+\item{snapshot}{A MRAN snapshot. Defaults to most recent snapshot}
 }
 \description{
 Get available package versions from MRAN
