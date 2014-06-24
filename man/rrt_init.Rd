@@ -4,7 +4,7 @@
 \title{Initiate a RRT repository.}
 \usage{
 rrt_init(repo = getwd(), mran = FALSE, snapdate = NULL, verbose = TRUE,
-  rprofile = NULL, interactive = TRUE)
+  rprofile = NULL, interactive = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
@@ -18,8 +18,8 @@ rrt_init(repo = getwd(), mran = FALSE, snapdate = NULL, verbose = TRUE,
 
 \item{rprofile}{(list) pass in a list of options to include in the .Rprofile file for the repo.}
 
-\item{interactive}{(logical) If TRUE (default), function asks you for input for each item,
-otherwise, defaults are used.}
+\item{interactive}{(logical) If TRUE, function asks you for input for each item,
+otherwise, defaults are used. Default: FALSE.}
 }
 \value{
 Files written to the user's machine, with informative messages on progress

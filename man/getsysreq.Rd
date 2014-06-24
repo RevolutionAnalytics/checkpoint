@@ -7,6 +7,8 @@ getsysreq(x, lib)
 }
 \arguments{
 \item{x}{(character) Name of package. One to many in a vector or list}
+
+\item{lib}{Library to look in}
 }
 \description{
 Function to get system requireqments, if any, from installed packages

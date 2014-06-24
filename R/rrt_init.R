@@ -16,8 +16,8 @@
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
-#' @param interactive (logical) If TRUE (default), function asks you for input for each item,
-#' otherwise, defaults are used.
+#' @param interactive (logical) If TRUE, function asks you for input for each item,
+#' otherwise, defaults are used. Default: FALSE.
 #'
 #' @seealso \link{rrt_refresh}, \link{rrt_install}
 #'
@@ -33,7 +33,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=TRUE)
+rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
