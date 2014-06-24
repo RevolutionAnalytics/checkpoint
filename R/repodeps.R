@@ -31,6 +31,8 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
 {
   # Get packages used in the repository
   pkgs_used <- rrt_deps(repo)
+  # remove RRT
+  pkgs_used <- pkgs_used[!pkgs_used %in% 'RRT']
   
   # Get package dependencies using miniCRAN
   pkg_deps <- lapply(pkgs_used, pkgDep, ...)
