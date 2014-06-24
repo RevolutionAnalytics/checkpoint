@@ -23,15 +23,15 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FA
     
     pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
     if(!file.exists(pkgslist)) { pkgs2install <- x } else {
-      installedpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
-      pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
+      gotpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
+      pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
     }
     
     # Make local repo of packages
-    if(!is.null(pkgs2install) || length(pkgs2install) == 0){
+    if(!is.null(pkgs2get) || length(pkgs2get) == 0){
       if(!mran){
         # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
-        makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
+        makeRepo(pkgs = pkgs2get, path = lib, download = TRUE)
         options(RRT_snapshotID = "none")
       } else {
         if(is.null(snapdate)) snapdate <- Sys.Date()
@@ -39,11 +39,11 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FA
         pkgloc <- file.path(lib, "src/contrib")
         setwd(lib)
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
-        pkgs_mran(snapshotid = snapdateid, pkgs=pkgs2install, outdir=pkgloc)
+        pkgs_mran(snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
         options(RRT_snapshotID = snapdateid)
       }
     } else {
-      return(mssg(verbose, "No packages found - none installed"))
+      return(mssg(verbose, "No packages found - none downloaded"))
     }
   }
 }
