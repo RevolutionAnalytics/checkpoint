@@ -80,17 +80,15 @@ template <-
 
       <div style="background-color: #ecf0f1;">
         <div class="container">
-        <center><h2><i class="fa fa-list-ul"></i>  RRT Dashboard</h2></center>
+        <center><h2>RRT Dashboard</h2></center>
         <table class="table table-hover table-responsive" align="center">
         	<thead>
         		<tr>
         			<th>RepoID</th>
               <th>RepoDir</th>
-        			<th>InstalledWith</th>
-              <th>InstalledFrom</th>
-              <th>RRT_ver</th>
               <th>R_ver</th>
               <th>DateCreated</th>
+              <th>DateUpdated</th>
         		</tr>
         	</thead>
         	<tbody>
@@ -98,11 +96,9 @@ template <-
             <tr>
               <td><a href="{{singlepage}}" class="btn btn-info btn-xs">{{RepoID}}</a></td>
               <td>{{repo_root}}</td>
-              <td>{{InstalledWith}}</td>
-              <td>{{InstalledFrom}}</td>
-              <td>{{RRT_version}}</td>
               <td>{{R_version}}</td>
               <td>{{DateCreated}}</td>
+              <td>{{DateUpdated}}</td>
             </tr>
           {{/repos}}
           </tbody>
@@ -140,7 +136,7 @@ template_onepage <-
 
         <div style="background-color: #ecf0f1;">
           {{#single}}
-          <center><h2><a href="{{homepage}}"><i class="fa fa-list-ul"></i></a>  RRT Dashboard - {{#single}} {{RepoID}} {{/single}}</h2></center>
+          <center><h2><a href="{{homepage}}"><i class="fa fa-home"></i></a>  RRT Dashboard - {{#single}} {{RepoID}} {{/single}}</h2></center>
           <div class="container">
             <ul style="list-style-type: none;">
               <li><h4><button class="btn btn-xs btn-success">Repo Name:</button> {{RepositoryName}}</h4></li>
@@ -155,6 +151,7 @@ template_onepage <-
               <li><h4><button class="btn btn-xs btn-success">RRT snapshot ID:</button> {{RRT_snapshotID}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">R version:</button> {{R_version}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">Date repo created:</button> {{DateCreated}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">Date repo updated:</button> {{DateUpdated}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">Packages installed:</button> {{Packages}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">System requirements:</button> {{SystemRequirements}}</h4></li>
             </ul>
