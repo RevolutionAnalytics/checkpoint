@@ -7,9 +7,9 @@
 #' @export
 #' @param repo A repository path
 #' @param verbose Print messages
-#' 
+#'
 #' @seealso \link{rrt_init}, \link{rrt_refresh}
-#' 
+#'
 #' @examples \dontrun{
 #' rrt_install(repo="~/testrepo")
 #' }
@@ -17,28 +17,28 @@
 rrt_install <- function(repo=getwd(), verbose=TRUE)
 {
   repoid <- digest(repo)
-  
+
   # check to make sure repo exists
   mssg(verbose, "Checking to make sure repository exists...")
   if(!file.exists(repo)){ # only create if file doesn't exist already
     stop(sprintf("Repository %s doesn't exist", repo))
   }
-  
+
   # check for rrt directory in the repo, and stop if it doesn't exist
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, base::getRversion())
   present <- list.dirs(repo)[-1]
   ## ignore git dir
-  present <- present[!grepl(".git", present)]
+  present <- present[!grepl("\\.git", present)]
   if(!all(grepl("rrt", present))){
     stop("rrt directory doesn't exist")
   }
-  
+
   pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
-  
+
   mssg(verbose, "Looking for packages used in your repository...")
   x <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
-  
+
   if(!file.exists(pkgslist)) {
     mssg(verbose, "Getting new packages...")
     pkgs2install <- getPkgs(x, lib, verbose)
@@ -48,10 +48,10 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
     installedpkgs <- installedpkgs[!installedpkgs %in% "src"]
     pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
   }
-  
+
   basepkgs <- c('tools','methods','utils','stats')
   pkgs2install <- pkgs2install[!pkgs2install %in% basepkgs]
-  
+
   if(length(pkgs2install)==0){
     mssg(verbose, "No packages found to install")
   } else {
