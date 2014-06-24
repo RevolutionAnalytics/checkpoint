@@ -33,10 +33,7 @@ rrt_refresh <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE)
   # check for rrt directory in the repo, and stop if it doesn't exist
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, base::getRversion())
-  present <- list.dirs(repo)[-1]
-  ## ignore git dir
-  present <- present[!grepl("\\.git", present)]
-  if(!all(grepl("rrt", present))){
+  if(!file.exists(file.path(repo, "rrt"))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)
   } else { mssg(verbose, "rrt directory already exists") }
