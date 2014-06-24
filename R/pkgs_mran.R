@@ -1,4 +1,7 @@
-#' Install from MRAN server
+#' Download R packages from the MRAN server
+#' 
+#' This function uses rsync, which is faster than the method (wget) \code{install.packages} uses 
+#' by default. This function does not install packages, but only downloads them to your machine.
 #'
 #' @importFrom plyr rbind.fill
 #' @export
@@ -7,7 +10,7 @@
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
 #' @examples \dontrun{
 #' # By default installs most recent version
-#' pkgs_mran(date='2014-06-19', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/stuff/")
+#' pkgs_mran(date='2014-06-19', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
 #'
 #' pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/mran_snaps/stuff/")
 #' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
@@ -40,7 +43,9 @@ pkgs_mran <- function(date=NULL, pkgs=NULL, outdir=NULL)
     df[is.na(df)] <- 0
     row.names(df) <- names(splitvers)
     df <- colClasses(df, "numeric")
-    df <- sort_df(df, c("X1","X2","X3"))
+    if(NCOL(df) == 3){ df <- sort_df(df, c("X1","X2","X3")) } else {
+      df <- sort_df(df, c("X1","X2"))      
+    }
     pkgver <- tryCatch(x[[2]], error=function(e) e)
     if('error' %in% class(pkgver)) {
       pkgveruse <- row.names(df[nrow(df),])
