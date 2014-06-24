@@ -10,8 +10,12 @@
 #' @export
 #'
 #' @param pkg Package name
-#' @param snapshot MRAN snapshot ID
+#' @param date MRAN snapshot date
+#' @param lib Library to install packages in
+#' @param destdir Destination directory to install packages to
 #' @param ... Further args passed on to \link{install.packages}
+#' @param dependencies Whether to install dependencies or not. Default: TRUE. See 
+#' \link{install.packages}
 #'
 #' @return Installs a package, or throws warnings/errors on failures
 #'
@@ -72,10 +76,10 @@ download_deps <- function (pkg = NULL, info, lib, dependencies = NA)
 }
 
 needs_install <- function(pkg, compare, version, lib) {
-  if (length(find.package(pkg, lib=lib, quiet = TRUE)) == 0) return(TRUE)
+  if (length(find.package(pkg, lib.loc=lib, quiet = TRUE)) == 0) return(TRUE)
   if (is.na(compare)) return(FALSE)
   compare <- match.fun(compare)
-  !compare(packageVersion(pkg, lib=lib), version)
+  !compare(packageVersion(pkg, lib.loc=lib), version)
 }
 
 # install_mran <- function (pkg, snapshot=NULL, ..., dependencies = TRUE)

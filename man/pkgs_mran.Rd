@@ -8,6 +8,8 @@ pkgs_mran(date = NULL, snapshotid = NULL, pkgs = NULL, outdir = NULL)
 \arguments{
 \item{date}{Date as "year-month-day" (YY-MM-DD)}
 
+\item{snapshotid}{Optional. You can give the exact snapshot ID insetad of a date.}
+
 \item{outdir}{Output directory}
 
 \item{pkgs}{Packages to install with version numbers, e.g. plyr_1.8.1}

@@ -6,6 +6,7 @@
 #' @importFrom plyr rbind.fill
 #' @export
 #' @param date Date as "year-month-day" (YY-MM-DD)
+#' @param snapshotid Optional. You can give the exact snapshot ID insetad of a date.
 #' @param outdir Output directory
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
 #' @examples \dontrun{

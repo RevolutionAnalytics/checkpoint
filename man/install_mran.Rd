@@ -9,9 +9,16 @@ install_mran(pkg, date = NULL, lib = NULL, destdir = NULL, ...,
 \arguments{
 \item{pkg}{Package name}
 
-\item{snapshot}{MRAN snapshot ID}
+\item{date}{MRAN snapshot date}
+
+\item{lib}{Library to install packages in}
+
+\item{destdir}{Destination directory to install packages to}
 
 \item{...}{Further args passed on to \link{install.packages}}
+
+\item{dependencies}{Whether to install dependencies or not. Default: TRUE. See
+\link{install.packages}}
 }
 \value{
 Installs a package, or throws warnings/errors on failures
