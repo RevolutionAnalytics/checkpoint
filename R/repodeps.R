@@ -5,7 +5,7 @@
 #' Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE: 
 #' Enhances not working right now.
 #'
-#' @import miniCRAN yaml
+#' @import miniCRAN yaml httr
 #' @export
 #' 
 #' @param repo (character) A path to a RRT repository; defaults to current working directory.
@@ -105,6 +105,7 @@ get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FAL
     tmp2 <- do.call(c, as.list(tmp))
     tmp3 <- parse_pkg_ver(tmp2)
     # remove R
+    # NOTE: parse_pkg_ver also provides with any version specification, so use that later
     tmp4 <- tmp3[!sapply(tmp3, function(w) any(w %in% "R"))]
     vapply(tmp4, function(x) x[[1]], "")
   } else { "No DESCRIPTION file found" }

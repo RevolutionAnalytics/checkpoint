@@ -39,9 +39,11 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   datecheck <- check4date_created(x=infofile)
   date_created <- if(is.null(datecheck)) sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d")) else datecheck
   date_updated <- sprintf("DateUpdated: %s", format(Sys.time(), "%Y-%m-%d"))
+  
+  github <- check4github(infofile)
 
   info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtsnapshot, rrtver,
-            rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
+            rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq, github)
   cat(info, file = infofile, sep = "\n")
 }
 
@@ -50,6 +52,16 @@ check4date_created <- function(x){
     info <- readLines(x)
     dcline <- grep("DateCreated", info, value = TRUE)
     if(length(dcline) > 0) dcline else NULL
+  } else { NULL }
+}
+
+check4github <- function(x){
+  if(file.exists(x)){
+    info <- yaml.load_file(x)
+    gline <- info['Github'][1]
+    if(!is.null(gline[[1]])){
+      sprintf("Github:\n- %s", gline[[1]])
+    } else { NULL }
   } else { NULL }
 }
 
@@ -67,9 +79,22 @@ getsysreq <- function(x, lib)
 {
   tmp <-
     lapply(x, function(y){
-      res <- packageDescription(y, encoding = NA, lib.loc = lib)
-      if(is(res, "packageDescription")) res$SystemRequirements
+#       res <- packageDescription(y, encoding = NA, lib.loc = lib)
+      pkgdesc(y, lib = lib)
+#       if(is(res, "packageDescription")) res$SystemRequirements
     })
   names(tmp) <- x
   tmp
+}
+
+pkgdesc <- function(rr, lib){
+  tmpdir <- tempdir()
+  tarfiles <- list.files(file.path(lib, "src/contrib"), pattern = ".tar.gz", full.names = TRUE)
+  use <- grep(rr, tarfiles, value = TRUE)
+  untar(use, exdir = tmpdir)
+  out <- as.package(file.path(tmpdir, rr))
+  sysreq <- out['systemrequirements'][[1]]
+#   lines <- yaml.load_file(file.path(tmpdir, rr, "DESCRIPTION"))
+#   sysreq <- lines['SystemRequirements'][[1]]
+  if(is.null(sysreq)) NULL else sysreq
 }
