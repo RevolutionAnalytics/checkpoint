@@ -5,7 +5,7 @@
 #' Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE: 
 #' Enhances not working right now.
 #'
-#' @import miniCRAN
+#' @import miniCRAN yaml
 #' @export
 #' 
 #' @param repo (character) A path to a RRT repository; defaults to current working directory.
@@ -56,4 +56,27 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
   }
   
   return(pkg_deps)
+}
+
+pkgDep_try <- function(x, ...){
+  tmp <- tryCatch(pkgDep(x, ...), error=function(e) e)
+  if(!"error" %in% class(tmp)){ tmp } else {
+    pkg_deps_noncran(x)
+  }
+}
+
+pkg_deps_noncran <- function(repo, x){
+  ### FIXME: if we index non-CRAN packages on MRAN, we could easily search MRAN instead of the mess below
+  # look for package mention in manifest, return message if not
+  manfile <- file.path(repo, "rrt/rrt_manifest.yml")
+  if(!file.exists(manfile)){ tt <- "not found" } else {  
+    tt <- yaml.load_file(manfile)
+    nn <- grep("Github|MRAN|Bitbucket|Bioconductor|Gitorious", tt, value = TRUE)
+    agrep(x, nn)
+  }
+  if(){ 
+    
+  } else {
+    sprintf("%s not found - make sure to specify info in the manifest file at %s", x, manfile)
+  }
 }
