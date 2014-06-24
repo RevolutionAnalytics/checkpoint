@@ -10,7 +10,10 @@
 #' rrt_repos_write(repo="~/testrepo/")
 #' }
 rrt_repos_write <- function(repo, repoid=NULL){
-  gg <- file.path(Sys.getenv("HOME"), ".rrt")
+  rrtdir <- file.path(Sys.getenv("HOME"), ".rrt")
+  if(!file.exists(rrtdir)) dir.create(rrtdir, recursive = TRUE)
+  
+  gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
   append <- if(file.exists(gg)) TRUE else FALSE
   out <- tryCatch(rrt_repos_list(), error=function(e) e)
   if("error" %in% class(out)){
@@ -54,7 +57,7 @@ rrt_repos_write <- function(repo, repoid=NULL){
 #' rrt_repos_list(names(repos)[2])
 #' }
 rrt_repos_list <- function(repoid=NULL){
-  gg <- file.path(Sys.getenv("HOME"), ".rrt")
+  gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
   if(file.exists(gg)){
     hh <- readLines(gg)
     start <- grep("repo:", hh)
@@ -139,7 +142,7 @@ wrap <- function (..., indent = 0, width=getOption("width")) {
 }
 
 rrt_repos_check <- function(){
-  gg <- file.path(Sys.getenv("HOME"), ".rrt")
+  gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
   if(!file.exists(gg)) rrt_repos_write() else TRUE
   invisible(gg)
 }
