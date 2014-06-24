@@ -49,6 +49,12 @@ rrt_refresh <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE)
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
   writeManifest(repo, lib, pkgs, repoid)
+  
+  # Write repo log file
+  rrt_repos_write(repo, repoid)
+  
+  # regenerate RRT dashboard
+  rrt_browse(browse = FALSE)
 
   message("\n>>> RRT refresh completed.")
 }

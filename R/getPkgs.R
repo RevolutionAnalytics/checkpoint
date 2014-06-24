@@ -22,7 +22,7 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FA
   if(is.null(x)){ NULL } else {
     
     pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
-    if(!file.exists(pkgslist)) { pkgs2install <- x } else {
+    if(!file.exists(pkgslist)) { pkgs2get <- x } else {
       gotpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
       pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
     }
