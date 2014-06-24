@@ -14,18 +14,21 @@
 
 rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
 {
+  wwwdir <- file.path(Sys.getenv("HOME"), ".rrt", "www")
+  if(!file.exists(wwwdir)) dir.create(wwwdir, recursive = TRUE)
+  
   if(is.null(output))
-    output <- tempfile(fileext=".html")
+    output <- file.path(Sys.getenv("HOME"), ".rrt", "www", "rrt.html")
 
   repos <- rrt_repos_list(repoid=repoid)
   names(repos) <- NULL
-  for(i in seq_along(repos)) repos[[i]]$singlepage <- tempfile(fileext=".html")
+  for(i in seq_along(repos)) repos[[i]]$singlepage <- file.path(Sys.getenv("HOME"), ".rrt", "www", sprintf("%s.html", repos[[i]]$RepoID))
   for(i in seq_along(repos)) repos[[i]]$homepage <- output
   for(i in seq_along(repos)) repos[[i]]$Packages <- gsub(",", ", ", repos[[i]]$Packages)
 
   # get check results, if any, for each repository
   bb <- lapply(repos, function(x){
-    tmp <- tryCatch(readRDS(file.path(x$repo_root, "rrt/check_result.rds")), error=function(e) e)
+    tmp <- suppressWarnings(tryCatch(readRDS(file.path(x$repo_root, "rrt/check_result.rds")), error=function(e) e))
     if("error" %in% class(tmp)) NA else tmp
   })
   names(bb) <- vapply(repos, "[[", "", "RepoID")
@@ -145,10 +148,11 @@ template_onepage <-
               <li><h4><button class="btn btn-xs btn-success">License:</button> {{License}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">Description:</button> {{Description}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">Remote:</button> {{Remote}}</h4></li>
-              <li><h4><button class="btn btn-xs btn-success">Repo directory:</button> {{repo_root}}</h4></li>
+              <li><h4><a href="file:///{{repo_root}}" class="btn btn-xs btn-success">Repo directory: </a> {{repo_root}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">RRT Installed with:</button> {{InstalledWith}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">RRT Installed from:</button> {{InstalledFrom}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">RRT version:</button> {{RRT_version}}</h4></li>
+              <li><h4><button class="btn btn-xs btn-success">RRT snapshot ID:</button> {{RRT_snapshotID}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">R version:</button> {{R_version}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">Date repo created:</button> {{DateCreated}}</h4></li>
               <li><h4><button class="btn btn-xs btn-success">Packages installed:</button> {{Packages}}</h4></li>
