@@ -80,7 +80,7 @@ rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rpro
   lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   present <- list.dirs(repo)
   ## ignore git dir
-  present <- present[!grepl(".git", present)]
+  present <- present[!grepl("\\.git", present)]
   if(!all(grepl("rrt", present))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)
@@ -110,6 +110,9 @@ rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rpro
   } else {
     NULL # fixme: add ability to write options to the rprofile file
   }
+  
+  # regenerate RRT dashboard
+  rrt_browse(browse = FALSE)
 
   message("\n>>> RRT initialization completed.")
 }
