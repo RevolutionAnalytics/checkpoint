@@ -26,7 +26,7 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
   
   # check for rrt directory in the repo, and stop if it doesn't exist
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
-  lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
+  lib <- file.path(repo, "rrt", "lib", R.version$platform, base::getRversion())
   present <- list.dirs(repo)[-1]
   ## ignore git dir
   present <- present[!grepl(".git", present)]

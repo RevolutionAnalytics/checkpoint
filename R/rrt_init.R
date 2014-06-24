@@ -84,7 +84,7 @@ rrt_init <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE, rpro
   if(!all(grepl("rrt", present))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)
-  }
+  } else { mssg(verbose, "rrt directory already exists") }
 
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")

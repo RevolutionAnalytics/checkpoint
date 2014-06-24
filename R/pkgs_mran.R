@@ -16,24 +16,13 @@
 #' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
 #' }
 
-pkgs_mran <- function(date=NULL, pkgs=NULL, outdir=NULL)
+pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
 {
   if(is.null(outdir)) stop("You must specify a directory to download packages to")
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
 
   # get available snapshots
-  availsnaps <- suppressMessages(mran_snaps())
-
-  if(is.null(date)) date <- Sys.Date()
-  snapshots <- grep(date, availsnaps, value = TRUE)
-  if(length(snapshots) > 1){
-    print(data.frame(snapshots))
-    message("\nMore than one snapshot matching your date found \n",
-            "Enter rownumber of snapshot (other inputs will return 'NA'):\n")
-    take <- scan(n = 1, quiet = TRUE, what = 'raw')
-    if(is.na(take)){ message("No snapshot found or you didn't select one") }
-    snapshot_use <- snapshots[as.numeric(take)]
-  }
+  snapshot_use <- if(is.null(snapshotid)) getsnapshotid(date) else snapshotid
 
   # parse versions from pkgs
   foo <- function(x){
@@ -88,4 +77,20 @@ sort_df <- function (data, vars = names(data)){
   if (length(vars) == 0 || is.null(vars))
     return(data)
   data[do.call("order", data[, vars, drop = FALSE]), , drop = FALSE]
+}
+
+getsnapshotid <- function(date){
+  # get available snapshots
+  availsnaps <- suppressMessages(mran_snaps())
+  
+  if(is.null(date)) date <- Sys.Date()
+  snapshots <- grep(date, availsnaps, value = TRUE)
+  if(length(snapshots) > 1){
+    print(data.frame(snapshots))
+    message("\nMore than one snapshot matching your date found \n",
+            "Enter rownumber of snapshot (other inputs will return 'NA'):\n")
+    take <- scan(n = 1, quiet = TRUE, what = 'raw')
+    if(is.na(take)){ message("No snapshot found or you didn't select one") }
+    snapshots[as.numeric(take)]
+  }
 }

@@ -1,4 +1,4 @@
-#' Function to install pkgs
+#' Function to download packages
 #'
 #' @import miniCRAN
 #' 
@@ -14,8 +14,9 @@
 #' @keywords internal
 #' 
 #' @examples \dontrun{
-#' getPkgs()
+#' getPkgs("<path to RRT repo>")
 #' }
+
 getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FALSE, snapdate=NULL){
   # check for existence of pkg, subset only those that need to be installed
   if(is.null(x)){ NULL } else {
@@ -31,15 +32,15 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FA
       if(!mran){
         # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
         makeRepo(pkgs = pkgs2install, path = lib, download = TRUE)
+        options(RRT_snapshotID = "none")
       } else {
         if(is.null(snapdate)) snapdate <- Sys.Date()
-        snapdate <- "2014-06-19"
-        #         snapdate <- as.POSIXct(Sys.Date())
-        #         format(snapdate, tz="Europe/London", usetz=TRUE)
+        snapdateid <- getsnapshotid(snapdate)
         pkgloc <- file.path(lib, "src/contrib")
         setwd(lib)
-        dir.create("src/contrib", recursive = TRUE)
-        pkgs_mran(date=snapdate, pkgs=pkgs2install, outdir=pkgloc)
+        dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
+        pkgs_mran(snapshotid = snapdateid, pkgs=pkgs2install, outdir=pkgloc)
+        options(RRT_snapshotID = snapdateid)
       }
     } else {
       return(mssg(verbose, "No packages found - none installed"))

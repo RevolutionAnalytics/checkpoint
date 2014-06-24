@@ -3,7 +3,7 @@
 \alias{pkgs_mran}
 \title{Download R packages from the MRAN server}
 \usage{
-pkgs_mran(date = NULL, pkgs = NULL, outdir = NULL)
+pkgs_mran(date = NULL, snapshotid = NULL, pkgs = NULL, outdir = NULL)
 }
 \arguments{
 \item{date}{Date as "year-month-day" (YY-MM-DD)}

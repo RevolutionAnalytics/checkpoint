@@ -28,6 +28,9 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   installedwith <- "InstalledWith: RRT"
   installedfrom <- "InstalledFrom: source"
   rrtver <- sprintf("RRT_version: %s", packageVersion("RRT"))
+
+  rrtsnapshot <- sprintf("RRT_snapshotID: %s", getOption("RRT_snapshotID", ""))
+  
   rver <- sprintf("R_version: %s", paste0(as.character(R.version[c('major','minor')]), collapse="."))
   pkgsloc <- sprintf("PkgsInstalledAt: %s", librar)
   sysreq <- sprintf("SystemRequirements: %s", paste0(rtt_compact(getsysreq(packs)), collapse = "\n") )
@@ -37,7 +40,7 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   date_created <- if(is.null(datecheck)) sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d")) else datecheck
   date_updated <- sprintf("DateUpdated: %s", format(Sys.time(), "%Y-%m-%d"))
   
-  info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtver,
+  info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtsnapshot, rrtver,
             rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq)
   cat(info, file = infofile, sep = "\n")
 }
