@@ -91,6 +91,10 @@ pkgdesc <- function(rr, lib){
   tmpdir <- tempdir()
   tarfiles <- list.files(file.path(lib, "src/contrib"), pattern = ".tar.gz", full.names = TRUE)
   use <- grep(rr, tarfiles, value = TRUE)
+  if(length(use) > 1){
+    pkgs <- gsub("_.+", "", sapply(use, function(x) strsplit(x, "/")[[1]][length(strsplit(x, "/")[[1]])], USE.NAMES = FALSE))
+    use <- use[pkgs %in% rr]
+  }
   untar(use, exdir = tmpdir)
   out <- as.package(file.path(tmpdir, rr))
   sysreq <- out['systemrequirements'][[1]]
