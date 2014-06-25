@@ -2,6 +2,7 @@
 
 S3method(print,rrtrepos)
 export(install_mran)
+export(is_rrt)
 export(mran_diffs)
 export(mran_pkg_avail)
 export(mran_pkg_metadata)
