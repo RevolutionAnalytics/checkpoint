@@ -70,16 +70,46 @@ pkgDep_try <- function(x, repo=NULL, ...){
 
 pkg_deps_noncran <- function(repo, x){
   ### FIXME: if we index non-CRAN packages on MRAN, we could easily search MRAN instead of the mess below
-  # look for package mention in manifest, return message if not
   manfile <- file.path(repo, "rrt/rrt_manifest.yml")
+  
+  # look for user specified manifest file, and read from there if any
+  usermanfile <- file.path(repo, "manifest.yml")
+  if(!file.exists(usermanfile)){ userdeets <- NULL } else {
+    tt <- suppressWarnings(yaml.load_file(usermanfile))
+    if(!is.null(tt)){
+      nn <- tt[names(tt) %in% c("Github","MRAN","Bitbucket","Bioconductor","Gitorious")]
+      trymatch <- lapply(nn, function(y) y[sapply(y, function(z) grepl(x, z))])
+      if(all(sapply(trymatch, length)==0)){ out <- "not found" } else {
+        userdeets <- trymatch[!sapply(trymatch, length)==0]
+        uu <- list()
+        for(i in seq_along(userdeets)){
+          uu[[i]] <- paste(sprintf(" - %s", userdeets[[i]]))
+        }
+        github <- sprintf("Github:\n %s", uu)
+      }
+      if(file.exists(manfile)){
+        manfiletmp <- suppressWarnings(yaml.load_file(manfile))
+        if("Github" %in% names(manfiletmp)){
+          if(any(grepl(x, manfiletmp$Github))){ NULL } else {
+            cat(github, file = manfile, append = TRUE)
+          }
+        } else {
+          cat(github, file = manfile, append = TRUE)
+        }
+      }
+    }
+  }
+  
+  # look for package mention in manifest, return message if not
   if(!file.exists(manfile)){ out <- "not found" } else {  
-    tt <- yaml.load_file(manfile)
+    tt <- suppressWarnings(yaml.load_file(manfile))
     nn <- tt[names(tt) %in% c("Github","MRAN","Bitbucket","Bioconductor","Gitorious")]
     trymatch <- lapply(nn, function(y) y[sapply(y, function(z) grepl(x, z))])
     if(all(sapply(trymatch, length)==0)){ out <- "not found" } else {
       out <- trymatch[!sapply(trymatch, length)==0]
     }
   }
+  
   if(!out == "not found"){
     from <- tolower(names(out))
     from <- match.arg(from, c('github','mran','bitbucket','bioconductor','gitorious'))
@@ -99,7 +129,7 @@ get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FAL
   if(res$headers$statusmessage == "OK"){
     tt <- content(res, as = "parsed")$content
     txt <- paste(lapply(strsplit(tt, "\n")[[1]], RCurl::base64Decode, mode="character"), collapse = "")
-    fields <- yaml.load(txt)
+    fields <- suppressWarnings(yaml.load(txt))
     out <- if(depends) c(fields[['Depends']], fields[['Imports']])
     out <- if(suggests) c(out, fields[['Suggests']]) else out
     out <- if(enhances) c(out, fields[['Enhances']]) else out

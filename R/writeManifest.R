@@ -33,13 +33,14 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
 
   rver <- sprintf("R_version: %s", paste0(as.character(R.version[c('major','minor')]), collapse="."))
   pkgsloc <- sprintf("PkgsInstalledAt: %s", librar)
-  sysreq <- sprintf("SystemRequirements: %s", paste0(rtt_compact(getsysreq(packs, lib=librar)), collapse = "\n") )
+#   sysreq <- sprintf("SystemRequirements: %s", paste0(rrt_compact(getsysreq(packs, lib=librar)), collapse = "\n") )
+  sysreq <- sprintf("SystemRequirements:\n%s", getsysreq(packs, lib=librar) )
   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
   datecheck <- check4date_created(x=infofile)
   date_created <- if(is.null(datecheck)) sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d")) else datecheck
   date_updated <- sprintf("DateUpdated: %s", format(Sys.time(), "%Y-%m-%d"))
-  
+
   github <- check4github(infofile)
 
   info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtsnapshot, rrtver,
@@ -77,14 +78,16 @@ check4github <- function(x){
 
 getsysreq <- function(x, lib)
 {
-  tmp <-
-    lapply(x, function(y){
-#       res <- packageDescription(y, encoding = NA, lib.loc = lib)
-      pkgdesc(y, lib = lib)
-#       if(is(res, "packageDescription")) res$SystemRequirements
-    })
+  tmp <- lapply(x, function(y) pkgdesc(y, lib = lib))
   names(tmp) <- x
-  tmp
+  tmp <- rrt_compact(tmp)
+  if(!length(tmp) == 0){
+    tt <- list()
+    for(i in seq_along(tmp)){
+      tt[[i]] <- paste(sprintf(" - %s:", names(tmp[i])), gsub("\n", " ", tmp[[i]]))
+    }
+    paste(tt, collapse = "\n")
+  } else { tmp }
 }
 
 pkgdesc <- function(rr, lib){

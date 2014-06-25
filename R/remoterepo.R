@@ -39,7 +39,7 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
   get_credentials("github")
   headers <- add_headers(`User-Agent` = "Dummy", `Accept` = 'application/vnd.github.v3+json')
   auth  <- authenticate(getOption("github.username"), getOption("github.password"), type = "basic")
-  args <- rtt_compact(list(name=name, description=description, homepage=homepage, private=private,
+  args <- rrt_compact(list(name=name, description=description, homepage=homepage, private=private,
                        has_issues=has_issues, has_wiki=has_wiki, has_downloads=has_downloads,
                        team_id=team_id, auto_init=auto_init, gitignore_template=gitignore_template,
                        license_template=license_template))
@@ -86,7 +86,7 @@ rrt_bitbucket <- function(name, description = "", private = FALSE, fork_policy =
 {
   get_credentials("bitbucket")
   auth  <- authenticate(getOption("bitbucket.username"), getOption("bitbucket.password"), type = "basic")
-  args <- rtt_compact(list(name=name, description=description, is_private=private, scm="git",
+  args <- rrt_compact(list(name=name, description=description, is_private=private, scm="git",
             fork_policy=fork_policy, has_issues=has_issues, has_wiki=has_wiki, website=website))
   url2 <- file.path("https://bitbucket.org/api/2.0/repositories", getOption("bitbucket.username"), name)
   response <- POST(url = url2, body = RJSONIO::toJSON(args), config = auth)

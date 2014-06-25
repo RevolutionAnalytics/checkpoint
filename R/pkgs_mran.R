@@ -51,7 +51,7 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
 
   tmppkgsfileloc <- tempfile()
   cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
-  cmd <- sprintf('rsync -rtvh --progress --files-from=%s marmoset.revolutionanalytics.com::MRAN-snapshots/%s %s',
+  cmd <- sprintf('rsync -rt --progress --files-from=%s marmoset.revolutionanalytics.com::MRAN-snapshots/%s %s',
                  tmppkgsfileloc, snapshot_use, outdir)
   setwd(outdir)
   mvcmd <- sprintf("mv %s .", paste(pkgpaths, collapse = " "))
