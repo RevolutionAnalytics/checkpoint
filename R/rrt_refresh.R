@@ -3,7 +3,7 @@
 #' @export
 #'
 #' @param repo (character) A path to create a RRT repository; defaults to current working directory.
-#' @param mran (logical) If TRUE, packages are installed from the MRAN server. See
+#' @param mran (logical) If TRUE (default), packages are installed from the MRAN server. See
 #' \url{http://marmoset.revolutionanalytics.com/} for more information.
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
@@ -20,7 +20,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_refresh <- function(repo=getwd(), mran=FALSE, snapdate=NULL, verbose=TRUE)
+rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE)
 {
   repoid <- digest(repo)
 

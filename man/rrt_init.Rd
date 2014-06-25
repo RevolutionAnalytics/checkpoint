@@ -3,13 +3,13 @@
 \alias{rrt_init}
 \title{Initiate a RRT repository.}
 \usage{
-rrt_init(repo = getwd(), mran = FALSE, snapdate = NULL, verbose = TRUE,
+rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, verbose = TRUE,
   rprofile = NULL, interactive = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
 
-\item{mran}{(logical) If TRUE, packages are installed from the MRAN server. See
+\item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See
 \url{http://marmoset.revolutionanalytics.com/} for more information.}
 
 \item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}

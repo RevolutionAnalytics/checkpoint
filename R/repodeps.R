@@ -52,7 +52,9 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
         if(!is.na(zz[['Priority']]) && zz[['Priority']] == "base") TRUE else FALSE
       }
     })]
-    pkg_deps <- pkg_deps[!pkg_deps %in% c('stats','utils','grDevices','graphics','methods','grid')]
+    pkg_deps <- pkg_deps[!pkg_deps %in% 
+          c('base','compiler','datasets','graphics','grDevices','grid','methods','parallel',
+            'splines','stats','stats4','tcltk','tools','utils')]
   }
   
   return(pkg_deps)
