@@ -42,6 +42,11 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE)
   mssg(verbose, "Looking for packages used in your repository...")
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
 
+  # Look for packages installed by user but no source available
+  # if some installed give back vector of package names
+  addtnpkgs <- checkuserinstall(lib)
+  pkgs <- c(addtnpkgs, pkgs)
+  
   # get packages in a private location for this project
   mssg(verbose, "Getting new packages...")
   getPkgs(x = pkgs, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
