@@ -35,7 +35,8 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   pkgsloc <- sprintf("PkgsInstalledAt: %s", librar)
 #   sysreq <- sprintf("SystemRequirements: %s", paste0(rrt_compact(getsysreq(packs, lib=librar)), collapse = "\n") )
   sysreq <- sprintf("SystemRequirements:\n%s", getsysreq(packs, lib=librar) )
-  pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
+#   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
+  pkgs_deps <- sprintf("Packages: %s", check4pkgs(packs, repository))
   repositoryid <- sprintf("RepoID: %s", repoid)
   datecheck <- check4date_created(x=infofile)
   date_created <- if(is.null(datecheck)) sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d")) else datecheck
@@ -58,10 +59,22 @@ check4date_created <- function(x){
 
 check4github <- function(x){
   if(file.exists(x)){
-    info <- yaml.load_file(x)
+    info <- suppressWarnings(yaml.load_file(x))
     gline <- info['Github'][1]
     if(!is.null(gline[[1]])){
       sprintf("Github:\n- %s", gline[[1]])
+    } else { NULL }
+  } else { NULL }
+}
+
+check4pkgs <- function(x, repo){
+  manfile <- file.path(repo, "rrt/rrt_manifest.yml")
+  if(file.exists(manfile)){
+    info <- suppressWarnings(yaml.load_file(manfile))
+    pline <- info['Packages'][1]
+    if(!is.null(pline[[1]])){
+      bb <- gsub("\\s", "", strsplit(pline[[1]], ",")[[1]])
+      paste0(unique(bb), collapse = ", ")
     } else { NULL }
   } else { NULL }
 }
@@ -86,8 +99,9 @@ getsysreq <- function(x, lib)
     for(i in seq_along(tmp)){
       tt[[i]] <- paste(sprintf(" - %s:", names(tmp[i])), gsub("\n", " ", tmp[[i]]))
     }
-    paste(tt, collapse = "\n")
-  } else { tmp }
+    vv <- paste(tt, collapse = "\n")
+    if(length(vv) == 0) "" else vv
+  } else { if(length(tmp) == 0) "" else tmp }
 }
 
 pkgdesc <- function(rr, lib){
