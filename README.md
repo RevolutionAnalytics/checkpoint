@@ -3,7 +3,8 @@ RRT
 
 ## Reproducibile R Toolkit
 
-[![Build Status](https://api.travis-ci.org/RevolutionAnalytics/RRT.png)](https://travis-ci.org/RevolutionAnalytics/RRT)
+master: [![](https://api.travis-ci.org/RevolutionAnalytics/RRT.png?branch=master)](https://travis-ci.org/RevolutionAnalytics/RRT)
+dev: [![](https://api.travis-ci.org/RevolutionAnalytics/RRT.png?branch=dev)](https://travis-ci.org/RevolutionAnalytics/RRT)
 
 
 ### Installation
