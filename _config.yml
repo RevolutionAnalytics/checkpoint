@@ -2,6 +2,7 @@ title:        RRT
 tagline:      'Reproducibile R Toolkit'
 description:  'Reproducibile R Toolkit'
 permalink:    /:year/:month/:title/
+url:          http://revolutionanalytics.github.io/RRT/
 author:
   name:       'Scott Chamberlain'
   email:      'myrmecocystus@gmail.com'
