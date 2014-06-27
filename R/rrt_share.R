@@ -1,12 +1,33 @@
 #' Share an RRT repository
 #'
 #' @export
-#' @param repo An RRT repository
+#' @param repo Pah to an RRT repository
 #' @param to How to share. One of zip, tar, github, gist, bitbucket, or email.
 #' @param output Output. This can be one of a file name, directory, or X.
+#' @param address Email address. Only used if \code{to='email'}
 #' @param ... Further args passed on to each internal method. See the examples and Details.
 #'
 #' @details
+#' 
+#' When sharing, by default, we don't share the installed package sources and/or binaries, and 
+#' the installed packages. We do by default share all your files (scripts, data, etc.) in the 
+#' root of your project folder, and the manifest file at \code{rrt/rrt_manifest.yml}
+#' 
+#' Options for sharing, using the \code{to} parameter:
+#' \itemize{
+#'  \item zip - Creates a zip file, and writes by default to your home directory on your machine.
+#'  \item tar - Creates a tar.gz file, and writes by default to your home directory on your machine.
+#'  \item github - Using this option first checks to make sure you have git and git2r, if you do,
+#'  then uses a simplified set of steps: commits any tracked files, then pushes to your Github repo
+#'  (if there is one). You can do more detailed git stuff by using some helper functions within RRT
+#'  (see \code{rrt_git}), or use git on your command line.
+#'  \item gist Share as a Github gist. This requires that you have a Github account. You can save
+#'  your Github credentials to your .Rprofile file by doing \code{options(github.username='<name>')}
+#'  and \code{options(github.password='<name>')}.
+#'  \item bitbucket - Same as \code{github} option, but share to Bitbucket instead.
+#'  \item email - Composes a draft email for you in your default browser and prints path to zip 
+#'  file to attach to the email.
+#' }
 #'
 #' Note that with \code{to='email'} we can't attach the zip file for you, but we print out where
 #' the attachment is so you can easily find it and attach it to the email quickly.
