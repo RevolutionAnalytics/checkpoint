@@ -1,7 +1,6 @@
 title:        RRT
 tagline:      'Reproducibile R Toolkit'
 description:  'Reproducibile R Toolkit'
-url:          https://github.com/RevolutionAnalytics/RRT
 permalink:    /:year/:month/:title/
 author:
   name:       'Scott Chamberlain'
