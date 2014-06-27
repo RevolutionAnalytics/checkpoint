@@ -8,11 +8,11 @@
 #' @param ... Further args passed on to each internal method. See the examples and Details.
 #'
 #' @details
-#' 
-#' When sharing, by default, we don't share the installed package sources and/or binaries, and 
-#' the installed packages. We do by default share all your files (scripts, data, etc.) in the 
+#'
+#' When sharing, by default, we don't share the installed package sources and/or binaries, and
+#' the installed packages. We do by default share all your files (scripts, data, etc.) in the
 #' root of your project folder, and the manifest file at \code{rrt/rrt_manifest.yml}
-#' 
+#'
 #' Options for sharing, using the \code{to} parameter:
 #' \itemize{
 #'  \item zip - Creates a zip file, and writes by default to your home directory on your machine.
@@ -25,12 +25,24 @@
 #'  your Github credentials to your .Rprofile file by doing \code{options(github.username='<name>')}
 #'  and \code{options(github.password='<name>')}.
 #'  \item bitbucket - Same as \code{github} option, but share to Bitbucket instead.
-#'  \item email - Composes a draft email for you in your default browser and prints path to zip 
+#'  \item email - Composes a draft email for you in your default browser and prints path to zip
 #'  file to attach to the email.
 #' }
 #'
 #' Note that with \code{to='email'} we can't attach the zip file for you, but we print out where
 #' the attachment is so you can easily find it and attach it to the email quickly.
+#'
+#' Authentication for Github and Bitbucket: To prevent you from storing sensitive information in
+#' your RRT repositories that you may share with others, we look for Github and Bitbucket
+#' credentials in your hidden \code{.Renviron} file. This is by default in your home directory. See
+#' Sys.getenv('HOME') for your home directory if you're not sure where that is. To store your
+#' credentials there, open up the hidden \code{.Renviron} file and add entries:
+#' \code{GITHUB_USERNAME=yourusername} and \code{GITHUB_PASSWORD=yourpassword}. Note that you don't
+#' quote either the variable name or the variable itself. When you shar via github or bitbucket
+#' we can then pull your credentials from the \code{.Renviron} file, making your life easier. If you
+#' don't store your credentials in your \code{.Renviron} file we will ask you to provide them in the
+#' R session, and we store them in your current R session, but they are wiped after restarting the
+#' session, so to store them across sessions, use the \code{.Renviron} file.
 #'
 #' @examples \dontrun{
 #' rrt_share(to='zip', output='~/myrepo.zip')
@@ -126,12 +138,12 @@ gist_create <- function(files, description = "", public = TRUE, verbose=TRUE,
   dat <- create_gist(files, description = description, public = public)
   credentials <- get_credentials()
   headers <- add_headers(`User-Agent` = "Dummy", `Accept` = 'application/vnd.github.v3+json')
-  auth  <- authenticate(getOption("github.username"), getOption("github.password"), type = "basic")
+  auth  <- authenticate(Sys.getenv("GITHUB_USERNAME"), Sys.getenv("GITHUB_PASSWORD"), type = "basic")
   response <- POST(url = "https://api.github.com/gists", body = dat, config = c(auth, headers), callopts)
   warn_for_status(response)
   assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
   html_url <- content(response)$html_url
-  gisturl <- paste("https://gist.github.com/", getOption("github.username"), "/",
+  gisturl <- paste("https://gist.github.com/", Sys.getenv("GITHUB_USERNAME"), "/",
                    basename(html_url), sep = "")
   message("Your gist has been published!")
   message("View gist at ", gisturl)
@@ -149,18 +161,18 @@ create_gist <- function(filenames, description = "", public = TRUE) {
 }
 
 get_credentials <- function() {
-  if (is.null(getOption("github.username"))) {
+  if (is.null(Sys.getenv("GITHUB_USERNAME"))) {
     username <- readline("Please enter your github username: ")
     if(nchar(username) == 0){
       stop("Authentication failed - you can't have a blank username")
     }
-    options(github.username = username)
+    Sys.setenv(GITHUB_USERNAME = username)
   }
-  if (is.null(getOption("github.password"))) {
+  if (is.null(Sys.getenv("GITHUB_PASSWORD"))) {
     password <- readline("Please enter your github password: ")
     if(nchar(password) == 0){
       stop("Authentication failed - you can't have a blank password")
     }
-    options(github.password = password)
+    Sys.setenv(GITHUB_PASSWORD = password)
   }
 }

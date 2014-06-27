@@ -38,7 +38,7 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
 {
   get_credentials("github")
   headers <- add_headers(`User-Agent` = "Dummy", `Accept` = 'application/vnd.github.v3+json')
-  auth  <- authenticate(getOption("github.username"), getOption("github.password"), type = "basic")
+  auth  <- authenticate(Sys.getenv("GITHUB_USERNAME"), Sys.getenv("GITHUB_PASSWORD"), type = "basic")
   args <- rrt_compact(list(name=name, description=description, homepage=homepage, private=private,
                        has_issues=has_issues, has_wiki=has_wiki, has_downloads=has_downloads,
                        team_id=team_id, auto_init=auto_init, gitignore_template=gitignore_template,
@@ -47,7 +47,7 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
   warn_for_status(response)
   assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
   html_url <- content(response)$html_url
-  githubrepourl <- paste("https://github.com/", getOption("github.username"), "/",
+  githubrepourl <- paste("https://github.com/", Sys.getenv("GITHUB_USERNAME"), "/",
                    basename(html_url), sep = "")
   message("Your Github repo has been created")
   message("View repo at ", githubrepourl)
@@ -85,14 +85,14 @@ rrt_bitbucket <- function(name, description = "", private = FALSE, fork_policy =
   has_issues=TRUE, has_wiki=TRUE, website="", browse=TRUE, ...)
 {
   get_credentials("bitbucket")
-  auth  <- authenticate(getOption("bitbucket.username"), getOption("bitbucket.password"), type = "basic")
+  auth  <- authenticate(Sys.getenv("BITBUCKET_USERNAME"), Sys.getenv("BITBUCKET_PASSWORD"), type = "basic")
   args <- rrt_compact(list(name=name, description=description, is_private=private, scm="git",
             fork_policy=fork_policy, has_issues=has_issues, has_wiki=has_wiki, website=website))
-  url2 <- file.path("https://bitbucket.org/api/2.0/repositories", getOption("bitbucket.username"), name)
+  url2 <- file.path("https://bitbucket.org/api/2.0/repositories", Sys.getenv("BITBUCKET_USERNAME"), name)
   response <- POST(url = url2, body = RJSONIO::toJSON(args), config = auth)
   if(response$status_code > 202){ stop(sprintf("%s - %s", response$status_code, content(response)$error$message), call. = FALSE) } else {
     assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
-    html_url <- file.path("https://bitbucket.org", getOption("bitbucket.username"), name)
+    html_url <- file.path("https://bitbucket.org", Sys.getenv("BITBUCKET_USERNAME"), name)
     message("Your Github repo has been created")
     message("View repo at ", html_url)
     if(browse) browseURL(html_url)
@@ -102,34 +102,34 @@ rrt_bitbucket <- function(name, description = "", private = FALSE, fork_policy =
 get_credentials <- function(what="github") {
   what <- match.arg(what, c("github","bitbucket"))
   if(what=="github"){
-    if (is.null(getOption("github.username"))) {
+    if (is.null(Sys.getenv("GITHUB_USERNAME"))) {
       username <- readline("Please enter your github username: ")
       if(nchar(username) == 0){
         stop("Authentication failed - you can't have a blank github username")
       }
-      options(github.username = username)
+      Sys.setenv(GITHUB_USERNAME = username)
     }
-    if (is.null(getOption("github.password"))) {
+    if (is.null(Sys.getenv("GITHUB_PASSWORD"))) {
       password <- readline("Please enter your github password: ")
       if(nchar(password) == 0){
         stop("Authentication failed - you can't have a blank github password")
       }
-      options(github.password = password)
+      Sys.setenv(GITHUB_PASSWORD = password)
     }
   } else {
-    if (is.null(getOption("bitbucket.username"))) {
+    if (is.null(Sys.getenv("BITBUCKET_USERNAME"))) {
       username <- readline("Please enter your bitbucket username: ")
       if(nchar(username) == 0){
         stop("Authentication failed - you can't have a blank bitbucket username")
       }
-      options(bitbucket.username = username)
+      Sys.setenv(BITBUCKET_USERNAME = username)
     }
-    if (is.null(getOption("bitbucket.password"))) {
+    if (is.null(Sys.getenv("BITBUCKET_PASSWORD"))) {
       password <- readline("Please enter your bitbucket password: ")
       if(nchar(password) == 0){
         stop("Authentication failed - you can't have a blank bitbucket password")
       }
-      options(bitbucket.password = password)
+      Sys.setenv(BITBUCKET_PASSWORD = password)
     }
   }
 }

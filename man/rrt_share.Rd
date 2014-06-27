@@ -43,6 +43,18 @@ Options for sharing, using the \code{to} parameter:
 
 Note that with \code{to='email'} we can't attach the zip file for you, but we print out where
 the attachment is so you can easily find it and attach it to the email quickly.
+
+Authentication for Github and Bitbucket: To prevent you from storing sensitive information in
+your RRT repositories that you may share with others, we look for Github and Bitbucket
+credentials in your hidden \code{.Renviron} file. This is by default in your home directory. See
+Sys.getenv('HOME') for your home directory if you're not sure where that is. To store your
+credentials there, open up the hidden \code{.Renviron} file and add entries:
+\code{GITHUB_USERNAME=yourusername} and \code{GITHUB_PASSWORD=yourpassword}. Note that you don't
+quote either the variable name or the variable itself. When you shar via github or bitbucket
+we can then pull your credentials from the \code{.Renviron} file, making your life easier. If you
+don't store your credentials in your \code{.Renviron} file we will ask you to provide them in the
+R session, and we store them in your current R session, but they are wiped after restarting the
+session, so to store them across sessions, use the \code{.Renviron} file.
 }
 \examples{
 \dontrun{
