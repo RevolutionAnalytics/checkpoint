@@ -12,6 +12,7 @@ BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 VignetteBuilder: knitr
 Imports:
     miniCRAN,
+    git2r,
     digest,
     knitr,
     whisker,
