@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
  <title>RRT</title>
- <link href="http://revolutionanalytics.github.io/RRT//atom.xml" rel="self"/>
- <link href="http://revolutionanalytics.github.io/RRT//"/>
- <updated>2014-06-27T09:18:07-07:00</updated>
- <id>http://revolutionanalytics.github.io/RRT/</id>
+ <link href="/atom.xml" rel="self"/>
+ <link href="/"/>
+ <updated>2014-06-27T09:20:00-07:00</updated>
+ <id></id>
  <author>
    <name>Scott Chamberlain</name>
    <email>myrmecocystus@gmail.com</email>
