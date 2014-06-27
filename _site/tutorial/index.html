@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+
+  <title>
+    Tutorial &middot; 
+    Reproducibile R Toolkit
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,600,700|Abril+Fatface">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/favicon.ico">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-08">
+
+    <header class="masthead">
+      <div class="masthead-inner">
+        <h1>RRT</h1>
+        <!-- <h1> <a href="https://github.com/RevolutionAnalytics/RRT">RRT</a></h1> -->
+        <p class="lead">Reproducibile R Toolkit</p>
+
+        <div class="colophon">
+          <ul class="colophon-links">
+            <li>
+              <a href="/">Home</a><br>
+              <a href="/about">About</a><br>
+              <a href="/installation">Installation</a><br>
+              <a href="/tutorial">Tutorial</a><br>
+              <a href="/mran">MRAN</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT">Github</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT/archive/master.zip">Download (v0.1)</a>
+            </li>
+          </ul>
+          <!-- <small><a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.</small> -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content container">
+      <div class="page">
+  <h1 class="page-title">Tutorial</h1>
+  <ul>
+<li><a href="#installrrt">Install RRT</a></li>
+<li><a href="#createrrt">Create an RRT repository</a>
+
+<ul>
+<li><a href="#nouserinput">w/o user input</a></li>
+<li><a href="#userinput">w/ user input</a></li>
+</ul>
+</li>
+<li><a href="#refresh">Refresh repository</a></li>
+<li><a href="#installpkgs">Install packages</a></li>
+<li><a href="#compatibility">Package compatibility check</a></li>
+<li><a href="#browsing">Browse your RRT repositories</a></li>
+<li><a href="#listing">Get a list of repositories within R</a></li>
+<li><a href="#starting">Starting R from a repo</a></li>
+<li><a href="#mran">Get packages from MRAN </a></li>
+<li><a href="#clean">Clean ('sweep') out all packages from your repository</a></li>
+</ul>
+
+
+<h3><a href="#installrrt" name="installrrt">#</a> Install <code>RRT</code></h3>
+
+<p>On Linux, get xml C library first (on the command line)</p>
+
+<pre><code>(sudo) apt-get update
+(sudo) apt-get install r-cran-xml
+</code></pre>
+
+<p>You may need libcurl too. Do report in the issues tab if you run into this problem.</p>
+
+<p>Get dependency <code>miniCRAN</code> that is not on CRAN</p>
+
+<p>In an <code>R</code> session</p>
+
+<pre><code class="coffee">install.packages("devtools")
+library("devtools")
+</code></pre>
+
+<pre><code class="coffee">devtools::install_github("andrie/miniCRAN")
+</code></pre>
+
+<p><em>Optionally</em>, install <code>git2r</code> to use git from within R. <code>git2r</code> is in Enhances in <code>RRT</code>, so you don't need it to install <code>RRT</code></p>
+
+<pre><code class="coffee">devtools::install_github("ropensci/git2r")
+</code></pre>
+
+<p>Then install <code>RRT</code></p>
+
+<pre><code class="coffee">devtools::install_github("RevolutionAnalytics/RRT")
+library("RRT")
+</code></pre>
+
+<h3><a href="#createrrt" name="createrrt">#</a> Create an RRT repository</h3>
+
+<h4><a href="#nouserinput" name="nouserinput">#</a> Create a repo without user input</h4>
+
+<pre><code class="r">rrt_init("~/mynewrepository")
+</code></pre>
+
+<pre><code class="r">Checking to see if repository exists already...
+Creating repository ~/mynewrepository
+Checing to make sure rrt directory exists inside your repository...
+Creating rrt directory ~/mynewrepository/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0
+Looking for packages used in your repository...
+Writing repository manifest...
+
+&gt;&gt;&gt; RRT initialization completed.
+</code></pre>
+
+<p>You should now have a RRT repository</p>
+
+<h4><a href="#userinput" name="userinput">#</a> Or create a repo interactively</h4>
+
+<p>This process will ask you questions</p>
+
+<pre><code class="r">rrt_init(interactive=TRUE)
+</code></pre>
+
+<pre><code class="r">Repository name (default: random name generated):
+somenewrepo # user entered
+
+Repository path (default: home directory + repository name):
+ # user left blank
+
+Repository author(s) (default: left blank):
+Scott Chamberlain # user entered
+
+Repo license (default: MIT):
+GPL-2 # user entered
+
+Repo description (default: left blank):
+A repository for research on x, y, and z # user entered
+
+Repo remote git or svn repo (default: left blank):
+https://github.com/sckott/somenewrepo # user entered
+</code></pre>
+
+<p>With similar message as above for other checks</p>
+
+<pre><code class="r">Checking to see if repository exists already...
+Creating repository /Users/sacmac/somenewrepo
+Checing to make sure rrt directory exists inside your repository...
+Creating rrt directory /Users/sacmac/somenewrepo/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0
+Looking for packages used in your repository...
+Writing repository manifest...
+
+&gt;&gt;&gt; RRT initialization completed.
+</code></pre>
+
+<h3><a href="#refresh" name="refresh">#</a> Refresh repository</h3>
+
+<p><code>rrt_refresh()</code> is used to update the packages installed locally in your repository by looking through the repository files again for new packages. After we initiated a new repo above with <code>rrt_init()</code> we may add some code in a <code>code.R</code> file. Then we want to update the packages in the repo, which can be done with <code>rrt_refresh()</code>.</p>
+
+<pre><code class="r">rrt_refresh("~/mynewrepository")
+</code></pre>
+
+<pre><code class="r">Checking to make sure repository exists...
+Checking to make sure rrt directory exists inside your repository...
+Looking for packages used in your repository...
+Getting new packages...
+Creating new folders: ~/mynewrepository/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0/src/contrib
+trying URL 'http://cran.r-project.org/src/contrib/plyr_1.8.1.tar.gz'
+Content type 'application/x-gzip' length 393233 bytes (384 Kb)
+opened URL
+==================================================
+downloaded 384 Kb
+
+trying URL 'http://cran.r-project.org/src/contrib/Rcpp_0.11.2.tar.gz'
+Content type 'application/x-gzip' length 2004313 bytes (1.9 Mb)
+opened URL
+==================================================
+downloaded 1.9 Mb
+
+Writing repository manifest...
+
+&gt;&gt;&gt; RRT refresh completed.
+</code></pre>
+
+<p>As you can see <code>rrt_refresh()</code> scans the repo for new packages used, downloads them if any new ones, and updates the manifest file.</p>
+
+<h3><a href="#installpkgs" name="installpkgs">#</a> Install packages</h3>
+
+<p><code>rrt_init()</code> and <code>rrt_refresh()</code> do not install any packages. Packages are downloaded, but not installed yet. The installation process is separate on purpose, but if needed could become part of the initialization and/or refresh functions.</p>
+
+<p><code>rrt_install()</code> installs packages into the repository itself</p>
+
+<pre><code class="r">rrt_install("~/mynewrepository")
+</code></pre>
+
+<pre><code class="r">Checking to make sure repository exists...
+Checing to make sure rrt directory exists inside your repository...
+Looking for packages used in your repository...
+Installing packages...
+
+...cutoff
+</code></pre>
+
+<h3><a href="#compatibility" name="compatibility">#</a> Package compatibility check</h3>
+
+<p>This will be done by <code>rrt_compat()</code> - this function is not done yet...</p>
+
+<h3><a href="#browsing" name="browsing">#</a> Browse your RRT repositories</h3>
+
+<p>This function uses <code>rrt_repos_list()</code> (see below) internally, and uses the <code>whisker</code> R package to build a series of web pages to easily understand what RRT repos exist on your machine, their details, etc.</p>
+
+<pre><code class="r">rrt_browse()
+</code></pre>
+
+<p>Should open up a web page in your default browser</p>
+
+<p><img src="../public/img/browse1.png" alt="" /></p>
+
+<p>You can click on each green button to get to more detailed data for each repository</p>
+
+<p><img src="../public/img/browse2.png" alt="" /></p>
+
+<h3><a href="#listing" name="listing">#</a> Get a list of repositories within R</h3>
+
+<pre><code class="r">rrt_repos_list()
+</code></pre>
+
+<pre><code class="r">No. repos: 8
+First 10 repo ids : 29307e120a662d571bfd9fa1395f426e, 277c8be765b8fa66fb8180204459d408, 8ebc7000ea66165b24ba492d99a729fc, 543e3adeb00dfec82628addcb2dffbb4, 4177de12146511bf69a6d6cec69eb8d2, 1a6f0d8a387c0854464d260da141a9ea, 837809181e43446a37f550c0ef38c125, 0b34a89dda7b251d24c39fd90bf9881c
+</code></pre>
+
+<pre><code class="r">rrt_repos_list()[[1]]
+</code></pre>
+
+<pre><code class="r">$repo
+[1] "~/howdydoody//rrt/rrt_manifest.txt"
+
+$InstalledWith
+[1] "RRT"
+
+$InstalledFrom
+[1] "source"
+
+$RRT_version
+[1] "0.0.1"
+
+$R_version
+[1] "3.1.0"
+
+$DateCreated
+[1] "2014-20-16"
+
+$PkgsInstalledAt
+[1] "/Users/sacmac/howdydoody//rrt/lib/x86_64-apple-darwin13.1.0/3.1.0"
+
+$RepoID
+[1] "29307e120a662d571bfd9fa1395f426e"
+
+$Packages
+[1] "colorspace,dichromat,digest,ggplot2,gtable,labeling,MASS,munsell,plyr,proto,RColorBrewer,Rcpp,reshape2,scales,stringr,lattice"
+
+$SystemRequirements
+[1] ""
+
+$repo_root
+[1] "~/howdydoody/"
+</code></pre>
+
+<h3><a href="#starting" name="starting">#</a> Starting R from a repo</h3>
+
+<p>If you start R from a RRT repository R will use the repository specific <code>.Rprofile</code> file and look for packages in the repository to install instead of the global R packages library.</p>
+
+<h3><a href="#mran" name="mran">#</a> Get packages from MRAN</h3>
+
+<p>Note: this doesn't install them, only downloads them.</p>
+
+<pre><code class="r">pkgs_marmoset(pkgs=c("plyr","ggplot2"), outdir="~/marmoset_snaps/stuff/")
+</code></pre>
+
+<p>Snapshots are done a number of times each day, so a date input is used to check what snapshots are available for that date. If there is more than one, the options are listed, and you press the number of the row that corresponds to the snapshot you want to use. Then <code>rsync</code> is used to download the package(s) to the directory you specify in the <code>outdir</code> parameter. Currently, you have to specify package and version number as <code>package_ver</code>.</p>
+
+<pre><code class="r">        snapshots
+1 2014-06-19_0053
+2 2014-06-19_0103
+3 2014-06-19_0111
+4 2014-06-19_0126
+5 2014-06-19_0136
+6 2014-06-19_0802
+7 2014-06-19_0817
+8 2014-06-19_1100
+9 2014-06-19_1400
+
+More than one snapshot matching your date found
+Enter rownumber of snapshot (other inputs will return 'NA'):
+
+1: 9
+receiving file list ...
+4 files to consider
+ggplot2/
+ggplot2/ggplot2_1.0.0.tar.gz
+       2.35M 100%    2.07MB/s    0:00:01 (xfer#1, to-check=2/4)
+plyr/
+plyr/plyr_1.8.1.tar.gz
+     393.23K 100%    1.99MB/s    0:00:00 (xfer#2, to-check=0/4)
+
+sent 125 bytes  received 2.75M bytes  1.10M bytes/sec
+total size is 2.74M  speedup is 1.00
+</code></pre>
+
+<h3><a href="#clean" name="clean">#</a> Clean</h3>
+
+<p>You can clean out all package sources and installed packages from your repository with a single easy to use function: <code>rrt_sweep()</code>. This defaults to work from your current working directory, and deletes all package sources and installed packages. This basically creates a clean slate in your <code>rrt/</code> directory in your respository. Your manifest file is unchanged though to retain metadata important to replication of your efforts.</p>
+
+<pre><code class="r">rrt_sweep()
+</code></pre>
+
+<pre><code class="r">Checking to make sure repository exists...
+Checing to make sure rrt directory exists inside your repository...
+Package sources removed
+Your repository packages successfully removed:
+abind
+doMC
+foreach
+iterators
+itertools
+plyr
+Rcpp
+testthat
+</code></pre>
+
+<p>This leaves you with all your personal files, your <code>rrt/</code> directory, and your manifest file intact.</p>
+
+</div>
+
+    </div>
+
+  </body>
+
+  <!-- <footer>
+  <!-- Gaug.es Analytics -->
+  <script type="text/javascript">
+    var _gauges = _gauges || [];
+    (function() {
+      var t   = document.createElement('script');
+      t.type  = 'text/javascript';
+      t.async = true;
+      t.id    = 'gauges-tracker';
+      t.setAttribute('data-site-id', '53ad81c88bfdf738fe00d730');
+      t.src = '//secure.gaug.es/track.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(t, s);
+    })();
+  </script>
+</footer>
+ -->
+</html>

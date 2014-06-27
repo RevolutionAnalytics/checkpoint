@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  {% include head.html %}
+
+  <body class="theme-base-08">
+
+    <header class="masthead">
+      <div class="masthead-inner">
+        <h1>{{ site.title }}</h1>
+        <!-- <h1> <a href="{{ site.url }}">{{ site.title }}</a></h1> -->
+        <p class="lead">{{ site.description }}</p>
+
+        <div class="colophon">
+          <ul class="colophon-links">
+            <li>
+              <a href="/">Home</a><br>
+              <a href="/about">About</a><br>
+              <a href="/installation">Installation</a><br>
+              <a href="/tutorial">Tutorial</a><br>
+              <a href="/mran">MRAN</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT">Github</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT/archive/master.zip">Download (v{{ site.version }})</a>
+            </li>
+          </ul>
+          <!-- <small><a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.</small> -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content container">
+      {{ content }}
+    </div>
+
+  </body>
+
+  <!-- {% include footer.html %} -->
+</html>

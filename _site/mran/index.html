@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+
+  <title>
+    Installation &middot; 
+    Reproducibile R Toolkit
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,600,700|Abril+Fatface">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/favicon.ico">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-08">
+
+    <header class="masthead">
+      <div class="masthead-inner">
+        <h1>RRT</h1>
+        <!-- <h1> <a href="https://github.com/RevolutionAnalytics/RRT">RRT</a></h1> -->
+        <p class="lead">Reproducibile R Toolkit</p>
+
+        <div class="colophon">
+          <ul class="colophon-links">
+            <li>
+              <a href="/">Home</a><br>
+              <a href="/about">About</a><br>
+              <a href="/installation">Installation</a><br>
+              <a href="/tutorial">Tutorial</a><br>
+              <a href="/mran">MRAN</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT">Github</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT/archive/master.zip">Download (v0.1)</a>
+            </li>
+          </ul>
+          <!-- <small><a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.</small> -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content container">
+      <div class="page">
+  <h1 class="page-title">Installation</h1>
+  <ul>
+<li><a href="#whatismran">What is MRAN?</a></li>
+<li><a href="#indetail">MRAN</a></li>
+<li><a href="#snapshots">How are snapshots created?</a></li>
+<li><a href="#dates">Important note regarding dates</a></li>
+<li><a href="#diffsnaps">Difference between snapshots of MRAN</a></li>
+<li><a href="#metadatarrt">Metadata and RRT integration</a></li>
+</ul>
+
+
+<h3><a href="#whatismran" name="whatismran">#</a> What is MRAN?</h3>
+
+<p>MRAN is a server side component that works hand-in-hand with the client side
+RRT package.
+The goal of MRAN is to better organize the various places that R packages
+live on CRAN, and add point in time capabilities.</p>
+
+<h3><a href="#indetail" name="indetail">#</a> In detail - MRAN (Marmoset R Archive Network)</h3>
+
+<p>MRAN is downstream snapshot of CRAN. The main differentiation of MRAN to CRAN
+is that MRAN consists of a series of snapshots that are taken every three
+hours using a script that points to the master CRAN server in Vienna, Austria.
+Each MRAN snapshot holds all source versions of a package in the same
+per-package directory on the MRAN server.
+i.e. mran.revolutionanalytics.com/snapshots/2014-06-26_1400/zoo</p>
+
+<h3><a href="#snapshots" name="snapshots">#</a> How are snapshots created?</h3>
+
+<p>Snapshots are created using <a href="http://open-zfs.org/wiki/Main_Page">ZFS</a>.
+The MRAN server is specifically using
+<a href="http://zfsonlinux.org/">ZFS-on-Linux</a>.
+The ZFS-on-linux project was started at Lawrence Livermore National Laboratory.
+Open-ZFS is an open source community project that has similarities to the
+R ecosystem.</p>
+
+<p>ZFS was chosen as the snapshot method for MRAN as it works on the block level,
+not the file level like many other tools. It is efficient for storing binary
+files, unlike other tools such as git, mercurial or subversion.
+ZFS is very space efficient: ZFS snapshots only take up the amount of
+space that has changed between the snapshot and the 'live' file system. i.e.
+very small when looking at the daily churn of R packages, but great space
+savings when looking at the ecosystem of packages hosted on CRAN as a whole
+over the course of a year.
+A current overview of space usage on the current MRAN server can be found at:
+http://mran.revolutionanalytics.com/accounting.txt
+All MRAN snapshots are exposed at:
+http://marmoset.revolutionanalytics.com/snapshots/</p>
+
+<h3><a href="#dates" name="dates">#</a> Important note regarding dates</h3>
+
+<p>MRAN snapshots are taken using the UTC time zone as the basis for dates.</p>
+
+<h3><a href="#diffsnaps" name="diffsnaps">#</a> Differences between snapshots of MRAN</h3>
+
+<p>The <code>zfs diff</code> command is the method that diffs are created with.
+Diffs are taken between the most recent snapshot and the previous
+snapshot so that RRT or a user can compare differences between them
+at any point in time.</p>
+
+<p>The output of the diffs are exposed at:<br/>
+http://marmoset.revolutionanalytics.com/diffs/</p>
+
+<h3><a href="#metadatarrt" name="metadatarrt">#</a> Metadata and RRT integration</h3>
+
+<p>mran_metadata.R creates metadata from each snapshot of source packages.
+Right now it only holds basic metadata, but will hold additional
+metadata in the future. All metadata is exposed at:<br/>
+http://marmoset.revolutionanalytics.com/metadata/</p>
+
+</div>
+
+    </div>
+
+  </body>
+
+  <!-- <footer>
+  <!-- Gaug.es Analytics -->
+  <script type="text/javascript">
+    var _gauges = _gauges || [];
+    (function() {
+      var t   = document.createElement('script');
+      t.type  = 'text/javascript';
+      t.async = true;
+      t.id    = 'gauges-tracker';
+      t.setAttribute('data-site-id', '53ad81c88bfdf738fe00d730');
+      t.src = '//secure.gaug.es/track.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(t, s);
+    })();
+  </script>
+</footer>
+ -->
+</html>

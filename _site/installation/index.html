@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+
+  <title>
+    Installation &middot; 
+    Reproducibile R Toolkit
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,600,700|Abril+Fatface">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/favicon.ico">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body class="theme-base-08">
+
+    <header class="masthead">
+      <div class="masthead-inner">
+        <h1>RRT</h1>
+        <!-- <h1> <a href="https://github.com/RevolutionAnalytics/RRT">RRT</a></h1> -->
+        <p class="lead">Reproducibile R Toolkit</p>
+
+        <div class="colophon">
+          <ul class="colophon-links">
+            <li>
+              <a href="/">Home</a><br>
+              <a href="/about">About</a><br>
+              <a href="/installation">Installation</a><br>
+              <a href="/tutorial">Tutorial</a><br>
+              <a href="/mran">MRAN</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT">Github</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT/archive/master.zip">Download (v0.1)</a>
+            </li>
+          </ul>
+          <!-- <small><a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.</small> -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content container">
+      <div class="page">
+  <h1 class="page-title">Installation</h1>
+  <p><strong>Installation</strong></p>
+
+<ul>
+<li><a href="#linux---osx">Linux/OSX</a></li>
+<li><a href="#windows">Windows</a></li>
+<li><a href="#git">git</a></li>
+</ul>
+
+
+<p>To install R, go to the <a href="http://cran.r-project.org/">CRAN home page</a></p>
+
+<h3>Linux - OSX</h3>
+
+<p>On Linux, you may need to install xml C library first (on the command line) (if you don't have them already). You may need libcurl too. Do report in the issues tab if you run into this problem. On OSX, I believe xml and curl C libraries are installed by default on your machine.</p>
+
+<pre><code>(sudo) apt-get update
+(sudo) apt-get install r-cran-xml
+</code></pre>
+
+<p>Get dependency <code>miniCRAN</code> that is not on CRAN</p>
+
+<p>In an <code>R</code> session</p>
+
+<pre><code class="coffee">install.packages("devtools")
+library("devtools")
+</code></pre>
+
+<pre><code class="coffee">install_github("andrie/miniCRAN")
+</code></pre>
+
+<p>Then install <code>RRT</code></p>
+
+<pre><code class="coffee">install_github("RevolutionAnalytics/RRT")
+library("RRT")
+</code></pre>
+
+<h3>OSX</h3>
+
+<p>asdfadf</p>
+
+<h3>Windows</h3>
+
+<ul>
+<li>Install <a href="http://cran.r-project.org/bin/windows/Rtools/">Rtools</a></li>
+<li>Install the <a href="https://github.com/hadley/devtools">devtools R package</a>. You can install from source, or just install via <code>install.packages("devtools")</code>, or choose devtools from the R GUI.</li>
+<li>Install <code>miniCRAN</code></li>
+</ul>
+
+
+<pre><code class="coffee">install_github("andrie/miniCRAN")
+</code></pre>
+
+<ul>
+<li>Then install <code>RRT</code></li>
+</ul>
+
+
+<pre><code class="coffee">install_github("RevolutionAnalytics/RRT")
+library("RRT")
+</code></pre>
+
+<h3>git</h3>
+
+<p><em>Optionally</em>, install <code>git2r</code> to use git from within R. <code>git2r</code> is in Enhances in <code>RRT</code>, so you don't need it to install <code>RRT</code></p>
+
+<pre><code class="coffee">install_github("ropensci/git2r")
+</code></pre>
+
+</div>
+
+    </div>
+
+  </body>
+
+  <!-- <footer>
+  <!-- Gaug.es Analytics -->
+  <script type="text/javascript">
+    var _gauges = _gauges || [];
+    (function() {
+      var t   = document.createElement('script');
+      t.type  = 'text/javascript';
+      t.async = true;
+      t.id    = 'gauges-tracker';
+      t.setAttribute('data-site-id', '53ad81c88bfdf738fe00d730');
+      t.src = '//secure.gaug.es/track.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(t, s);
+    })();
+  </script>
+</footer>
+ -->
+</html>
