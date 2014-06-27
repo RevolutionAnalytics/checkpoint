@@ -33,6 +33,11 @@ git_add <- function(path=getwd(), verbose=TRUE){
   if(take == 2){
     add(rep, unname(unlist(st$untracked)))
   }
+
+  # commit files users chooses
+  if(take == 2){
+    commit(rep, unname(unlist(st$untracked)))
+  }
 }
 
 #' Add and commit files in your RRT repository
