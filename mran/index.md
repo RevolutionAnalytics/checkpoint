@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Installation
+title: MRAN Overview
 ---
 
 * [What is MRAN?](#whatismran)
@@ -21,7 +21,7 @@ MRAN is downstream snapshot of CRAN. The main differentiation of MRAN to CRAN
 is that MRAN consists of a series of snapshots that are taken every three
 hours using a script that points to the master CRAN server in Vienna, Austria.
 Each MRAN snapshot holds all source versions of a package in the same
-per-package directory on the MRAN server.
+per-package directory on the MRAN server.  
 i.e. mran.revolutionanalytics.com/snapshots/2014-06-26_1400/zoo
 
 ### <a href="#snapshots" name="snapshots">#</a> How are snapshots created?
@@ -29,8 +29,8 @@ Snapshots are created using [ZFS](http://open-zfs.org/wiki/Main_Page).
 The MRAN server is specifically using
 [ZFS-on-Linux](http://zfsonlinux.org/).
 The ZFS-on-linux project was started at Lawrence Livermore National Laboratory.
-Open-ZFS is an open source community project that has similarities to the
-R ecosystem.
+Open-ZFS is an open source community project that has a wide range of contributors 
+and sponsors that comprise it's ecosystem.
 
 ZFS was chosen as the snapshot method for MRAN as it works on the block level,
 not the file level like many other tools. It is efficient for storing binary
@@ -39,10 +39,10 @@ ZFS is very space efficient: ZFS snapshots only take up the amount of
 space that has changed between the snapshot and the 'live' file system. i.e.
 very small when looking at the daily churn of R packages, but great space
 savings when looking at the ecosystem of packages hosted on CRAN as a whole
-over the course of a year.
-A current overview of space usage on the current MRAN server can be found at:
-http://mran.revolutionanalytics.com/accounting.txt
-All MRAN snapshots are exposed at:
+over the course of a year.  
+A current overview of space usage on the current MRAN server can be found at:  
+http://mran.revolutionanalytics.com/accounting.txt  
+All MRAN snapshots are exposed at:  
 http://marmoset.revolutionanalytics.com/snapshots/
 
 
@@ -63,6 +63,6 @@ http://marmoset.revolutionanalytics.com/diffs/
 ### <a href="#metadatarrt" name="metadatarrt">#</a> Metadata and RRT integration
 
 mran_metadata.R creates metadata from each snapshot of source packages.
-Right now it only holds basic metadata, but will hold additional
-metadata in the future. All metadata is exposed at:  
+A variety of metadata above and beyond what a CRAN package description file would contain is stored for each package.  
+All metadata is exposed at:  
 http://marmoset.revolutionanalytics.com/metadata/
