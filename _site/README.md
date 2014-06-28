@@ -1,4 +1,4 @@
-## Recology
+## RRT - Reproducible R Toolkit
 
 Modified from [Erjjones.Github.com](Erjjones.Github.com) (thanks!). 
 
