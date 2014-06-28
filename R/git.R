@@ -76,7 +76,7 @@ git_add_commit <- function(path=getwd(), message="", verbose=TRUE, ...){
 #' git_add(path="~/bbb")
 #' }
 
-git_setup <- function(path, verbose=TRUE, ...){
+git_setup <- function(path=getwd(), verbose=TRUE, ...){
   # check for rrt directory in the repo, and stop if it doesn't exist
   if(!is_rrt(path, FALSE))
     stop(sprintf("%s is not an RRT repo; See ?rrt_init", path))
@@ -87,7 +87,7 @@ git_setup <- function(path, verbose=TRUE, ...){
 #     mssg(verbose, sprintf("%s is not an git repository; Do you want to initialize git?", path))
 #     take <- scan(n = 1, quiet = TRUE, what = 'raw')
     take <- yesno(sprintf("%s is not an git repository; Do you want to initialize git?", path))
-    if(!take == 1){
+    if(take == 1){
       mssg(verbose, sprintf("Initializing git repo in %s", path))
       git2r::init(path)
       mssg(verbose, sprintf("Writing .gitignore file in %s", path))

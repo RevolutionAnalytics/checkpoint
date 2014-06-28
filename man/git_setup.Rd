@@ -3,7 +3,7 @@
 \alias{git_setup}
 \title{Add and commit files in your RRT repository}
 \usage{
-git_setup(path, verbose = TRUE, ...)
+git_setup(path = getwd(), verbose = TRUE, ...)
 }
 \arguments{
 \item{path}{Path to the RRT repository}
