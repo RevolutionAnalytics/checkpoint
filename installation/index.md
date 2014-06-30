@@ -3,8 +3,6 @@ layout: page
 title: RRT Installation
 ---
 
-**RRT Installation**
-
 * [Ubuntu Linux](#Ubuntu Linux)
 * [Mac OS X](#Mac OS X)
 * [Windows](#windows)
@@ -23,6 +21,8 @@ Mac [Homebrew](http://brew.sh) users can
 ```coffee
 brew update ; brew tap homebrew/science ; brew install R
 ```
+
+**RRT Installation by operating system**
 
 ### Ubuntu Linux
 
