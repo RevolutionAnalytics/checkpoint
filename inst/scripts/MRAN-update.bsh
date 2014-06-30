@@ -2,7 +2,7 @@
 #This is the Marmoset R Archive Network (MRAN) update script
 #We use ZFS for snapshots
 
-#rrt-user account works with dates and times in GMT via ~/.profile, we set it again here so that is made clear
+#rrt-user account works with dates and times in UTC via ~/.profile, we set it again here so that is made clear
 export TZ="UTC"
 
 #use ISO standard for date, underscore for date time seperator, no colon for hour minute seperation
