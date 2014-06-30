@@ -1,23 +1,37 @@
 ---
 layout: page
-title: Installation
+title: RRT Installation
 ---
 
-**Installation**
+**RRT Installation**
 
-* [Linux/OSX](#linux---osx)
+* [Ubuntu Linux](#Ubuntu Linux)
+* [Mac OS X](#Mac OS X)
 * [Windows](#windows)
-* [git](#git)
+* optional [git integration](#git integration)
 
-To install R, go to the [CRAN home page](http://cran.r-project.org/)
+To install R, the best place to start is the [CRAN home page](http://cran.r-project.org/)  
+Optionally:  
+Ubuntu users can  
 
-### Linux - OSX
+```coffee
+apt-get update ; apt-get install r-base
+```  
 
-On Linux, you may need to install xml C library first (on the command line) (if you don't have them already). You may need libcurl too. Do report in the issues tab if you run into this problem. On OSX, I believe xml and curl C libraries are installed by default on your machine.
+Mac [Homebrew](http://brew.sh) users can 
 
+```coffee
+brew update ; brew tap homebrew/science ; brew install R
 ```
-(sudo) apt-get update
-(sudo) apt-get install r-cran-xml
+
+### Ubuntu Linux
+
+On Ubuntu Linux, you may need to install two system dependencies:  
+-XML C library  
+-libcurl-dev
+
+```coffee
+apt-get install r-cran-xml libcurl-dev
 ```
 
 Get dependency `miniCRAN` that is not on CRAN
@@ -40,15 +54,42 @@ install_github("RevolutionAnalytics/RRT")
 library("RRT")
 ```
 
-### OSX
+RRT has been tested on Ubuntu 14.04.  
+Please create a brief item in the [RRT issue tracker](https://github.com/RevolutionAnalytics/RRT/issues) 
+if you run into issues with system dependencies or general install issues.
 
+### Mac OS X
 
-asdfadf
+XML and curl C libraries should be installed by default on your machine.
+RRT has been tested on Mac OS X Mavericks.  
+Please create a brief item in the [RRT issue tracker](https://github.com/RevolutionAnalytics/RRT/issues) 
+if you run into issues on other versions of Mac OS X and system dependencies.  
+
+Get dependency `miniCRAN` that is not on CRAN
+
+In an `R` session
+
+```coffee
+install.packages("devtools")
+library("devtools")
+```
+
+```coffee
+install_github("andrie/miniCRAN")
+```
+
+Then install `RRT`
+
+```coffee
+install_github("RevolutionAnalytics/RRT")
+library("RRT")
+```
 
 ### Windows
 
 * Install [Rtools](http://cran.r-project.org/bin/windows/Rtools/)
-* Install the [devtools R package](https://github.com/hadley/devtools). You can install from source, or just install via `install.packages("devtools")`, or choose devtools from the R GUI.
+* Install the [devtools R package](https://github.com/hadley/devtools). You can install from source, 
+or just install via `install.packages("devtools")`, or choose devtools from the R GUI.
 * Install `miniCRAN`
 
 ```coffee
@@ -62,9 +103,11 @@ install_github("RevolutionAnalytics/RRT")
 library("RRT")
 ```
 
-### git
+### git integration
 
-_Optionally_, install `git2r` to use git from within R. `git2r` is in Enhances in `RRT`, so you don't need it to install `RRT`
+_Optionally_, install `git2r` to use git capabilities from within R / RRT. `git2r` is an enhancement in `RRT`,
+so you do not need git2r to install `RRT`. RRT users are encouraged to try the git integration features of RRT
+to simplify sharing R code repositories with other R users.
 
 ```coffee
 install_github("ropensci/git2r")
