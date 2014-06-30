@@ -31,24 +31,24 @@ Get dependency `miniCRAN` that is not on CRAN
 
 In an `R` session
 
-```coffee
+```r
 install.packages("devtools")
 library("devtools")
 ```
 
-```coffee
+```r
 devtools::install_github("andrie/miniCRAN")
 ```
 
 _Optionally_, install `git2r` to use git from within R. `git2r` is in Enhances in `RRT`, so you don't need it to install `RRT`
 
-```coffee
+```r
 devtools::install_github("ropensci/git2r")
 ```
 
 Then install `RRT`
 
-```coffee
+```r
 devtools::install_github("RevolutionAnalytics/RRT")
 library("RRT")
 ```
@@ -117,7 +117,7 @@ Writing repository manifest...
 ### <a href="#refresh" name="refresh">#</a> Refresh repository
 
 `rrt_refresh()` is used to update the packages installed locally in your repository by looking through the repository files again for new packages.
-After we initiated a new repo above with `rrt_init()` we may add some code in a `code.R` file. 
+After we initiated a new repo above with `rrt_init()` we may add some code in a `code.R` file.
 Then we want to update the packages in the repo, which can be done with `rrt_refresh()`.
 
 ```r
@@ -126,23 +126,36 @@ rrt_refresh("~/mynewrepository")
 
 ```r
 Checking to make sure repository exists...
-Checking to make sure rrt directory exists inside your repository...
+Checing to make sure rrt directory exists inside your repository...
+rrt directory already exists
 Looking for packages used in your repository...
 Getting new packages...
-Creating new folders: ~/mynewrepository/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0/src/contrib
-trying URL 'http://cran.r-project.org/src/contrib/plyr_1.8.1.tar.gz'
-Content type 'application/x-gzip' length 393233 bytes (384 Kb)
-opened URL
-==================================================
-downloaded 384 Kb
+        snapshots
+1 2014-06-30_0200
+2 2014-06-30_0500
+3 2014-06-30_0800
+4 2014-06-30_1100
+5 2014-06-30_1400
+6 2014-06-30_1700
+7 2014-06-30_2000
 
-trying URL 'http://cran.r-project.org/src/contrib/Rcpp_0.11.2.tar.gz'
-Content type 'application/x-gzip' length 2004313 bytes (1.9 Mb)
-opened URL
-==================================================
-downloaded 1.9 Mb
+More than one snapshot matching your date found
+Enter rownumber of snapshot (other inputs will return 'NA'):
 
+1: 7
+receiving file list ...
+4 files to consider
+stringr/
+stringr/stringr_0.6.2.tar.gz
+       20636 100%    2.46MB/s    0:00:00 (xfer#1, to-check=2/4)
+testthat/
+testthat/testthat_0.8.1.tar.gz
+       40777 100%    4.86MB/s    0:00:00 (xfer#2, to-check=0/4)
+
+sent 133 bytes  received 61662 bytes  41196.67 bytes/sec
+total size is 61413  speedup is 0.99
 Writing repository manifest...
+/Users/sacmac/.rrt/www/rrt.html
 
 >>> RRT refresh completed.
 ```

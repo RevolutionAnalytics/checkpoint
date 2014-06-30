@@ -11,3 +11,4 @@ markdown:     rdiscount
 pygments:     true
 paginate:     3
 version:      0.1
+exclude:      ['*.Rmd']

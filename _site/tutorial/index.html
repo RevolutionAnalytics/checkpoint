@@ -39,11 +39,12 @@
               <a href="http://revolutionanalytics.github.io/RRT/installation">Installation</a><br>
               <a href="http://revolutionanalytics.github.io/RRT/tutorial">Tutorial</a><br>
               <a href="http://revolutionanalytics.github.io/RRT/mran">MRAN</a><br>
-              <a href="https://github.com/RevolutionAnalytics/RRT">Github</a><br>
-              <a href="https://github.com/RevolutionAnalytics/RRT/archive/master.zip">Download (v0.1)</a>
+              <a href="https://github.com/RevolutionAnalytics/RRT/issues">Issue Tracker</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT">Source Code</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT/archive/v0.1.0.zip">Download (v0.1)</a>
             </li>
           </ul>
-          <!-- <small><a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.</small> -->
+          <!-- hyde theme from <a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>-->
         </div>
       </div>
     </header>
@@ -85,21 +86,21 @@
 
 <p>In an <code>R</code> session</p>
 
-<pre><code class="coffee">install.packages("devtools")
+<pre><code class="r">install.packages("devtools")
 library("devtools")
 </code></pre>
 
-<pre><code class="coffee">devtools::install_github("andrie/miniCRAN")
+<pre><code class="r">devtools::install_github("andrie/miniCRAN")
 </code></pre>
 
 <p><em>Optionally</em>, install <code>git2r</code> to use git from within R. <code>git2r</code> is in Enhances in <code>RRT</code>, so you don't need it to install <code>RRT</code></p>
 
-<pre><code class="coffee">devtools::install_github("ropensci/git2r")
+<pre><code class="r">devtools::install_github("ropensci/git2r")
 </code></pre>
 
 <p>Then install <code>RRT</code></p>
 
-<pre><code class="coffee">devtools::install_github("RevolutionAnalytics/RRT")
+<pre><code class="r">devtools::install_github("RevolutionAnalytics/RRT")
 library("RRT")
 </code></pre>
 
@@ -112,7 +113,7 @@ library("RRT")
 
 <pre><code class="r">Checking to see if repository exists already...
 Creating repository ~/mynewrepository
-Checing to make sure rrt directory exists inside your repository...
+Checking to make sure rrt directory exists inside your repository...
 Creating rrt directory ~/mynewrepository/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0
 Looking for packages used in your repository...
 Writing repository manifest...
@@ -152,7 +153,7 @@ https://github.com/sckott/somenewrepo # user entered
 
 <pre><code class="r">Checking to see if repository exists already...
 Creating repository /Users/sacmac/somenewrepo
-Checing to make sure rrt directory exists inside your repository...
+Checking to make sure rrt directory exists inside your repository...
 Creating rrt directory /Users/sacmac/somenewrepo/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0
 Looking for packages used in your repository...
 Writing repository manifest...
@@ -162,29 +163,44 @@ Writing repository manifest...
 
 <h3><a href="#refresh" name="refresh">#</a> Refresh repository</h3>
 
-<p><code>rrt_refresh()</code> is used to update the packages installed locally in your repository by looking through the repository files again for new packages. After we initiated a new repo above with <code>rrt_init()</code> we may add some code in a <code>code.R</code> file. Then we want to update the packages in the repo, which can be done with <code>rrt_refresh()</code>.</p>
+<p><code>rrt_refresh()</code> is used to update the packages installed locally in your repository by looking through the repository files again for new packages.
+After we initiated a new repo above with <code>rrt_init()</code> we may add some code in a <code>code.R</code> file.
+Then we want to update the packages in the repo, which can be done with <code>rrt_refresh()</code>.</p>
 
 <pre><code class="r">rrt_refresh("~/mynewrepository")
 </code></pre>
 
 <pre><code class="r">Checking to make sure repository exists...
-Checking to make sure rrt directory exists inside your repository...
+Checing to make sure rrt directory exists inside your repository...
+rrt directory already exists
 Looking for packages used in your repository...
 Getting new packages...
-Creating new folders: ~/mynewrepository/rrt/lib/x86_64-apple-darwin13.1.0/3.1.0/src/contrib
-trying URL 'http://cran.r-project.org/src/contrib/plyr_1.8.1.tar.gz'
-Content type 'application/x-gzip' length 393233 bytes (384 Kb)
-opened URL
-==================================================
-downloaded 384 Kb
+        snapshots
+1 2014-06-30_0200
+2 2014-06-30_0500
+3 2014-06-30_0800
+4 2014-06-30_1100
+5 2014-06-30_1400
+6 2014-06-30_1700
+7 2014-06-30_2000
 
-trying URL 'http://cran.r-project.org/src/contrib/Rcpp_0.11.2.tar.gz'
-Content type 'application/x-gzip' length 2004313 bytes (1.9 Mb)
-opened URL
-==================================================
-downloaded 1.9 Mb
+More than one snapshot matching your date found
+Enter rownumber of snapshot (other inputs will return 'NA'):
 
+1: 7
+receiving file list ...
+4 files to consider
+stringr/
+stringr/stringr_0.6.2.tar.gz
+       20636 100%    2.46MB/s    0:00:00 (xfer#1, to-check=2/4)
+testthat/
+testthat/testthat_0.8.1.tar.gz
+       40777 100%    4.86MB/s    0:00:00 (xfer#2, to-check=0/4)
+
+sent 133 bytes  received 61662 bytes  41196.67 bytes/sec
+total size is 61413  speedup is 0.99
 Writing repository manifest...
+/Users/sacmac/.rrt/www/rrt.html
 
 &gt;&gt;&gt; RRT refresh completed.
 </code></pre>
@@ -201,7 +217,7 @@ Writing repository manifest...
 </code></pre>
 
 <pre><code class="r">Checking to make sure repository exists...
-Checing to make sure rrt directory exists inside your repository...
+Checking to make sure rrt directory exists inside your repository...
 Looking for packages used in your repository...
 Installing packages...
 
@@ -322,7 +338,7 @@ total size is 2.74M  speedup is 1.00
 </code></pre>
 
 <pre><code class="r">Checking to make sure repository exists...
-Checing to make sure rrt directory exists inside your repository...
+Checking to make sure rrt directory exists inside your repository...
 Package sources removed
 Your repository packages successfully removed:
 abind
@@ -344,6 +360,26 @@ testthat
   </body>
 
   <!-- <footer>
+
+<!-- Start of StatCounter -->
+<script type="text/javascript">
+var sc_project=9889491; 
+var sc_invisible=1; 
+var sc_security="20d769e7"; 
+var scJsHost = (("https:" == document.location.protocol) ?
+"https://secure." : "http://www.");
+document.write("<sc"+"ript type='text/javascript' src='" +
+scJsHost+
+"statcounter.com/counter/counter.js'></"+"script>");
+</script>
+<noscript><div class="statcounter"><a title="click tracking"
+href="http://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="http://c.statcounter.com/9889491/0/20d769e7/1/"
+alt="click tracking"></a></div></noscript>
+<!-- End of StatCounter -->
+<a href="http://statcounter.com/p9889491/?guest=1">Visitor Stats</a>
+
   <!-- Gaug.es Analytics -->
   <script type="text/javascript">
     var _gauges = _gauges || [];

@@ -7,7 +7,7 @@
   <link href="http://gmpg.org/xfn/11" rel="profile">
 
   <title>
-    MRAN &middot; 
+    MRAN Overview &middot; 
     Reproducibile R Toolkit
   </title>
 
@@ -39,11 +39,12 @@
               <a href="http://revolutionanalytics.github.io/RRT/installation">Installation</a><br>
               <a href="http://revolutionanalytics.github.io/RRT/tutorial">Tutorial</a><br>
               <a href="http://revolutionanalytics.github.io/RRT/mran">MRAN</a><br>
-              <a href="https://github.com/RevolutionAnalytics/RRT">Github</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT/issues">Issue Tracker</a><br>
+              <a href="https://github.com/RevolutionAnalytics/RRT">Source Code</a><br>
               <a href="https://github.com/RevolutionAnalytics/RRT/archive/v0.1.0.zip">Download (v0.1)</a>
             </li>
           </ul>
-          <!-- <small><a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.</small> -->
+          <!-- hyde theme from <a href="https://github.com/mdo/hyde">Hyde</a> from <a href="https://twitter.com/mdo" target="_blank">@mdo</a>-->
         </div>
       </div>
     </header>
@@ -66,38 +67,45 @@
 <p>MRAN is a server side component that works hand-in-hand with the client side
 RRT package.
 The goal of MRAN is to better organize the various places that R packages
-live on CRAN, and add point in time capabilities.</p>
+live on CRAN, and add point in time capabilities allowing more precision for reproducibility.</p>
 
 <h3><a href="#indetail" name="indetail">#</a> In detail - MRAN (Marmoset R Archive Network)</h3>
 
 <p>MRAN is downstream snapshot of CRAN. The main differentiation of MRAN to CRAN
 is that MRAN consists of a series of snapshots that are taken every three
 hours using a script that points to the master CRAN server in Vienna, Austria.
+Authors of R packages that are hosted on CRAN are likely to update their packages at any point in time.
+That is great as it keeps the ecosystem fresh and ensures that bug fixes are available. MRAN snapshots
+combined with the RRT front end are in essence a trace back mechanism so R users will have a way to go
+back to the version of a package that they were working on at a point in time.
 Each MRAN snapshot holds all source versions of a package in the same
-per-package directory on the MRAN server.
-i.e. mran.revolutionanalytics.com/snapshots/2014-06-26_1400/zoo</p>
+per-package directory on the MRAN server.<br/>
+i.e. <a href="http://mran.revolutionanalytics.com/snapshots/2014-06-26_1400/zoo">http://mran.revolutionanalytics.com/snapshots/2014-06-26_1400/zoo</a></p>
 
 <h3><a href="#snapshots" name="snapshots">#</a> How are snapshots created?</h3>
 
 <p>Snapshots are created using <a href="http://open-zfs.org/wiki/Main_Page">ZFS</a>.
-The MRAN server is specifically using
-<a href="http://zfsonlinux.org/">ZFS-on-Linux</a>.
-The ZFS-on-linux project was started at Lawrence Livermore National Laboratory.
-Open-ZFS is an open source community project that has similarities to the
-R ecosystem.</p>
+The MRAN server is specifically using the native Linux kernel port, <a href="http://zfsonlinux.org/">ZFS-on-Linux</a>.
+The ZFS-on-Linux project was started at <a href="https://www.llnl.gov/">Lawrence Livermore National Laboratory</a>.
+<a href="http://open-zfs.org/wiki/Main_Page">Open-ZFS</a> is an open source community project that
+has a wide range of contributors and sponsors that comprise its ecosystem.</p>
 
-<p>ZFS was chosen as the snapshot method for MRAN as it works on the block level,
-not the file level like many other tools. It is efficient for storing binary
-files, unlike other tools such as git, mercurial or subversion.
-ZFS is very space efficient: ZFS snapshots only take up the amount of
+<p>ZFS was chosen as the server side snapshot method for MRAN as it works on the block level,
+not the file level like many other tools. It is efficient for storing compressed binary
+files like .tar.gz or .zip, unlike SCM tools such as git, mercurial or subversion.
+ZFS is very space efficient: ZFS snapshots are immutable objects that only take up the amount of
 space that has changed between the snapshot and the 'live' file system. i.e.
 very small when looking at the daily churn of R packages, but great space
 savings when looking at the ecosystem of packages hosted on CRAN as a whole
-over the course of a year.
-A current overview of space usage on the current MRAN server can be found at:
-http://mran.revolutionanalytics.com/accounting.txt
-All MRAN snapshots are exposed at:
-http://marmoset.revolutionanalytics.com/snapshots/</p>
+over the course of a year.<br/>
+Note that backend processes work on the "live" file system, so for reproducability RRT always
+points to a MRAN snapshot. A RRT user never see's the "live" file system.
+A current overview of space usage on the current MRAN server can be found at:<br/>
+<br/>
+<a href="http://mran.revolutionanalytics.com/accounting.txt">http://mran.revolutionanalytics.com/accounting.txt</a><br/>
+<br/>
+All MRAN snapshots are exposed at:<br/>
+<a href="http://mran.revolutionanalytics.com/snapshots/">http://mran.revolutionanalytics.com/snapshots/</a></p>
 
 <h3><a href="#dates" name="dates">#</a> Important note regarding dates</h3>
 
@@ -111,14 +119,14 @@ snapshot so that RRT or a user can compare differences between them
 at any point in time.</p>
 
 <p>The output of the diffs are exposed at:<br/>
-http://marmoset.revolutionanalytics.com/diffs/</p>
+<a href="http://mran.revolutionanalytics.com/diffs/">http://mran.revolutionanalytics.com/diffs/</a></p>
 
 <h3><a href="#metadatarrt" name="metadatarrt">#</a> Metadata and RRT integration</h3>
 
-<p>mran_metadata.R creates metadata from each snapshot of source packages.
-Right now it only holds basic metadata, but will hold additional
-metadata in the future. All metadata is exposed at:<br/>
-http://marmoset.revolutionanalytics.com/metadata/</p>
+<p><code>mran_metadata.R</code> creates metadata from each snapshot of source packages.
+A variety of metadata above and beyond what a CRAN package description file contains is stored for each R package.<br/>
+All metadata is exposed at:<br/>
+<a href="http://mran.revolutionanalytics.com/metadata/">http://mran.revolutionanalytics.com/metadata/</a></p>
 
 </div>
 
@@ -127,6 +135,26 @@ http://marmoset.revolutionanalytics.com/metadata/</p>
   </body>
 
   <!-- <footer>
+
+<!-- Start of StatCounter -->
+<script type="text/javascript">
+var sc_project=9889491; 
+var sc_invisible=1; 
+var sc_security="20d769e7"; 
+var scJsHost = (("https:" == document.location.protocol) ?
+"https://secure." : "http://www.");
+document.write("<sc"+"ript type='text/javascript' src='" +
+scJsHost+
+"statcounter.com/counter/counter.js'></"+"script>");
+</script>
+<noscript><div class="statcounter"><a title="click tracking"
+href="http://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="http://c.statcounter.com/9889491/0/20d769e7/1/"
+alt="click tracking"></a></div></noscript>
+<!-- End of StatCounter -->
+<a href="http://statcounter.com/p9889491/?guest=1">Visitor Stats</a>
+
   <!-- Gaug.es Analytics -->
   <script type="text/javascript">
     var _gauges = _gauges || [];
