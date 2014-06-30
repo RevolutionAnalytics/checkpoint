@@ -14,6 +14,7 @@
 #' @param mran (logical) If TRUE (default), packages are installed from the MRAN server. See
 #' \url{http://marmoset.revolutionanalytics.com/} for more information.
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
+#' @param autosnap (logical) Get most recent snapshot. Default: FALSE
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
 #' @param interactive (logical) If TRUE, function asks you for input for each item,
@@ -33,7 +34,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE, rprofile=NULL, interactive=FALSE)
+rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, rprofile=NULL, interactive=FALSE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
@@ -78,7 +79,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE, rprof
   # check for rrt directory in the repo, and create if doesn't exist already
   # and create library directory
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
-  lib <- file.path(repo, "rrt", "lib", R.version$platform, base::getRversion())
+  lib <- rrt_libpath(repo)
   if(!file.exists(file.path(repo, "rrt"))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)
@@ -94,6 +95,10 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE, rprof
   pkgs <- c(addtnpkgs, pkgs)
 
   # get packages in a private location for this project
+  if(autosnap){
+    availsnaps <- suppressMessages(mran_snaps())
+    snapshotid <- availsnaps[length(availsnaps)]
+  } else { snapshotid <- NULL }
   getPkgs(x = pkgs, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
 
   # Write to internal manifest file

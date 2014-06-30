@@ -3,8 +3,8 @@
 \alias{rrt_init}
 \title{Initiate a RRT repository.}
 \usage{
-rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, verbose = TRUE,
-  rprofile = NULL, interactive = FALSE)
+rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, autosnap = FALSE,
+  verbose = TRUE, rprofile = NULL, interactive = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
@@ -13,6 +13,8 @@ rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, verbose = TRUE,
 \url{http://marmoset.revolutionanalytics.com/} for more information.}
 
 \item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
+
+\item{autosnap}{(logical) Get most recent snapshot. Default: FALSE}
 
 \item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 

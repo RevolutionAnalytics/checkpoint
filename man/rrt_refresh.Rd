@@ -4,7 +4,7 @@
 \title{Refresh package - look for any new packages used and install those in rrt library}
 \usage{
 rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
-  verbose = TRUE)
+  autosnap = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
@@ -13,6 +13,8 @@ rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
 \url{http://marmoset.revolutionanalytics.com/} for more information.}
 
 \item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
+
+\item{autosnap}{(logical) Get most recent snapshot. Default: FALSE}
 
 \item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 }

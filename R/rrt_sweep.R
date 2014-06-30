@@ -23,14 +23,14 @@ rrt_sweep <- function(repo=getwd(), pkgs = NULL, verbose=TRUE)
   
   # check for rrt directory in the repo
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
-  lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
+  lib <- rrt_libpath(repo)
   present <- list.dirs(lib)
   if(!all(grepl("rrt", present))){
     mssg(verbose, "rrt directory doesn't exist...")
   }
   
   # get pkgs list in the rrt repo
-  pathtoremove <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
+  pathtoremove <- rrt_libpath(repo)
   dirstoremove <- list.files(pathtoremove, full.names = TRUE, recursive = FALSE)
   srctoremove <- grep("src", dirstoremove, value = TRUE)
   if(is.null(pkgs)){

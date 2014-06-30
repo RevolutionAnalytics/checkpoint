@@ -1,6 +1,9 @@
 # tests for initialize
 context("init")
 
+# remove rrttemp dir if exists
+unlink("~/rrttemp", recursive = TRUE, force = TRUE)
+
 options(repos=structure(c(CRAN="http://cran.revolutionanalytics.com/")))
 path <- "~/rrttemp"
 rrt_init(path, verbose = FALSE)

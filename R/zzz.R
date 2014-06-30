@@ -22,3 +22,7 @@ checkuserinstall <- function(lib){
   
   return(if(!length(haveinst) == 0) haveinst[!haveinst %in% havesource] else NULL)
 }
+
+rrt_libpath <- function(x){
+  file.path(x, "rrt", "lib", R.version$platform, base::getRversion())
+}

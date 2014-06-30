@@ -4,7 +4,7 @@
 \title{Function to download packages}
 \usage{
 getPkgs(x, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
-  mran = FALSE, snapdate = NULL)
+  mran = FALSE, snapdate = NULL, snapshotid = NULL)
 }
 \arguments{
 \item{x}{(character) A vector of package names. If NULL, none installed, and message prints}
@@ -20,7 +20,9 @@ getPkgs(x, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
 \item{mran}{(logical) If TRUE, packages are installed from the MRAN server. See
 \url{http://marmoset.revolutionanalytics.com/} for more information.}
 
-\item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
+\item{snapdate}{Date of MRAN snapshot to use. E.g. "2014-06-20"}
+
+\item{snapshotid}{MRAN snapshotID to use. E.g. "2014-06-30_1700"}
 }
 \description{
 Function to download packages

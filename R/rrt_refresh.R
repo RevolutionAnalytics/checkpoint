@@ -6,6 +6,7 @@
 #' @param mran (logical) If TRUE (default), packages are installed from the MRAN server. See
 #' \url{http://marmoset.revolutionanalytics.com/} for more information.
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
+#' @param autosnap (logical) Get most recent snapshot. Default: FALSE
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #'
 #' @seealso \link{rrt_init}, \link{rrt_install}
@@ -20,7 +21,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE)
+rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE)
 {
   repoid <- digest(repo)
 
@@ -32,7 +33,7 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE)
 
   # check for rrt directory in the repo, and stop if it doesn't exist
   mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
-  lib <- file.path(repo, "rrt", "lib", R.version$platform, base::getRversion())
+  lib <- rrt_libpath(repo)
   if(!file.exists(file.path(repo, "rrt"))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)
@@ -49,7 +50,11 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, verbose=TRUE)
   
   # get packages in a private location for this project
   mssg(verbose, "Getting new packages...")
-  getPkgs(x = pkgs, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
+  if(autosnap){
+    availsnaps <- suppressMessages(mran_snaps())
+    snapshotid <- availsnaps[length(availsnaps)]
+  } else { snapshotid <- NULL }
+  getPkgs(x = pkgs, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate, snapshotid = snapshotid)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
