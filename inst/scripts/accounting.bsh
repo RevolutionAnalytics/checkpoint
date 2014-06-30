@@ -12,7 +12,7 @@ DATE=$(date +"%Y-%m-%d_%H%M")
 WWW_HOME=/MRAN/www
 
 
-echo "accounting information for date: $DATE GMT" > $WWW_HOME/accounting.txt
+echo "accounting information for date: $DATE UTC" > $WWW_HOME/accounting.txt
 
 echo "raw ZFS file system usage" >> $WWW_HOME/accounting.txt
 sudo zfs list marmoset/RRT >> $WWW_HOME/accounting.txt
