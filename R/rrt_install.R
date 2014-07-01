@@ -1,12 +1,21 @@
-#' Install packages
+#' Install packages within an RRT repository.
 #'
 #' Installs packages to your local repository. Performs some checks to make sure your repo is a
 #' RRT repository, and the rrt dir exists with your repository, then installs packages not already
-#' installed.
+#' installed. See Details for more info.
 #'
 #' @export
-#' @param repo A repository path
-#' @param verbose Print messages
+#' 
+#' @param repo A repository path. This is the path to the root of your RRT repository. By default, 
+#' we use the current working directory via \code{getwd()}. 
+#' @param verbose Print messages. Default: TRUE.
+#' 
+#' @details Think of \code{rrt_install} as though \code{install.packages} was broken into two 
+#' steps: download, then install. \link{rrt_init} and \link{rrt_refresh} both download packages 
+#' from MRAN, CRAN, Github, or other locations, while \code{rrt_install} only installs packages 
+#' already downloaded. However, if source packages downloaded by \link{rrt_init} and 
+#' \link{rrt_refresh} don't work, \code{rrt_install} downloads the binary version from CRAN and 
+#' attempts to install that.
 #'
 #' @seealso \link{rrt_init}, \link{rrt_refresh}
 #'
