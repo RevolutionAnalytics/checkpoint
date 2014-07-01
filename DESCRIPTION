@@ -2,8 +2,8 @@ Package: RRT
 Title: R Reproducibility Toolkit
 Description: R Reproducibility Toolkit. Get miniCRAN from
     https://github.com/andrie/miniCRAN
-Version: 0.1.0
-Date: 2014-06-30
+Version: 0.1.2
+Date: 2014-07-01
 Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
     email = "myrmecocystus@gmail.com")
 License: GPL-2
