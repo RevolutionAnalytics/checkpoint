@@ -2,6 +2,7 @@
 #'
 #' @import digest
 #' @template rrt
+#' @keywords internal
 #'
 #' @return Files written to the user system, with informative messages on progress
 #'

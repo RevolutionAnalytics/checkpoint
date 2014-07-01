@@ -21,4 +21,5 @@ Commit versions of an RRT repository to git
 rrt_git(repo="~/testrepo")
 }
 }
+\keyword{internal}
 
