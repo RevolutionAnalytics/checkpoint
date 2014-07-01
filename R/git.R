@@ -1,6 +1,6 @@
-#' Add and commit files in your RRT repository
+#' Add and commit files in your RRT repository using git.
 #' 
-#' @import git2r
+#' @importFrom git2r status repository add init commit
 #' @export
 #' 
 #' @param path Path to the RRT repository
@@ -8,6 +8,9 @@
 #' Use quotes around your commit message!
 #' @param verbose Print messages or not, Default: TRUE
 #' @param ... Further args passed on to \code{git2r::commit}
+#' 
+#' @details Note this doesn't do anything about remote connections to your repo. See help for 
+#' \link{remote_add}
 #' 
 #' @examples \dontrun{
 #' git_add_commit(path="~/bbb", message="Made some changes to the regression function")
