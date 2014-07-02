@@ -26,3 +26,26 @@ checkuserinstall <- function(lib){
 rrt_libpath <- function(x){
   file.path(x, "rrt", "lib", R.version$platform, base::getRversion())
 }
+
+check4repo <- function(x, verbose){
+  mssg(verbose, "Checking to make sure repository exists...")
+  if(!file.exists(x)){ # only create if file doesn't exist already
+    stop(sprintf("Repository %s doesn't exist", x))
+  }
+}
+
+makerrtrepo <- function(x, verbose){
+  mssg(verbose, "Checking to see if repository exists already...")
+  if(!file.exists(x)){ # only create if file doesn't exist already
+    mssg(verbose, sprintf("Creating repository %s", x))
+    dir.create(x)
+  }
+}
+
+check4rrt <- function(repo, lib, verbose){
+  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
+  if(!file.exists(file.path(repo, "rrt"))){
+    mssg(verbose, sprintf("Creating rrt directory %s", lib))
+    dir.create(lib, showWarnings = FALSE, recursive = TRUE)
+  } else { mssg(verbose, "rrt directory already exists") }
+}

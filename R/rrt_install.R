@@ -34,11 +34,8 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
   }
 
   # check for rrt directory in the repo, and stop if it doesn't exist
-  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
-  lib <- file.path(repo, "rrt", "lib", R.version$platform, base::getRversion())
-  if(!file.exists(file.path(repo, "rrt"))){
-    stop("rrt directory doesn't exist")
-  }
+  lib <- rrt_libpath(repo)
+  check4rrt(repo, lib, verbose)
 
   pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
 
@@ -55,7 +52,7 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
     pkgs2install <- sort(x)[!sort(x) %in% sort(installedpkgs)]
   }
 
-  basepkgs <- c('tools','methods','utils','stats')
+  basepkgs <- rownames(installed.packages(priority="base"))
   pkgs2install <- pkgs2install[!pkgs2install %in% basepkgs]
 
   if(length(pkgs2install)==0){
