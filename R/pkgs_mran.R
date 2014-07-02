@@ -93,5 +93,5 @@ getsnapshotid <- function(date){
     take <- scan(n = 1, quiet = TRUE, what = 'raw')
     if(is.na(take)){ message("No snapshot found or you didn't select one") }
     snapshots[as.numeric(take)]
-  }
+  } else { snapshots }
 }

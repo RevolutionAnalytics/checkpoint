@@ -42,7 +42,7 @@ rrt_install2 <- function(repo=getwd(), repoid, lib, verbose=TRUE)
       # alternative setup to install all pkgs in one install.packages call to avoid restart messages
       install.packages(pkgswithpath, lib = lib, repos=NULL, type = "source")
       notinst <- pkgs2install[!vapply(file.path(lib, pkgs2install), file.exists, logical(1))]
-      if(!length(notinst) == 0) install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"))  
+      if(!length(notinst) == 0) install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"))
 #       try_install <- function(x){
 #         pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
 #         install.packages(x, lib = lib, repos=NULL, type = "source")
