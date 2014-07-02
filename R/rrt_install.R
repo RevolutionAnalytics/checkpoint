@@ -71,8 +71,6 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
       pkgswithpath <- unlist(pkgswithpath)
       try_install <- function(x){
         pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
-        #         installfrom <- file.path(lib, "src/contrib")
-        #         install.packages(x, lib = lib, repos=NULL, type = "source")
         install.packages(x, lib = lib, repos=NULL, type = "source")
         if(!file.exists(file.path(lib, pkgname))){
           mssg(verbose, "Installation from source failed, trying binary package version...")

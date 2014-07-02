@@ -42,10 +42,10 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
         } else { snapshotid }
         pkgloc <- file.path(lib, "src/contrib")
         setwd(lib)
+        on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
         pkgs_mran(snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
         options(RRT_snapshotID = snapdateid)
-        on.exit(setwd(repo))
       }
     } else {
       return(mssg(verbose, "No packages found - none downloaded"))

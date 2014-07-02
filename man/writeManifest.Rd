@@ -29,7 +29,7 @@ writeManifest(repository, librar, packs, repoid, reponame = "", author = "",
 Writes a RRT manifest file ("rrt_manifest.yml") to disk
 }
 \description{
-# FIXME: check for existence of manifest file first, and combine with old info, if any
+Function to write manifest file
 }
 \keyword{internal}
 

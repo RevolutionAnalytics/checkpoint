@@ -1,7 +1,5 @@
 #' Function to write manifest file
 #'
-#' # FIXME: check for existence of manifest file first, and combine with old info, if any
-#'
 #' @export
 #' @param repository Repository root path
 #' @param librar Library to install packages in
@@ -37,7 +35,7 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
 #   sysreq <- sprintf("SystemRequirements: %s", paste0(rrt_compact(getsysreq(packs, lib=librar)), collapse = "\n") )
   sysreq <- sprintf("SystemRequirements:\n%s", getsysreq(packs, lib=librar) )
 #   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
-  pkgs_deps <- sprintf("Packages: %s", check4pkgs(packs, repository))
+  pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse=", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
   datecheck <- check4date_created(x=infofile)
   date_created <- if(is.null(datecheck)) sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d")) else datecheck
@@ -68,18 +66,18 @@ check4github <- function(x){
   } else { NULL }
 }
 
-check4pkgs <- function(x, repo){
-  manfile <- file.path(repo, "rrt/rrt_manifest.yml")
-  x <- if(is.null(x)) NULL else x
-  if(file.exists(manfile)){
-    info <- suppressWarnings(yaml.load_file(manfile))
-    pline <- info['Packages'][1]
-    if(!is.null(pline[[1]])){
-      bb <- gsub("\\s", "", strsplit(pline[[1]], ",")[[1]])
-      paste0(c(x, unique(bb)), collapse = ", ")
-    } else { paste0(x, collapse = ", ") }
-  } else { NULL }
-}
+# check4pkgs <- function(x, repo){
+#   manfile <- file.path(repo, "rrt/rrt_manifest.yml")
+#   x <- if(is.null(x)) NULL else x
+#   if(file.exists(manfile)){
+#     info <- suppressWarnings(yaml.load_file(manfile))
+#     pline <- info['Packages'][1]
+#     if(!is.null(pline[[1]])){
+#       bb <- gsub("\\s", "", strsplit(pline[[1]], ",")[[1]])
+#       paste0(unique(c(x,bb)), collapse = ", ")
+#     } else { paste0(x, collapse = ", ") }
+#   } else { NULL }
+# }
 
 #' Function to get system requireqments, if any, from installed packages
 #'
@@ -110,14 +108,14 @@ pkgdesc <- function(rr, lib){
   tmpdir <- tempdir()
   tarfiles <- list.files(file.path(lib, "src/contrib"), pattern = ".tar.gz", full.names = TRUE)
   use <- grep(rr, tarfiles, value = TRUE)
-  if(length(use) > 1){
-    pkgs <- gsub("_.+", "", sapply(use, function(x) strsplit(x, "/")[[1]][length(strsplit(x, "/")[[1]])], USE.NAMES = FALSE))
-    use <- use[pkgs %in% rr]
+  if(length(use) == 0){ return(NULL) } else {
+    if(length(use) > 1){
+      pkgs <- gsub("_.+", "", sapply(use, function(x) strsplit(x, "/")[[1]][length(strsplit(x, "/")[[1]])], USE.NAMES = FALSE))
+      use <- use[pkgs %in% rr]
+    }  
+    untar(use, exdir = tmpdir)
+    out <- as.package(file.path(tmpdir, rr))
+    sysreq <- out['systemrequirements'][[1]]
+    if(is.null(sysreq)) NULL else sysreq
   }
-  untar(use, exdir = tmpdir)
-  out <- as.package(file.path(tmpdir, rr))
-  sysreq <- out['systemrequirements'][[1]]
-#   lines <- yaml.load_file(file.path(tmpdir, rr, "DESCRIPTION"))
-#   sysreq <- lines['SystemRequirements'][[1]]
-  if(is.null(sysreq)) NULL else sysreq
 }

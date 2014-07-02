@@ -27,28 +27,39 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
 
   # parse versions from pkgs
   foo <- function(x){
-    vers <- mran_pkg_avail(snapshot=snapshot_use, package=x[[1]])
-    splitvers <- vapply(vers, strsplit, list(1), "\\.")
-    df <- data.frame(do.call(rbind.fill, lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))), stringsAsFactors = FALSE)
-    df[is.na(df)] <- 0
-    row.names(df) <- names(splitvers)
-    df <- colClasses(df, "numeric")
-    if(NCOL(df) == 3){ df <- sort_df(df, c("X1","X2","X3")) } else {
-      df <- sort_df(df, c("X1","X2"))      
+    vers <- tryCatch(mran_pkg_avail(snapshot=snapshot_use, package=x[[1]]), error=function(e) e)
+    if("error" %in% class(vers)){
+      sprintf("%s/__notfound__", x[[1]])
+    } else {    
+      splitvers <- vapply(vers, strsplit, list(1), "\\.")
+      df <- data.frame(do.call(rbind.fill, lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))), stringsAsFactors = FALSE)
+      df[is.na(df)] <- 0
+      row.names(df) <- names(splitvers)
+      df <- suppressWarnings(colClasses(df, "numeric"))
+      if(NCOL(df) == 3){ df <- sort_df(df, c("X1","X2","X3")) } else {
+        df <- sort_df(df, c("X1","X2"))      
+      }
+      pkgver <- tryCatch(x[[2]], error=function(e) e)
+      if('error' %in% class(pkgver)) {
+        pkgveruse <- row.names(df[nrow(df),])
+      } else {
+        pkgveruse <- if(pkgver %in% vers) pkgver else unname(verssorted[length(verssorted)])
+      }
+      sprintf("%s/%s_%s.tar.gz", x[[1]], x[[1]], pkgveruse)
     }
-    pkgver <- tryCatch(x[[2]], error=function(e) e)
-    if('error' %in% class(pkgver)) {
-      pkgveruse <- row.names(df[nrow(df),])
-#       pkgveruse <- unname(verssorted[length(verssorted)])
-    } else {
-      pkgveruse <- if(pkgver %in% vers) pkgver else unname(verssorted[length(verssorted)])
-    }
-    sprintf("%s/%s_%s.tar.gz", x[[1]], x[[1]], pkgveruse)
   }
 
   pkgs <- lapply(pkgs, function(x) strsplit(x, "_")[[1]])
   pkgpaths <- sapply(pkgs, foo)
 
+  notonmran <- grep("__notfound__", pkgpaths, value = TRUE)
+  pkgpaths <- pkgpaths[!grepl("__notfound__", pkgpaths)]
+  
+  if(length(notonmran) > 0) {
+    gg <- vapply(notonmran, function(x) strsplit(x, "/")[[1]][[1]], character(1), USE.NAMES = FALSE)
+    message(sprintf("Not found on MRAN:\n%s", paste0(gg, collapse = ", "))) 
+  }
+  
   tmppkgsfileloc <- tempfile()
   cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
   cmd <- sprintf('rsync -rt --progress --files-from=%s marmoset.revolutionanalytics.com::MRAN-snapshots/%s %s',
@@ -93,5 +104,5 @@ getsnapshotid <- function(date){
     take <- scan(n = 1, quiet = TRUE, what = 'raw')
     if(is.na(take)){ message("No snapshot found or you didn't select one") }
     snapshots[as.numeric(take)]
-  }
+  } else { snapshots }
 }
