@@ -39,16 +39,20 @@ rrt_install2 <- function(repo=getwd(), repoid, lib, verbose=TRUE)
       mssg(verbose, "No packages found to install")
     } else {
       pkgswithpath <- unlist(pkgswithpath)
-      try_install <- function(x){
-        pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
-        install.packages(x, lib = lib, repos=NULL, type = "source")
-        if(!file.exists(file.path(lib, pkgname))){
-          mssg(verbose, "Installation from source failed, trying binary package version...")
-          download.packages(pkgname, destdir = file.path(lib, "src/contrib"))
-          install.packages(pkgname, lib = lib)
-        }
-      }
-      lapply(pkgswithpath, try_install)
+      # alternative setup to install all pkgs in one install.packages call to avoid restart messages
+      install.packages(pkgswithpath, lib = lib, repos=NULL, type = "source")
+      notinst <- pkgs2install[!vapply(file.path(lib, pkgs2install), file.exists, logical(1))]
+      if(!length(notinst) == 0) install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"))  
+#       try_install <- function(x){
+#         pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
+#         install.packages(x, lib = lib, repos=NULL, type = "source")
+#         if(!file.exists(file.path(lib, pkgname))){
+#           mssg(verbose, "Installation from source failed, trying binary package version...")
+#           download.packages(pkgname, destdir = file.path(lib, "src/contrib"))
+#           install.packages(pkgname, lib = lib)
+#         }
+#       }
+#       lapply(pkgswithpath, try_install)
     }
   }
 }
