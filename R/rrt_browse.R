@@ -58,7 +58,7 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
     write(tmp, file = repos[[i]]$singlepage)
   }
   write(rendered, file = output)
-  if(browse) browseURL(output) else message(output)
+  if(browse) browseURL(output)
 }
 
 template <-
