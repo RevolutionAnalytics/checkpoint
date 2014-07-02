@@ -48,7 +48,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
     if(is.null(repo)){
       stop("You need to specify a repository path and name")
     } else {
-      reponame <- strsplit("~/testrepo", "/")[[1]][length(strsplit("~/testrepo", "/")[[1]])]
+      reponame <- strsplit(repo, "/")[[1]][length(strsplit(repo, "/")[[1]])]
     }
   }
 

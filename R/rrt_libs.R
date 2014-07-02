@@ -17,7 +17,7 @@ rrt_repos_write <- function(repo, repoid=NULL){
   append <- if(file.exists(gg)) TRUE else FALSE
   out <- tryCatch(rrt_repos_list(), error=function(e) e)
   if("error" %in% class(out)){
-      infofile <- file.path(repo, "rrt", "rrt_manifest.yml")
+      infofile <- path.expand(file.path(repo, "rrt", "rrt_manifest.yml"))
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
@@ -29,7 +29,7 @@ rrt_repos_write <- function(repo, repoid=NULL){
       repoid <- strsplit(linez[grep("RepoID", linez)], ":\\s")[[1]][[2]]
     }
     if(repoid %in% existingrepoids){ NULL } else {
-      infofile <- file.path(repo, "rrt", "rrt_manifest.yml")
+      infofile <- path.expand(file.path(repo, "rrt", "rrt_manifest.yml"))
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
