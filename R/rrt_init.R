@@ -70,20 +70,12 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   repoid <- digest(repo)
 
   # create repo
-  mssg(verbose, "Checking to see if repository exists already...")
-  if(!file.exists(repo)){ # only create if file doesn't exist already
-    mssg(verbose, sprintf("Creating repository %s", repo))
-    dir.create(repo)
-  }
+  makerrtrepo(repo, verbose)
 
   # check for rrt directory in the repo, and create if doesn't exist already
   # and create library directory
-  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
   lib <- rrt_libpath(repo)
-  if(!file.exists(file.path(repo, "rrt"))){
-    mssg(verbose, sprintf("Creating rrt directory %s", lib))
-    dir.create(lib, showWarnings = FALSE, recursive = TRUE)
-  } else { mssg(verbose, "rrt directory already exists") }
+  check4rrt(repo, lib, verbose)
 
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
