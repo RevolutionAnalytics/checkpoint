@@ -4,6 +4,7 @@
 #' @export
 #'
 #' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
+#' @param repo Repository path.
 #'
 #' @examples \dontrun{
 #' mran_set()

@@ -7,6 +7,8 @@ mran_set(snapshot = NULL, repo = getwd())
 }
 \arguments{
 \item{snapshot}{A MRAN snapshot. Defaults to most recent snapshot}
+
+\item{repo}{Repository path.}
 }
 \description{
 Set the MRAN snapshot to get packages from.
