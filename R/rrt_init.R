@@ -80,7 +80,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
-  
+
   # Look for packages installed by user but no source available
   # if some installed give back vector of package names
   addtnpkgs <- checkuserinstall(lib)
@@ -105,7 +105,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
     rprofilepath <- file.path(repo, ".Rprofile")
     mirror <- 'options(repos=structure(c(CRAN="http://cran.revolutionanalytics.com/")))'
     libpaths <- sprintf('.libPaths("%s")', lib)
-    msg <- sprintf("cat('    Starting repo from RRT repository: %s \n    Packages will be installed in and loaded from this repository\n    To go back to a non-RRT environment, start R outside an RRT repository\n    Report any bugs/feature requests at https://github.com/RevolutionAnalytics/RRT\n\n')", repoid)
+    msg <- sprintf("cat('    Starting repo from RRT repository: %s \n    Packages installed in and loaded from this repository\n    To go back to a non-RRT environment, start R outside an RRT repository\n\n')", repoid)
     cat(c(mirror, libpaths, msg), file=rprofilepath, sep="\n")
   } else {
     NULL # fixme: add ability to write options to the rprofile file
@@ -113,7 +113,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # regenerate RRT dashboard
   rrt_browse(browse = FALSE)
-  
+
   # install packages
   rrt_install2(repo, repoid, lib, verbose)
 
