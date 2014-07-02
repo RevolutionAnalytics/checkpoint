@@ -76,7 +76,7 @@ check4pkgs <- function(x, repo){
     pline <- info['Packages'][1]
     if(!is.null(pline[[1]])){
       bb <- gsub("\\s", "", strsplit(pline[[1]], ",")[[1]])
-      paste0(c(x, unique(bb)), collapse = ", ")
+      paste0(unique(c(x,bb)), collapse = ", ")
     } else { paste0(x, collapse = ", ") }
   } else { NULL }
 }
