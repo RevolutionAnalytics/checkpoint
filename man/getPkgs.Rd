@@ -3,11 +3,13 @@
 \alias{getPkgs}
 \title{Function to download packages}
 \usage{
-getPkgs(x, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
+getPkgs(x, repo, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
   mran = FALSE, snapdate = NULL, snapshotid = NULL)
 }
 \arguments{
 \item{x}{(character) A vector of package names. If NULL, none installed, and message prints}
+
+\item{repo}{Repository path}
 
 \item{lib}{(character) Library location, a directory}
 

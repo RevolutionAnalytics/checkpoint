@@ -91,7 +91,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
     availsnaps <- suppressMessages(mran_snaps())
     snapshotid <- availsnaps[length(availsnaps)]
   } else { snapshotid <- NULL }
-  getPkgs(x = pkgs, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
+  getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")

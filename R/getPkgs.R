@@ -3,6 +3,7 @@
 #' @import miniCRAN
 #'
 #' @param x (character) A vector of package names. If NULL, none installed, and message prints
+#' @param repo Repository path
 #' @param lib (character) Library location, a directory
 #' @param recursive (logical) Recursively install packages?
 #' @param verbose (logical) Inherited from call to rrt_init or rrt_refresh
@@ -18,7 +19,7 @@
 #' getPkgs("<path to RRT repo>")
 #' }
 
-getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FALSE, snapdate=NULL, snapshotid=NULL){
+getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FALSE, snapdate=NULL, snapshotid=NULL){
   # check for existence of pkg, subset only those that need to be installed
   if(is.null(x)){ NULL } else {
 
@@ -44,6 +45,7 @@ getPkgs <- function(x, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FA
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
         pkgs_mran(snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
         options(RRT_snapshotID = snapdateid)
+        on.exit(setwd(repo))
       }
     } else {
       return(mssg(verbose, "No packages found - none downloaded"))
