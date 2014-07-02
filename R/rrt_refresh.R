@@ -58,6 +58,9 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
   
   # regenerate RRT dashboard
   rrt_browse(browse = FALSE)
+  
+  # install packages
+  rrt_install2(repo, repoid, lib, verbose)
 
   message("\n>>> RRT refresh completed.")
 }

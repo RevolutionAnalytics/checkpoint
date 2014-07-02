@@ -16,7 +16,7 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
 {
   wwwdir <- file.path(Sys.getenv("HOME"), ".rrt", "www")
   if(!file.exists(wwwdir)) dir.create(wwwdir, recursive = TRUE)
-  
+
   if(is.null(output))
     output <- file.path(Sys.getenv("HOME"), ".rrt", "www", "rrt.html")
 
@@ -40,7 +40,7 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
       checktab <- whisker.render(checktemplate)
       checktab <- gsub("<td>TRUE", '<td class="success">TRUE', checktab)
       gsub("<td>NA", '<td class="info">NA', checktab)
-    } else { 
+    } else {
       '
       <div style="background-color: #ecf0f1;">
         <div class="container">
