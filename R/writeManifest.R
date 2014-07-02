@@ -16,7 +16,7 @@
 #' @keywords internal
 #' @return Writes a RRT manifest file ("rrt_manifest.yml") to disk
 writeManifest <- function(repository, librar, packs, repoid, reponame="", author="",
-                          license="", description="", remote="")
+                          license="", description="", remote="", snapshot=NULL)
 {
   reponame <- sprintf("RepositoryName: %s", reponame)
   author <- sprintf("Authors: %s", author)
@@ -29,7 +29,8 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   installedfrom <- "InstalledFrom: source"
   rrtver <- sprintf("RRT_version: %s", packageVersion("RRT"))
 
-  rrtsnapshot <- sprintf("RRT_snapshotID: %s", getOption("RRT_snapshotID", ""))
+  snaps <- if(is.null(snapshot)) getOption("RRT_snapshotID", "") else snapshot
+  rrtsnapshot <- sprintf("RRT_snapshotID: %s", snaps)
 
   rver <- sprintf("R_version: %s", paste0(as.character(R.version[c('major','minor')]), collapse="."))
   pkgsloc <- sprintf("PkgsInstalledAt: %s", librar)
@@ -69,13 +70,14 @@ check4github <- function(x){
 
 check4pkgs <- function(x, repo){
   manfile <- file.path(repo, "rrt/rrt_manifest.yml")
+  x <- if(is.null(x)) NULL else x
   if(file.exists(manfile)){
     info <- suppressWarnings(yaml.load_file(manfile))
     pline <- info['Packages'][1]
     if(!is.null(pline[[1]])){
       bb <- gsub("\\s", "", strsplit(pline[[1]], ",")[[1]])
-      paste0(unique(bb), collapse = ", ")
-    } else { NULL }
+      paste0(c(x, unique(bb)), collapse = ", ")
+    } else { paste0(x, collapse = ", ") }
   } else { NULL }
 }
 

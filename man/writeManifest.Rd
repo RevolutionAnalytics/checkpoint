@@ -4,7 +4,7 @@
 \title{Function to write manifest file}
 \usage{
 writeManifest(repository, librar, packs, repoid, reponame = "", author = "",
-  license = "", description = "", remote = "")
+  license = "", description = "", remote = "", snapshot = NULL)
 }
 \arguments{
 \item{repository}{Repository root path}
