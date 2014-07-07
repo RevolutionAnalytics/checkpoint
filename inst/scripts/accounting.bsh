@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #space accounting output
 
 #rrt-user account works with dates and times in GMT via ~/.profile, we set it again here so that is made clear
