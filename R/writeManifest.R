@@ -14,7 +14,7 @@
 #' @keywords internal
 #' @return Writes a RRT manifest file ("rrt_manifest.yml") to disk
 writeManifest <- function(repository, librar, packs, repoid, reponame="", author="",
-                          license="", description="", remote="", snapshot=NULL)
+                          license="", description="", remote="", snapshot=NULL, verbose=FALSE)
 {
   reponame <- sprintf("RepositoryName: %s", reponame)
   author <- sprintf("Authors: %s", author)
@@ -32,19 +32,28 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
 
   rver <- sprintf("R_version: %s", paste0(as.character(R.version[c('major','minor')]), collapse="."))
   pkgsloc <- sprintf("PkgsInstalledAt: %s", librar)
+  
+  
+  mssg(verbose, "... checking for package system requirements")
 #   sysreq <- sprintf("SystemRequirements: %s", paste0(rrt_compact(getsysreq(packs, lib=librar)), collapse = "\n") )
   sysreq <- sprintf("SystemRequirements:\n%s", getsysreq(packs, lib=librar) )
 #   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
+
   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse=", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
+
+  mssg(verbose, "... writeManifest: checking for date created")
+
   datecheck <- check4date_created(x=infofile)
   date_created <- if(is.null(datecheck)) sprintf("DateCreated: %s", format(Sys.time(), "%Y-%m-%d")) else datecheck
   date_updated <- sprintf("DateUpdated: %s", format(Sys.time(), "%Y-%m-%d"))
 
+  mssg(verbose, "... writeManifest: checking for github")
   github <- check4github(infofile)
 
   info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtsnapshot, rrtver,
             rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq, github)
+  mssg(verbose, "... writeManifest: writing manifest files")
   cat(info, file = infofile, sep = "\n")
 }
 

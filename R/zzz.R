@@ -47,5 +47,5 @@ check4rrt <- function(repo, lib, verbose){
   if(!file.exists(file.path(repo, "rrt"))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)
-  } else { mssg(verbose, "rrt directory already exists") }
+  } else { mssg(verbose, "...rrt directory already exists") }
 }

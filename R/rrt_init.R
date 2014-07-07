@@ -95,9 +95,10 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
-  writeManifest(repository = repo, librar = lib, packs = pkgs, repoid, reponame, author, license, description, remote)
+  writeManifest(repository = repo, librar = lib, packs = pkgs, repoid, reponame, author, license, description, remote, verbose=verbose)
 
   # Write repo log file
+  mssg(verbose, "Writing repository log file...")
   rrt_repos_write(repo, repoid)
 
   # Write new .Rprofile file

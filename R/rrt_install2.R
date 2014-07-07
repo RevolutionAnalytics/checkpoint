@@ -15,7 +15,7 @@ rrt_install2 <- function(repo=getwd(), repoid, lib, verbose=TRUE)
   
   if(!file.exists(pkgslist)) {
     mssg(verbose, "Getting new packages...")
-    pkgs2install <- getPkgs(x, lib, verbose)
+    pkgs2install <- getPkgs(x, lib, verbose=verbose)
   } else {
     installedpkgs <- list.files(lib)
     installedpkgs <- installedpkgs[!installedpkgs %in% "src"]
