@@ -1,3 +1,9 @@
+# get mran_server url, if none found, defaults to global url: http://mran.revolutionanalytics.com
+mran_server_url <- function(){
+  x <- Sys.getenv('MRAN_SERVER')
+  if(identical(x, "")) 'http://mran.revolutionanalytics.com' else x
+}
+
 #' Get available snapshots from MRAN
 #'
 #' @import httr XML
@@ -7,7 +13,8 @@
 #' }
 
 mran_snaps <- function(){
-  url <- "http://marmoset.revolutionanalytics.com/snapshots/"
+  url <- file.path(mran_server_url(), 'snapshots')
+#   url <- "http://marmoset.revolutionanalytics.com/snapshots/"
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
@@ -35,9 +42,10 @@ mran_snaps <- function(){
 
 mran_diffs <- function(diff=NULL)
 {
-  if(is.null(diff)){
-    url <- "http://marmoset.revolutionanalytics.com/diffs/"
-  } else { url <- sprintf('http://marmoset.revolutionanalytics.com/diffs/RRT_%s.txt', diff) }
+  url <- file.path(mran_server_url(), 'diffs')
+  if(!is.null(diff)){
+    url <- sprintf('%s/RRT_%s.txt', url, diff)
+  }
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
@@ -70,9 +78,8 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
     gg <- suppressMessages(mran_snaps())
     snapshot <- gg[length(gg)]
   }
-#   snapshot <- "2014-06-17_2300" # forcing to only available metadata for now
 
-  url <- sprintf("http://marmoset.revolutionanalytics.com/metadata/logs/%s/%s.json", snapshot, package)
+  url <- sprintf("%s/%s/%s.json", file.path(mran_server_url(), 'metadata/logs'), snapshot, package)
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - Package not found, you don't have an internet connection, or other error...", res$status_code))
@@ -103,7 +110,7 @@ mran_pkg_avail <- function(package, snapshot=NULL)
     snapshot <- gg[length(gg)]
   }
 
-  url <- sprintf("http://marmoset.revolutionanalytics.com/snapshots/%s/%s/", snapshot, package)
+  url <- sprintf("%s/%s/%s/", file.path(mran_server_url(), 'snapshots'), snapshot, package)
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - Package not found, you don't have an internet connection, or other error...", res$status_code))
