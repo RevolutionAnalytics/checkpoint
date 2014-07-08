@@ -21,6 +21,7 @@
 
 getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FALSE, snapdate=NULL, snapshotid=NULL){
   # check for existence of pkg, subset only those that need to be installed
+  mssg(verbose, "... running getPkgs()")
   if(is.null(x)){ NULL } else {
 
     pkgslist <- paste0(lib, "/src/contrib/PACKAGES")

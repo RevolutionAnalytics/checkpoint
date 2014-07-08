@@ -60,17 +60,26 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
     message(sprintf("Not found on MRAN:\n%s", paste0(gg, collapse = ", "))) 
   }
   
-  tmppkgsfileloc <- tempfile()
-  cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
-  cmd <- sprintf('rsync -rt --progress --files-from=%s marmoset.revolutionanalytics.com::MRAN-snapshots/%s %s',
-                 tmppkgsfileloc, snapshot_use, outdir)
   setwd(outdir)
+  tmppkgsfileloc <- "_rsync-file-locations.txt"
+  cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
+
+  message(".. Downloading package files")
+  cmd <- sprintf('rsync -rt --progress --files-from=%s marmoset.revolutionanalytics.com::MRAN-snapshots/%s .',
+                 tmppkgsfileloc, snapshot_use)
+  system(cmd, intern=TRUE)
+  
+#   cpcmd <- sprintf("cp %s .", paste(pkgpaths, collapse = " "))
+#   system(cpcmd)
+
   mvcmd <- sprintf("mv %s .", paste(pkgpaths, collapse = " "))
-  rmcmd <- sprintf("rm -rf %s", paste(sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " "))
-  system(cmd)
   system(mvcmd)
+  
+  rmcmd <- sprintf("rm -rf %s", paste(sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " "))
   system(rmcmd)
-  tools::write_PACKAGES(outdir)
+
+  message(".. Generating PACKAGES index file")
+  tools::write_PACKAGES(dir=".", type="source")
 }
 
 

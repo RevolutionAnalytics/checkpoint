@@ -44,7 +44,7 @@ rrt_install <- function(repo=getwd(), verbose=TRUE)
 
   if(!file.exists(pkgslist)) {
     mssg(verbose, "Getting new packages...")
-    pkgs2install <- getPkgs(x, lib, verbose)
+    pkgs2install <- getPkgs(x, lib, verbose=verbose)
   } else {
     #     installedpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
     installedpkgs <- list.files(lib)
