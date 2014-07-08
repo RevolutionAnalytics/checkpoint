@@ -3,7 +3,7 @@
 \alias{print.rrtrepos}
 \alias{rrt_repos_list}
 \alias{rrt_repos_write}
-\title{Write rrt libraries to user's .Rprofile file}
+\title{Write rrt libraries to user's global list of RRT repos}
 \usage{
 rrt_repos_write(repo, repoid = NULL)
 
@@ -21,9 +21,9 @@ rrt_repos_list(repoid = NULL)
 \item{...}{not used}
 }
 \description{
-Write rrt libraries to user's .Rprofile file
+Write rrt libraries to user's global list of RRT repos
 
-Read rrt libraries from user's .Rprofile file
+Read rrt libraries from user's global list of RRT repos
 
 Print rrtrepos class
 }

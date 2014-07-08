@@ -1,4 +1,4 @@
-#' @title Write rrt libraries to user's .Rprofile file
+#' @title Write rrt libraries to user's global list of RRT repos
 #'
 #' @export
 #' @param repo Respository path
@@ -38,7 +38,49 @@ rrt_repos_write <- function(repo, repoid=NULL){
   }
 }
 
-#' @title Read rrt libraries from user's .Rprofile file
+#' Remove an RRT repo from the user's global list of RRT repos
+#'
+#' @export
+#' @param repo (character) A path to create a RRT repository; defaults to current working directory
+#' @param verbose Print messages or not, Default: TRUE
+#' 
+#' @return Prints message saying what has been done.
+#'
+#' @examples \dontrun{
+#' rrt_repos_remove(repo="~/testrepo")
+#' }
+
+rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
+{
+  if(is_rrt(repo, verbose)){
+    rrtrepos <- rrt_repos_list()
+    repos <- sapply(rrtrepos, "[[", "repo")
+    repoids <- paste(sapply(rrtrepos, "[[", "RepoID"), collapse = ", ")
+    paths <- lapply(rrtrepos, function(b) c(b$repo_root, b$RepoID))
+    misspaths <- paths[vapply(paths, function(n) is.na(n[[1]]), TRUE)]
+    notmisspaths <- paths[!vapply(paths, function(n) is.na(n[[1]]), TRUE)]
+    
+    if(!length(misspaths) == 0){
+      idmiss <- names(misspaths)
+      idmiss_list <- rrtrepos[names(rrtrepos) %in% idmiss]
+      idmisstodf <- list()
+      for(i in seq_along(idmiss_list)){
+        tmp <- idmiss_list[[i]]$repo
+        tmp <- sub("/rrt/rrt_manifest.yml", "", tmp)
+        idmisstodf[[i]] <- c(tmp, names(idmiss_list[i]))
+      }
+      dfmiss <- data.frame(do.call(rbind, idmisstodf), stringsAsFactors = FALSE)
+      names(dfmiss) <- c('path','repoid')
+      # remove repos - wipe current rrt.txt file first
+      gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
+      file.remove(gg)
+      invisible(sapply(vapply(notmisspaths, function(x) x[[1]], character(1)), rrt_repos_write))
+    } else { dfmiss <- "all good :)" }
+    print(dfmiss)
+  }
+}
+
+#' @title Read rrt libraries from user's global list of RRT repos
 #'
 #' @export
 #'
