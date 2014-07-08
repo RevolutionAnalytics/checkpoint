@@ -65,8 +65,9 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
   cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
 
   message(".. Downloading package files")
-  cmd <- sprintf('rsync -rt --progress --files-from=%s marmoset.revolutionanalytics.com::MRAN-snapshots/%s .',
-                 tmppkgsfileloc, snapshot_use)
+  url <- mran_server_url()
+  url <- sub("http://", "", url)
+  cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
   system(cmd, intern=TRUE)
   
 #   cpcmd <- sprintf("cp %s .", paste(pkgpaths, collapse = " "))
