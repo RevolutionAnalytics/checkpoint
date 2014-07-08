@@ -38,7 +38,7 @@ rrt_repos_write <- function(repo, repoid=NULL){
   }
 }
 
-#' Remove an RRT repo from the user's global list of RRT repos
+#' Remove any missing RRT repos from the user's global list of RRT repos
 #'
 #' @export
 #' @param repo (character) A path to create a RRT repository; defaults to current working directory
@@ -47,7 +47,7 @@ rrt_repos_write <- function(repo, repoid=NULL){
 #' @return Prints message saying what has been done.
 #'
 #' @examples \dontrun{
-#' rrt_repos_remove(repo="~/testrepo")
+#' rrt_repos_remove()
 #' }
 
 rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
@@ -75,8 +75,9 @@ rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
       gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
       file.remove(gg)
       invisible(sapply(vapply(notmisspaths, function(x) x[[1]], character(1)), rrt_repos_write))
-    } else { dfmiss <- "all good :)" }
-    print(dfmiss)
+      mssg(verbose, "Removed the following from the global list of RRT repos\n:")
+      print(dfmiss)
+    } else { mssg(verbose, "No missing RRT repos to remove.") }
   }
 }
 
