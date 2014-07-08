@@ -17,8 +17,8 @@ mran_set <- function(snapshot=NULL, repo=getwd())
     gg <- suppressMessages(mran_snaps())
     snapshot <- gg[length(gg)]
   }
-
-  url <- sprintf("http://marmoset.revolutionanalytics.com/snapshots/%s/", snapshot)
+  
+  url <- sprintf("%s/%s/", file.path(mran_server_url(), 'snapshots'), snapshot)
   res <- GET(url)
   if(res$status_code >= 300)
     stop(sprintf("%s - snapshot not found, you don't have an internet connection, or other error...", res$status_code))
@@ -29,7 +29,9 @@ mran_set <- function(snapshot=NULL, repo=getwd())
   check4rrt(repo, lib, TRUE)
   
   # write MRAN snapshot id
+  message("Writing new snapshotID...")
   writeManifest(repo, lib, packs = NULL, repoid = digest(repo), snapshot = snapshot)
+  message("...Done")
 }
 
 # #' Write MRAN snapshot ID to internal manifest file.
