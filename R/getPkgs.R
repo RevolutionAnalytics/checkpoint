@@ -9,7 +9,7 @@
 #' @param verbose (logical) Inherited from call to rrt_init or rrt_refresh
 #' @param install (logical) Install packages or just download packages. Not used yet...
 #' @param mran (logical) If TRUE, packages are installed from the MRAN server. See
-#' \url{http://marmoset.revolutionanalytics.com/} for more information.
+#' \url{http://mran.revolutionanalytics.com} for more information.
 #' @param snapdate Date of MRAN snapshot to use. E.g. "2014-06-20"
 #' @param snapshotid MRAN snapshotID to use. E.g. "2014-06-30_1700"
 #'

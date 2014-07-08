@@ -10,7 +10,7 @@ rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, autosnap = FALSE,
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
 
 \item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See
-\url{http://marmoset.revolutionanalytics.com/} for more information.}
+\url{http://mran.revolutionanalytics.com} for more information.}
 
 \item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
 

@@ -20,7 +20,7 @@ getPkgs(x, repo, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
 \item{install}{(logical) Install packages or just download packages. Not used yet...}
 
 \item{mran}{(logical) If TRUE, packages are installed from the MRAN server. See
-\url{http://marmoset.revolutionanalytics.com/} for more information.}
+\url{http://mran.revolutionanalytics.com} for more information.}
 
 \item{snapdate}{Date of MRAN snapshot to use. E.g. "2014-06-20"}
 
