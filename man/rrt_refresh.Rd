@@ -4,7 +4,7 @@
 \title{Refresh package - look for any new packages used and install those in rrt library}
 \usage{
 rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
-  autosnap = FALSE, verbose = TRUE)
+  autosnap = FALSE, verbose = TRUE, suggests = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
@@ -17,6 +17,9 @@ rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
 \item{autosnap}{(logical) Get most recent snapshot. Default: FALSE}
 
 \item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
+
+\item{suggests}{(logical) Download and install packages in the Suggests line for packages
+used in your RRT repository, or not. Default: FALSE.}
 }
 \description{
 Refresh package - look for any new packages used and install those in rrt library

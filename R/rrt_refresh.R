@@ -8,6 +8,8 @@
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
 #' @param autosnap (logical) Get most recent snapshot. Default: FALSE
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
+#' @param suggests (logical) Download and install packages in the Suggests line for packages
+#' used in your RRT repository, or not. Default: FALSE.
 #'
 #' @seealso \link{rrt_init}, \link{rrt_install}
 #'
@@ -21,7 +23,8 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE)
+rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, 
+                        suggests=FALSE)
 {
   repoid <- digest(repo)
 
@@ -34,7 +37,7 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
 
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
-  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
+  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
 
   # Look for packages installed by user but no source available
   # if some installed give back vector of package names

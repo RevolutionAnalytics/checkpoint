@@ -19,6 +19,8 @@
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
 #' @param interactive (logical) If TRUE, function asks you for input for each item,
 #' otherwise, defaults are used. Default: FALSE.
+#' @param suggests (logical) Download and install packages in the Suggests line for packages
+#' used in your RRT repository, or not. Default: FALSE.
 #'
 #' @seealso \link{rrt_refresh}, \link{rrt_install}
 #'
@@ -34,7 +36,8 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, rprofile=NULL, interactive=FALSE)
+rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, 
+                     rprofile=NULL, interactive=FALSE, suggests=FALSE)
 {
   if(interactive){
     message("\nRepository name (default: random name generated):")
@@ -79,7 +82,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
-  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
+  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
 
   # Look for packages installed by user but no source available
   # if some installed give back vector of package names
