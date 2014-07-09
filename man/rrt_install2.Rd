@@ -3,7 +3,8 @@
 \alias{rrt_install2}
 \title{Install packages within an RRT repository.}
 \usage{
-rrt_install2(repo = getwd(), repoid, lib, verbose = TRUE)
+rrt_install2(repo = getwd(), repoid, lib, suggests = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{repo}{A repository path. This is the path to the root of your RRT repository. By default,

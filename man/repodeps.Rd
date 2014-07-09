@@ -3,7 +3,8 @@
 \alias{repodeps}
 \title{Get repository dependencies}
 \usage{
-repodeps(repo = getwd(), simplify = FALSE, base = TRUE, ...)
+repodeps(repo = getwd(), simplify = FALSE, base = TRUE,
+  suggests = FALSE, ...)
 }
 \arguments{
 \item{repo}{(character) A path to a RRT repository; defaults to current working directory.}
@@ -11,6 +12,9 @@ repodeps(repo = getwd(), simplify = FALSE, base = TRUE, ...)
 \item{simplify}{(logical) If TRUE, simplify list to a vector with all unique packages.}
 
 \item{base}{(logical) If TRUE, return base R packages, if FALSE, don't return them.}
+
+\item{suggests}{(logical) Download and install packages in the Suggests line for packages
+used in your RRT repository, or not. Default: FALSE.}
 
 \item{...}{Further args passed on to \code{miniCRAN::pkgDep}}
 }

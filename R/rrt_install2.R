@@ -6,12 +6,12 @@
 #' @param lib Library path
 #' @param verbose Print messages. Default: TRUE.
 
-rrt_install2 <- function(repo=getwd(), repoid, lib, verbose=TRUE)
+rrt_install2 <- function(repo=getwd(), repoid, lib, suggests=FALSE, verbose=TRUE)
 {
   pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
   
   mssg(verbose, "Looking for packages used in your repository...")
-  x <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=TRUE)
+  x <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
   
   if(!file.exists(pkgslist)) {
     mssg(verbose, "Getting new packages...")

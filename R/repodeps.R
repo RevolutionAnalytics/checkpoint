@@ -11,6 +11,8 @@
 #' @param repo (character) A path to a RRT repository; defaults to current working directory.
 #' @param simplify (logical) If TRUE, simplify list to a vector with all unique packages.
 #' @param base (logical) If TRUE, return base R packages, if FALSE, don't return them.
+#' @param suggests (logical) Download and install packages in the Suggests line for packages
+#' used in your RRT repository, or not. Default: FALSE.
 #' @param ... Further args passed on to \code{miniCRAN::pkgDep}
 #' 
 #' @keywords internal
@@ -27,7 +29,7 @@
 #' repodeps(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
 #' }
 
-repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
+repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ...)
 {
   # Get packages used in the repository
   pkgs_used <- rrt_deps(repo)
@@ -35,7 +37,7 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, ...)
   pkgs_used <- pkgs_used[!pkgs_used %in% 'RRT']
   
   # Get package dependencies using miniCRAN
-  pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, ...)
+  pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, suggests=suggests, ...)
   names(pkg_deps) <- pkgs_used
   
   if(simplify){
