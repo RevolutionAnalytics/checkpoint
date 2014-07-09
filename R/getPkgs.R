@@ -24,10 +24,12 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
   mssg(verbose, "... running getPkgs()")
   if(is.null(x)){ NULL } else {
 
-    pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
-    if(!file.exists(pkgslist)) { pkgs2get <- x } else {
-      gotpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
-      pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
+#     pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
+    pkgslist <- list.files(file.path(lib, "src/contrib"))
+    if(length(pkgslist) == 0) { pkgs2get <- x } else {
+#       gotpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
+#       pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
+      pkgs2get <- vapply(pkgslist, function(x) strsplit(x, "_")[[1]][[1]], character(1), USE.NAMES = FALSE)
     }
 
     # Make local repo of packages
