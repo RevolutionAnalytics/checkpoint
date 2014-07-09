@@ -78,6 +78,7 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
   
   rmcmd <- sprintf("rm -rf %s", paste(sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " "))
   system(rmcmd)
+  system(sprintf("rm %s", tmppkgsfileloc))
 
   message(".. Generating PACKAGES index file")
   tools::write_PACKAGES(dir=".", type="source")
