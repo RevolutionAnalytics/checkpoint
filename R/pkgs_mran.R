@@ -26,7 +26,7 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
   snapshot_use <- if(is.null(snapshotid)) getsnapshotid(date) else snapshotid
 
   # parse versions from pkgs
-  foo <- function(x){
+  get_pkg_versions <- function(x){
     vers <- tryCatch(mran_pkg_avail(snapshot=snapshot_use, package=x[[1]]), error=function(e) e)
     if("error" %in% class(vers)){
       sprintf("%s/__notfound__", x[[1]])
@@ -50,7 +50,7 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
   }
 
   pkgs <- lapply(pkgs, function(x) strsplit(x, "_")[[1]])
-  pkgpaths <- sapply(pkgs, foo)
+  pkgpaths <- sapply(pkgs, get_pkg_versions)
 
   notonmran <- grep("__notfound__", pkgpaths, value = TRUE)
   pkgpaths <- pkgpaths[!grepl("__notfound__", pkgpaths)]
