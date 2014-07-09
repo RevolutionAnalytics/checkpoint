@@ -21,7 +21,6 @@ Imports:
     httr,
     RJSONIO,
     XML,
-    plyr,
     yaml
 Suggests:
     roxygen2

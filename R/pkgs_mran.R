@@ -1,9 +1,8 @@
 #' Download R packages from the MRAN server
-#' 
-#' This function uses rsync, which is faster than the method (wget) \code{install.packages} uses 
+#'
+#' This function uses rsync, which is faster than the method (wget) \code{install.packages} uses
 #' by default. This function does not install packages, but only downloads them to your machine.
 #'
-#' @importFrom plyr rbind.fill
 #' @export
 #' @param date Date as "year-month-day" (YY-MM-DD)
 #' @param snapshotid Optional. You can give the exact snapshot ID insetad of a date.
@@ -30,15 +29,15 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
     vers <- tryCatch(mran_pkg_avail(snapshot=snapshot_use, package=x[[1]]), error=function(e) e)
     if("error" %in% class(vers)){
       sprintf("%s/__notfound__", x[[1]])
-    } else {    
+    } else {
       splitvers <- vapply(vers, strsplit, list(1), "\\.")
       tmp <- lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))
       lengths <- vapply(tmp, length, numeric(1))
       toadd <- max(lengths) - min(lengths)
       if(toadd > 0){
 #         gg <- tmp[vapply(tmp, length, numeric(1)) < max(lengths)]
-        tmp[vapply(tmp, length, numeric(1)) < max(lengths)] <- 
-          lapply(tmp[vapply(tmp, length, numeric(1)) < max(lengths)], 
+        tmp[vapply(tmp, length, numeric(1)) < max(lengths)] <-
+          lapply(tmp[vapply(tmp, length, numeric(1)) < max(lengths)],
                  function(b){
                    ss <- data.frame(b, t(rep(NA, max(lengths)-NCOL(b))), stringsAsFactors = FALSE)
                    names(ss) <- paste0('X', 1:max(lengths))
@@ -46,13 +45,13 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
                 })
       }
       df <- do.call(rbind, tmp)
-      #      
+      #
 #       df <- data.frame(do.call(rbind.fill, lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))), stringsAsFactors = FALSE)
       df[is.na(df)] <- 0
       row.names(df) <- names(splitvers)
       df <- suppressWarnings(colClasses(df, "numeric"))
       if(NCOL(df) == 3){ df <- sort_df(df, c("X1","X2","X3")) } else {
-        df <- sort_df(df, c("X1","X2"))      
+        df <- sort_df(df, c("X1","X2"))
       }
       pkgver <- tryCatch(x[[2]], error=function(e) e)
       if('error' %in% class(pkgver)) {
@@ -69,12 +68,12 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
 
   notonmran <- grep("__notfound__", pkgpaths, value = TRUE)
   pkgpaths <- pkgpaths[!grepl("__notfound__", pkgpaths)]
-  
+
   if(length(notonmran) > 0) {
     gg <- vapply(notonmran, function(x) strsplit(x, "/")[[1]][[1]], character(1), USE.NAMES = FALSE)
-    message(sprintf("Not found on MRAN:\n%s", paste0(gg, collapse = ", "))) 
+    message(sprintf("Not found on MRAN:\n%s", paste0(gg, collapse = ", ")))
   }
-  
+
   setwd(outdir)
   tmppkgsfileloc <- "_rsync-file-locations.txt"
   cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
@@ -84,13 +83,13 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
   url <- sub("http://", "", url)
   cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
   system(cmd, intern=TRUE)
-  
+
 #   cpcmd <- sprintf("cp %s .", paste(pkgpaths, collapse = " "))
 #   system(cpcmd)
 
   mvcmd <- sprintf("mv %s .", paste(pkgpaths, collapse = " "))
   system(mvcmd)
-  
+
   rmcmd <- sprintf("rm -rf %s", paste(sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " "))
   system(rmcmd)
   system(sprintf("rm %s", tmppkgsfileloc))
@@ -119,7 +118,7 @@ sort_df <- function (data, vars = names(data)){
 getsnapshotid <- function(date){
   # get available snapshots
   availsnaps <- suppressMessages(mran_snaps())
-  
+
   if(is.null(date)) date <- Sys.Date()
   snapshots <- grep(date, availsnaps, value = TRUE)
   if(length(snapshots) > 1){

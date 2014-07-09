@@ -4,7 +4,6 @@
 #' repository tested - not the dependencies of the packages you use. 
 #' 
 #' @import testthat devtools digest
-#' @importFrom plyr ldply
 #' @export
 #' 
 #' @details You can see a visual breakdown of check results using \link{rrt_browse} if you have run this 
@@ -71,8 +70,13 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   if("check" %in% what){
     checksres <- lapply(pkgs, checkrepo, repo=repo, verbose=verbose)
     names(checksres) <- pkgnames
-    check <- ldply(checksres)
-    names(check) <- c('pkg','check_result')
+    check <- data.frame(pkg=NA, check_result=NA)
+    for(i in seq_along(checksres)){
+      check[i,1] <- names(checksres[i])
+      check[i,2] <- checksres[[i]]
+    }
+#     check <- ldply(checksres)
+#     names(check) <- c('pkg','check_result')
   } else { check <- data.frame(pkg=pkgnames, check_result=NA, , stringsAsFactors = FALSE) }
   
   # run tests
