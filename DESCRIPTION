@@ -20,7 +20,6 @@ Imports:
     devtools,
     httr,
     RJSONIO,
-    assertthat,
     XML,
     plyr,
     yaml

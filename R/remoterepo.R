@@ -1,6 +1,6 @@
 #' Create a Github repository
 #'
-#' @import httr RJSONIO assertthat
+#' @import httr RJSONIO
 #' @export
 #'
 #' @param name (character) Required. The name of the repository
@@ -45,7 +45,7 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
                        license_template=license_template))
   response <- POST(url = "https://api.github.com/user/repos", body = RJSONIO::toJSON(args), config = c(auth, headers), ...)
   warn_for_status(response)
-  assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
+  if(response$headers$`content-type` == 'application/json; charset=utf-8') stop("Content-type does not equal 'application/json; charset=utf-8'")
   html_url <- content(response)$html_url
   githubrepourl <- paste("https://github.com/", Sys.getenv("GITHUB_USERNAME"), "/",
                    basename(html_url), sep = "")
@@ -91,7 +91,7 @@ rrt_bitbucket <- function(name, description = "", private = FALSE, fork_policy =
   url2 <- file.path("https://bitbucket.org/api/2.0/repositories", Sys.getenv("BITBUCKET_USERNAME"), name)
   response <- POST(url = url2, body = RJSONIO::toJSON(args), config = auth)
   if(response$status_code > 202){ stop(sprintf("%s - %s", response$status_code, content(response)$error$message), call. = FALSE) } else {
-    assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
+    if(response$headers$`content-type` == 'application/json; charset=utf-8') stop("Content-type does not equal 'application/json; charset=utf-8'")
     html_url <- file.path("https://bitbucket.org", Sys.getenv("BITBUCKET_USERNAME"), name)
     message("Your Github repo has been created")
     message("View repo at ", html_url)
