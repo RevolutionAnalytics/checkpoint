@@ -11,7 +11,7 @@
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
 #' @examples \dontrun{
 #' # By default installs most recent version
-#' pkgs_mran(date='2014-06-19', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
+#' pkgs_mran(date='2014-07-08', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
 #'
 #' pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/mran_snaps/stuff/")
 #' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
@@ -32,7 +32,22 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
       sprintf("%s/__notfound__", x[[1]])
     } else {    
       splitvers <- vapply(vers, strsplit, list(1), "\\.")
-      df <- data.frame(do.call(rbind.fill, lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))), stringsAsFactors = FALSE)
+      tmp <- lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))
+      lengths <- vapply(tmp, length, numeric(1))
+      toadd <- max(lengths) - min(lengths)
+      if(toadd > 0){
+#         gg <- tmp[vapply(tmp, length, numeric(1)) < max(lengths)]
+        tmp[vapply(tmp, length, numeric(1)) < max(lengths)] <- 
+          lapply(tmp[vapply(tmp, length, numeric(1)) < max(lengths)], 
+                 function(b){
+                   ss <- data.frame(b, t(rep(NA, max(lengths)-NCOL(b))), stringsAsFactors = FALSE)
+                   names(ss) <- paste0('X', 1:max(lengths))
+                   ss
+                })
+      }
+      df <- do.call(rbind, tmp)
+      #      
+#       df <- data.frame(do.call(rbind.fill, lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))), stringsAsFactors = FALSE)
       df[is.na(df)] <- 0
       row.names(df) <- names(splitvers)
       df <- suppressWarnings(colClasses(df, "numeric"))
