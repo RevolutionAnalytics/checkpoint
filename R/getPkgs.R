@@ -29,14 +29,18 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
     if(length(pkgslist) == 0) { pkgs2get <- x } else {
 #       gotpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
 #       pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
-      pkgs2get <- vapply(pkgslist, function(x) strsplit(x, "_")[[1]][[1]], character(1), USE.NAMES = FALSE)
+      gotpkgs <- vapply(pkgslist, function(x) strsplit(x, "_")[[1]][[1]], character(1), USE.NAMES = FALSE)
+      pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
     }
 
     # Make local repo of packages
     if(!is.null(pkgs2get) || length(pkgs2get) == 0){
       if(!mran){
         # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
-        makeRepo(pkgs = pkgs2get, path = lib, download = TRUE)
+        setwd(lib)
+        on.exit(setwd(repo))
+        dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
+        makeLibrary(pkgs = pkgs2get, path = file.path(lib, "src/contrib"))
         options(RRT_snapshotID = "none")
       } else {
         snapdateid <- if(is.null(snapshotid)){
