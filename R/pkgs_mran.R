@@ -81,7 +81,7 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
   system(sprintf("rm %s", tmppkgsfileloc))
 
   message(".. Generating PACKAGES index file")
-  tools::write_PACKAGES(dir=".", type="source")
+#   tools::write_PACKAGES(dir=".", type="source")
 }
 
 
