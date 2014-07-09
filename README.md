@@ -7,6 +7,9 @@ master: [![](https://api.travis-ci.org/RevolutionAnalytics/RRT.png?branch=master
 dev: [![](https://api.travis-ci.org/RevolutionAnalytics/RRT.png?branch=dev)](https://travis-ci.org/RevolutionAnalytics/RRT)
 
 
+Active development is on the `dev` branch - A more stable version on the `master` branch
+
+
 ### Installation
 
 On Linux, get xml C library first (on the command line)
