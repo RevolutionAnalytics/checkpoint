@@ -10,10 +10,10 @@ get_github <- function(pkg, username, ...){
   refurl <- devtools:::github_get_conn(pkg, username, ...)
   res <- GET(refurl$url)
   stop_for_status(res)
-  installtmpdir <- file.path(lib, "src/contrib", paste0(pkg, ".zip"))
-  writeBin(content(res), installtmpdir)
-  unzip(sprintf("%s/tmp.zip", installtmpdir), exdir = file.path(lib, "src/contrib"))
-  unlink(installtmpdir)
+  installtmpfile <- file.path(lib, "src/contrib", paste0(pkg, ".zip"))
+  writeBin(content(res), installtmpfile)
+#   unzip(sprintf("%s/tmp.zip", installtmpfile), exdir = file.path(lib, "src/contrib"))
+#   unlink(installtmpdir)
 }
 
 

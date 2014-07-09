@@ -120,7 +120,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # install packages
   rrt_install2(repo, repoid, lib, suggests, verbose)
-
+  
   message("\n>>> RRT initialization completed.")
 }
 
@@ -128,3 +128,8 @@ rrt_readline <- function(default=""){
   tmp <- readline()
   if(nchar(tmp) == 0) default else tmp
 }
+
+# install_rrt <- function(lib, ...){
+#   get_github(lib=lib, pkg="RRT", username="RevolutionAnalytics", ...)
+# #   devtools::install_github("RevolutionAnalytics/RRT", lib=lib, ...)
+# }
