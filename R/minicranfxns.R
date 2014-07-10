@@ -2,9 +2,9 @@
 #' 
 #' Performs recursive retrieve for \code{Depends}, \code{Imports} and \code{LinkLibrary}. Performs 
 #' non-recursive retrieve for \code{Suggests}.
-#' 
-#' @export
-#' 
+#'
+#' @keywords internal
+#'  
 #' @param pkg Character vector of packages.
 #' @param availPkgs Vector of available packages.  Defaults to reading this list from CRAN, using 
 #' \code{\link{available.packages}}
@@ -77,7 +77,7 @@ pkgDep <- function(pkg, availPkgs, repos=getOption("repos"), type=getOption("pkg
 #' supplied, then the function attempts to read from a local repository, otherwise attempts to read
 #' from a CRAN mirror at the \code{repos} url.
 #' 
-#' @export
+#' @keywords internal
 #' 
 #' @param repos URL(s) of the 'contrib' sections of the repositories. Passed to \code{\link{available.packages}}
 #' @param type Passed to \code{\link{available.packages}}
@@ -106,7 +106,7 @@ pkgAvail <- function(repos=getOption("repos"), type=getOption("pkgType"), ...)
 #' 
 #' Uses \code{\link{download.packages}} and \code{\link[tools]{write_PACKAGES}}
 #' 
-#' @export
+#' @keywords internal
 #' 
 #' @param pkgs Character vector of packages to download
 #' @param type Passed to \code{\link{download.packages}}

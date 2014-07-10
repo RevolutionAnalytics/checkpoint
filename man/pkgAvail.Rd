@@ -17,4 +17,5 @@ This is a thin wrapper around \code{\link{available.packages}}.  If the argument
 supplied, then the function attempts to read from a local repository, otherwise attempts to read
 from a CRAN mirror at the \code{repos} url.
 }
+\keyword{internal}
 

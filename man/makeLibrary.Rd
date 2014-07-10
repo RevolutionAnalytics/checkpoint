@@ -22,4 +22,5 @@ library on a machine.
 
 Uses \code{\link{download.packages}} and \code{\link[tools]{write_PACKAGES}}
 }
+\keyword{internal}
 

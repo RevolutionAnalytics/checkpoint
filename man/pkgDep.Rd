@@ -34,4 +34,5 @@ pkgDep(pkg, availPkgs, repos = getOption("repos"),
 Performs recursive retrieve for \code{Depends}, \code{Imports} and \code{LinkLibrary}. Performs
 non-recursive retrieve for \code{Suggests}.
 }
+\keyword{internal}
 
