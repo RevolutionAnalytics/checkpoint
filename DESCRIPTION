@@ -8,7 +8,7 @@ Authors@R: c(person("Andrie", "de Vries", role = c("aut", "cre"),
     email = "apdevries@gmail.com"),
     person("Scott", "Chamberlain", role = "aut",
     email = "myrmecocystus@gmail.com"))
-License: GPL-2
+License: GPL-2 + file LICENSE
 URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
