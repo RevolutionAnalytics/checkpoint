@@ -86,23 +86,28 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
   tmppkgsfileloc <- "_rsync-file-locations.txt"
   cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
 
-  message("... Downloading package files")
-  url <- mran_server_url()
-  url <- sub("http://", "", url)
-  cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
-  system(cmd, intern=TRUE)
+  if(length(pkgpaths > 0)){
 
-#   cpcmd <- sprintf("cp %s .", paste(pkgpaths, collapse = " "))
-#   system(cpcmd)
-
-  mvcmd <- sprintf("mv %s .", paste(pkgpaths, collapse = " "))
-  system(mvcmd)
-
-  rmcmd <- sprintf("rm -rf %s", paste(sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " "))
-  system(rmcmd)
-  system(sprintf("rm %s", tmppkgsfileloc))
-#   message("... Generating PACKAGES index file")
-#   tools::write_PACKAGES(dir=".", type="source")
+    message("... Downloading package files")
+    url <- mran_server_url()
+    url <- sub("http://", "", url)
+    cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
+    system(cmd, intern=TRUE)
+  
+  #   cpcmd <- sprintf("cp %s .", paste(pkgpaths, collapse = " "))
+  #   system(cpcmd)
+  
+    mvcmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
+    system(mvcmd)
+  
+    rmcmd <- sprintf("rm -rf %s", paste(
+      sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
+      )
+    system(rmcmd)
+    system(sprintf("rm %s", tmppkgsfileloc))
+  #   message("... Generating PACKAGES index file")
+  #   tools::write_PACKAGES(dir=".", type="source")
+}
 }
 
 
