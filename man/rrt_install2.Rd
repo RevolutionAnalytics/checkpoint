@@ -14,6 +14,8 @@ we use the current working directory via \code{getwd()}.}
 
 \item{lib}{Library path}
 
+\item{suggests}{Install suggests or not. Default: FALSE.}
+
 \item{verbose}{Print messages. Default: TRUE.}
 }
 \description{

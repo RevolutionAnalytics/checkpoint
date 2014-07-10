@@ -4,6 +4,7 @@
 #' we use the current working directory via \code{getwd()}.
 #' @param repoid Repository ID.
 #' @param lib Library path
+#' @param suggests Install suggests or not. Default: FALSE.
 #' @param verbose Print messages. Default: TRUE.
 
 rrt_install2 <- function(repo=getwd(), repoid, lib, suggests=FALSE, verbose=TRUE)
