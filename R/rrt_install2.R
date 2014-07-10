@@ -38,6 +38,14 @@ rrt_install2 <- function(repo=getwd(), repoid, lib, suggests=FALSE, verbose=TRUE
     if(length(pkgswithpath) == 0){
       mssg(verbose, "No packages found to install")
     } else {
+      # install github pkgs separately
+      gh_install <- pkgswithpath[grep("\\.zip", pkgswithpath)]
+      gh_install_names <- vapply(gh_install, function(x) sub("\\.zip", "", strsplit(x, '/')[[1]][length(strsplit(x, '/')[[1]])]), character(1), USE.NAMES = FALSE)
+      for(i in seq_along(gh_install_names)){
+        install_other(pkg=gh_install_names[i], lib=lib)
+      }
+      
+      # regular install from tar.gz
       pkgswithpath <- unlist(pkgswithpath)
       install.packages(pkgswithpath, lib = lib, repos=NULL, type = "source")
       notinst <- pkgs2install[!vapply(file.path(lib, pkgs2install), file.exists, logical(1))]

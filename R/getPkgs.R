@@ -24,15 +24,12 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
   mssg(verbose, "... running getPkgs()")
   if(is.null(x)){ NULL } else {
 
-#     pkgslist <- paste0(lib, "/src/contrib/PACKAGES")
     pkgslist <- list.files(file.path(lib, "src/contrib"))
     if(length(pkgslist) == 0) { pkgs2get <- x } else {
-#       gotpkgs <- gsub("Package:\\s", "", grep("Package:", readLines(pkgslist), value=TRUE))
-#       pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
       gotpkgs <- vapply(pkgslist, function(x) strsplit(x, "_")[[1]][[1]], character(1), USE.NAMES = FALSE)
       pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
     }
-
+    
     # Make local repo of packages
     if(!is.null(pkgs2get) || length(pkgs2get) == 0){
       if(!mran){
@@ -51,7 +48,7 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
         setwd(lib)
         on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
-        pkgs_mran(snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
+        pkgs_mran(repo=repo, lib=lib, snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
         options(RRT_snapshotID = snapdateid)
       }
     } else {

@@ -83,6 +83,14 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
+  ## remove packages not found on MRAN
+  if(!is.null(pkgs)){ 
+    notfound <- pkgs[grepl("not found", pkgs)]
+    if(!length(notfound) == 0){
+      cat(notfound, sep = "\n")
+    }
+    pkgs <- pkgs[!grepl("not found", pkgs)]
+  }
 
   # Look for packages installed by user but no source available
   # if some installed give back vector of package names

@@ -32,7 +32,7 @@
 repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ...)
 {
   # Get packages used in the repository
-  pkgs_used <- rrt_deps(repo)
+  pkgs_used <- rrt_deps(repo) 
   # remove RRT
   pkgs_used <- pkgs_used[!pkgs_used %in% 'RRT']
   
@@ -116,9 +116,9 @@ pkg_deps_noncran <- function(repo, x){
     from <- tolower(names(out))
     from <- match.arg(from, c('github','mran','bitbucket','bioconductor','gitorious'))
     switch(from, 
-           github = get_desc_github(out[[1]]))
+           github = c(x, get_desc_github(out[[1]])))
   } else {
-    sprintf("%s not found - make sure to specify info in the manifest file at %s", x, manfile)
+    sprintf("%s not found - make sure to specify info in the manifest file at %s", x, usermanfile)
   }
 }
 

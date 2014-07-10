@@ -3,9 +3,14 @@
 \alias{pkgs_mran}
 \title{Download R packages from the MRAN server}
 \usage{
-pkgs_mran(date = NULL, snapshotid = NULL, pkgs = NULL, outdir = NULL)
+pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
+  pkgs = NULL, outdir = NULL)
 }
 \arguments{
+\item{repo}{Repository path}
+
+\item{lib}{(character) Library location, a directory}
+
 \item{date}{Date as "year-month-day" (YY-MM-DD)}
 
 \item{snapshotid}{Optional. You can give the exact snapshot ID insetad of a date.}

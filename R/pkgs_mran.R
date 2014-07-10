@@ -4,6 +4,8 @@
 #' by default. This function does not install packages, but only downloads them to your machine.
 #'
 #' @export
+#' @param repo Repository path
+#' @param lib (character) Library location, a directory
 #' @param date Date as "year-month-day" (YY-MM-DD)
 #' @param snapshotid Optional. You can give the exact snapshot ID insetad of a date.
 #' @param outdir Output directory
@@ -16,7 +18,7 @@
 #' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
 #' }
 
-pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
+pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
 {
   if(is.null(outdir)) stop("You must specify a directory to download packages to")
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
@@ -72,6 +74,12 @@ pkgs_mran <- function(date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
   if(length(notonmran) > 0) {
     gg <- vapply(notonmran, function(x) strsplit(x, "/")[[1]][[1]], character(1), USE.NAMES = FALSE)
     message(sprintf("Not found on MRAN:\n%s", paste0(gg, collapse = ", ")))
+    githubpaths <- yaml.load_file(file.path(repo, "rrt/rrt_manifest.yml"))$Github
+    toinstall <- sapply(gg, function(x) grep(x, githubpaths, value = TRUE), USE.NAMES = FALSE)
+    for(i in seq_along(toinstall)){
+      pathsplit <- strsplit(toinstall[i], "/")[[1]]
+      get_github(lib=lib, pkg=pathsplit[[2]], username=pathsplit[[1]])
+    }
   }
 
   setwd(outdir)

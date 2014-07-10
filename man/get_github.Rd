@@ -3,7 +3,7 @@
 \alias{get_github}
 \title{Install packages from locations other than CRAN, its mirrors, or MRAN}
 \usage{
-get_github(pkg, username, ...)
+get_github(pkg, username, lib, ...)
 }
 \description{
 Install packages from locations other than CRAN, its mirrors, or MRAN
