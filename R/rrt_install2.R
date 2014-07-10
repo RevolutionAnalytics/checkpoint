@@ -40,14 +40,22 @@ rrt_install2 <- function(repo=getwd(), repoid, lib, suggests=FALSE, verbose=TRUE
     } else {
       # install github pkgs separately
       gh_install <- pkgswithpath[grep("\\.zip", pkgswithpath)]
-      gh_install_names <- vapply(gh_install, function(x) sub("\\.zip", "", strsplit(x, '/')[[1]][length(strsplit(x, '/')[[1]])]), character(1), USE.NAMES = FALSE)
+      gh_install_names <- vapply(gh_install, 
+                                 function(x) sub("\\.zip", "", strsplit(x, '/')[[1]][length(strsplit(x, '/')[[1]])]),
+                                 character(1), USE.NAMES = FALSE)
       for(i in seq_along(gh_install_names)){
         install_other(pkg=gh_install_names[i], lib=lib)
       }
       
       # regular install from tar.gz
       pkgswithpath <- unlist(pkgswithpath)
-      install.packages(pkgswithpath, lib = lib, repos=NULL, type = "source")
+      pkgswithpath <- normalizePath(pkgswithpath, winslash="/")
+      lib <- normalizePath(lib)
+      oldwd <- getwd()
+      on.exit(setwd(oldwd))
+      setwd(dirname(pkgswithpath[1]))
+      utils::install.packages(basename(pkgswithpath[1]), lib = lib, repos=NULL, type = "source", dependencies=FALSE)
+      
       notinst <- pkgs2install[!vapply(file.path(lib, pkgs2install), file.exists, logical(1))]
       if(!length(notinst) == 0) install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"))
     }
