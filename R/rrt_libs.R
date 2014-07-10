@@ -11,7 +11,7 @@
 #' }
 rrt_repos_write <- function(repo, repoid=NULL){
   rrtdir <- file.path(Sys.getenv("HOME"), ".rrt")
-  if(!file.exists(rrtdir)) dir.create(rrtdir, recursive = TRUE)
+  if(!file.exists(rrtdir)) dir.create(normalizePath(rrtdir), recursive = TRUE)
   
   gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
   append <- if(file.exists(gg)) TRUE else FALSE
