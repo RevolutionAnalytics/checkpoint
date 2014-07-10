@@ -3,9 +3,11 @@ Title: R Reproducibility Toolkit
 Description: R Reproducibility Toolkit. Get miniCRAN from
     https://github.com/andrie/miniCRAN
 Version: 0.1.4
-Date: 2014-07-08
-Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
-    email = "myrmecocystus@gmail.com")
+Date: 2014-07-10
+Authors@R: c(person("Andrie", "de Vries", role = c("aut", "cre"),
+    email = "apdevries@gmail.com"),
+    person("Scott", "Chamberlain", role = "aut",
+    email = "myrmecocystus@gmail.com"))
 License: GPL-2
 URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
