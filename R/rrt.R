@@ -40,6 +40,8 @@
 rrt <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, 
                      rprofile=NULL, interactive=FALSE, suggests=FALSE)
 {
+  if(!has_rsync()) mran <- FALSE
+  
   if(is_rrt(repo, verbose = FALSE)){
     mssg(verbose, "RRT repo recognized...refreshing...\n")
     rrt_refresh(repo=repo, mran=mran, snapdate=snapdate, autosnap=autosnap, verbose=verbose, 
@@ -49,4 +51,9 @@ rrt <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=
     rrt_init(repo=repo, mran=mran, snapdate=snapdate, autosnap=autosnap, verbose=verbose, 
              rprofile=rprofile, interactive=interactive, suggests=suggests)
   }
+}
+
+has_rsync <- function(){
+  x <- Sys.which("rsync")
+  if(grepl("rsync", x)) TRUE else FALSE
 }
