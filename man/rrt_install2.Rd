@@ -21,4 +21,5 @@ we use the current working directory via \code{getwd()}.}
 \description{
 Install packages within an RRT repository.
 }
+\keyword{internal}
 

@@ -32,4 +32,5 @@ rrt_install(repo="~/testrepo")
 \seealso{
 \link{rrt_init}, \link{rrt_refresh}
 }
+\keyword{internal}
 
