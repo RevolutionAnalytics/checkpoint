@@ -7,7 +7,7 @@
 #' repo initialization is done interactively, so that you can choose your settings or accept
 #' reasonable defaults.
 #'
-#' @import digest miniCRAN
+#' @import digest
 #' @export
 #'
 #' @param repo (character) A path to create a RRT repository; defaults to current working directory.
@@ -36,7 +36,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, 
+rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE,
                      rprofile=NULL, interactive=FALSE, suggests=FALSE)
 {
   if(interactive){
@@ -84,7 +84,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   mssg(verbose, "Looking for packages used in your repository...")
   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
   ## remove packages not found on MRAN
-  if(!is.null(pkgs)){ 
+  if(!is.null(pkgs)){
     notfound <- pkgs[grepl("not found", pkgs)]
     if(!length(notfound) == 0){
       cat(notfound, sep = "\n")
@@ -128,7 +128,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # install packages
   rrt_install2(repo, repoid, lib, suggests, verbose)
-  
+
   message("\n>>> RRT initialization completed.")
 }
 

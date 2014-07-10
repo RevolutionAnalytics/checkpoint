@@ -12,7 +12,6 @@ License: GPL-2
 URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
-    miniCRAN,
     git2r,
     digest,
     knitr,

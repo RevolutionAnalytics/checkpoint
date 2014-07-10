@@ -1,30 +1,30 @@
 #' Get repository dependencies
-#' 
+#'
 #' This function first determines packages used in the repo, then recursively gets dependencies
-#' of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}). 
-#' Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE: 
+#' of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}).
+#' Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE:
 #' Enhances not working right now.
 #'
-#' @import miniCRAN yaml httr
+#' @import yaml httr
 #' @export
-#' 
+#'
 #' @param repo (character) A path to a RRT repository; defaults to current working directory.
 #' @param simplify (logical) If TRUE, simplify list to a vector with all unique packages.
 #' @param base (logical) If TRUE, return base R packages, if FALSE, don't return them.
 #' @param suggests (logical) Download and install packages in the Suggests line for packages
 #' used in your RRT repository, or not. Default: FALSE.
 #' @param ... Further args passed on to \code{miniCRAN::pkgDep}
-#' 
+#'
 #' @keywords internal
 #' @return A named list of packages, named by the package that requires said dependencies
 #' @examples \dontrun{
 #' repodeps(repo="~/newrepo")
 #' repodeps(repo="~/newrepo", simplify=TRUE)
-#' 
+#'
 #' # defaults to working directory
 #' setwd("~/newrepo")
-#' repodeps() 
-#' 
+#' repodeps()
+#'
 #' # Get Suggests too, not retrieved by default
 #' repodeps(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
 #' }
@@ -32,19 +32,19 @@
 repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ...)
 {
   # Get packages used in the repository
-  pkgs_used <- rrt_deps(repo) 
+  pkgs_used <- rrt_deps(repo)
   # remove RRT
   pkgs_used <- pkgs_used[!pkgs_used %in% 'RRT']
-  
+
   # Get package dependencies using miniCRAN
   pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, suggests=suggests, ...)
   names(pkg_deps) <- pkgs_used
-  
+
   if(simplify){
     allpkgs <- unname(do.call(c, pkg_deps))
     pkg_deps <- unique(allpkgs)
   }
-  
+
   # remove base R pkgs
   if(!base){
     availpkgs <- available.packages(contrib.url(getOption("repos"), "source"))
@@ -54,11 +54,11 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ..
         if(!is.na(zz[['Priority']]) && zz[['Priority']] == "base") TRUE else FALSE
       }
     })]
-    pkg_deps <- pkg_deps[!pkg_deps %in% 
+    pkg_deps <- pkg_deps[!pkg_deps %in%
           c('base','compiler','datasets','graphics','grDevices','grid','methods','parallel',
             'splines','stats','stats4','tcltk','tools','utils')]
   }
-  
+
   return(pkg_deps)
 }
 
@@ -73,7 +73,7 @@ pkgDep_try <- function(x, repo=NULL, ...){
 pkg_deps_noncran <- function(repo, x){
   ### FIXME: if we index non-CRAN packages on MRAN, we could easily search MRAN instead of the mess below
   manfile <- file.path(repo, "rrt/rrt_manifest.yml")
-  
+
   # look for user specified manifest file, and read from there if any
   usermanfile <- file.path(repo, "manifest.yml")
   if(!file.exists(usermanfile)){ userdeets <- NULL } else {
@@ -101,9 +101,9 @@ pkg_deps_noncran <- function(repo, x){
       }
     }
   }
-  
+
   # look for package mention in manifest, return message if not
-  if(!file.exists(manfile)){ out <- "not found" } else {  
+  if(!file.exists(manfile)){ out <- "not found" } else {
     tt <- suppressWarnings(yaml.load_file(manfile))
     nn <- tt[names(tt) %in% c("Github","MRAN","Bitbucket","Bioconductor","Gitorious")]
     trymatch <- lapply(nn, function(y) y[sapply(y, function(z) grepl(x, z))])
@@ -111,11 +111,11 @@ pkg_deps_noncran <- function(repo, x){
       out <- trymatch[!sapply(trymatch, length)==0]
     }
   }
-  
+
   if(!out == "not found"){
     from <- tolower(names(out))
     from <- match.arg(from, c('github','mran','bitbucket','bioconductor','gitorious'))
-    switch(from, 
+    switch(from,
            github = c(x, get_desc_github(out[[1]])))
   } else {
     sprintf("%s not found - make sure to specify info in the manifest file at %s", x, usermanfile)

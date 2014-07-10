@@ -1,7 +1,5 @@
 #' Function to download packages
 #'
-#' @import miniCRAN
-#'
 #' @param x (character) A vector of package names. If NULL, none installed, and message prints
 #' @param repo Repository path
 #' @param lib (character) Library location, a directory
@@ -29,7 +27,7 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
       gotpkgs <- vapply(pkgslist, function(x) strsplit(x, "_")[[1]][[1]], character(1), USE.NAMES = FALSE)
       pkgs2get <- sort(x)[!sort(x) %in% sort(gotpkgs)]
     }
-    
+
     # Make local repo of packages
     if(!is.null(pkgs2get) || length(pkgs2get) == 0){
       if(!mran){
