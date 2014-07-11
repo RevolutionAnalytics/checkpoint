@@ -98,18 +98,16 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   pkgs <- c(addtnpkgs, pkgs)
 
   # get packages in a private location for this project
-  if(autosnap){
-    availsnaps <- suppressMessages(mran_snaps())
-    snapshotid <- availsnaps[length(availsnaps)]
-  } else { snapshotid <- NULL }
-  getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
+  mssg(verbose, "Getting new packages...")
+  set_snapshot_date(repo, snapdate, autosnap)
+  getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran)
 
   # Write blank user manifest file, or not if already present
   writeUserManifest(repository = repo, verbose = verbose)
   
   # Write to internal manifest file
   mssg(verbose, "Writing repository locked manifest file...")
-  writeManifest(repository = repo, librar = lib, packs = pkgs, repoid, reponame, author, license, description, remote, verbose=verbose)
+  writeManifest(repository = repo, librar = lib, packs = pkgs, repoid, reponame, author, license, description, remote, snapshot = getOption('RRT_snapshotID'), verbose=verbose)
 
   # Write repo log file
   mssg(verbose, "Writing repository log file...")
@@ -176,4 +174,29 @@ writeUserManifest <- function(repository, verbose){
     fields <- c('RepositoryName:', 'Authors:', 'License:', 'Description:', 'Remote:')
     cat(fields, file = usermanfile, sep = "\n")
   } else { mssg(verbose, "User manifest file already exists") }
+}
+
+get_snapshot_date <- function(repository){
+  manfile <- suppressWarnings(normalizePath(file.path(repository, "rrt/rrt_manifest.yml")))
+  if(file.exists(manfile)){
+    manfile_contents <- yaml.load_file(manfile)
+    manfile_contents$RRT_snapshotID
+  }
+}
+
+set_snapshot_date <- function(repo, snapdate, autosnap){
+  if(is.null(snapdate)){
+    tt <- get_snapshot_date(repository=repo)
+    if(!is.null(tt)){ snapshotid <- tt } else {
+      if(autosnap){
+        availsnaps <- suppressMessages(mran_snaps())
+        snapshotid <- availsnaps[length(availsnaps)]
+      } else { stop("You must provide a date or set autosnap=TRUE") }
+    }
+  } else {
+    # as of 2014-07-11, we're moving to one snapshot per day, so forcing to last
+    # snapshot of any day if there are more than 1
+    snapshotid <- getsnapshotid(snapdate, forcelast = TRUE)
+  }
+  options(RRT_snapshotID = snapshotid)
 }
