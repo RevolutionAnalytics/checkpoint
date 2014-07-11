@@ -25,7 +25,7 @@
 
 rrt_install <- function(repo=getwd(), verbose=TRUE)
 {
-  repoid <- digest(repo)
+  repoid <- digest(normalizePath(repo))
 
   # check to make sure repo exists
   mssg(verbose, "Checking to make sure repository exists...")

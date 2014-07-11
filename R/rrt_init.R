@@ -70,7 +70,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   }
 
   # create repo id using digest
-  repoid <- digest(repo)
+  repoid <- digest(normalizePath(repo))
 
   # create repo
   makerrtrepo(repo, verbose)

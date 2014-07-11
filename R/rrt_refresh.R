@@ -26,7 +26,7 @@
 rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, 
                         suggests=FALSE)
 {
-  repoid <- digest(repo)
+  repoid <- digest(normalizePath(repo))
 
   # check to make sure repo exists
   check4repo(repo, verbose)
