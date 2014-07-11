@@ -72,6 +72,9 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
 
   # install packages
   rrt_install2(repo, repoid, lib, suggests, verbose)
+  
+  # write package versions to manifest file
+  write_pkg_versions(lib, repo)
 
   message("\n>>> RRT refresh completed.")
 }

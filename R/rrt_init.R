@@ -128,6 +128,9 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # install packages
   rrt_install2(repo, repoid, lib, suggests, verbose)
+  
+  # write package versions to manifest file
+  write_pkg_versions(lib, repo)
 
   message("\n>>> RRT initialization completed.")
 }
@@ -141,3 +144,24 @@ rrt_readline <- function(default=""){
 #   get_github(lib=lib, pkg="RRT", username="RevolutionAnalytics", ...)
 # #   devtools::install_github("RevolutionAnalytics/RRT", lib=lib, ...)
 # }
+
+write_pkg_versions <- function(lib, repo){
+  instpks <- list.files(normalizePath(lib), full.names = TRUE)
+  if(!length(instpks) == 0){
+    names(instpks) <- list.files(normalizePath(lib))
+    instpks <- instpks[!names(instpks) %in% "src"]
+    instpks_ver <- lapply(instpks, function(x) as.package(x)$version)
+    towrite <- sprintf("Packages:\n%s", cat_pack_vers(instpks_ver) )
+    cat(towrite, file = normalizePath(file.path(repo, "rrt/rrt_manifest.yml")), sep = "\n", append = TRUE)
+  }
+}
+
+cat_pack_vers <- function(x)
+{
+  tt <- list()
+  for(i in seq_along(x)){
+    tt[[i]] <- paste0(sprintf(" - %s~", names(x[i])), gsub("\n", " ", x[[i]]))
+  }
+  vv <- paste(tt, collapse = "\n")
+  if(length(vv) == 0) "" else vv
+}
