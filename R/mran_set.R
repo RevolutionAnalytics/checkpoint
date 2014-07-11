@@ -15,7 +15,7 @@ mran_set <- function(snapshot=NULL, repo=getwd())
 {
   if(is.null(snapshot)){
     gg <- suppressMessages(mran_snaps())
-    snapshot <- gg[length(gg)]
+    snapshot <- gg[length(gg)] # get the latest snapshot (latest date that is)
   }
 
   url <- sprintf("%s/%s/", file.path(mran_server_url(), 'snapshots'), snapshot)
