@@ -54,18 +54,25 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
 
   # get packages in a private location for this project
   mssg(verbose, "Getting new packages...")
-  if(autosnap){
-    availsnaps <- suppressMessages(mran_snaps())
-    snapshotid <- availsnaps[length(availsnaps)]
-  } else { snapshotid <- NULL }
-  getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate, snapshotid = snapshotid)
+  set_snapshot_date(repo, snapdate, autosnap)
+  getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran)
+#   snapshotid <- NULL
+#   man_snapshotid <- get_snapshot_date(repository=repo)
+#   if(!is.null(man_snapshotid)){ snapshotid <- man_snapshotid } else {
+#     if(autosnap){
+#       availsnaps <- suppressMessages(mran_snaps())
+#       snapshotid <- availsnaps[length(availsnaps)]
+#     } else { snapshotid <- NULL }
+#   }
+#   options(RRT_snapshotID = snapshotid)
+#   getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate, snapshotid = snapshotid)
 
   # Write blank user manifest file
   writeUserManifest(repository = repo, verbose = verbose)
   
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
-  writeManifest(repository = repo, librar = lib, packs = pkgs, repoid)
+  writeManifest(repository = repo, librar = lib, packs = pkgs, snapshot = getOption('RRT_snapshotID'), repoid)
 
   # Write repo log file
   rrt_repos_write(repo, repoid)
