@@ -128,18 +128,20 @@ sort_df <- function (data, vars = names(data)){
   data[do.call("order", data[, vars, drop = FALSE]), , drop = FALSE]
 }
 
-getsnapshotid <- function(date){
+getsnapshotid <- function(date, forcelast=FALSE){
   # get available snapshots
   availsnaps <- suppressMessages(mran_snaps())
 
   if(is.null(date)) date <- Sys.Date()
   snapshots <- grep(date, availsnaps, value = TRUE)
   if(length(snapshots) > 1){
-    print(data.frame(snapshots))
-    message("\nMore than one snapshot matching your date found \n",
-            "Enter rownumber of snapshot (other inputs will return 'NA'):\n")
-    take <- scan(n = 1, quiet = TRUE, what = 'raw')
-    if(is.na(take)){ message("No snapshot found or you didn't select one") }
-    snapshots[as.numeric(take)]
+    if(!forcelast){
+      print(data.frame(snapshots))
+      message("\nMore than one snapshot matching your date found \n",
+              "Enter rownumber of snapshot (other inputs will return 'NA'):\n")
+      take <- scan(n = 1, quiet = TRUE, what = 'raw')
+      if(is.na(take)){ message("No snapshot found or you didn't select one") }
+      snapshots[as.numeric(take)]
+    } else { snapshots[length(snapshots)] }
   } else { snapshots }
 }
