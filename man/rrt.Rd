@@ -3,17 +3,18 @@
 \alias{rrt}
 \title{Initiate or refresh an RRT repository.}
 \usage{
-rrt(repo = getwd(), mran = TRUE, snapdate = NULL, autosnap = FALSE,
+rrt(snapshotdate = NULL, repo = getwd(), mran = TRUE, autosnap = TRUE,
   verbose = TRUE, rprofile = NULL, interactive = FALSE,
   suggests = FALSE)
 }
 \arguments{
+\item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+will be supplied with options.}
+
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
 
 \item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See
 \url{http://mran.revolutionanalytics.com} for more information.}
-
-\item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
 
 \item{autosnap}{(logical) Get most recent snapshot. Default: FALSE}
 
@@ -45,11 +46,11 @@ function downloads packages and installs them, as needed.
 }
 \examples{
 \dontrun{
-# new repo
-rrt(repo="~/scottsnewrepo")
+# new repo, after entering a project folder, starting R, then loading RRT
+rrt("2014-07-11")
 
 # refresh repo
-rrt(repo="~/scottsnewrepo")
+rrt()
 }
 }
 \seealso{

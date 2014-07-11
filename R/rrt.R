@@ -13,10 +13,11 @@
 #'
 #' @export
 #'
+#' @param snapshotdate (date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you 
+#' will be supplied with options.
 #' @param repo (character) A path to create a RRT repository; defaults to current working directory.
 #' @param mran (logical) If TRUE (default), packages are installed from the MRAN server. See
 #' \url{http://mran.revolutionanalytics.com} for more information.
-#' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
 #' @param autosnap (logical) Get most recent snapshot. Default: FALSE
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
@@ -30,25 +31,31 @@
 #' @return Files written to the user's machine, with informative messages on progress
 #'
 #' @examples \dontrun{
-#' # new repo
-#' rrt(repo="~/scottsnewrepo")
+#' # new repo, after entering a project folder, starting R, then loading RRT
+#' rrt("2014-07-11")
 #' 
 #' # refresh repo
-#' rrt(repo="~/scottsnewrepo")
+#' rrt()
 #' }
 
-rrt <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, 
+rrt <- function(snapshotdate=NULL, repo=getwd(), mran=TRUE, autosnap=TRUE, verbose=TRUE, 
                      rprofile=NULL, interactive=FALSE, suggests=FALSE)
 {
+  # if user doesn't have rsync, don't use MRAN
+  # FIXME: perhaps change to if they don't have rsync use download.files or other method.
   if(!has_rsync()) mran <- FALSE
+#   
+#   if(is.null(snapshotdate)){
+#     snaps <- suppressMessages(mran_snaps())  
+#   }
   
   if(is_rrt(repo, verbose = FALSE)){
     mssg(verbose, "RRT repo recognized...refreshing...\n")
-    rrt_refresh(repo=repo, mran=mran, snapdate=snapdate, autosnap=autosnap, verbose=verbose, 
+    rrt_refresh(repo=repo, mran=mran, snapdate=snapshotdate, autosnap=autosnap, verbose=verbose, 
                 suggests=suggests) 
   } else {
     mssg(verbose, "Creating a new RRT repo...\n")
-    rrt_init(repo=repo, mran=mran, snapdate=snapdate, autosnap=autosnap, verbose=verbose, 
+    rrt_init(repo=repo, mran=mran, snapdate=snapshotdate, autosnap=autosnap, verbose=verbose, 
              rprofile=rprofile, interactive=interactive, suggests=suggests)
   }
 }
