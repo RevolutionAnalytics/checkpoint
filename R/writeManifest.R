@@ -18,14 +18,17 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
 {
   # look first for user manifest file in root directory - overrides user input for fields:
   ## reponame, author, license, description, and remote
+  givezerochar <- function(x) if(is.null(x)) "" else x
   usermanfile <- normalizePath(file.path(repository, "manifest.yml"))
   if(file.exists(usermanfile)){
     tt <- yaml.load_file(usermanfile)
-    reponame <- tt$RepositoryName
-    author <- tt$Authors
-    license <- tt$License
-    description <- tt$Description
-    remote <- tt$Remote
+    if(!is.null(tt)){
+      reponame <- givezerochar(tt$RepositoryName)
+      author <- givezerochar(tt$Authors)
+      license <- givezerochar(tt$License)
+      description <- givezerochar(tt$Description)
+      remote <- givezerochar(tt$Remote)
+    }
   }
   
   reponame <- sprintf("RepositoryName: %s", reponame)
