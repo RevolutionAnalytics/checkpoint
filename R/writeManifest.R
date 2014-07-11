@@ -39,7 +39,7 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   sysreq <- sprintf("SystemRequirements:\n%s", getsysreq(packs, lib=librar) )
 #   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
 
-  pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse=", "))
+#   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse=", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
 
   mssg(verbose, "... writeManifest: checking for date created")
@@ -52,7 +52,7 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   github <- check4github(infofile)
 
   info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtsnapshot, rrtver,
-            rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq, github)
+            rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, sysreq, github)
   mssg(verbose, "... writeManifest: writing manifest files")
   cat(info, file = infofile, sep = "\n")
 }
