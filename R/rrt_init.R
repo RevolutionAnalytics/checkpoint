@@ -70,7 +70,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   }
 
   # create repo id using digest
-  repoid <- digest(normalizePath(repo))
+  repoid <- digest(suppressWarnings(normalizePath(repo)))
 
   # create repo
   makerrtrepo(repo, verbose)
@@ -104,8 +104,11 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   } else { snapshotid <- NULL }
   getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate)
 
+  # Write blank user manifest file, or not if already present
+  writeUserManifest(repository = repo, verbose = verbose)
+  
   # Write to internal manifest file
-  mssg(verbose, "Writing repository manifest...")
+  mssg(verbose, "Writing repository locked manifest file...")
   writeManifest(repository = repo, librar = lib, packs = pkgs, repoid, reponame, author, license, description, remote, verbose=verbose)
 
   # Write repo log file
@@ -164,4 +167,13 @@ cat_pack_vers <- function(x)
   }
   vv <- paste(tt, collapse = "\n")
   if(length(vv) == 0) "" else vv
+}
+
+writeUserManifest <- function(repository, verbose){
+  usermanfile <- suppressWarnings(normalizePath(file.path(repository, "manifest.yml")))
+  if(!file.exists(usermanfile)){
+    mssg(verbose, "Writing blank user manifest file...")
+    fields <- c('RepositoryName:', 'Authors:', 'License:', 'Description:', 'Remote:')
+    cat(fields, file = usermanfile, sep = "\n")
+  } else { mssg(verbose, "User manifest file already exists") }
 }

@@ -26,7 +26,7 @@
 rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE, 
                         suggests=FALSE)
 {
-  repoid <- digest(normalizePath(repo))
+  repoid <- digest(suppressWarnings(normalizePath(repo)))
 
   # check to make sure repo exists
   check4repo(repo, verbose)
@@ -60,6 +60,9 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
   } else { snapshotid <- NULL }
   getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate, snapshotid = snapshotid)
 
+  # Write blank user manifest file
+  writeUserManifest(repository = repo, verbose = verbose)
+  
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
   writeManifest(repository = repo, librar = lib, packs = pkgs, repoid)
