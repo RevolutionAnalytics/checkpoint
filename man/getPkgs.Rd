@@ -4,7 +4,7 @@
 \title{Function to download packages}
 \usage{
 getPkgs(x, repo, lib, recursive = FALSE, verbose = TRUE, install = TRUE,
-  mran = FALSE, snapdate = NULL, snapshotid = NULL)
+  mran = FALSE)
 }
 \arguments{
 \item{x}{(character) A vector of package names. If NULL, none installed, and message prints}

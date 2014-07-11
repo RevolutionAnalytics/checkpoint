@@ -17,7 +17,7 @@
 #' getPkgs("<path to RRT repo>")
 #' }
 
-getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FALSE, snapdate=NULL, snapshotid=NULL){
+getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, mran=FALSE){
   # check for existence of pkg, subset only those that need to be installed
   mssg(verbose, "... running getPkgs()")
   if(is.null(x)){ NULL } else {
@@ -36,18 +36,18 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
         on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
         makeLibrary(pkgs = pkgs2get, path = file.path(lib, "src/contrib"))
-        options(RRT_snapshotID = "none")
       } else {
-        snapdateid <- if(is.null(snapshotid)){
-          if(is.null(snapdate)) snapdate <- Sys.Date()
-          getsnapshotid(snapdate)
-        } else { snapshotid }
+#         snapdateid <- if(is.null(snapshotid)){
+#           if(is.null(snapdate)) snapdate <- Sys.Date()
+#           getsnapshotid(snapdate)
+#         } else { snapshotid }
         pkgloc <- file.path(lib, "src/contrib")
         setwd(lib)
         on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
+        snapdateid <- getOption('RRT_snapshotID')
         pkgs_mran(repo=repo, lib=lib, snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
-        options(RRT_snapshotID = snapdateid)
+#         options(RRT_snapshotID = snapdateid)
       }
     } else {
       return(mssg(verbose, "No packages found - none downloaded"))
