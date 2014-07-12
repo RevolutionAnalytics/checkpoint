@@ -35,22 +35,40 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
         setwd(lib)
         on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
+        get_github_pkgs(lib, pkgs2get, repo)
         makeLibrary(pkgs = pkgs2get, path = file.path(lib, "src/contrib"))
       } else {
-#         snapdateid <- if(is.null(snapshotid)){
-#           if(is.null(snapdate)) snapdate <- Sys.Date()
-#           getsnapshotid(snapdate)
-#         } else { snapshotid }
         pkgloc <- file.path(lib, "src/contrib")
         setwd(lib)
         on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
         snapdateid <- getOption('RRT_snapshotID')
         pkgs_mran(repo=repo, lib=lib, snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
-#         options(RRT_snapshotID = snapdateid)
       }
     } else {
       return(mssg(verbose, "No packages found - none downloaded"))
     }
   }
+}
+
+get_github_pkgs <- function(lib, pkgs, repo){
+#   got <- list.files(normalizePath(file.path(lib, "src/contrib")))
+#   got2 <- vapply(got, function(x) strsplit(x, "_")[[1]][[1]], character(1), USE.NAMES = FALSE)
+#   dontgot <- pkgs[!pkgs %in% got2]
+  availcranpkgs <- row.names(availCRANpkgs())
+  notoncran <- pkgs[!pkgs %in% availcranpkgs]
+  message(sprintf("Not found on CRAN:\n%s", paste0(notoncran, collapse = ", ")))
+  githubpaths <- yaml.load_file(file.path(repo, "rrt/rrt_manifest.yml"))$Github
+  toinstall <- sapply(notoncran, function(x) grep(x, githubpaths, value = TRUE), USE.NAMES = FALSE)
+  for(i in seq_along(toinstall)){
+    pathsplit <- strsplit(toinstall[i], "/")[[1]]
+    get_github(lib=lib, pkg=pathsplit[[2]], username=pathsplit[[1]])
+  }
+}
+
+availCRANpkgs <- function (repos = getOption("repos"), type = getOption("pkgType"), ...){
+  if (!grepl("^file", repos) && file.exists(repos)) {
+    repos <- paste0("file:///", repos)
+  }
+  available.packages(contrib.url(repos, type = type))
 }
