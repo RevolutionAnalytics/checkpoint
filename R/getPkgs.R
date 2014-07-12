@@ -36,6 +36,7 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
         on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
         get_github_pkgs(lib, pkgs2get, repo)
+#         get_bioconductor_pkgs()
         makeLibrary(pkgs = pkgs2get, path = file.path(lib, "src/contrib"))
       } else {
         pkgloc <- file.path(lib, "src/contrib")
@@ -72,3 +73,12 @@ availCRANpkgs <- function (repos = getOption("repos"), type = getOption("pkgType
   }
   available.packages(contrib.url(repos, type = type))
 }
+
+# get_bioconductor_pkgs <- function(lib, pkgs, repo){
+#   biocpkgs <- all_group()
+#   pkgs_bioc <- pkgs[pkgs %in% biocpkgs]
+#   if(!length(pkgs_bioc) == 0){
+#     source("http://bioconductor.org/biocLite.R")
+#     BiocInstaller::biocLite(pkgs_bioc, lib = lib, destdir = file.path(lib, "src/contrib"), dependencies=FALSE, suppressUpdates = TRUE, suppressAutoUpdate = TRUE)
+#   }
+# }

@@ -58,7 +58,7 @@ rrt_install2 <- function(repo=getwd(), repoid, lib, suggests=FALSE, verbose=TRUE
       oldwd <- getwd()
       on.exit(setwd(oldwd))
       setwd(dirname(pkgswithpath[1]))
-      utils::install.packages(basename(pkgswithpath), lib = lib, repos=NULL, type = "source", dependencies=FALSE)
+      install.packagess(basename(pkgswithpath), lib = lib, repos=NULL, type = "source", dependencies=FALSE)
       
       notinst <- pkgs2install[!vapply(file.path(lib, pkgs2install), file.exists, logical(1))]
       if(!length(notinst) == 0) install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"))
