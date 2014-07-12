@@ -31,5 +31,5 @@ install_other <- function(pkg, lib){
   #   unzip(sprintf("%s/tmp.zip", installtmpfile), exdir = file.path(lib, "src/contrib"))
   #   unlink(installtmpdir)
   inst <- file.path(lib, "src/contrib", sprintf("%s.zip", pkg))
-  install_local(inst, args=sprintf("--library=%s", lib))
+  install_local(inst, args=sprintf("--library=%s", lib), dependencies=FALSE)
 }
