@@ -76,7 +76,7 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
     message(sprintf("Not found on MRAN:\n%s", paste0(gg, collapse = ", ")))
     githubpaths <- yaml.load_file(file.path(repo, "rrt/rrt_manifest.yml"))$Github
     toinstall <- sapply(gg, function(x) grep(x, githubpaths, value = TRUE), USE.NAMES = FALSE)
-    for(i in seq_along(toinstall)){
+    for(i in seq_along(toinstall)){  
       pathsplit <- strsplit(toinstall[i], "/")[[1]]
       get_github(lib=lib, pkg=pathsplit[[2]], username=pathsplit[[1]])
     }
@@ -91,15 +91,15 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
     message("... Downloading package files")
     url <- mran_server_url()
     url <- sub("http://", "", url)
-    cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
+    cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
     system(cmd, intern=TRUE)
-  
+
   #   cpcmd <- sprintf("cp %s .", paste(pkgpaths, collapse = " "))
   #   system(cpcmd)
-  
+
     mvcmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
     system(mvcmd)
-  
+
     rmcmd <- sprintf("rm -rf %s", paste(
       sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
       )
