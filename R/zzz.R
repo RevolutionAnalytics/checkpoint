@@ -5,10 +5,10 @@ mssg <- function(x, ...) if(x) message(...)
 checkuserinstall <- function(lib){
   if(file.exists(file.path(lib))){
     ss <- list.dirs(file.path(lib), recursive = FALSE, full.names = FALSE)
-    haveinst <- ss[!ss %in% "src"]
+    haveinst <- ss[!ss %in% c("src","packrat","rstudio","manipulate","RRT")]
     # check if is a package or not
     if(!length(haveinst) == 0){
-      try_aspkg <- function(x){ 
+      try_aspkg <- function(x){
         tt <- tryCatch(as.package(x), error=function(e) e)
         if("error" %in% class(tt)) FALSE else TRUE
       }
@@ -19,7 +19,7 @@ checkuserinstall <- function(lib){
     tt <- list.files(file.path(lib, "src/contrib"), pattern = ".tar.gz|.zip")
     havesource <- sapply(tt, function(x) strsplit(x, "_")[[1]][[1]], USE.NAMES = FALSE)
   }
-  
+
   return(if(!length(haveinst) == 0) haveinst[!haveinst %in% havesource] else NULL)
 }
 
