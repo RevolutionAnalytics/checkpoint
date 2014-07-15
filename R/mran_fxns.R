@@ -13,7 +13,7 @@ mran_server_url <- function(){
 #' }
 
 mran_snaps <- function(){
-  url <- file.path(mran_server_url(), 'snapshots')
+  url <- file.path(mran_server_url(), 'snapshots/src')
 #   url <- "http://marmoset.revolutionanalytics.com/snapshots/"
   res <- GET(url)
   if(res$status_code > 202)
@@ -56,6 +56,7 @@ mran_diffs <- function(diff=NULL)
   if(is.null(diff)){
     diffs <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
     diffs <- gsub("RRT_|.txt", "", diffs)
+    diffs <- diffs[!diffs %in% c('bin/','src/')]
     return( diffs )
   } else {
     cat(text)
@@ -95,7 +96,8 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
 #' @param package Required. A package name
 #' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @examples \dontrun{
-#' mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr")
+#' mran_pkg_avail(snapshot="2014-07-14_0500", package="plyr")
+#' mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr", which="bin/windows/")
 #'
 #' # Example of differences in available versions between snapshots for the package MPSEM
 #' snaps <- mran_snaps()
@@ -103,14 +105,14 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
 #' mran_pkg_avail(snaps[length(snaps)-2], package="MPSEM")
 #' }
 
-mran_pkg_avail <- function(package, snapshot=NULL)
+mran_pkg_avail <- function(package, snapshot=NULL, which="src")
 {
   if(is.null(snapshot)){
     gg <- suppressMessages(mran_snaps())
     snapshot <- gg[length(gg)]
   }
 
-  url <- sprintf("%s/%s/%s/", file.path(mran_server_url(), 'snapshots'), snapshot, package)
+  url <- sprintf("%s/%s/%s/", file.path(mran_server_url(), 'snapshots', which), snapshot, package)
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - Package not found, you don't have an internet connection, or other error...", res$status_code))

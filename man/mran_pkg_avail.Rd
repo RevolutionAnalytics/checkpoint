@@ -3,7 +3,7 @@
 \alias{mran_pkg_avail}
 \title{Get available package versions from MRAN}
 \usage{
-mran_pkg_avail(package, snapshot = NULL)
+mran_pkg_avail(package, snapshot = NULL, which = "src")
 }
 \arguments{
 \item{package}{Required. A package name}
@@ -15,7 +15,8 @@ Get available package versions from MRAN
 }
 \examples{
 \dontrun{
-mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr")
+mran_pkg_avail(snapshot="2014-07-14_0500", package="plyr")
+mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr", which="bin/windows/")
 
 # Example of differences in available versions between snapshots for the package MPSEM
 snaps <- mran_snaps()
