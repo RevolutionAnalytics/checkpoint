@@ -2,7 +2,7 @@ Package: RRT
 Title: R Reproducibility Toolkit
 Description: R Reproducibility Toolkit.
 Version: 0.1.5
-Date: 2014-07-15
+Date: 2014-07-16
 Authors@R: c(person("Andrie", "de Vries", role = c("aut", "cre"),
     email = "apdevries@gmail.com"),
     person("Scott", "Chamberlain", role = "aut",
@@ -19,6 +19,7 @@ Imports:
     httr,
     RJSONIO,
     XML,
-    yaml
+    yaml,
+    BiocInstaller
 Suggests:
     roxygen2

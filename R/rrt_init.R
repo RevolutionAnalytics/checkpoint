@@ -98,20 +98,9 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   pkgs <- c(addtnpkgs, pkgs)
 
   # get packages in a private location for this project
-  mssg(verbose, "Getting new packages...")
+#   mssg(verbose, "Getting new packages...")
   set_snapshot_date(repo, snapdate, autosnap)
-  getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran)
-
-  # Write blank user manifest file, or not if already present
-  writeUserManifest(repository = repo, verbose = verbose)
-  
-  # Write to internal manifest file
-  mssg(verbose, "Writing repository locked manifest file...")
-  writeManifest(repository = repo, librar = lib, packs = pkgs, repoid, reponame, author, license, description, remote, snapshot = getOption('RRT_snapshotID'), verbose=verbose)
-
-  # Write repo log file
-  mssg(verbose, "Writing repository log file...")
-  rrt_repos_write(repo, repoid)
+#   getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran)
 
   # Write new .Rprofile file
   if(is.null(rprofile)){
@@ -124,14 +113,25 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
     NULL # fixme: add ability to write options to the rprofile file
   }
 
-  # regenerate RRT dashboard
-  rrt_browse(browse = FALSE)
-
   # install packages
-  rrt_install2(repo, repoid, lib, suggests, verbose)
-  
+  rrt_install3(repo, repoid, lib, suggests, verbose)
+
+  # Write blank user manifest file, or not if already present
+  writeUserManifest(repository = repo, verbose = verbose)
+
+  # Write to internal manifest file
+  mssg(verbose, "Writing repository locked manifest file...")
+  writeManifest(repository = repo, librar = lib, packs = pkgs, repoid, reponame, author, license, description, remote, snapshot = getOption('RRT_snapshotID'), verbose=verbose)
+
   # write package versions to manifest file
   write_pkg_versions(lib, repo)
+  
+  # Write repo log file
+  mssg(verbose, "Writing repository log file...")
+  rrt_repos_write(repo, repoid)
+
+  # regenerate RRT dashboard
+  rrt_browse(browse = FALSE)
 
   message("\n>>> RRT initialization completed.")
 }

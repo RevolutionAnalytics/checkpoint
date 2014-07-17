@@ -31,13 +31,7 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
     # Make local repo of packages
     if(!is.null(pkgs2get) || length(pkgs2get) == 0){
       if(!mran){
-        # FIXME, needs some fixes on miniCRAN to install source if binaries not avail.-This may be fixed now
-        setwd(lib)
-        on.exit(setwd(repo))
-        dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
-        get_github_pkgs(lib, pkgs2get, repo)
-#         get_bioconductor_pkgs()
-        makeLibrary(pkgs = pkgs2get, path = file.path(lib, "src/contrib"))
+        NULL
       } else {
         pkgloc <- file.path(lib, "src/contrib")
         setwd(lib)
@@ -46,6 +40,9 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
         snapdateid <- getOption('RRT_snapshotID')
         pkgs_mran(repo=repo, lib=lib, snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
       }
+      
+      # download pkgs from Github
+      get_github_pkgs(lib, pkgs2get, repo)
     } else {
       return(mssg(verbose, "No packages found - none downloaded"))
     }
@@ -73,12 +70,3 @@ availCRANpkgs <- function (repos = getOption("repos"), type = getOption("pkgType
   }
   available.packages(contrib.url(repos, type = type))
 }
-
-# get_bioconductor_pkgs <- function(lib, pkgs, repo){
-#   biocpkgs <- all_group()
-#   pkgs_bioc <- pkgs[pkgs %in% biocpkgs]
-#   if(!length(pkgs_bioc) == 0){
-#     source("http://bioconductor.org/biocLite.R")
-#     BiocInstaller::biocLite(pkgs_bioc, lib = lib, destdir = file.path(lib, "src/contrib"), dependencies=FALSE, suppressUpdates = TRUE, suppressAutoUpdate = TRUE)
-#   }
-# }

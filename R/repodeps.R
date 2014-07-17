@@ -15,7 +15,7 @@
 #' used in your RRT repository, or not. Default: FALSE.
 #' @param ... Further args passed on to \code{miniCRAN::pkgDep}
 #'
-#' @keywords internal
+#' @keywords internal  
 #' @return A named list of packages, named by the package that requires said dependencies
 #' @examples \dontrun{
 #' repodeps(repo="~/newrepo")
@@ -37,7 +37,7 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ..
   pkgs_used <- pkgs_used[!pkgs_used %in% c('RRT','manipulate','packrat','rstudio')]
 
   # Get package dependencies using miniCRAN
-  pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, suggests=suggests, ...)
+  pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, suggests=suggests)
   names(pkg_deps) <- pkgs_used
 
   if(simplify){
@@ -62,63 +62,38 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ..
   return(pkg_deps)
 }
 
-pkgDep_try <- function(x, repo=NULL, ...){
-  # FIXME - currently only works for Github
-  tmp <- tryCatch(pkgDep(x, ...), error=function(e) e)
+pkgDep_try <- function(x, repo=NULL, suggests=FALSE){
+  tmp <- tryCatch(pkgDep(x, type="source", suggests = suggests), error=function(e) e)
   if(!"error" %in% class(tmp)){ tmp } else {
     pkg_deps_noncran(repo, x)
   }
 }
 
 pkg_deps_noncran <- function(repo, x){
-  ### FIXME: if we index non-CRAN packages on MRAN, we could easily search MRAN instead of the mess below
-  manfile <- file.path(repo, "rrt/rrt_manifest.yml")
+  if(is_bioc_pkg(x)){
+    pkgDep(x, repos = c(CRAN=biocinstallRepos(siteRepos=character())[[1]]))
+  } else {
+    # look for user specified manifest file, and read from there if any
+    usermanfile <- file.path(repo, "manifest.yml")
 
-  # look for user specified manifest file, and read from there if any
-  usermanfile <- file.path(repo, "manifest.yml")
-  if(!file.exists(usermanfile)){ userdeets <- NULL } else {
-    tt <- suppressWarnings(yaml.load_file(usermanfile))
-    if(!is.null(tt)){
+    # look for package mention in manifest, return message if not
+    if(!file.exists(usermanfile)){ out <- "not found" } else {
+      tt <- suppressWarnings(yaml.load_file(usermanfile))
       nn <- tt[names(tt) %in% c("Github","MRAN","Bitbucket","Bioconductor","Gitorious")]
       trymatch <- lapply(nn, function(y) y[sapply(y, function(z) grepl(x, z))])
       if(all(sapply(trymatch, length)==0)){ out <- "not found" } else {
-        userdeets <- trymatch[!sapply(trymatch, length)==0]
-        uu <- list()
-        for(i in seq_along(userdeets)){
-          uu[[i]] <- paste(sprintf(" - %s", userdeets[[i]]))
-        }
-        github <- sprintf("Github:\n %s", uu)
-      }
-      if(file.exists(manfile)){
-        manfiletmp <- suppressWarnings(yaml.load_file(manfile))
-        if("Github" %in% names(manfiletmp)){
-          if(any(grepl(x, manfiletmp$Github))){ NULL } else {
-            cat(github, file = manfile, append = TRUE)
-          }
-        } else {
-          cat(github, file = manfile, append = TRUE)
-        }
+        out <- trymatch[!sapply(trymatch, length)==0]
       }
     }
-  }
 
-  # look for package mention in manifest, return message if not
-  if(!file.exists(manfile)){ out <- "not found" } else {
-    tt <- suppressWarnings(yaml.load_file(manfile))
-    nn <- tt[names(tt) %in% c("Github","MRAN","Bitbucket","Bioconductor","Gitorious")]
-    trymatch <- lapply(nn, function(y) y[sapply(y, function(z) grepl(x, z))])
-    if(all(sapply(trymatch, length)==0)){ out <- "not found" } else {
-      out <- trymatch[!sapply(trymatch, length)==0]
+    if(!out == "not found"){
+      from <- tolower(names(out))
+      from <- match.arg(from, c('github','mran','bitbucket','bioconductor','gitorious'))
+      switch(from,
+             github = c(x, get_desc_github(out[[1]])))
+    } else {
+      sprintf("%s not found - make sure to specify info in the manifest file at %s", x, usermanfile)
     }
-  }
-
-  if(!out == "not found"){
-    from <- tolower(names(out))
-    from <- match.arg(from, c('github','mran','bitbucket','bioconductor','gitorious'))
-    switch(from,
-           github = c(x, get_desc_github(out[[1]])))
-  } else {
-    sprintf("%s not found - make sure to specify info in the manifest file at %s", x, usermanfile)
   }
 }
 
@@ -139,7 +114,7 @@ get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FAL
     tmp2 <- do.call(c, as.list(tmp))
     tmp3 <- parse_pkg_ver(tmp2)
     # remove R
-    # NOTE: parse_pkg_ver also provides with any version specification, so use that later
+    # NOTE: parse_pkg_ver also provid2es with any version specification, so use that later
     tmp4 <- tmp3[!sapply(tmp3, function(w) any(w %in% "R"))]
     vapply(tmp4, function(x) x[[1]], "")
   } else { "No DESCRIPTION file found" }
