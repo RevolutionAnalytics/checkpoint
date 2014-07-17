@@ -71,6 +71,21 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
   notonmran <- grep("__notfound__", pkgpaths, value = TRUE)
   pkgpaths <- pkgpaths[!grepl("__notfound__", pkgpaths)]
 
+  if(!.Platform$OS.type == "unix"){
+    pkgs_mran_get(lib, repo, cranpkgs)
+    install_mran_pkgs(lib, cranpkgs, verbose)
+  } else {
+    windows_install <- function(x, lib){
+      pkg <- strsplit(x, "/")[[1]]
+      url <- sprintf("%s/snapshots/src/%s/%s", RRT:::mran_server_url(), snapshotid, x)
+      destfile <- file.path(lib, 'src/contrib', pkg[[2]])
+      download.file(url, destfile=destfile)
+    }
+    for(i in seq_along(pkgpaths)){
+      windows_install(pkgpaths[[i]], lib=lib)
+    }
+  }
+
   setwd(outdir)
   tmppkgsfileloc <- "_rsync-file-locations.txt"
   cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
