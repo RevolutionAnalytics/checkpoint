@@ -37,7 +37,6 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
       lengths <- vapply(tmp, length, numeric(1))
       toadd <- max(lengths) - min(lengths)
       if(toadd > 0){
-#         gg <- tmp[vapply(tmp, length, numeric(1)) < max(lengths)]
         tmp[vapply(tmp, length, numeric(1)) < max(lengths)] <-
           lapply(tmp[vapply(tmp, length, numeric(1)) < max(lengths)],
                  function(b){
@@ -47,8 +46,6 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
                 })
       }
       df <- do.call(rbind, tmp)
-      #
-#       df <- data.frame(do.call(rbind.fill, lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))), stringsAsFactors = FALSE)
       df[is.na(df)] <- 0
       row.names(df) <- names(splitvers)
       df <- suppressWarnings(colClasses(df, "numeric"))
@@ -72,43 +69,41 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
   pkgpaths <- pkgpaths[!grepl("__notfound__", pkgpaths)]
 
   if(!.Platform$OS.type == "unix"){
-    pkgs_mran_get(lib, repo, cranpkgs)
-    install_mran_pkgs(lib, cranpkgs, verbose)
-  } else {
-    windows_install <- function(x, lib){
-      pkg <- strsplit(x, "/")[[1]]
-      url <- sprintf("%s/snapshots/src/%s/%s", RRT:::mran_server_url(), snapshotid, x)
-      destfile <- file.path(lib, 'src/contrib', pkg[[2]])
-      download.file(url, destfile=destfile)
-    }
     for(i in seq_along(pkgpaths)){
       windows_install(pkgpaths[[i]], lib=lib)
     }
-  }
-
-  setwd(outdir)
-  tmppkgsfileloc <- "_rsync-file-locations.txt"
-  cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
-
-  if(length(pkgpaths > 0)){
-
-    message("... Downloading package files")
-    url <- mran_server_url()
-    url <- sub("http://", "", url)
-    cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
-    system(cmd, intern=TRUE)
+  } else {  
+    setwd(outdir)
+    tmppkgsfileloc <- "_rsync-file-locations.txt"
+    cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
     
-    mvcmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
-    system(mvcmd)
-
-    rmcmd <- sprintf("rm -rf %s", paste(
-      sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
+    if(length(pkgpaths > 0)){
+      
+      message("... Downloading package files")
+      url <- mran_server_url()
+      url <- sub("http://", "", url)
+      cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
+      system(cmd, intern=TRUE)
+      
+      mvcmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
+      system(mvcmd)
+      
+      rmcmd <- sprintf("rm -rf %s", paste(
+        sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
       )
-    system(rmcmd)
-    system(sprintf("rm %s", tmppkgsfileloc))
+      system(rmcmd)
+      system(sprintf("rm %s", tmppkgsfileloc))
+    }
+    
   }
 }
 
+windows_install <- function(x, lib){
+  pkg <- strsplit(x, "/")[[1]]
+  url <- sprintf("%s/snapshots/src/%s/%s", mran_server_url(), snapshotid, x)
+  destfile <- file.path(lib, 'src/contrib', pkg[[2]])
+  download.file(url, destfile=destfile)
+}
 
 colClasses <- function (d, colClasses)
 {

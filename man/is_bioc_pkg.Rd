@@ -7,11 +7,22 @@ is_bioc_pkg(pkgs=c('stringr','ACME'))
 is_bioc_pkg(pkgs=c('stringr','ACME','aroma.light'))}
 \usage{
 is_bioc_pkg(pkgs)
+
+is_bioc_pkg(pkgs)
+}
+\arguments{
+\item{pkgs}{Vector of package names}
+}
+\value{
+A logical vector of same length as input vector
 }
 \description{
 is_bioc_pkg('stringr')
 is_bioc_pkg(c('stringr','cowsay','dplyr'))
 is_bioc_pkg(pkgs=c('stringr','ACME'))
 is_bioc_pkg(pkgs=c('stringr','ACME','aroma.light'))
+
+Determine if a package is on Bioconductor or not.
 }
+\keyword{internal}
 

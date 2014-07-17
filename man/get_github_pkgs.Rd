@@ -4,8 +4,20 @@
 \title{get_github_pkgs('cowsay')}
 \usage{
 get_github_pkgs(repo, pkgs, lib)
+
+get_github_pkgs(repo, pkgs, lib)
+}
+\arguments{
+\item{repo}{Repository path}
+
+\item{pkgs}{Vector of package names}
+
+\item{lib}{Library path}
 }
 \description{
 get_github_pkgs('cowsay')
+
+Download github packages.
 }
+\keyword{internal}
 

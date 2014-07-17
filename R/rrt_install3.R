@@ -105,6 +105,10 @@ is_cran_pkg <- function (pkgs, repos = c(CRAN="http://cran.r-project.org/"), typ
   pkgs %in% availcranpkgs
 }
 
+#' Determine if a package is on Bioconductor or not.
+#' @keywords internal
+#' @param pkgs Vector of package names
+#' @return A logical vector of same length as input vector
 is_bioc_pkg <- function(pkgs){
   file <- file.path(tempdir(), "rrt_biockgs.rda")
   biocpkgs <- suppressWarnings(tryCatch(load(file), error = function(e) e))
@@ -115,6 +119,11 @@ is_bioc_pkg <- function(pkgs){
   pkgs %in% biocpkgs
 }
 
+#' Download github packages.
+#' @keywords internal
+#' @param repo Repository path
+#' @param pkgs Vector of package names
+#' @param lib Library path
 get_github_pkgs <- function(repo, pkgs, lib){
   githubpaths <- yaml.load_file(file.path(repo, "manifest.yml"))$Github
   if(is.null(githubpaths)) { character(0) } else {
