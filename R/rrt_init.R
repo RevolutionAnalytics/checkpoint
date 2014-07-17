@@ -106,7 +106,8 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   if(is.null(rprofile)){
     rprofilepath <- file.path(repo, ".Rprofile")
     mirror <- 'options(repos=structure(c(CRAN="http://cran.revolutionanalytics.com/")))'
-    libpaths <- sprintf('.libPaths("%s")', lib)
+#     libpaths <- sprintf('.libPaths("%s")', lib)
+    libpaths <- .libPaths(sprintf(".libPaths('%s')", paste0(c(lib, .libPaths()), collapse = "','")))
     msg <- sprintf("cat('    Starting repo from RRT repository: %s \n    Packages installed in and loaded from this repository\n    To go back to a non-RRT environment, start R outside an RRT repository\n\n')", repoid)
     cat(c(mirror, libpaths, msg), file=rprofilepath, sep="\n")
   } else {
