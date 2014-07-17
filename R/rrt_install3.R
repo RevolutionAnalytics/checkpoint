@@ -39,6 +39,10 @@ rrt_install3 <- function(repo=getwd(), repoid, lib, mran=TRUE, suggests=FALSE, v
       install.packages(cranpkgs, lib = lib, destdir = file.path(lib, "src/contrib"))
     }
     
+    # check for any failed intalls and install from binary from default CRAN mirror
+    notinst <- cranpkgs[!vapply(file.path(lib, cranpkgs), file.exists, logical(1))]
+    if(!length(notinst) == 0) install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"))
+    
     # install github pkgs
     if(!length(githubpkgs) == 0) install_github_pkgs(lib, githubpkgs)
     
