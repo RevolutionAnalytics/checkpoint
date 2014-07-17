@@ -105,10 +105,6 @@ is_cran_pkg <- function (pkgs, repos = c(CRAN="http://cran.r-project.org/"), typ
   pkgs %in% availcranpkgs
 }
 
-#' is_bioc_pkg('stringr')
-#' is_bioc_pkg(c('stringr','cowsay','dplyr'))
-#' is_bioc_pkg(pkgs=c('stringr','ACME'))
-#' is_bioc_pkg(pkgs=c('stringr','ACME','aroma.light'))
 is_bioc_pkg <- function(pkgs){
   file <- file.path(tempdir(), "rrt_biockgs.rda")
   biocpkgs <- suppressWarnings(tryCatch(load(file), error = function(e) e))
@@ -119,7 +115,6 @@ is_bioc_pkg <- function(pkgs){
   pkgs %in% biocpkgs
 }
 
-#' get_github_pkgs('cowsay')
 get_github_pkgs <- function(repo, pkgs, lib){
   githubpaths <- yaml.load_file(file.path(repo, "manifest.yml"))$Github
   if(is.null(githubpaths)) { character(0) } else {

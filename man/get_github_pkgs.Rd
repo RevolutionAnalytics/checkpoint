@@ -4,12 +4,8 @@
 \title{get_github_pkgs('cowsay')}
 \usage{
 get_github_pkgs(repo, pkgs, lib)
-
-get_github_pkgs(repo, pkgs, lib)
 }
 \description{
-get_github_pkgs('cowsay')
-
 get_github_pkgs('cowsay')
 }
 

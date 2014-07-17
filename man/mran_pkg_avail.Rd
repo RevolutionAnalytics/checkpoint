@@ -9,6 +9,8 @@ mran_pkg_avail(package, snapshot = NULL, which = "src")
 \item{package}{Required. A package name}
 
 \item{snapshot}{A MRAN snapshot. Defaults to most recent snapshot}
+
+\item{which}{one of src or bin}
 }
 \description{
 Get available package versions from MRAN

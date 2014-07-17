@@ -95,6 +95,7 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
 #' @export
 #' @param package Required. A package name
 #' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
+#' @param which one of src or bin
 #' @examples \dontrun{
 #' mran_pkg_avail(snapshot="2014-07-14_0500", package="plyr")
 #' mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr", which="bin/windows/")
