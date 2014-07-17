@@ -70,7 +70,7 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
 
   if(!.Platform$OS.type == "unix"){
     for(i in seq_along(pkgpaths)){
-      windows_install(pkgpaths[[i]], lib=lib)
+      windows_install(pkgpaths[[i]], lib=lib, snapshotid=snapshotid)
     }
   } else {  
     setwd(outdir)
@@ -98,7 +98,7 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
   }
 }
 
-windows_install <- function(x, lib){
+windows_install <- function(x, lib, snapshotid){
   pkg <- strsplit(x, "/")[[1]]
   url <- sprintf("%s/snapshots/src/%s/%s", mran_server_url(), snapshotid, x)
   destfile <- file.path(lib, 'src/contrib', pkg[[2]])
