@@ -32,22 +32,16 @@
 #'
 #' @examples \dontrun{
 #' # new repo, after entering a project folder, starting R, then loading RRT
-#' rrt("2014-07-11")
+#' checkpoint("2014-07-11")
 #' 
 #' # refresh repo
-#' rrt()
+#' checkpoint()
 #' }
 
-rrt <- function(snapshotdate=NULL, repo=getwd(), mran=TRUE, autosnap=TRUE, verbose=TRUE, 
+checkpoint <- function(snapshotdate=NULL, repo=getwd(), mran=TRUE, autosnap=TRUE, verbose=TRUE, 
                      rprofile=NULL, interactive=FALSE, suggests=FALSE)
 {
-  # if user doesn't have rsync, don't use MRAN
-  # FIXME: perhaps change to if they don't have rsync use download.files or other method.
   if(!has_rsync()) mran <- FALSE
-#   
-#   if(is.null(snapshotdate)){
-#     snaps <- suppressMessages(mran_snaps())  
-#   }
   
   if(is_rrt(repo, verbose = FALSE)){
     mssg(verbose, "RRT repo recognized...refreshing...\n")
