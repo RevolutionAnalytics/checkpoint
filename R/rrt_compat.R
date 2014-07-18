@@ -80,9 +80,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
       check[i,1] <- names(checksres[i])
       check[i,2] <- checksres[[i]]
     }
-#     check <- ldply(checksres)
-#     names(check) <- c('pkg','check_result')
-  } else { check <- data.frame(pkg=pkgnames, check_result=NA, , stringsAsFactors = FALSE) }
+  } else { check <- data.frame(pkg=pkgnames, check_result=NA, stringsAsFactors = FALSE) }
 
   # run tests
   if("tests" %in% what){
@@ -105,6 +103,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
     if(!is.null(oldpkgs)){
       hh <- t(oldpkgs)
       update <- data.frame(repo='CRAN', hh, stringsAsFactors = FALSE, row.names = NULL)
+      names(update)[2] <- 'pkg'
     } else { update <- data.frame(repo='CRAN', pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
     # bioconductor updates
     biocup <- biocupdates(lib, biocpkgs)
@@ -115,7 +114,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   }
 
   df <- merge(check, tdf, by="pkg")
-  df <- merge(df, allupdates, by="pkg")
+  df <- merge(df, allupdates, by="pkg", all = TRUE)
   saveRDS(df, file = file.path(repo, "rrt", "check_result.rds"))
 
   message("Tests complete!")
@@ -150,25 +149,34 @@ getpkgnames <- function(zzz){
 }
 
 checkrepo <- function(x, repo, verbose){
-  pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]]
+  pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_|\\.")[[1]][[1]]
   tmpdir <- tempdir()
   untar(x, exdir = tmpdir)
+  dirs <- list.dirs(tmpdir, recursive = FALSE, full.names = FALSE)
+  dirname <- grep(pkgname, dirs, value = TRUE)
   mssg(verbose, sprintf("Checking %s", pkgname))
   checkdir <- file.path(repo, "rrt/check")
-  dir.create(checkdir)
+  suppressWarnings(dir.create(checkdir))
   checkout <- sprintf("--output=%s", checkdir)
-  check(file.path(tmpdir, pkgname), document = FALSE, doc_clean = FALSE, cleanup = FALSE, force_suggests = FALSE,
-#         args = c('--no-manual','--no-vignettes','--no-build-vignettes', checkout))
-        args = c('--no-manual','--no-vignettes','--no-build-vignettes','--no-examples','--no-tests', checkout))
+  out <- tryCatch(check(file.path(tmpdir, dirname), document = FALSE, doc_clean = FALSE, cleanup = FALSE, force_suggests = FALSE,
+        args = c('--no-manual','--no-vignettes','--no-build-vignettes','--no-examples','--no-tests', checkout)), 
+        error = function(e) e)
+  if(is(out, 'simpleError'))
+    "not a source package"
+  else
+    if(out) "passed" else "failed"
 }
 
 testrepo <- function(x, repo, verbose){
   tmpdir <- file.path(repo, "rrt", "tests", "tmp")# create temporary directory
-  dir.create(tmpdir, recursive = TRUE)
+  suppressWarnings(dir.create(tmpdir, recursive = TRUE))
   testit <- function(y){
     untar(y, exdir = tmpdir)
-    pkg <- sub("_.+", "", strsplit(y, "/")[[1]][length(strsplit(y, "/")[[1]])])
-    capture.output(test_dir(file.path(tmpdir, sprintf("%s/tests", pkg))), file = paste0(repo, "/rrt/tests/", pkg, ".txt"))
+    dirs <- list.dirs(tmpdir, recursive = FALSE, full.names = FALSE)
+    pkgname <- sub("_.+|\\.[A-Za-z]+", "", strsplit(y, "/")[[1]][length(strsplit(y, "/")[[1]])])
+    dirname <- grep(pkgname, dirs, value = TRUE)
+    capture.output(
+      tryCatch(test_dir(file.path(tmpdir, sprintf("%s/tests", dirname))), error=function(e) "no tests found"), file = paste0(repo, "/rrt/tests/", pkgname, ".txt"))
   }
   lapply(x, testit)
   unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
@@ -182,5 +190,7 @@ biocupdates <- function(lib, bioc_pkgs){
   contribUrl <- contrib.url(repos, type = type)
   availPkgs <- available.packages(contribUrl, type = type)
   df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
-  data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
+  df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
+  names(df)[2] <- 'pkg'
+  df
 }
