@@ -23,7 +23,8 @@
 #' default, but you can run them by passing on args to \code{devtools::run_examples()}.
 #'
 #' \bold{update:} We check for any available updates on CRAN for your packages using
-#' \code{old.packages}. NA is returned if no updates available.
+#' \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and 
+#' Bioconductor packages.
 #'
 #' @param repo Repository path. Defaults to your working directory.
 #' @param what What to test, one or more of check, tests, examples, or udpate. \code{match.arg} is
@@ -33,7 +34,6 @@
 #' @seealso \link{rrt_browse}
 #'
 #' @examples \dontrun{
-#' rrt_refresh()
 #' rrt_compat(what="update")
 #' rrt_compat(what=c("update","check"))
 #' }
@@ -51,7 +51,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   checksres <- testsres <- egsres <- oldpkgs <- "passed"
 
   ## create repo id using digest
-  repoid <- digest(normalizePath(repo))
+  repoid <- digest(suppressWarnings(normalizePath(repo)))
 
   ## check for repo
   mssg(verbose, "Checking to make sure repository exists...")
@@ -65,6 +65,11 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   # get pkgs list in the rrt repo
   pkgs <- getpkgslist(repo)
   pkgnames <- getpkgnames(pkgs)
+  
+  # separate pkgs by source
+  cranpkgs <- pkgnames[ is_cran_pkg(pkgnames) ]
+  biocpkgs <- pkgnames[ is_bioc_pkg(pkgnames) ]
+#   ghpkgs <- pkgnames[ is_(pkgnames) ]
 
   # check: R CMD CHECK via devtools::check
   if("check" %in% what){
@@ -89,22 +94,28 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # run examples
   if("examples" %in% what){
-#     lapply(pkgs, run_examples)
     egsres <- NULL
   }
 
   # check for packages that need updating
   if("update" %in% what){
-    oldpkgs <- old.packages(lib)
+    # cran updates
+    oldpkgs <- old.packages(lib.loc = lib)
     oldpkgs <- oldpkgs[,c('Package','Installed','ReposVer')]
     if(!is.null(oldpkgs)){
-      update <- data.frame(hh[,c('Package','Installed','ReposVer')], stringsAsFactors = FALSE, row.names = NULL)
-    } else { update <- data.frame(pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
+      hh <- t(oldpkgs)
+      update <- data.frame(repo='CRAN', hh, stringsAsFactors = FALSE, row.names = NULL)
+    } else { update <- data.frame(repo='CRAN', pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
+    # bioconductor updates
+    biocup <- biocupdates(lib, biocpkgs)
+    # github updates
+    ### FIXME - for now any github packages are not checked
+    # combine updates
+    allupdates <- rbind(update, biocup)
   }
-#   compatfile <- file.path(repo, "rrt/rrt_check.txt")
-#   cat(c(check, tests, examples, update), file = compatfile)
+
   df <- merge(check, tdf, by="pkg")
-  df <- merge(df, update, by="pkg")
+  df <- merge(df, allupdates, by="pkg")
   saveRDS(df, file = file.path(repo, "rrt", "check_result.rds"))
 
   message("Tests complete!")
@@ -135,7 +146,7 @@ getpkgslist <- function(repo){
 
 getpkgnames <- function(zzz){
   sapply(zzz, function(x)
-    strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_")[[1]][[1]], USE.NAMES = FALSE)
+    strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_|\\.")[[1]][[1]], USE.NAMES = FALSE)
 }
 
 checkrepo <- function(x, repo, verbose){
@@ -161,4 +172,15 @@ testrepo <- function(x, repo, verbose){
   }
   lapply(x, testit)
   unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
+}
+
+### bioc updates
+biocupdates <- function(lib, bioc_pkgs){
+  type <- getOption('pkgType')
+  repos <- biocinstallRepos()
+  pkgs <- installed.packages(lib)
+  contribUrl <- contrib.url(repos, type = type)
+  availPkgs <- available.packages(contribUrl, type = type)
+  df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
+  data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
 }
