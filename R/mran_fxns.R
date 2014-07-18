@@ -42,7 +42,7 @@ mran_snaps <- function(){
 
 mran_diffs <- function(diff=NULL)
 {
-  url <- file.path(mran_server_url(), 'diffs')
+  url <- file.path(mran_server_url(), 'diffs/src')
   if(!is.null(diff)){
     url <- sprintf('%s/RRT_%s.txt', url, diff)
   }
