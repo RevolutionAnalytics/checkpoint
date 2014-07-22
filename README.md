@@ -54,6 +54,9 @@ See the [RRT wiki](https://github.com/RevolutionAnalytics/RRT/wiki/Examples) for
 
 Post an issue on the [Issue tracker](https://github.com/RevolutionAnalytics/RRT/issues)
 
+### IRC channel on Freenode
+`#RRT`
+
 ### Made by
 
 [Revolution Analytics](http://www.revolutionanalytics.com/)
