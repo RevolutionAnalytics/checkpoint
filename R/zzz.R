@@ -43,7 +43,7 @@ makerrtrepo <- function(x, verbose){
 }
 
 check4rrt <- function(repo, lib, verbose){
-  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
+  mssg(verbose, "Checking to make sure rrt directory exists inside your repository...")
   if(!file.exists(file.path(repo, "rrt"))){
     mssg(verbose, sprintf("Creating rrt directory %s", lib))
     dir.create(lib, showWarnings = FALSE, recursive = TRUE)

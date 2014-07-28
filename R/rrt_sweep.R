@@ -22,7 +22,7 @@ rrt_sweep <- function(repo=getwd(), pkgs = NULL, verbose=TRUE)
   }
 
   # check for rrt directory in the repo
-  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
+  mssg(verbose, "Checking to make sure rrt directory exists inside your repository...")
   lib <- rrt_libpath(repo)
   present <- list.dirs(lib)
   if(!all(grepl("rrt", present))){
