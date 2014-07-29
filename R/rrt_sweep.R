@@ -30,22 +30,22 @@ rrt_sweep <- function(repo=getwd(), pkgs = NULL, verbose=TRUE)
   }
 
   # get pkgs list in the rrt repo
-  pathtoremove <- rrt_libpath(repo)
-  dirstoremove <- list.files(pathtoremove, full.names = TRUE, recursive = FALSE)
-  srctoremove <- grep("src", dirstoremove, value = TRUE)
+  pathToRemove <- rrt_libpath(repo)
+  dirsToRemove <- list.files(pathToRemove, full.names = TRUE, recursive = FALSE)
+  srcToRemove <- grep("src", dirsToRemove, value = TRUE)
   if(is.null(pkgs)){
-    pkgnames <- list.files(pathtoremove, recursive = FALSE)
-    pkgnames <- pkgnames[!pkgnames %in% "src"]
-  } else { pkgnames <- pkgs }
+    pkgNames <- list.files(pathToRemove, recursive = FALSE)
+    pkgNames <- pkgNames[!pkgNames %in% "src"]
+  } else { pkgNames <- pkgs }
 
   ## remove src (source files)
-  unlink(srctoremove, recursive = TRUE)
-  cat("Package sources removed", sep = "\n")
+  unlink(srcToRemove, recursive = TRUE)
+  mssg(verbose, paste("Package sources removed: ", sep = "\n"))
 
-  if(length(pkgnames) == 0){ cat("No installed packages to remove :)") } else {
+  if(length(pkgNames) == 0){ cat("No installed packages to remove :)") } else {
     ## remove installed packages
-    remove.packages(pkgnames, pathtoremove)
+    remove.packages(pkgNames, pathToRemove)
 
-    cat("Your repository packages successfully removed:", pkgnames, sep = "\n")
+    mssg(verbose, paste("Your repository packages successfully removed:", pkgNames, sep = "\n"))
   }
 }

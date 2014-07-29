@@ -1,30 +1,21 @@
 #' Local test for package compatibility
 #'
-#' Currently, these checks, tests, etc. are run just on the packages used in your code in the
-#' repository tested - not the dependencies of the packages you use.
+#' Currently, these checks, tests, etc. are run just on the packages used in your code in the repository tested - not the dependencies of the packages you use.
 #'
 #' @import testthat devtools digest
 #' @export
 #'
-#' @details You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
-#' function in your repository.
+#' @details You can see a visual breakdown of check results using \link{rrt_browse} if you have run this function in your repository.
 #'
 #' Details for each option passed to the \code{what}:
 #'
-#' \bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we
-#' don't run examples, or tests. Examples and test are run in separate options passed to the
-#' \code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
+#' \bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we don't run examples, or tests. Examples and test are run in separate options passed to the \code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
 #'
-#' \bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL
-#' returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a
-#' package we return TRUE, otherwise we link to a report for the tests.
+#' \bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a package we return TRUE, otherwise we link to a report for the tests.
 #'
-#' \bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by
-#' default, but you can run them by passing on args to \code{devtools::run_examples()}.
+#' \bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by default, but you can run them by passing on args to \code{devtools::run_examples()}.
 #'
-#' \bold{update:} We check for any available updates on CRAN for your packages using
-#' \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and 
-#' Bioconductor packages.
+#' \bold{update:} We check for any available updates on CRAN for your packages using \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and Bioconductor packages.
 #'
 #' @param repo Repository path. Defaults to your working directory.
 #' @param what What to test, one or more of check, tests, examples, or udpate. \code{match.arg} is
@@ -69,7 +60,6 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   # separate pkgs by source
   cranpkgs <- pkgnames[ is_cran_pkg(pkgnames) ]
   biocpkgs <- pkgnames[ is_bioc_pkg(pkgnames) ]
-#   ghpkgs <- pkgnames[ is_(pkgnames) ]
 
   # check: R CMD CHECK via devtools::check
   if("check" %in% what){
@@ -97,6 +87,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # check for packages that need updating
   if("update" %in% what){
+    
     # cran updates
     oldpkgs <- old.packages(lib.loc = lib)
     oldpkgs <- oldpkgs[,c('Package','Installed','ReposVer')]
@@ -105,8 +96,10 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
       update <- data.frame(repo='CRAN', hh, stringsAsFactors = FALSE, row.names = NULL)
       names(update)[2] <- 'pkg'
     } else { update <- data.frame(repo='CRAN', pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
+    
     # bioconductor updates
     biocup <- biocupdates(lib, biocpkgs)
+    
     # github updates
     ### FIXME - for now any github packages are not checked
     # combine updates
@@ -161,8 +154,7 @@ checkrepo <- function(x, repo, verbose){
   out <- tryCatch(check(file.path(tmpdir, dirname), document = FALSE, doc_clean = FALSE, cleanup = FALSE, force_suggests = FALSE,
         args = c('--no-manual','--no-vignettes','--no-build-vignettes','--no-examples','--no-tests', checkout)), 
         error = function(e) e)
-  if(is(out, 'simpleError'))
-    "not a source package"
+  if(is(out, 'simpleError')) "not a source package"
   else
     if(out) "passed" else "failed"
 }

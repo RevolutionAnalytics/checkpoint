@@ -1,4 +1,4 @@
-#' Refresh package - look for any new packages used and install those in rrt library
+#' Refresh package - look for any new packages used and install those in rrt library.
 #'
 #' @export
 #'
@@ -8,23 +8,15 @@
 #' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
 #' @param autosnap (logical) Get most recent snapshot. Default: FALSE
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
-#' @param suggests (logical) Download and install packages in the Suggests line for packages
-#' used in your RRT repository, or not. Default: FALSE.
+#' @param suggests (logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.
+#' @param quiet Passed to install.packages
 #'
-#' @seealso \link{rrt_init}, \link{rrt_install}
+#' @seealso \code{\link{rrt_init}}, \code{\link{rrt_install}}
 #'
-#' @examples \dontrun{
-#' rrt_init(repo="~/testrepo")
-#' rrt_refresh(repo="~/testrepo")
-#' rrt_refresh(repo="~/testrepo", mran=TRUE)
-#' rrt_install(repo="~/testrepo")
-#'
-#' # Optionally, do an interactive repo intitialization
-#' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
-#' }
-
+#' @example \inst\examples\example_rrt_refresh.R
+#' 
 rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE,
-                        suggests=FALSE)
+                        suggests=FALSE, quiet=FALSE)
 {
   repoid <- digest(suppressWarnings(normalizePath(repo)))
 
@@ -35,44 +27,14 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
   lib <- rrt_libpath(repo)
   check4rrt(repo, lib, verbose)
 
-  # Look for packages in the project
-#   mssg(verbose, "Looking for packages used in your repository...")
-#   pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
-  ## remove packages not found on MRAN
-#   if(!is.null(pkgs)){
-#     notfound <- pkgs[grepl("not found", pkgs)]
-#     if(!length(notfound) == 0){
-#       cat(notfound, sep = "\n")
-#     }
-#     pkgs <- pkgs[!grepl("not found", pkgs)]
-#   }
-#
-#   # Look for packages installed by user but no source available
-#   # if some installed give back vector of package names
-#   addtnpkgs <- checkuserinstall(lib)
-#   pkgs <- c(addtnpkgs, pkgs)
-
   # get packages in a private location for this project
-#   mssg(verbose, "Getting new packages...")
   set_snapshot_date(repo, snapdate, autosnap)
-#   getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran)
-
-#   snapshotid <- NULL
-#   man_snapshotid <- get_snapshot_date(repository=repo)
-#   if(!is.null(man_snapshotid)){ snapshotid <- man_snapshotid } else {
-#     if(autosnap){
-#       availsnaps <- suppressMessages(mran_snaps())
-#       snapshotid <- availsnaps[length(availsnaps)]
-#     } else { snapshotid <- NULL }
-#   }
-#   options(RRT_snapshotID = snapshotid)
-#   getPkgs(x = pkgs, repo = repo, lib = lib, verbose = verbose, mran = mran, snapdate = snapdate, snapshotid = snapshotid)
 
   # Write blank user manifest file
   writeUserManifest(repository = repo, verbose = verbose)
   
   # download and install packages
-  rrt_install(repo, repoid, lib, mran, suggests, verbose)
+  rrt_install(repo, repoid, lib, mran, suggests, verbose, quiet=quiet)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")

@@ -97,6 +97,7 @@ pkg_deps_noncran <- function(repo, x){
   }
 }
 
+#' @importFrom RCurl base64Decode
 get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FALSE){
 #   GET /repos/:owner/:repo/contents/:path
   url <- "https://api.github.com/repos/%s/%s/contents/DESCRIPTION"

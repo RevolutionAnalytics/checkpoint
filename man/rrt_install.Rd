@@ -3,12 +3,11 @@
 \alias{rrt_install}
 \title{Install packages within an RRT repository.}
 \usage{
-rrt_install(repo = getwd(), repoid, lib, mran = TRUE, suggests = FALSE,
-  verbose = TRUE)
+rrt_install(repo = getwd(), repoid, lib = rrt_libpath(repo), mran = TRUE,
+  suggests = FALSE, verbose = TRUE, quiet = FALSE)
 }
 \arguments{
-\item{repo}{A repository path. This is the path to the root of your RRT repository. By default,
-we use the current working directory via \code{getwd()}.}
+\item{repo}{A repository path. This is the path to the root of your RRT repository. By default, we use the current working directory via \code{\link{getwd}}.}
 
 \item{repoid}{Repository ID.}
 
@@ -16,7 +15,9 @@ we use the current working directory via \code{getwd()}.}
 
 \item{suggests}{Install suggests or not. Default: FALSE.}
 
-\item{verbose}{Print messages. Default: TRUE.}
+\item{verbose}{Print messages. Default: TRUE}
+
+\item{quiet}{Passed to install.packages}
 }
 \description{
 Install packages within an RRT repository.

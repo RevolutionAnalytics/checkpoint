@@ -8,6 +8,7 @@ source(system.file("tests/testthat/0-common-functions.R", package="RRT"))
 cleanRRTfolder()
 options(repos=c(CRAN="http://cran.revolutionanalytics.com/"))
 
+
 test_that("refresh works as expected", {
   
   expect_false("rrt" %in% list.files(rrtPath))
@@ -24,7 +25,7 @@ test_that("refresh works as expected", {
 
 test_that("refresh returns messages", {
   expect_message(rrt_refresh(rrtPath), 
-                 "Checking to see if repository exists already")
+                 "Checking to make sure repository exists")
 })
 
 # cleanup
