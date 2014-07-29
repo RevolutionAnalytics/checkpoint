@@ -1,5 +1,5 @@
 #' Clean out installed packages and their sources in your repository
-#' 
+#'
 #' @import digest
 #' @export
 #' @param repo Repository path, Defaults to the current working directory
@@ -11,41 +11,41 @@
 #' }
 
 rrt_sweep <- function(repo=getwd(), pkgs = NULL, verbose=TRUE)
-{  
+{
   ## create repo id using digest
-  repoid <- digest(repo)
-  
+  repoid <- digest(normalizePath(repo))
+
   ## check for repo
   mssg(verbose, "Checking to make sure repository exists...")
   if(!file.exists(repo)){
     mssg(verbose, sprintf("No repository exists at %s", repo))
   }
-  
+
   # check for rrt directory in the repo
-  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
+  mssg(verbose, "Checking to make sure rrt directory exists inside your repository...")
   lib <- rrt_libpath(repo)
   present <- list.dirs(lib)
   if(!all(grepl("rrt", present))){
     mssg(verbose, "rrt directory doesn't exist...")
   }
-  
+
   # get pkgs list in the rrt repo
-  pathtoremove <- rrt_libpath(repo)
-  dirstoremove <- list.files(pathtoremove, full.names = TRUE, recursive = FALSE)
-  srctoremove <- grep("src", dirstoremove, value = TRUE)
+  pathToRemove <- rrt_libpath(repo)
+  dirsToRemove <- list.files(pathToRemove, full.names = TRUE, recursive = FALSE)
+  srcToRemove <- grep("src", dirsToRemove, value = TRUE)
   if(is.null(pkgs)){
-    pkgnames <- list.files(pathtoremove, recursive = FALSE)
-    pkgnames <- pkgnames[!pkgnames %in% "src"]
-  } else { pkgnames <- pkgs }
-  
+    pkgNames <- list.files(pathToRemove, recursive = FALSE)
+    pkgNames <- pkgNames[!pkgNames %in% "src"]
+  } else { pkgNames <- pkgs }
+
   ## remove src (source files)
-  unlink(srctoremove, recursive = TRUE)
-  cat("Package sources removed", sep = "\n")
-  
-  if(length(pkgnames) == 0){ cat("No installed packages to remove :)") } else {
+  unlink(srcToRemove, recursive = TRUE)
+  mssg(verbose, paste("Package sources removed: ", sep = "\n"))
+
+  if(length(pkgNames) == 0){ cat("No installed packages to remove :)") } else {
     ## remove installed packages
-    remove.packages(pkgnames, pathtoremove)
-    
-    cat("Your repository packages successfully removed:", pkgnames, sep = "\n")
+    remove.packages(pkgNames, pathToRemove)
+
+    mssg(verbose, paste("Your repository packages successfully removed:", pkgNames, sep = "\n"))
   }
 }

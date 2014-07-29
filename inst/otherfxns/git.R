@@ -1,17 +1,16 @@
 #' Add and commit files in your RRT repository using git.
-#' 
-#' @importFrom git2r status repository add init commit
-#' @export
-#' 
+#'
+#' @keywords internal
+#'
 #' @param path Path to the RRT repository
-#' @param message Commit message. If you don't pass a message we ask you for a commit message. 
+#' @param message Commit message. If you don't pass a message we ask you for a commit message.
 #' Use quotes around your commit message!
 #' @param verbose Print messages or not, Default: TRUE
-#' @param ... Further args passed on to \code{git2r::commit}
-#' 
-#' @details Note this doesn't do anything about remote connections to your repo. See help for 
-#' \link{remote_add}
-#' 
+#' @param ... Further args passed on to commit() function in git2r package
+#'
+#' @details Note this doesn't do anything about remote connections to your repo. See help for
+#' remote_add() function
+#'
 #' @examples \dontrun{
 #' git_add_commit(path="~/bbb", message="Made some changes to the regression function")
 #' }
@@ -19,16 +18,16 @@
 git_add_commit <- function(path=getwd(), message="", verbose=TRUE, ...){
   # setup git
   git_setup(path, verbose)
-  
+
   # get repo object
   rep <- git2r::repository(path)
-  
+
   # ask user what files they want to add
   st <- git2r::status(rep)
   untrackedlen <- length(st$untracked)
   if(untrackedlen > 0){
     untrackedtake <- manyselect(sprintf("You have %s untracked files\nWhich do you want to track:\n", untrackedlen))
-    switch(untrackedtake, 
+    switch(untrackedtake,
            `1` = message("You selected not to add any untracked files - stopping."),
            `2` = message("All untracked files are being added, proceeding..."),
            `3` = message("You selected to add selected untracked files, see ?add in the git2r package - stopping"))
@@ -36,14 +35,14 @@ git_add_commit <- function(path=getwd(), message="", verbose=TRUE, ...){
       git2r::add(rep, unname(unlist(st$untracked)))
     }
   } else { untrackedtake <- 0 }
-  
+
   if(!untrackedtake == 3){
     # ask user what files they want to add
     st <- git2r::status(rep)
     unstagedlen <- length(st$unstaged)
     if(unstagedlen > 0){
       unstagedtake <- manyselect(sprintf("You have %s unstaged files\nWhich do you want to stage:\n", unstagedlen))
-      switch(unstagedtake, 
+      switch(unstagedtake,
              `1` = message("You selected not to add any unstaged files - stopping."),
              `2` = message("All unstaged files are being staged, proceeding..."),
              `3` = message("You selected to add selected unstaged files, see ?add in the git2r package - stopping"))
@@ -51,7 +50,7 @@ git_add_commit <- function(path=getwd(), message="", verbose=TRUE, ...){
         git2r::add(rep, unname(unlist(st$unstaged)))
       }
     } else { unstagedtake <- 0 }
-    
+
     if(!unstagedtake == 3){
       # commit files
       st <- git2r::status(rep)
@@ -68,13 +67,13 @@ git_add_commit <- function(path=getwd(), message="", verbose=TRUE, ...){
 }
 
 #' Add and commit files in your RRT repository
-#' 
-#' @export
-#' 
+#'
+#' @keywords internal
+#'
 #' @param path Path to the RRT repository
 #' @param verbose Print messages or not, Default: TRUE
 #' @param ... Further args, ignored for now.
-#' 
+#'
 #' @examples \dontrun{
 #' git_add(path="~/bbb")
 #' }
@@ -83,7 +82,7 @@ git_setup <- function(path=getwd(), verbose=TRUE, ...){
   # check for rrt directory in the repo, and stop if it doesn't exist
   if(!is_rrt(path, FALSE))
     stop(sprintf("%s is not an RRT repo; See ?rrt_init", path))
-  
+
   # check to see if git initialized yet
   res <- tryCatch(git2r::repository(path), error=function(e) e)
   if("error" %in% class(res)){

@@ -1,8 +1,7 @@
 #' Create a Github repository
 #'
-#' @import httr RJSONIO assertthat
-#' @export
-#'
+#' @keywords internal
+#' 
 #' @param name (character) Required. The name of the repository
 #' @param description	(character)	A short description of the repository
 #' @param homepage (character)	A URL with more information about the repository
@@ -36,7 +35,7 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
   has_issues=TRUE, has_wiki=TRUE, has_downloads=TRUE, team_id=NULL, auto_init=FALSE,
   gitignore_template = NULL, license_template = NULL, browse=TRUE, ...)
 {
-  get_credentials("github")
+  get_credentials(what="github")
   headers <- add_headers(`User-Agent` = "Dummy", `Accept` = 'application/vnd.github.v3+json')
   auth  <- authenticate(Sys.getenv("GITHUB_USERNAME"), Sys.getenv("GITHUB_PASSWORD"), type = "basic")
   args <- rrt_compact(list(name=name, description=description, homepage=homepage, private=private,
@@ -45,7 +44,7 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
                        license_template=license_template))
   response <- POST(url = "https://api.github.com/user/repos", body = RJSONIO::toJSON(args), config = c(auth, headers), ...)
   warn_for_status(response)
-  assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
+  if(response$headers$`content-type` == 'application/json; charset=utf-8') stop("Content-type does not equal 'application/json; charset=utf-8'")
   html_url <- content(response)$html_url
   githubrepourl <- paste("https://github.com/", Sys.getenv("GITHUB_USERNAME"), "/",
                    basename(html_url), sep = "")
@@ -55,9 +54,8 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
 }
 
 #' Create Bitbucket repository
-#'
-#' @import httr RJSONIO
-#' @export
+#' 
+#' @keywords internal
 #'
 #' @param name Required. Name of the repository
 #' @param description A string containing the repository's description.
@@ -84,14 +82,14 @@ rrt_github <- function(name, description = "", homepage = "", private = FALSE,
 rrt_bitbucket <- function(name, description = "", private = FALSE, fork_policy = "allow_forks",
   has_issues=TRUE, has_wiki=TRUE, website="", browse=TRUE, ...)
 {
-  get_credentials("bitbucket")
+  get_credentials(what="bitbucket")
   auth  <- authenticate(Sys.getenv("BITBUCKET_USERNAME"), Sys.getenv("BITBUCKET_PASSWORD"), type = "basic")
   args <- rrt_compact(list(name=name, description=description, is_private=private, scm="git",
             fork_policy=fork_policy, has_issues=has_issues, has_wiki=has_wiki, website=website))
   url2 <- file.path("https://bitbucket.org/api/2.0/repositories", Sys.getenv("BITBUCKET_USERNAME"), name)
   response <- POST(url = url2, body = RJSONIO::toJSON(args), config = auth)
   if(response$status_code > 202){ stop(sprintf("%s - %s", response$status_code, content(response)$error$message), call. = FALSE) } else {
-    assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
+    if(response$headers$`content-type` == 'application/json; charset=utf-8') stop("Content-type does not equal 'application/json; charset=utf-8'")
     html_url <- file.path("https://bitbucket.org", Sys.getenv("BITBUCKET_USERNAME"), name)
     message("Your Github repo has been created")
     message("View repo at ", html_url)
@@ -99,6 +97,9 @@ rrt_bitbucket <- function(name, description = "", private = FALSE, fork_policy =
   }
 }
 
+#' Get github or bitbucket credentials
+#' @keywords internal
+#' @param what one of github or bitbucket
 get_credentials <- function(what="github") {
   what <- match.arg(what, c("github","bitbucket"))
   if(what=="github"){

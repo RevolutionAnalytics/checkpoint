@@ -15,9 +15,9 @@ mran_set <- function(snapshot=NULL, repo=getwd())
 {
   if(is.null(snapshot)){
     gg <- suppressMessages(mran_snaps())
-    snapshot <- gg[length(gg)]
+    snapshot <- gg[length(gg)] # get the latest snapshot (latest date that is)
   }
-  
+
   url <- sprintf("%s/%s/", file.path(mran_server_url(), 'snapshots'), snapshot)
   res <- GET(url)
   if(res$status_code >= 300)
@@ -27,10 +27,10 @@ mran_set <- function(snapshot=NULL, repo=getwd())
   check4repo(repo, TRUE)
   lib <- rrt_libpath(repo)
   check4rrt(repo, lib, TRUE)
-  
+
   # write MRAN snapshot id
   message("Writing new snapshotID...")
-  writeManifest(repo, lib, packs = NULL, repoid = digest(repo), snapshot = snapshot)
+  writeManifest(repo, lib, packs = NULL, repoid = digest(normalizePath(repo)), snapshot = snapshot)
   message("...Done")
 }
 
@@ -47,10 +47,10 @@ mran_set <- function(snapshot=NULL, repo=getwd())
 # {
 #   mfile <- file.path(rr, "rrt", "rrt_manifest.yml")
 #   datecheck <- check_snapshot(x=mfile)
-#   rrtsnapshot <- sprintf("RRT_snapshotID: %s", getOption("RRT_snapshotID", ""))  
+#   rrtsnapshot <- sprintf("RRT_snapshotID: %s", getOption("RRT_snapshotID", ""))
 #   cat(info, file = infofile, sep = "\n")
 # }
-# 
+#
 # check_snapshot <- function(){
 #   if(file.exists(x)){
 #     info <- readLines(x)

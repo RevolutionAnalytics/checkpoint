@@ -4,7 +4,8 @@
 \title{Initiate a RRT repository.}
 \usage{
 rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, autosnap = FALSE,
-  verbose = TRUE, rprofile = NULL, interactive = FALSE)
+  verbose = TRUE, rprofile = NULL, interactive = FALSE,
+  suggests = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
@@ -20,19 +21,17 @@ rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, autosnap = FALSE,
 
 \item{rprofile}{(list) pass in a list of options to include in the .Rprofile file for the repo.}
 
-\item{interactive}{(logical) If TRUE, function asks you for input for each item,
-otherwise, defaults are used. Default: FALSE.}
+\item{interactive}{(logical) If TRUE, function asks you for input for each item, otherwise, defaults are used. Default: FALSE.}
+
+\item{suggests}{(logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.}
+
+\item{quiet}{Passed to install.packages}
 }
 \value{
 Files written to the user's machine, with informative messages on progress
 }
 \description{
-This function initiates a repository. You can run this function to start a new repository,
-without any work done yet, creating a new folder and RRT files, or you can initiate a RRT
-repository inside an existing project/folder you already have. If the latter, we don't alter
-your files at all, but simply write a few files needed for RRT to work properly. By detault
-repo initialization is done interactively, so that you can choose your settings or accept
-reasonable defaults.
+This function initiates a repository. You can run this function to start a new repository, without any work done yet, creating a new folder and RRT files, or you can initiate a RRT repository inside an existing project/folder you already have. If the latter, we don't alter your files at all, but simply write a few files needed for RRT to work properly. By detault repo initialization is done interactively, so that you can choose your settings or accept reasonable defaults.
 }
 \examples{
 \dontrun{

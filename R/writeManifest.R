@@ -16,6 +16,21 @@
 writeManifest <- function(repository, librar, packs, repoid, reponame="", author="",
                           license="", description="", remote="", snapshot=NULL, verbose=FALSE)
 {
+  # look first for user manifest file in root directory - overrides user input for fields:
+  ## reponame, author, license, description, and remote
+  givezerochar <- function(x) if(is.null(x)) "" else x
+  usermanfile <- normalizePath(file.path(repository, "manifest.yml"))
+  if(file.exists(usermanfile)){
+    tt <- yaml.load_file(usermanfile)
+    if(!is.null(tt)){
+      reponame <- givezerochar(tt$RepositoryName)
+      author <- givezerochar(tt$Authors)
+      license <- givezerochar(tt$License)
+      description <- givezerochar(tt$Description)
+      remote <- givezerochar(tt$Remote)
+    }
+  }
+  
   reponame <- sprintf("RepositoryName: %s", reponame)
   author <- sprintf("Authors: %s", author)
   license <- sprintf("License: %s", license)
@@ -39,7 +54,7 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   sysreq <- sprintf("SystemRequirements:\n%s", getsysreq(packs, lib=librar) )
 #   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
 
-  pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse=", "))
+#   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse=", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
 
   mssg(verbose, "... writeManifest: checking for date created")
@@ -52,7 +67,7 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   github <- check4github(infofile)
 
   info <- c(reponame, author, license, description, remote, installedwith, installedfrom, rrtsnapshot, rrtver,
-            rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, pkgs_deps, sysreq, github)
+            rver, date_created, date_updated, path.expand(pkgsloc), repositoryid, sysreq, github)
   mssg(verbose, "... writeManifest: writing manifest files")
   cat(info, file = infofile, sep = "\n")
 }

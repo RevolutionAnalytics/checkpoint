@@ -14,7 +14,7 @@ rrt_git <- function(repo=NULL, verbose=TRUE)
 {
 
   # create repo id using digest
-  repoid <- digest(repo)
+  repoid <- digest(normalizePath(repo))
   if(is.null(repo)) repo <- getwd()
 
   # initiate git repo

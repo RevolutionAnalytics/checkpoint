@@ -1,7 +1,6 @@
 #' Share an RRT repository
 #'
-#' @export
-#' @param repo Pah to an RRT repository
+#' @param repo Path to an RRT repository
 #' @param to How to share. One of zip, tar, github, gist, bitbucket, or email.
 #' @param output Output. This can be one of a file name, directory, or X.
 #' @param address Email address. Only used if \code{to='email'}
@@ -141,7 +140,7 @@ gist_create <- function(files, description = "", public = TRUE, verbose=TRUE,
   auth  <- authenticate(Sys.getenv("GITHUB_USERNAME"), Sys.getenv("GITHUB_PASSWORD"), type = "basic")
   response <- POST(url = "https://api.github.com/gists", body = dat, config = c(auth, headers), callopts)
   warn_for_status(response)
-  assert_that(response$headers$`content-type` == 'application/json; charset=utf-8')
+  if(response$headers$`content-type` == 'application/json; charset=utf-8') stop("Content-type does not equal 'application/json; charset=utf-8'")
   html_url <- content(response)$html_url
   gisturl <- paste("https://gist.github.com/", Sys.getenv("GITHUB_USERNAME"), "/",
                    basename(html_url), sep = "")

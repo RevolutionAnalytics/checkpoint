@@ -3,9 +3,14 @@
 \alias{pkgs_mran}
 \title{Download R packages from the MRAN server}
 \usage{
-pkgs_mran(date = NULL, snapshotid = NULL, pkgs = NULL, outdir = NULL)
+pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
+  pkgs = NULL, outdir = NULL)
 }
 \arguments{
+\item{repo}{Repository path}
+
+\item{lib}{(character) Library location, a directory}
+
 \item{date}{Date as "year-month-day" (YY-MM-DD)}
 
 \item{snapshotid}{Optional. You can give the exact snapshot ID insetad of a date.}
@@ -21,7 +26,7 @@ by default. This function does not install packages, but only downloads them to 
 \examples{
 \dontrun{
 # By default installs most recent version
-pkgs_mran(date='2014-06-19', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
+pkgs_mran(date='2014-07-08', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
 
 pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/mran_snaps/stuff/")
 pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
