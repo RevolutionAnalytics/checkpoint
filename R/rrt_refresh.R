@@ -72,7 +72,7 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
   writeUserManifest(repository = repo, verbose = verbose)
   
   # download and install packages
-  rrt_install3(repo, repoid, lib, mran, suggests, verbose)
+  rrt_install(repo, repoid, lib, mran, suggests, verbose)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")

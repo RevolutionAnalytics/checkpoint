@@ -115,7 +115,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   }
 
   # install packages
-  rrt_install3(repo, repoid, lib, suggests, verbose)
+  rrt_install(repo, repoid=repoid, lib=lib, suggests=suggests, verbose=verbose)
 
   # Write blank user manifest file, or not if already present
   writeUserManifest(repository = repo, verbose = verbose)

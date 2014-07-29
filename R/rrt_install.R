@@ -10,7 +10,7 @@
 #' @param suggests Install suggests or not. Default: FALSE.
 #' @param verbose Print messages. Default: TRUE.
 
-rrt_install3 <- function(repo=getwd(), repoid, lib, mran=TRUE, suggests=FALSE, verbose=TRUE)
+rrt_install <- function(repo=getwd(), repoid, lib, mran=TRUE, suggests=FALSE, verbose=TRUE)
 {
 #   pkgslist <- list.files(file.path(lib, "src/contrib"))  
   mssg(verbose, "Looking for packages used in your repository...")
