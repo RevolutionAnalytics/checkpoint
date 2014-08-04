@@ -18,7 +18,7 @@
 #' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
 #' }
 
-pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL)
+pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL, verbose=FALSE, quiet=FALSE)
 {
   if(is.null(outdir)) stop("You must specify a directory to download packages to")
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
@@ -70,7 +70,7 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
 
   if(!.Platform$OS.type == "unix"){
     for(i in seq_along(pkgpaths)){
-      windows_install(pkgpaths[[i]], lib=lib, snapshotid=snapshotid)
+      windows_install(pkgpaths[[i]], lib=lib, snapshotid=snapshotid, quiet=quiet)
     }
   } else {  
     setwd(outdir)
@@ -79,7 +79,7 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
     
     if(length(pkgpaths > 0)){
       
-      message("... Downloading package files")
+      mssg(verbose, "... Downloading package files")
       url <- mran_server_url()
       url <- sub("http://", "", url)
       cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
@@ -98,11 +98,11 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
   }
 }
 
-windows_install <- function(x, lib, snapshotid){
+windows_install <- function(x, lib, snapshotid, quiet=FALSE){
   pkg <- strsplit(x, "/")[[1]]
   url <- sprintf("%s/snapshots/src/%s/%s", mran_server_url(), snapshotid, x)
   destfile <- file.path(lib, 'src/contrib', pkg[[2]])
-  download.file(url, destfile=destfile)
+  download.file(url, destfile=destfile, quiet=quiet)
 }
 
 colClasses <- function (d, colClasses)

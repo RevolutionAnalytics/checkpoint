@@ -33,16 +33,16 @@ rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, 
     } else { githubpkgs <- character(0) }
     
     if(mran){
-      pkgs_mran_get(lib, repo, cranpkgs)
+      pkgs_mran_get(lib, repo, cranpkgs, quiet=quiet)
       install_mran_pkgs(lib, cranpkgs, verbose=verbose, quiet=quiet)
     } else {
-      install.packages(cranpkgs, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet)
+      install.packages(cranpkgs, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
     }
     
     # check for any failed intalls and install from binary from default CRAN mirror
     notinst <- cranpkgs[!vapply(file.path(lib, cranpkgs), file.exists, logical(1))]
     if(!length(notinst) == 0) {
-      install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet)
+      install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
     }
     
     # install github pkgs
@@ -82,12 +82,12 @@ install_mran_pkgs <- function(lib, yyy, verbose, quiet=FALSE){
   }
 }
 
-pkgs_mran_get <- function(lib, repo, pkgs2get){
+pkgs_mran_get <- function(lib, repo, pkgs2get, quiet=FALSE){
   pkgloc <- file.path(lib, "src/contrib")
   setwd(lib)
   on.exit(setwd(repo))
   suppressWarnings(dir.create(file.path(lib, "src/contrib"), recursive = TRUE))
-  pkgs_mran(repo=repo, lib=lib, snapshotid = getOption('RRT_snapshotID'), pkgs=pkgs2get, outdir=pkgloc)
+  pkgs_mran(repo=repo, lib=lib, snapshotid = getOption('RRT_snapshotID'), pkgs=pkgs2get, outdir=pkgloc, quiet=quiet)
 }
 
 # not sure we need this to separate download from install from CRAN, since we can also put 
@@ -139,11 +139,11 @@ get_github_pkgs <- function(repo, pkgs, lib){
   }
 }
 
-install_github_pkgs <- function(lib, yyy){
+install_github_pkgs <- function(lib, pkgs){
   allPkgs <- list.files(file.path(lib, "src/contrib"), full.names = TRUE)
   names(allPkgs) <- gsub("_[0-9].+", "", list.files(file.path(lib, "src/contrib")))
   allPkgs <- allPkgs[!grepl("PACKAGES", allPkgs)]
-  pkgsWithPath <- unname(sapply(yyy, function(x) allPkgs[grepl(x, names(allPkgs))]))
+  pkgsWithPath <- unname(sapply(pkgs, function(x) allPkgs[grepl(x, names(allPkgs))]))
   pkgsWithPath <- pkgsWithPath[!sapply(pkgsWithPath, length) == 0]
   
   gh_install <- pkgsWithPath[grep("\\.zip", pkgsWithPath)]
