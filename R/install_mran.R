@@ -15,24 +15,22 @@
 #' @param destdir Destination directory to install packages to
 #' @param ... Further args passed on to \link{install.packages}
 #' @param dependencies Whether to install dependencies or not. Default: TRUE. See 
+#' @param quiet Passed to install.packages
 #' \link{install.packages}
 #'
 #' @return Installs a package, or throws warnings/errors on failures
 #'
-#' @examples \dontrun{
-#' install_mran(pkg="plyr", date="2014-06-23", lib="~/mran_snaps/")
-#' install_mran(pkg="calmate", date="2014-06-23", lib="~/mran_snaps/")
-#' }
-
-install_mran <- function(pkg, date=NULL, lib = NULL, destdir = NULL, ..., dependencies = TRUE)
+#' @example \inst\examples\example_install_mran.R
+#' 
+install_mran <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quiet=FALSE, ..., dependencies = TRUE)
 {
-  pkgs_mran(date=date, pkgs=pkg, outdir=lib)
+  pkgs_mran(date=date, pkgs=pkg, outdir=lib, quiet=quiet)
   files <- list.files(lib, pattern = ".tar.gz")
   files <- grep(pkg, files, value = TRUE)
-  sapply(files, install_mran_single, ..., lib=lib, destdir=destdir, dependencies=dependencies)
+  sapply(files, install_mran_single, ..., lib=lib, destdir=destdir, dependencies=dependencies, quiet=quiet)
 }
 
-install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, ..., dependencies = TRUE){
+install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quiet=FALSE, ..., dependencies = TRUE){
   path <- file.path(lib, pkg)
   pkgname <- strsplit(strsplit(pkg, "/")[[1]][ length(strsplit(pkg, "/")[[1]]) ], "_")[[1]][[1]]
   tmpdir <- tempdir()
@@ -44,10 +42,13 @@ install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, ...,
   depsinstall <- info$name[as.logical(depscheck)]
   just_deps <- sapply(depsinstall, function(x) grep(x, list.files(lib, pattern = ".tar.gz"), value = TRUE))
   just_deps_paths <- file.path(lib, just_deps)
+  
   # install dependencies
-  install.packages(just_deps_paths, ..., lib=lib, dependencies=TRUE, repos=NULL, type = "source")
+  install.packages(just_deps_paths, ..., lib=lib, dependencies=TRUE, repos=NULL, type = "source", quiet=quiet)
+  
   # install target package
-  install.packages(file.path(lib, grep(pkgname, list.files(lib, pattern = ".tar.gz"), value = TRUE)), lib=lib, dependencies=FALSE, repos=NULL, type = "source", ...)
+  install.packages(pkgs=file.path(lib, grep(pkgname, list.files(lib, pattern = ".tar.gz"), value = TRUE)), 
+                   lib=lib, dependencies=FALSE, repos=NULL, type = "source", quiet=quiet, ...)
 }
 
 pkg_deps <- function (pkg = ".", dependencies = NA){
@@ -71,7 +72,7 @@ download_deps <- function (pkg = NULL, info, lib, dependencies = NA)
   deps <- info$name[as.logical(needed)]
   if (length(deps) == 0) return(invisible())
   message("Downloading dependencies for ", pkg$package, ":\n", paste(deps, collapse = ", "))
-  pkgs_mran(date=date, pkgs=deps, outdir=lib)
+  pkgs_mran(date=date, pkgs=deps, outdir=lib, quiet=quiet)
   invisible(deps)
 }
 

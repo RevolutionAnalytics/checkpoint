@@ -1,45 +1,23 @@
 #' Detect repository dependencies
 #'
-#' Recursively detect all repository dependencies. Parses all .R, .Rmd, .Rnw, .Rpres, and other
-#' files in the repository directory to determine what packages the repo depends directly.
+#' Recursively detect all repository dependencies. Parses all .R, .Rmd, .Rnw, .Rpres, and other files in the repository directory to determine what packages the repo depends directly.
 #'
 #' Only direct dependencies are detected (i.e. no recursion).
 #'
 #' NOTE: Modified from dependencies.R in the packrat github repo
 #' NOTE: Working on adding support for other file types, including .md
 #'
-#' @import knitr
 #' @export
-#' @keywords internal
 #'
 #' @param repo Repository path. Defaults to current working directory.
-#' @param fileext (character) File extensions to search for. Default is .R, .Rmd, .Rnw, and .Rpres.
-#'    Specify a certain file extension(s) in a charcter vector. Exclude a file extension by e.g.
-#'    "-.Rmd"
+#' @param fileext (character) File extensions to search for. Default is .R, .Rmd, .Rnw, and .Rpres.  Specify a certain file extension(s) in a charcter vector. Exclude a file extension by e.g. "-.Rmd"
 #' @param verbose (logical) Print messages or not.
 #'
 #' @return Vector of package names on which R code in the repository depends.
-#' @details Dependencies are determined by parsing repository source code and
-#'   looking for calls to \code{library}, \code{require}, \code{::}, and
-#'   \code{:::}.
+#' @details Dependencies are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
 #'
-#' @examples \dontrun{
-#' # dependencies for the repo in the current working dir
-#' rrt_deps()
-#'
-#' # dependencies for an repo in another directory
-#' rrt_deps("~/newrepo")
-#'
-#' # include only certain file extensions
-#' rrt_deps(fileext=c('Rmd'))
-#'
-#' # exclude some file extensions
-#' rrt_deps(fileext=c('-Rmd'))
-#' rrt_deps(fileext=c('-Rmd','Rnw'))
-#'
-#' # suppress messages
-#' rrt_deps(verbose=FALSE)
-#' }
+#' @example inst\examples\example_rrt_deps.R 
+#' 
 rrt_deps <- function(repo = NULL, fileext = NULL, verbose = TRUE){
   if(is.null(repo)) repo <- getwd()
   repo <- path.expand(repo)
@@ -86,7 +64,7 @@ deps_by_ext <- function(file, dir) {
 }
 
 deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
-  if (require("knitr")) {
+#   if (require("knitr")) {
     tempfile <- tempfile()
     on.exit(unlink(tempfile))
     tryCatch(knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE), error = function(e) {
@@ -94,10 +72,10 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
       character()
     })
     deps.R(tempfile)
-  } else {
-    warning("knitr is required to parse dependencies from .Rmd files, but is not available")
-    character()
-  }
+#   } else {
+#     warning("knitr is required to parse dependencies from .Rmd files, but is not available")
+#     character(0)
+#   }
 }
 
 deps.Rnw <- function(file, verbose=TRUE) {

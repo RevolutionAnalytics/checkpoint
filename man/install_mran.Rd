@@ -3,8 +3,8 @@
 \alias{install_mran}
 \title{Install packages from MRAN}
 \usage{
-install_mran(pkg, date = NULL, lib = NULL, destdir = NULL, ...,
-  dependencies = TRUE)
+install_mran(pkg, date = NULL, lib = NULL, destdir = NULL,
+  quiet = FALSE, ..., dependencies = TRUE)
 }
 \arguments{
 \item{pkg}{Package name}
@@ -17,7 +17,9 @@ install_mran(pkg, date = NULL, lib = NULL, destdir = NULL, ...,
 
 \item{...}{Further args passed on to \link{install.packages}}
 
-\item{dependencies}{Whether to install dependencies or not. Default: TRUE. See
+\item{dependencies}{Whether to install dependencies or not. Default: TRUE. See}
+
+\item{quiet}{Passed to install.packages
 \link{install.packages}}
 }
 \value{
@@ -35,5 +37,6 @@ Steps (for each pkg):
 install_mran(pkg="plyr", date="2014-06-23", lib="~/mran_snaps/")
 install_mran(pkg="calmate", date="2014-06-23", lib="~/mran_snaps/")
 }
+
 }
 

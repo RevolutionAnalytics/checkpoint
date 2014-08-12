@@ -12,9 +12,8 @@ get_github <- function(pkg, username, lib, ...){
   stop_for_status(res)
   installtmpfile <- file.path(lib, "src/contrib", paste0(pkg, ".zip"))
   writeBin(content(res), installtmpfile)
-#   unzip(sprintf("%s/tmp.zip", installtmpfile), exdir = file.path(lib, "src/contrib"))
-#   unlink(installtmpdir)
 }
+
 
 
 #' Install packages that were downloaded from non-CRAN like places
@@ -28,8 +27,6 @@ get_github <- function(pkg, username, lib, ...){
 #' }
 
 install_other <- function(pkg, lib){
-  #   unzip(sprintf("%s/tmp.zip", installtmpfile), exdir = file.path(lib, "src/contrib"))
-  #   unlink(installtmpdir)
   inst <- file.path(lib, "src/contrib", sprintf("%s.zip", pkg))
   install_local(inst, args=sprintf("--library=%s", lib), dependencies=FALSE)
 }

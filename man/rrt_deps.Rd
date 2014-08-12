@@ -8,9 +8,7 @@ rrt_deps(repo = NULL, fileext = NULL, verbose = TRUE)
 \arguments{
 \item{repo}{Repository path. Defaults to current working directory.}
 
-\item{fileext}{(character) File extensions to search for. Default is .R, .Rmd, .Rnw, and .Rpres.
-Specify a certain file extension(s) in a charcter vector. Exclude a file extension by e.g.
-"-.Rmd"}
+\item{fileext}{(character) File extensions to search for. Default is .R, .Rmd, .Rnw, and .Rpres.  Specify a certain file extension(s) in a charcter vector. Exclude a file extension by e.g. "-.Rmd"}
 
 \item{verbose}{(logical) Print messages or not.}
 }
@@ -18,8 +16,7 @@ Specify a certain file extension(s) in a charcter vector. Exclude a file extensi
 Vector of package names on which R code in the repository depends.
 }
 \description{
-Recursively detect all repository dependencies. Parses all .R, .Rmd, .Rnw, .Rpres, and other
-files in the repository directory to determine what packages the repo depends directly.
+Recursively detect all repository dependencies. Parses all .R, .Rmd, .Rnw, .Rpres, and other files in the repository directory to determine what packages the repo depends directly.
 }
 \details{
 Only direct dependencies are detected (i.e. no recursion).
@@ -27,28 +24,26 @@ Only direct dependencies are detected (i.e. no recursion).
 NOTE: Modified from dependencies.R in the packrat github repo
 NOTE: Working on adding support for other file types, including .md
 
-Dependencies are determined by parsing repository source code and
-  looking for calls to \code{library}, \code{require}, \code{::}, and
-  \code{:::}.
+Dependencies are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
 }
 \examples{
 \dontrun{
-# dependencies for the repo in the current working dir
-rrt_deps()
-
-# dependencies for an repo in another directory
-rrt_deps("~/newrepo")
-
-# include only certain file extensions
-rrt_deps(fileext=c('Rmd'))
-
-# exclude some file extensions
-rrt_deps(fileext=c('-Rmd'))
-rrt_deps(fileext=c('-Rmd','Rnw'))
-
-# suppress messages
-rrt_deps(verbose=FALSE)
+   # dependencies for the repo in the current working dir
+   rrt_deps()
+  
+   # dependencies for an repo in another directory
+   rrt_deps("~/newrepo")
+  
+   # include only certain file extensions
+   rrt_deps(fileext=c('Rmd'))
+  
+   # exclude some file extensions
+   rrt_deps(fileext=c('-Rmd'))
+   rrt_deps(fileext=c('-Rmd','Rnw'))
+  
+   # suppress messages
+   rrt_deps(verbose=FALSE)
 }
+
 }
-\keyword{internal}
 

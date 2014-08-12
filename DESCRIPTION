@@ -1,25 +1,26 @@
 Package: RRT
 Title: R Reproducibility Toolkit
 Description: R Reproducibility Toolkit.
-Version: 0.1.5
-Date: 2014-07-16
+Version: 0.1.6
+Date: 2014-07-29
 Authors@R: c(person("Andrie", "de Vries", role = c("aut", "cre"),
     email = "apdevries@gmail.com"),
     person("Scott", "Chamberlain", role = "aut",
     email = "myrmecocystus@gmail.com"))
-License: GPL-2
+License: GPL-2|GPL-3
 URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
     digest,
     knitr,
     whisker,
-    testthat,
     devtools,
     httr,
     RJSONIO,
     XML,
     yaml,
-    BiocInstaller
+    BiocInstaller,
+    RCurl,
+    testthat
 Suggests:
     roxygen2
