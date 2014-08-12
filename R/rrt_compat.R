@@ -106,12 +106,12 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
       names(update)[2] <- 'pkg'
     } else { update <- data.frame(repo='CRAN', pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
     # bioconductor updates
-    biocup <- biocupdates(lib, biocpkgs)
+    biocup <- biocupdates(lib, bioc_pkgs = biocpkgs)
     # github updates
     ### FIXME - for now any github packages are not checked
     # combine updates
     allupdates <- rbind(update, biocup)
-  }
+  } else { allupdates <- data.frame(pkg=NA, update=NA, stringsAsFactors = FALSE) }
 
   df <- merge(check, tdf, by="pkg")
   df <- merge(df, allupdates, by="pkg", all = TRUE)
@@ -190,7 +190,9 @@ biocupdates <- function(lib, bioc_pkgs){
   contribUrl <- contrib.url(repos, type = type)
   availPkgs <- available.packages(contribUrl, type = type)
   df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
-  df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
-  names(df)[2] <- 'pkg'
-  df
+  if(is.null(df)){ data.frame(NULL) } else {  
+    df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
+    names(df)[2] <- 'pkg'
+    df
+  }
 }
