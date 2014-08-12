@@ -20,8 +20,10 @@
 #'
 #' @return Installs a package, or throws warnings/errors on failures
 #'
-#' @example \inst\examples\example_install_mran.R
-#' 
+#' @examples \dontrun{
+#' install_mran(pkg="plyr", date="2014-06-23", lib="~/mran_snaps/")
+#' install_mran(pkg="calmate", date="2014-06-23", lib="~/mran_snaps/")
+#' }
 install_mran <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quiet=FALSE, ..., dependencies = TRUE)
 {
   pkgs_mran(date=date, pkgs=pkg, outdir=lib, quiet=quiet)

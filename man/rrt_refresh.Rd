@@ -27,15 +27,14 @@ Refresh package - look for any new packages used and install those in rrt librar
 }
 \examples{
 \dontrun{
-   rrt_init(repo="~/testrepo")
-   rrt_refresh(repo="~/testrepo")
-   rrt_refresh(repo="~/testrepo", mran=TRUE)
-   rrt_install(repo="~/testrepo")
-  
-   # Optionally, do an interactive repo intitialization
-   rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
-}
+rrt_init(repo="~/testrepo")
+rrt_refresh(repo="~/testrepo")
+rrt_refresh(repo="~/testrepo", mran=TRUE)
+rrt_install(repo="~/testrepo")
 
+# Optionally, do an interactive repo intitialization
+rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
+}
 }
 \seealso{
 \code{\link{rrt_init}}, \code{\link{rrt_install}}

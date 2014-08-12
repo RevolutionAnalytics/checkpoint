@@ -13,8 +13,16 @@
 #'
 #' @seealso \code{\link{rrt_init}}, \code{\link{rrt_install}}
 #'
-#' @example \inst\examples\example_rrt_refresh.R
+#' @examples \dontrun{
+#' rrt_init(repo="~/testrepo")
+#' rrt_refresh(repo="~/testrepo")
+#' rrt_refresh(repo="~/testrepo", mran=TRUE)
+#' rrt_install(repo="~/testrepo")
 #' 
+#' # Optionally, do an interactive repo intitialization
+#' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
+#' }
+
 rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE,
                         suggests=FALSE, quiet=FALSE)
 {

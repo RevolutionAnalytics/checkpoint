@@ -4,7 +4,7 @@
 \title{Download R packages from the MRAN server}
 \usage{
 pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
-  pkgs = NULL, outdir = NULL)
+  pkgs = NULL, outdir = NULL, verbose = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{repo}{Repository path}
