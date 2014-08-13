@@ -26,10 +26,10 @@ by default. This function does not install packages, but only downloads them to 
 \examples{
 \dontrun{
 # By default installs most recent version
-pkgs_mran(date='2014-07-08', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
+pkgs_mran(date='2014-08-04', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
 
 pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/mran_snaps/stuff/")
-pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
+pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps")
 }
 }
 

@@ -127,6 +127,6 @@ snapshot_from_date <- function(x){
     gg <- suppressMessages(mran_snaps())
     gg[length(gg)]
   } else {
-    suppressMessages(mran_snaps(snapshot))
+    suppressMessages(mran_snaps(x))
   }
 }

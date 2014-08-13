@@ -12,10 +12,10 @@
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
 #' @examples \dontrun{
 #' # By default installs most recent version
-#' pkgs_mran(date='2014-07-08', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
+#' pkgs_mran(date='2014-08-04', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
 #'
 #' pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/mran_snaps/stuff/")
-#' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
+#' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps")
 #' }
 
 pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL, verbose=FALSE, quiet=FALSE)
@@ -28,7 +28,7 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
 
   # parse versions from pkgs
   get_pkg_versions <- function(x){
-    vers <- tryCatch(mran_pkg_avail(snapshot=snapshot_use, package=x[[1]]), error=function(e) e)
+    vers <- tryCatch(mran_pkg_versions(snapshot=snapshot_use, package=x[[1]]), error=function(e) e)
     if("error" %in% class(vers)){
       sprintf("%s/__notfound__", x[[1]])
     } else {
