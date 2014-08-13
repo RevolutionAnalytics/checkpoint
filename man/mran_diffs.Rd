@@ -3,10 +3,14 @@
 \alias{mran_diffs}
 \title{Get available diffs from MRAN}
 \usage{
-mran_diffs(diff = NULL)
+mran_diffs(diff = NULL, which = "src", os = "macosx")
 }
 \arguments{
 \item{diff}{Optional. (character) A diff date-time stamp of a MRAN diff.}
+
+\item{which}{(character) One of src (for source packages) or bin (for binary packages).}
+
+\item{os}{(character) Operating system. One of macosx, windows, or linux.}
 }
 \description{
 Get available diffs from MRAN
@@ -14,9 +18,12 @@ Get available diffs from MRAN
 \examples{
 \dontrun{
 mran_diffs()
+mran_diffs(which='bin')
+mran_diffs(which='bin', os='windows')
+mran_diffs(which='bin', os='linux')
 
 # An individual diff
-mran_diffs(diff="2014-06-19_0136")
+mran_diffs(diff="2014-08-01_0500")
 
 diffs <- mran_diffs()
 mran_diffs(diffs[length(diffs)-1])

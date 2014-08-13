@@ -14,7 +14,6 @@ mran_server_url <- function(){
 
 mran_snaps <- function(){
   url <- file.path(mran_server_url(), 'snapshots/src')
-#   url <- "http://marmoset.revolutionanalytics.com/snapshots/"
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
@@ -30,21 +29,28 @@ mran_snaps <- function(){
 #' @import httr XML
 #' @export
 #' @param diff Optional. (character) A diff date-time stamp of a MRAN diff.
+#' @param which (character) One of src (for source packages) or bin (for binary packages).
+#' @param os (character) Operating system. One of macosx, windows, or linux.
 #' @examples \dontrun{
 #' mran_diffs()
+#' mran_diffs(which='bin')
+#' mran_diffs(which='bin', os='windows')
+#' mran_diffs(which='bin', os='linux')
 #'
 #' # An individual diff
-#' mran_diffs(diff="2014-06-19_0136")
+#' mran_diffs(diff="2014-08-01_0500")
 #'
 #' diffs <- mran_diffs()
 #' mran_diffs(diffs[length(diffs)-1])
 #' }
 
-mran_diffs <- function(diff=NULL)
+mran_diffs <- function(diff=NULL, which='src', os='macosx')
 {
-  url <- file.path(mran_server_url(), 'diffs/src')
+  url <- mran_server_url()
+  which <- match.arg(which, c('src','bin'))
+  url <- if(which=='src') file.path(url, sprintf('diffs/%s/2014', which)) else file.path(url, sprintf('diffs/%s/%s/2014', which, os))
   if(!is.null(diff)){
-    url <- sprintf('%s/RRT_%s.txt', url, diff)
+    url <- sprintf('%s/%s.txt', url, diff)
   }
   res <- GET(url)
   if(res$status_code > 202)
