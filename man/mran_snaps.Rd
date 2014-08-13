@@ -3,14 +3,20 @@
 \alias{mran_snaps}
 \title{Get available snapshots from MRAN}
 \usage{
-mran_snaps()
+mran_snaps(date = NULL)
+}
+\arguments{
+\item{date}{(character) A date, in the format YYY-MM-DD}
 }
 \description{
 Get available snapshots from MRAN
 }
 \examples{
 \dontrun{
+# List all available snapshots
 mran_snaps()
+# Get code for a single snapshot
+mran_snaps(date='2014-08-04')
 }
 }
 

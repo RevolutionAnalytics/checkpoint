@@ -15,7 +15,7 @@ Get available package level metadata from MRAN
 }
 \examples{
 \dontrun{
-mran_pkg_metadata(package="plyr")
+mran_pkg_metadata(package="plyr", snapshot="2014-08-04")
 }
 }
 

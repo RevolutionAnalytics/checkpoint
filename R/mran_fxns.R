@@ -8,11 +8,15 @@ mran_server_url <- function(){
 #'
 #' @import httr XML
 #' @export
+#' @param date (character) A date, in the format YYY-MM-DD
 #' @examples \dontrun{
+#' # List all available snapshots
 #' mran_snaps()
+#' # Get code for a single snapshot
+#' mran_snaps(date='2014-08-04')
 #' }
 
-mran_snaps <- function(){
+mran_snaps <- function(date=NULL){
   url <- file.path(mran_server_url(), 'snapshots/src')
   res <- GET(url)
   if(res$status_code > 202)
@@ -20,6 +24,7 @@ mran_snaps <- function(){
   text <- content(res, as = "text")
   snaps <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
   snaps <- gsub("/", "", snaps)
+  if(!is.null(date)) snaps <- snaps[grep(date, snaps)]
   message("Dates and times are in GMT")
   return( snaps )
 }
@@ -76,7 +81,7 @@ mran_diffs <- function(diff=NULL, which='src', os='macosx')
 #' @param package Required. A package name
 #' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
 #' @examples \dontrun{
-#' mran_pkg_metadata(package="plyr")
+#' mran_pkg_metadata(package="plyr", snapshot="2014-08-04")
 #' }
 
 mran_pkg_metadata <- function(package, snapshot=NULL)
@@ -84,7 +89,7 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
   if(is.null(snapshot)){
     gg <- suppressMessages(mran_snaps())
     snapshot <- gg[length(gg)]
-  }
+  } else { snapshot <- suppressMessages(mran_snaps(snapshot)) }
 
   url <- sprintf("%s/%s/%s.json", file.path(mran_server_url(), 'metadata/logs'), snapshot, package)
   res <- GET(url)
