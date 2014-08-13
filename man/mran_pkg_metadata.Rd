@@ -8,7 +8,8 @@ mran_pkg_metadata(package, snapshot = NULL)
 \arguments{
 \item{package}{Required. A package name}
 
-\item{snapshot}{A MRAN snapshot. Defaults to most recent snapshot}
+\item{snapshot}{An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most
+recent snapshot.}
 }
 \description{
 Get available package level metadata from MRAN

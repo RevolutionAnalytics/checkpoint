@@ -79,18 +79,15 @@ mran_diffs <- function(diff=NULL, which='src', os='macosx')
 #' @import httr RJSONIO
 #' @export
 #' @param package Required. A package name
-#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
+#' @param snapshot An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most 
+#' recent snapshot.
 #' @examples \dontrun{
 #' mran_pkg_metadata(package="plyr", snapshot="2014-08-04")
 #' }
 
 mran_pkg_metadata <- function(package, snapshot=NULL)
 {
-  if(is.null(snapshot)){
-    gg <- suppressMessages(mran_snaps())
-    snapshot <- gg[length(gg)]
-  } else { snapshot <- suppressMessages(mran_snaps(snapshot)) }
-
+  snapshot <- snapshot_from_date(snapshot)
   url <- sprintf("%s/%s/%s.json", file.path(mran_server_url(), 'metadata/logs'), snapshot, package)
   res <- GET(url)
   if(res$status_code > 202)
@@ -105,31 +102,31 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
 #' @import httr RJSONIO
 #' @export
 #' @param package Required. A package name
-#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
+#' @param snapshot An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most 
+#' recent snapshot.
 #' @param which one of src or bin
 #' @examples \dontrun{
-#' mran_pkg_avail(snapshot="2014-07-14_0500", package="plyr")
-#' mran_pkg_avail(snapshot="2014-06-19_0136", package="plyr", which="bin/windows/")
-#'
-#' # Example of differences in available versions between snapshots for the package MPSEM
-#' snaps <- mran_snaps()
-#' mran_pkg_avail(snaps[length(snaps)-1], package="MPSEM")
-#' mran_pkg_avail(snaps[length(snaps)-2], package="MPSEM")
+#' mran_pkg_versions(snapshot="2014-07-14", package="plyr")
+#' mran_pkg_versions(snapshot="2014-08-04", package="plyr", which="bin", os="windows")
 #' }
 
-mran_pkg_avail <- function(package, snapshot=NULL, which="src")
+mran_pkg_versions <- function(package, snapshot=NULL, which="src", os='macosx')
 {
-  if(is.null(snapshot)){
-    gg <- suppressMessages(mran_snaps())
-    snapshot <- gg[length(gg)]
+  snapshot <- snapshot_from_date(snapshot)
+  md <- mran_pkg_metadata(package, snapshot)
+  which <- match.arg(which, c('src','bin'))
+  if(which=='src'){ names(md$source$ver) } else {
+    tmp <- switch(os, macosx = md$osx[[1]], windows = md$windows[[1]])
+    tmp2 <- strsplit(tmp, '/')[[1]]
+    gsub("\\.zip|\\.tgz|[A-Za-z]+_", "", tmp2[length(tmp2)])
   }
+}
 
-  url <- sprintf("%s/%s/%s/", file.path(mran_server_url(), 'snapshots', which), snapshot, package)
-  res <- GET(url)
-  if(res$status_code > 202)
-    stop(sprintf("%s - Package not found, you don't have an internet connection, or other error...", res$status_code))
-  text <- content(res, as = "text")
-  vers <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
-  vers <- gsub(sprintf(".tar.gz|%s_", package), "", vers)
-  return( vers )
+snapshot_from_date <- function(x){
+  if(is.null(x)){
+    gg <- suppressMessages(mran_snaps())
+    gg[length(gg)]
+  } else {
+    suppressMessages(mran_snaps(snapshot))
+  }
 }
