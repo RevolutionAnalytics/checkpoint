@@ -198,7 +198,7 @@ checktemplate <- '
         <tr>
         <td>{{pkg}}</td>
         <td>{{check_result}}</td>
-        <td>{{testfile}}</td>
+        <td><a href="{{testfile}}">{{testfile}}</a></td>
         <td>{{update}}</td>
         </tr>
         {{/tt}}
