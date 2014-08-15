@@ -6,12 +6,14 @@
 mran_pkg_versions(package, snapshot = NULL, which = "src", os = "macosx")
 }
 \arguments{
-\item{package}{Required. A package name}
+\item{package}{(character) Required. A package name}
 
-\item{snapshot}{An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most
+\item{snapshot}{(date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most
 recent snapshot.}
 
-\item{which}{one of src or bin}
+\item{which}{(character) One of src or bin}
+
+\item{os}{(character) Operating system. One of 'macosx', 'linux', or 'windows'}
 }
 \description{
 Get available package versions from MRAN

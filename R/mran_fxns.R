@@ -101,10 +101,11 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
 #'
 #' @import httr RJSONIO
 #' @export
-#' @param package Required. A package name
-#' @param snapshot An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most 
+#' @param package (character) Required. A package name
+#' @param snapshot (date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most 
 #' recent snapshot.
-#' @param which one of src or bin
+#' @param which (character) One of src or bin
+#' @param os (character) Operating system. One of 'macosx', 'linux', or 'windows'
 #' @examples \dontrun{
 #' mran_pkg_versions(snapshot="2014-07-14", package="plyr")
 #' mran_pkg_versions(snapshot="2014-08-04", package="plyr", which="bin", os="windows")

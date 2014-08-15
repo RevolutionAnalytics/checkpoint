@@ -1,7 +1,8 @@
 #' Download R packages from the MRAN server
 #'
-#' This function uses rsync, which is faster than the method (wget) \code{install.packages} uses
-#' by default. This function does not install packages, but only downloads them to your machine.
+#' This function uses rsync on *unix machines, which is faster than the method (wget)
+#' \code{install.packages} uses by default. On Windows we use your default method of downloading
+#' files. This function does not install packages, but only downloads them to your machine.
 #'
 #' @export
 #' @param repo Repository path
@@ -49,10 +50,10 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
       df[is.na(df)] <- 0
       row.names(df) <- names(splitvers)
       df <- suppressWarnings(colClasses(df, "numeric"))
-      df <- if(NCOL(df) == 4){ 
-        sort_df(df, c("X1","X2","X3","X4")) 
+      df <- if(NCOL(df) == 4){
+        sort_df(df, c("X1","X2","X3","X4"))
       } else if(NCOL(df) == 3) {
-        sort_df(df, c("X1","X2","X3")) 
+        sort_df(df, c("X1","X2","X3"))
       } else {
         sort_df(df, c("X1","X2"))
       }
@@ -76,29 +77,29 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
     for(i in seq_along(pkgpaths)){
       windows_install(pkgpaths[[i]], lib=lib, snapshotid=snapshotid, quiet=quiet)
     }
-  } else {  
+  } else {
     setwd(outdir)
     tmppkgsfileloc <- "_rsync-file-locations.txt"
     cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
-    
+
     if(length(pkgpaths > 0)){
-      
+
       mssg(verbose, "... Downloading package files")
       url <- mran_server_url()
       url <- sub("http://", "", url)
       cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
       system(cmd, intern=TRUE)
-      
+
       mvcmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
       system(mvcmd)
-      
+
       rmcmd <- sprintf("rm -rf %s", paste(
         sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
       )
       system(rmcmd)
       system(sprintf("rm %s", tmppkgsfileloc))
     }
-    
+
   }
 }
 

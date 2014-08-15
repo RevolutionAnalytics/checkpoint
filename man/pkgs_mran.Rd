@@ -4,7 +4,7 @@
 \title{Download R packages from the MRAN server}
 \usage{
 pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
-  pkgs = NULL, outdir = NULL, verbose = FALSE, quiet = FALSE)
+  pkgs = NULL, outdir = NULL, verbose = FALSE)
 }
 \arguments{
 \item{repo}{Repository path}
@@ -18,10 +18,13 @@ pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
 \item{outdir}{Output directory}
 
 \item{pkgs}{Packages to install with version numbers, e.g. plyr_1.8.1}
+
+\item{verbose}{(logical) Print messages (default) or not}
 }
 \description{
-This function uses rsync, which is faster than the method (wget) \code{install.packages} uses
-by default. This function does not install packages, but only downloads them to your machine.
+This function uses rsync on *unix machines, which is faster than the method (wget)
+\code{install.packages} uses by default. On Windows we use your default method of downloading
+files. This function does not install packages, but only downloads them to your machine.
 }
 \examples{
 \dontrun{

@@ -95,7 +95,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # run examples
   if("examples" %in% what){
-    runegs(pkgs, repo=repo, verbose=verbose, ...)
+    runegs(pkgs, repo=repo, verbose=verbose)
     egfiles <- list.files(file.path(repo, "rrt", "examples"), full.names = TRUE)
     cat(egfiles, file = compatfile, sep = "\n")
     egsdf <- data.frame(pkg=pkgnames, testfile=egfiles, stringsAsFactors = FALSE)
@@ -193,7 +193,7 @@ testrepo <- function(x, repo, verbose){
   unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
 }
 
-runegs <- function(x, repo, verbose, ...){
+runegs <- function(x, repo, verbose){
   tmpdir <- file.path(repo, "rrt", "examples", "tmp")# create temporary directory
   suppressWarnings(dir.create(tmpdir, recursive = TRUE))
   runeg <- function(y){
@@ -202,7 +202,7 @@ runegs <- function(x, repo, verbose, ...){
     pkgname <- sub("_.+|\\.[A-Za-z]+", "", strsplit(y, "/")[[1]][length(strsplit(y, "/")[[1]])])
     dirname <- grep(pkgname, dirs, value = TRUE)
     capture.output(
-      tryCatch(run_examples(file.path(tmpdir, sprintf("%s", dirname)), ...), error=function(e) "no examples found"), file = paste0(repo, "/rrt/examples/", pkgname, ".txt"))
+      tryCatch(run_examples(file.path(tmpdir, sprintf("%s", dirname))), error=function(e) "no examples found"), file = paste0(repo, "/rrt/examples/", pkgname, ".txt"))
   }
   lapply(x, runeg)
   unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
