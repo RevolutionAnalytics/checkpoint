@@ -43,10 +43,6 @@
 
 rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 {
-  # write check file
-  compatfile <- file.path(repo, "rrt/rrt_check.txt")
-  cat("", file = compatfile)
-
   # Check for appropriate values of what
   what <- match.arg(what, c('check','tests','examples','update'), TRUE)
 
@@ -64,6 +60,13 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # check for rrt directory in the repo
   lib <- check_rrt_dir(verbose, repo)
+  
+  # Clean out any files for previous checks
+  clean_previous(repo)
+  
+  # write check file
+  compatfile <- file.path(repo, "rrt/rrt_check.txt")
+  cat("", file = compatfile)
 
   # get pkgs list in the rrt repo
   pkgs <- getpkgslist(repo)
@@ -76,7 +79,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # check: R CMD CHECK via devtools::check
   if("check" %in% what){
-      checksres <- lapply(pkgs, checkrepo, repo=repo, verbose=verbose)
+    checksres <- lapply(pkgs, checkrepo, repo=repo, verbose=verbose)
     names(checksres) <- pkgnames
     check <- data.frame(pkg=NA, check_result=NA)
     for(i in seq_along(checksres)){
@@ -89,7 +92,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   if("tests" %in% what){
     testrepo(pkgs, repo=repo, verbose=verbose)
     tfiles <- list.files(file.path(repo, "rrt", "tests"), full.names = TRUE)
-    cat(tfiles, file = compatfile, sep = "\n")
+    cat(tfiles, file = compatfile, sep = "\n", append = TRUE)
     tdf <- data.frame(pkg=pkgnames, testfile=tfiles, stringsAsFactors = FALSE)
   } else { tdf <- data.frame(pkg=pkgnames, testfile=NA, stringsAsFactors = FALSE) }
 
@@ -97,9 +100,9 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   if("examples" %in% what){
     runegs(pkgs, repo=repo, verbose=verbose)
     egfiles <- list.files(file.path(repo, "rrt", "examples"), full.names = TRUE)
-    cat(egfiles, file = compatfile, sep = "\n")
-    egsdf <- data.frame(pkg=pkgnames, testfile=egfiles, stringsAsFactors = FALSE)
-  } else { egsdf <- data.frame(pkg=pkgnames, testfile=NA, stringsAsFactors = FALSE) }
+    cat(egfiles, file = compatfile, sep = "\n", append = TRUE)
+    egsdf <- data.frame(pkg=pkgnames, examplesfile=egfiles, stringsAsFactors = FALSE)
+  } else { egsdf <- data.frame(pkg=pkgnames, examplesfile=NA, stringsAsFactors = FALSE) }
 
   # check for packages that need updating
   if("update" %in% what){
@@ -117,7 +120,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
     ### FIXME - for now any github packages are not checked
     # combine updates
     allupdates <- rbind(update, biocup)
-  } else { allupdates <- data.frame(pkg=NA, update=NA, stringsAsFactors = FALSE) }
+  } else { allupdates <- data.frame(pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
 
   df <- merge(check, tdf, by="pkg")
   df <- merge(df, egsdf, by="pkg")
@@ -223,4 +226,14 @@ biocupdates <- function(lib, bioc_pkgs){
       df
     }
   } else { data.frame(NULL) }
+}
+
+# Clean out previous check files to keep things clean. 
+# In the future, could just update files.
+clean_previous <- function(repo){
+  unlink(file.path(repo, 'rrt', 'tests'), recursive = TRUE)
+  unlink(file.path(repo, 'rrt', 'examples'), recursive = TRUE)
+  unlink(file.path(repo, 'rrt', 'check'), recursive = TRUE)
+  unlink(file.path(repo, 'rrt', 'rrt_check.txt'))
+  unlink(file.path(repo, 'rrt', 'check_result.rds'))
 }
