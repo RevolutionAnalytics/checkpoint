@@ -35,6 +35,9 @@
 #'
 #' @examples \dontrun{
 #' rrt_compat(what="update")
+#' rrt_compat(what="check")
+#' rrt_compat(what="tests")
+#' rrt_compat(what="examples")
 #' rrt_compat(what=c("update","check"))
 #' }
 
@@ -73,7 +76,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # check: R CMD CHECK via devtools::check
   if("check" %in% what){
-    checksres <- lapply(pkgs, checkrepo, repo=repo, verbose=verbose)
+      checksres <- lapply(pkgs, checkrepo, repo=repo, verbose=verbose)
     names(checksres) <- pkgnames
     check <- data.frame(pkg=NA, check_result=NA)
     for(i in seq_along(checksres)){
@@ -92,8 +95,11 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # run examples
   if("examples" %in% what){
-    egsres <- NULL
-  }
+    runegs(pkgs, repo=repo, verbose=verbose, ...)
+    egfiles <- list.files(file.path(repo, "rrt", "examples"), full.names = TRUE)
+    cat(egfiles, file = compatfile, sep = "\n")
+    egsdf <- data.frame(pkg=pkgnames, testfile=egfiles, stringsAsFactors = FALSE)
+  } else { egsdf <- data.frame(pkg=pkgnames, testfile=NA, stringsAsFactors = FALSE) }
 
   # check for packages that need updating
   if("update" %in% what){
@@ -114,14 +120,16 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   } else { allupdates <- data.frame(pkg=NA, update=NA, stringsAsFactors = FALSE) }
 
   df <- merge(check, tdf, by="pkg")
+  df <- merge(df, egsdf, by="pkg")
   df <- merge(df, allupdates, by="pkg", all = TRUE)
   saveRDS(df, file = file.path(repo, "rrt", "check_result.rds"))
 
-  message("Tests complete!")
+  message("Compatibility checks complete!")
+  return( df )
 }
 
 check_rrt_dir <- function(verbose, repo){
-  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
+  mssg(verbose, "Checking to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   present <- list.dirs(lib)
   if(!all(grepl("rrt", present))){
@@ -138,7 +146,10 @@ getpkgslist <- function(repo){
     tmp <- grep(z, pkgs, value = TRUE)
     if(length(tmp) > 1){
       justnames <- sapply(tmp, function(n){ b <- strsplit(n, "/")[[1]]; sub("_.+", "", b[length(b)]) })
-      names(justnames)[justnames %in% z]
+      zz <- names(justnames)[justnames %in% z]
+      if(length(zz) > 1){
+        zz[grep("\\.tar.gz", zz)]
+      } else { zz }
     } else { tmp }
   }, "", USE.NAMES = FALSE)
 }
@@ -182,17 +193,34 @@ testrepo <- function(x, repo, verbose){
   unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
 }
 
+runegs <- function(x, repo, verbose, ...){
+  tmpdir <- file.path(repo, "rrt", "examples", "tmp")# create temporary directory
+  suppressWarnings(dir.create(tmpdir, recursive = TRUE))
+  runeg <- function(y){
+    untar(y, exdir = tmpdir)
+    dirs <- list.dirs(tmpdir, recursive = FALSE, full.names = FALSE)
+    pkgname <- sub("_.+|\\.[A-Za-z]+", "", strsplit(y, "/")[[1]][length(strsplit(y, "/")[[1]])])
+    dirname <- grep(pkgname, dirs, value = TRUE)
+    capture.output(
+      tryCatch(run_examples(file.path(tmpdir, sprintf("%s", dirname)), ...), error=function(e) "no examples found"), file = paste0(repo, "/rrt/examples/", pkgname, ".txt"))
+  }
+  lapply(x, runeg)
+  unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
+}
+
 ### bioc updates
 biocupdates <- function(lib, bioc_pkgs){
-  type <- getOption('pkgType')
-  repos <- biocinstallRepos()
-  pkgs <- installed.packages(lib)
-  contribUrl <- contrib.url(repos, type = type)
-  availPkgs <- available.packages(contribUrl, type = type)
-  df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
-  if(is.null(df)){ data.frame(NULL) } else {  
-    df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
-    names(df)[2] <- 'pkg'
-    df
-  }
+  if(!length(bioc_pkgs) == 0){
+    type <- getOption('pkgType')
+    repos <- biocinstallRepos()
+    pkgs <- installed.packages(lib)
+    contribUrl <- contrib.url(repos, type = type)
+    availPkgs <- available.packages(contribUrl, type = type)
+    df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
+    if(is.null(df)){ data.frame(NULL) } else {  
+      df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
+      names(df)[2] <- 'pkg'
+      df
+    }
+  } else { data.frame(NULL) }
 }

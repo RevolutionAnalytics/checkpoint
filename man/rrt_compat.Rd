@@ -41,6 +41,9 @@ Bioconductor packages.
 \examples{
 \dontrun{
 rrt_compat(what="update")
+rrt_compat(what="check")
+rrt_compat(what="tests")
+rrt_compat(what="examples")
 rrt_compat(what=c("update","check"))
 }
 }
