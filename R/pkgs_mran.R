@@ -32,7 +32,7 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
     if("error" %in% class(vers)){
       sprintf("%s/__notfound__", x[[1]])
     } else {
-      splitvers <- vapply(vers, strsplit, list(1), "\\.")
+      splitvers <- vapply(vers, strsplit, list(1), "\\.|-")
       tmp <- lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))
       lengths <- vapply(tmp, length, numeric(1))
       toadd <- max(lengths) - min(lengths)
@@ -49,8 +49,12 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
       df[is.na(df)] <- 0
       row.names(df) <- names(splitvers)
       df <- suppressWarnings(colClasses(df, "numeric"))
-      if(NCOL(df) == 3){ df <- sort_df(df, c("X1","X2","X3")) } else {
-        df <- sort_df(df, c("X1","X2"))
+      df <- if(NCOL(df) == 4){ 
+        sort_df(df, c("X1","X2","X3","X4")) 
+      } else if(NCOL(df) == 3) {
+        sort_df(df, c("X1","X2","X3")) 
+      } else {
+        sort_df(df, c("X1","X2"))
       }
       pkgver <- tryCatch(x[[2]], error=function(e) e)
       if('error' %in% class(pkgver)) {
