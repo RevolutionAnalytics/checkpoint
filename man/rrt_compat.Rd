@@ -18,6 +18,9 @@ Currently, these checks, tests, etc. are run just on the packages used in your c
 repository tested - not the dependencies of the packages you use.
 }
 \details{
+Make sure to run \code{devtools::has_devel()} before running this function to make sure you
+have the reuquired setup to run this function.
+
 You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
 function in your repository.
 

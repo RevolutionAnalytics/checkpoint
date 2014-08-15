@@ -6,7 +6,11 @@
 #' @import testthat devtools digest
 #' @export
 #'
-#' @details You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
+#' @details 
+#' Make sure to run \code{devtools::has_devel()} before running this function to make sure you 
+#' have the reuquired setup to run this function.
+#' 
+#' You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
 #' function in your repository.
 #'
 #' Details for each option passed to the \code{what}:
