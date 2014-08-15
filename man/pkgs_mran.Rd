@@ -4,7 +4,7 @@
 \title{Download R packages from the MRAN server}
 \usage{
 pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
-  pkgs = NULL, outdir = NULL, verbose = FALSE)
+  pkgs = NULL, outdir = NULL, verbose = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{repo}{Repository path}
@@ -19,7 +19,9 @@ pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
 
 \item{pkgs}{Packages to install with version numbers, e.g. plyr_1.8.1}
 
-\item{verbose}{(logical) Print messages (default) or not}
+\item{verbose}{(logical) Print messages or not.}
+
+\item{quiet}{(logical) Passed on to install.packages}
 }
 \description{
 This function uses rsync on *unix machines, which is faster than the method (wget)

@@ -11,6 +11,8 @@
 #' @param snapshotid Optional. You can give the exact snapshot ID insetad of a date.
 #' @param outdir Output directory
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
+#' @param verbose (logical) Print messages or not.
+#' @param quiet (logical) Passed on to install.packages
 #' @examples \dontrun{
 #' # By default installs most recent version
 #' pkgs_mran(date='2014-08-04', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
