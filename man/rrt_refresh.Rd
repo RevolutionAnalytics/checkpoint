@@ -20,7 +20,7 @@ rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
 
 \item{suggests}{(logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.}
 
-\item{quiet}{Passed to install.packages}
+\item{quiet}{Passed to \code{\link[utils]{install.packages}}}
 }
 \description{
 Refresh package - look for any new packages used and install those in rrt library.

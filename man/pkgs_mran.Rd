@@ -19,9 +19,9 @@ pkgs_mran(repo = NULL, lib = NULL, date = NULL, snapshotid = NULL,
 
 \item{pkgs}{Packages to install with version numbers, e.g. plyr_1.8.1}
 
-\item{verbose}{(logical) Print messages or not.}
+\item{quiet}{Passed to \code{\link[utils]{install.packages}}}
 
-\item{quiet}{(logical) Passed on to install.packages}
+\item{verbose}{(logical) Whether to print messages or not (Default: FALSE).}
 }
 \description{
 This function uses rsync on *unix machines, which is faster than the method (wget)

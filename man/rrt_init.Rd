@@ -25,7 +25,7 @@ rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, autosnap = FALSE,
 
 \item{suggests}{(logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.}
 
-\item{quiet}{Passed to install.packages}
+\item{quiet}{Passed to \code{\link[utils]{install.packages}}}
 }
 \value{
 Files written to the user's machine, with informative messages on progress

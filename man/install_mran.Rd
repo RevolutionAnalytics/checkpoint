@@ -15,11 +15,11 @@ install_mran(pkg, date = NULL, lib = NULL, destdir = NULL,
 
 \item{destdir}{Destination directory to install packages to}
 
-\item{...}{Further args passed on to \link{install.packages}}
+\item{...}{Further args passed on to \code{\link[utils]{install.packages}}}
 
 \item{dependencies}{Whether to install dependencies or not. Default: TRUE. See}
 
-\item{quiet}{Passed to install.packages
+\item{quiet}{Passed to \code{\link[utils]{install.packages}}
 \link{install.packages}}
 }
 \value{

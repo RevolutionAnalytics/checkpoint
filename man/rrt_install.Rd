@@ -17,7 +17,7 @@ rrt_install(repo = getwd(), repoid, lib = rrt_libpath(repo), mran = TRUE,
 
 \item{verbose}{Print messages. Default: TRUE}
 
-\item{quiet}{Passed to install.packages}
+\item{quiet}{Passed to \code{\link[utils]{install.packages}}}
 }
 \description{
 Install packages within an RRT repository.
