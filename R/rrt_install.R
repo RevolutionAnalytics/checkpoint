@@ -36,13 +36,13 @@ rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, 
       pkgs_mran_get(lib, repo, cranpkgs, quiet=quiet)
       install_mran_pkgs(lib, cranpkgs, verbose=verbose, quiet=quiet)
     } else {
-      install.packages(cranpkgs, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
+      utils::install.packages(cranpkgs, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
     }
     
     # check for any failed intalls and install from binary from default CRAN mirror
     notinst <- cranpkgs[!vapply(file.path(lib, cranpkgs), file.exists, logical(1))]
     if(!length(notinst) == 0) {
-      install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
+      utils::install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
     }
     
     # install github pkgs
@@ -76,7 +76,7 @@ install_mran_pkgs <- function(lib, yyy, verbose, quiet=FALSE){
       oldwd <- getwd()
       setwd(dirname(pkgsWithPath[1]))
       on.exit(setwd(oldwd))
-      install.packages(basename(pkgsWithPath), lib = lib, repos=NULL, 
+      utils::install.packages(basename(pkgsWithPath), lib = lib, repos=NULL, 
                        type = "source", dependencies=FALSE, quiet=quiet)
     }
   }

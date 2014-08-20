@@ -44,10 +44,10 @@ install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quie
   just_deps_paths <- file.path(lib, just_deps)
   
   # install dependencies
-  install.packages(just_deps_paths, ..., lib=lib, dependencies=TRUE, repos=NULL, type = "source", quiet=quiet)
+  utils::install.packages(just_deps_paths, ..., lib=lib, dependencies=TRUE, repos=NULL, type = "source", quiet=quiet)
   
   # install target package
-  install.packages(pkgs=file.path(lib, grep(pkgname, list.files(lib, pattern = ".tar.gz"), value = TRUE)), 
+  utils::install.packages(pkgs=file.path(lib, grep(pkgname, list.files(lib, pattern = ".tar.gz"), value = TRUE)), 
                    lib=lib, dependencies=FALSE, repos=NULL, type = "source", quiet=quiet, ...)
 }
 
