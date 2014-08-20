@@ -112,7 +112,7 @@ rrt_repos_list <- function(repoid=NULL){
       out[[i]] <- do.call(c, lapply(tmp, function(y){ 
         yy <- strsplit(y, ": ")[[1]]
         zz <- yy[2]
-        if(.Platform != "windows") zz <- gsub('\\s+', '', zz)
+        if(.Platform$OS.type != "windows") zz <- gsub('\\s+', '', zz)
         names(zz) <- yy[1]; as.list(zz) 
       }))
     }
