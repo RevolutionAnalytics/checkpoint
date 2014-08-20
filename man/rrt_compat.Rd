@@ -52,5 +52,14 @@ rrt_compat(what=c("update","check"))
 }
 \seealso{
 \link{rrt_browse}
+
+Other rrt: \code{\link{checkpoint}};
+  \code{\link{print.rrtrepos}},
+  \code{\link{rrt_repos_list}},
+  \code{\link{rrt_repos_write}}; \code{\link{rrt_browse}};
+  \code{\link{rrt_deps}}; \code{\link{rrt_init}};
+  \code{\link{rrt_installed_pkgs}};
+  \code{\link{rrt_refresh}};
+  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
 }
 

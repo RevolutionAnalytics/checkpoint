@@ -38,4 +38,10 @@ install_mran(pkg="plyr", date="2014-08-01", lib="~/mran_snaps/")
 install_mran(pkg="calmate", date="2014-08-01", lib="~/mran_snaps/")
 }
 }
+\seealso{
+Other mran: \code{\link{mran_diffs}};
+  \code{\link{mran_pkg_metadata}};
+  \code{\link{mran_pkg_versions}}; \code{\link{mran_set}};
+  \code{\link{mran_snaps}}
+}
 

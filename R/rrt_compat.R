@@ -35,6 +35,7 @@
 #' used internally so unique abbreviations can be used.
 #' @param verbose (logical) Print messages (default) or not
 #'
+#' @family rrt
 #' @seealso \link{rrt_browse}
 #'
 #' @examples \dontrun{

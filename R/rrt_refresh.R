@@ -11,6 +11,7 @@
 #' @param suggests (logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.
 #' @param quiet Passed to \code{\link[utils]{install.packages}}
 #'
+#' @family rrt
 #' @seealso \code{\link{rrt_init}}, \code{\link{rrt_install}}
 #'
 #' @examples \dontrun{

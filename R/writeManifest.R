@@ -18,16 +18,16 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
 {
   # look first for user manifest file in root directory - overrides user input for fields:
   ## reponame, author, license, description, and remote
-  givezerochar <- function(x) if(is.null(x)) "" else x
+  giveZeroChar <- function(x) if(is.null(x)) "" else x
   usermanfile <- normalizePath(file.path(repository, "manifest.yml"))
   if(file.exists(usermanfile)){
     tt <- yaml.load_file(usermanfile)
     if(!is.null(tt)){
-      reponame <- givezerochar(tt$RepositoryName)
-      author <- givezerochar(tt$Authors)
-      license <- givezerochar(tt$License)
-      description <- givezerochar(tt$Description)
-      remote <- givezerochar(tt$Remote)
+      reponame <- giveZeroChar(tt$RepositoryName)
+      author <- giveZeroChar(tt$Authors)
+      license <- giveZeroChar(tt$License)
+      description <- giveZeroChar(tt$Description)
+      remote <- giveZeroChar(tt$Remote)
     }
   }
   
@@ -50,11 +50,8 @@ writeManifest <- function(repository, librar, packs, repoid, reponame="", author
   
   
   mssg(verbose, "... checking for package system requirements")
-#   sysreq <- sprintf("SystemRequirements: %s", paste0(rrt_compact(getsysreq(packs, lib=librar)), collapse = "\n") )
   sysreq <- sprintf("SystemRequirements:\n%s", getsysreq(packs, lib=librar) )
-#   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse = ", "))
 
-#   pkgs_deps <- sprintf("Packages: %s", paste0(packs, collapse=", "))
   repositoryid <- sprintf("RepoID: %s", repoid)
 
   mssg(verbose, "... writeManifest: checking for date created")
@@ -90,20 +87,8 @@ check4github <- function(x){
   } else { NULL }
 }
 
-# check4pkgs <- function(x, repo){
-#   manfile <- file.path(repo, "rrt/rrt_manifest.yml")
-#   x <- if(is.null(x)) NULL else x
-#   if(file.exists(manfile)){
-#     info <- suppressWarnings(yaml.load_file(manfile))
-#     pline <- info['Packages'][1]
-#     if(!is.null(pline[[1]])){
-#       bb <- gsub("\\s", "", strsplit(pline[[1]], ",")[[1]])
-#       paste0(unique(c(x,bb)), collapse = ", ")
-#     } else { paste0(x, collapse = ", ") }
-#   } else { NULL }
-# }
 
-#' Function to get system requireqments, if any, from installed packages
+#' Function to get system requirements, if any, from installed packages
 #'
 #' @param x (character) Name of package. One to many in a vector or list
 #' @param lib Library to look in

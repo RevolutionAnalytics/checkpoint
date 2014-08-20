@@ -24,4 +24,10 @@ mran_pkg_versions(snapshot="2014-07-14", package="plyr")
 mran_pkg_versions(snapshot="2014-08-04", package="plyr", which="bin", os="windows")
 }
 }
+\seealso{
+Other mran: \code{\link{install_mran}};
+  \code{\link{mran_diffs}};
+  \code{\link{mran_pkg_metadata}}; \code{\link{mran_set}};
+  \code{\link{mran_snaps}}
+}
 

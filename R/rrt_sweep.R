@@ -5,6 +5,7 @@
 #' @param repo Repository path, Defaults to the current working directory
 #' @param pkgs A vector of package names
 #' @param verbose (logical) Print messages (default) or not
+#' @family rrt
 #' @examples \dontrun{
 #' rrt_refresh(repo="~/testrepo")
 #' rrt_sweep(repo="~/testrepo")

@@ -6,6 +6,7 @@
 #' we use the current working directory via \code{getwd()}.
 #' @param simplify (logical) Whether to simplify to just package name and version or print entire
 #' matrix of package information.
+#' @family rrt
 #' @examples \dontrun{
 #' rrt_installed_pkgs()
 #' rrt_installed_pkgs(simplify=FALSE)

@@ -19,4 +19,10 @@ mran_set()
 mran_set(snapshot="2014-07-01_2000")
 }
 }
+\seealso{
+Other mran: \code{\link{install_mran}};
+  \code{\link{mran_diffs}};
+  \code{\link{mran_pkg_metadata}};
+  \code{\link{mran_pkg_versions}}; \code{\link{mran_snaps}}
+}
 

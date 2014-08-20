@@ -7,6 +7,8 @@
 #' NOTE: Modified from dependencies.R in the packrat github repo
 #' NOTE: Working on adding support for other file types, including .md
 #'
+#' Dependencies are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
+#' 
 #' @export
 #'
 #' @param repo Repository path. Defaults to current working directory.
@@ -14,8 +16,9 @@
 #' @param verbose (logical) Print messages or not.
 #'
 #' @return Vector of package names on which R code in the repository depends.
-#' @details Dependencies are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
 #'
+#' @family rrt
+#' 
 #' @examples \dontrun{
 #' # dependencies for the repo in the current working dir
 #' rrt_deps()

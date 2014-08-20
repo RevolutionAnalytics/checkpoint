@@ -11,7 +11,6 @@
 #' You can run this function to start a new RRT repo, and to refresh a repo with new work. This 
 #' function downloads packages and installs them, as needed.
 #'
-#' @export
 #'
 #' @param snapshotdate (date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you 
 #' will be supplied with options.
@@ -29,6 +28,8 @@
 #' @seealso \link{rrt_refresh}, \link{rrt_init}
 #'
 #' @return Files written to the user's machine, with informative messages on progress
+#' @export
+#' @family rrt
 #'
 #' @examples \dontrun{
 #' # new repo, after entering a project folder, starting R, then loading RRT

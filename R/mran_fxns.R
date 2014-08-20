@@ -8,6 +8,7 @@ mran_server_url <- function(){
 #'
 #' @import httr XML
 #' @export
+#' @family mran
 #' @param date (character) A date, in the format YYY-MM-DD
 #' @examples \dontrun{
 #' # List all available snapshots
@@ -33,6 +34,7 @@ mran_snaps <- function(date=NULL){
 #'
 #' @import httr XML
 #' @export
+#' @family mran
 #' @param diff Optional. (character) A diff date-time stamp of a MRAN diff.
 #' @param which (character) One of src (for source packages) or bin (for binary packages).
 #' @param os (character) Operating system. One of macosx, windows, or linux.
@@ -81,6 +83,7 @@ mran_diffs <- function(diff=NULL, which='src', os='macosx')
 #' @param package Required. A package name
 #' @param snapshot An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most 
 #' recent snapshot.
+#' @family mran
 #' @examples \dontrun{
 #' mran_pkg_metadata(package="plyr", snapshot="2014-08-04")
 #' }
@@ -106,6 +109,8 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
 #' recent snapshot.
 #' @param which (character) One of src or bin
 #' @param os (character) Operating system. One of 'macosx', 'linux', or 'windows'
+
+#' @family mran
 #' @examples \dontrun{
 #' mran_pkg_versions(snapshot="2014-07-14", package="plyr")
 #' mran_pkg_versions(snapshot="2014-08-04", package="plyr", which="bin", os="windows")

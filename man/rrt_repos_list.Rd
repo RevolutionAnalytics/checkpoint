@@ -23,18 +23,12 @@ rrt_repos_list(repoid = NULL)
 \description{
 Write rrt libraries to user's global list of RRT repos
 
-Read rrt libraries from user's global list of RRT repos
+This function is used internally to write a .rrt file in your home directory, and within that file writes a list of all RRT repositories.
 
 Print rrtrepos class
 }
 \details{
-This function is used internally to write a .rrt file in your home directory, and
-within that file writes a list of all RRT repositories.
-
-If for some reason your .rrt file gets deleted, you can also use this function to rewrite that
-file and its contents. Ideally you could make a vector or list of all your RRT repositories
-and pass those in an apply like functon to this function, like
-\code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
+If for some reason your .rrt file gets deleted, you can also use this function to rewrite that file and its contents. Ideally you could make a vector or list of all your RRT repositories and pass those in an apply like functon to this function, like \code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
 }
 \examples{
 \dontrun{
@@ -46,5 +40,20 @@ names(repos)
 rrt_repos_list(names(repos)[1])
 rrt_repos_list(names(repos)[2])
 }
+}
+\seealso{
+Other rrt: \code{\link{checkpoint}};
+  \code{\link{rrt_browse}}; \code{\link{rrt_compat}};
+  \code{\link{rrt_deps}}; \code{\link{rrt_init}};
+  \code{\link{rrt_installed_pkgs}};
+  \code{\link{rrt_refresh}};
+  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
+
+Other rrt: \code{\link{checkpoint}};
+  \code{\link{rrt_browse}}; \code{\link{rrt_compat}};
+  \code{\link{rrt_deps}}; \code{\link{rrt_init}};
+  \code{\link{rrt_installed_pkgs}};
+  \code{\link{rrt_refresh}};
+  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
 }
 

@@ -1,10 +1,11 @@
-#' @title Write rrt libraries to user's global list of RRT repos
+#' Write rrt libraries to user's global list of RRT repos
 #'
-#' @export
 #' @param repo Respository path
 #' @param repoid Repository id
 #'
 #' @rdname rrt_repos_list
+#' @export
+#' @family rrt
 #'
 #' @examples \dontrun{
 #' rrt_repos_write(repo="~/testrepo/")
@@ -21,7 +22,6 @@ rrt_repos_write <- function(repo, repoid=NULL){
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
-#       cat(c("\n", sprintf("repo: %s", infofile), info, "__end__"), file = gg, sep = "\n", append = append)
   } else {
     existingrepoids <- names(out)
     if(is.null(repoid)){
@@ -33,18 +33,20 @@ rrt_repos_write <- function(repo, repoid=NULL){
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
-#       cat(c("\n", sprintf("repo: %s", infofile), info, "__end__"), file = gg, sep = "\n", append = append)
     }
   }
 }
 
+
+
 #' Remove any missing RRT repos from the user's global list of RRT repos
 #'
-#' @export
 #' @param repo (character) A path to create a RRT repository; defaults to current working directory
 #' @param verbose Print messages or not, Default: TRUE
 #' 
 #' @return Prints message saying what has been done.
+#' @export
+#' @family rrt
 #'
 #' @examples \dontrun{
 #' rrt_repos_remove()
@@ -81,18 +83,14 @@ rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
   }
 }
 
-#' @title Read rrt libraries from user's global list of RRT repos
+#' Read rrt libraries from user's global list of RRT repos.
+#'
+#' This function is used internally to write a .rrt file in your home directory, and within that file writes a list of all RRT repositories.
+#'
+#' If for some reason your .rrt file gets deleted, you can also use this function to rewrite that file and its contents. Ideally you could make a vector or list of all your RRT repositories and pass those in an apply like functon to this function, like \code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
 #'
 #' @export
-#'
-#' @details This function is used internally to write a .rrt file in your home directory, and
-#' within that file writes a list of all RRT repositories.
-#'
-#' If for some reason your .rrt file gets deleted, you can also use this function to rewrite that
-#' file and its contents. Ideally you could make a vector or list of all your RRT repositories
-#' and pass those in an apply like functon to this function, like
-#' \code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
-#'
+#' @family rrt
 #' @examples \dontrun{
 #' (repos <- rrt_repos_list())
 #' names(repos)
@@ -138,19 +136,15 @@ rrt_repos_list <- function(repoid=NULL){
   } else { stop("You have no rrt repos or your .rrt file does not exist.\nIf the latter, run rrt_repos_write() with paths for each RRT repository.") }
 }
 
+
+
+
 #' Print rrtrepos class
 #' @method print rrtrepos
 #' @export
 #' @param x Input
 #' @param ... not used
 #' @rdname rrt_repos_list
-# print.rrtrepos <- function(x, ...){
-#   repos <- sapply(x, "[[", "repo")
-#   repoids <- paste(sapply(x, "[[", "RepoID"), collapse = ", ")
-#   cat(sprintf("No. repos: %s", length(repos)), "\n")
-#   cat(sprintf("First 10 repo ids : %s", repoids), "\n\n")
-#   cat("To get details for a single RRT repository, do rrt_repos_list('path/to/repo')", "\n")
-# }
 
 print.rrtrepos <- function(x, ...){
   repos <- sapply(x, "[[", "repo")

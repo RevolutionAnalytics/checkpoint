@@ -19,4 +19,10 @@ mran_snaps()
 mran_snaps(date='2014-08-04')
 }
 }
+\seealso{
+Other mran: \code{\link{install_mran}};
+  \code{\link{mran_diffs}};
+  \code{\link{mran_pkg_metadata}};
+  \code{\link{mran_pkg_versions}}; \code{\link{mran_set}}
+}
 

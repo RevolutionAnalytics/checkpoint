@@ -29,4 +29,10 @@ diffs <- mran_diffs()
 mran_diffs(diffs[length(diffs)-1])
 }
 }
+\seealso{
+Other mran: \code{\link{install_mran}};
+  \code{\link{mran_pkg_metadata}};
+  \code{\link{mran_pkg_versions}}; \code{\link{mran_set}};
+  \code{\link{mran_snaps}}
+}
 

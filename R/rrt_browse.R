@@ -3,11 +3,12 @@
 #' Open up a dashboard in your default browse.
 #'
 #' @import whisker
-#' @export
 #' @param repoid Respository id, default is NULL, so gets all repos
 #' @param output File to output RRT dashboard file to.
 #' @param browse (logical) If TRUE (default), web page opens in your default browse. If FALSE, html
 #' file written to disk and path to that file printed to console.
+#' @export
+#' @family rrt
 #' @examples \dontrun{
 #' rrt_browse()
 #' }
@@ -24,13 +25,17 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
   names(repos) <- NULL
   for(i in seq_along(repos)) 
     repos[[i]]$singlepage <- file.path(
-      Sys.getenv("HOME"), ".rrt", "www", sprintf("%s.html", repos[[i]]$RepoID))
+      wwwdir, sprintf("%s.html", repos[[i]]$RepoID))
   
   for(i in seq_along(repos)) 
     repos[[i]]$homepage <- output
   
   for(i in seq_along(repos)) 
     repos[[i]]$Packages <- gsub(",", ", ", repos[[i]]$Packages)
+  
+  for(i in seq_along(repos)) 
+    repos[[i]]$Packages <- paste(repos[[i]]$Packages, collapse=",  ")
+  
 
   # get check results, if any, for each repository
   bb <- lapply(repos, function(x){

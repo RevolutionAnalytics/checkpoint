@@ -16,6 +16,7 @@
 #' @param suggests (logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.
 #' @param quiet Passed to \code{\link[utils]{install.packages}}
 #'
+#' @family rrt
 #' @seealso \link{rrt_refresh}, \link{rrt_install}
 #'
 #' @return Files written to the user's machine, with informative messages on progress
@@ -146,10 +147,6 @@ rrt_readline <- function(default=""){
   if(nchar(tmp) == 0) default else tmp
 }
 
-# install_rrt <- function(lib, ...){
-#   get_github(lib=lib, pkg="RRT", username="RevolutionAnalytics", ...)
-# #   devtools::install_github("RevolutionAnalytics/RRT", lib=lib, ...)
-# }
 
 write_pkg_versions <- function(lib, repo){
   instpks <- list.files(normalizePath(lib), full.names = TRUE)
