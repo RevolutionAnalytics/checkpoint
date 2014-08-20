@@ -18,17 +18,25 @@ rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
   if(!file.exists(wwwdir)) dir.create(wwwdir, recursive = TRUE)
 
   if(is.null(output))
-    output <- file.path(Sys.getenv("HOME"), ".rrt", "www", "rrt.html")
+    output <- file.path(wwwdir, "rrt.html")
 
   repos <- rrt_repos_list(repoid=repoid)
   names(repos) <- NULL
-  for(i in seq_along(repos)) repos[[i]]$singlepage <- file.path(Sys.getenv("HOME"), ".rrt", "www", sprintf("%s.html", repos[[i]]$RepoID))
-  for(i in seq_along(repos)) repos[[i]]$homepage <- output
-  for(i in seq_along(repos)) repos[[i]]$Packages <- gsub(",", ", ", repos[[i]]$Packages)
+  for(i in seq_along(repos)) 
+    repos[[i]]$singlepage <- file.path(
+      Sys.getenv("HOME"), ".rrt", "www", sprintf("%s.html", repos[[i]]$RepoID))
+  
+  for(i in seq_along(repos)) 
+    repos[[i]]$homepage <- output
+  
+  for(i in seq_along(repos)) 
+    repos[[i]]$Packages <- gsub(",", ", ", repos[[i]]$Packages)
 
   # get check results, if any, for each repository
   bb <- lapply(repos, function(x){
-    tmp <- suppressWarnings(tryCatch(readRDS(file.path(x$repo_root, "rrt/check_result.rds")), error=function(e) e))
+    tmp <- suppressWarnings(tryCatch(
+      readRDS(file.path(x$repo_root, "rrt/check_result.rds")), 
+      error=function(e) e))
     if("error" %in% class(tmp)) NA else tmp
   })
   names(bb) <- vapply(repos, "[[", "", "RepoID")
