@@ -121,14 +121,6 @@ rrt_repos_list <- function(repoid=NULL){
     # get other info from each repo's local manifest file
     out <- lapply(out, function(x){
       if(file.exists(x$repo)){
-#         tmp <- readLines(x$repo)
-#         tmp2 <- do.call(c, lapply(tmp, function(y){ 
-#           yy <- strsplit(y, ":")[[1]]
-#           zz <- yy[2]
-#           zz <- gsub('\\s+', '', zz)
-#           names(zz) <- yy[1] 
-#           as.list(zz) 
-#         }))
         tmp2 <- yaml.load_file(x$repo)
         tmp2$repo_root <- sub("/rrt/rrt_manifest.yml", "", x[['repo']])
         c(x['repo'], tmp2, missing=FALSE)
