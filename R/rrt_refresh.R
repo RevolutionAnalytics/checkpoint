@@ -9,7 +9,7 @@
 #' @param autosnap (logical) Get most recent snapshot. Default: FALSE
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #' @param suggests (logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.
-#' @param quiet Passed to install.packages
+#' @param quiet Passed to \code{\link[utils]{install.packages}}
 #'
 #' @seealso \code{\link{rrt_init}}, \code{\link{rrt_install}}
 #'

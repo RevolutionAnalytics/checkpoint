@@ -8,7 +8,7 @@
 #' @param lib Library path
 #' @param suggests Install suggests or not. Default: FALSE.
 #' @param verbose Print messages. Default: TRUE
-#' @param quiet Passed to install.packages
+#' @param quiet Passed to \code{\link[utils]{install.packages}}
 
 rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, suggests=FALSE, verbose=TRUE, quiet=FALSE)
 {

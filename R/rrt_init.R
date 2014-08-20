@@ -14,7 +14,7 @@
 #' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
 #' @param interactive (logical) If TRUE, function asks you for input for each item, otherwise, defaults are used. Default: FALSE.
 #' @param suggests (logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.
-#' @param quiet Passed to install.packages
+#' @param quiet Passed to \code{\link[utils]{install.packages}}
 #'
 #' @seealso \link{rrt_refresh}, \link{rrt_install}
 #'
