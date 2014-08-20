@@ -13,9 +13,9 @@
 #' @param date MRAN snapshot date
 #' @param lib Library to install packages in
 #' @param destdir Destination directory to install packages to
-#' @param ... Further args passed on to \link{install.packages}
+#' @param ... Further args passed on to \code{\link[utils]{install.packages}}
 #' @param dependencies Whether to install dependencies or not. Default: TRUE. See 
-#' @param quiet Passed to install.packages
+#' @param quiet Passed to \code{\link[utils]{install.packages}}
 #' \link{install.packages}
 #'
 #' @return Installs a package, or throws warnings/errors on failures
@@ -39,7 +39,7 @@ install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quie
   untar(path, exdir = tmpdir)
   path2 <- file.path(tmpdir, pkgname)
   info <- pkg_deps(path2)
-  download_deps(pkg = path2, info=info, lib=lib, dependencies = dependencies)
+  download_deps(pkg = path2, info=info, lib=lib, dependencies = dependencies, quiet=quiet)
   depscheck <- Map(needs_install, info$name, info$compare, info$version, lib)
   depsinstall <- info$name[as.logical(depscheck)]
   just_deps <- sapply(depsinstall, function(x) grep(x, list.files(lib, pattern = ".tar.gz"), value = TRUE))
@@ -66,7 +66,7 @@ pkg_deps <- function (pkg = ".", dependencies = NA){
   parse_deps(paste(deps, collapse = ","))
 }
 
-download_deps <- function (pkg = NULL, info, lib, dependencies = NA)
+download_deps <- function (pkg = NULL, info, lib, dependencies = NA, quiet=FALSE)
 {
   pkg <- as.package(pkg)
 #   info <- pkg_deps(pkg, dependencies)
