@@ -14,24 +14,39 @@ used internally so unique abbreviations can be used.}
 \item{verbose}{(logical) Print messages (default) or not}
 }
 \description{
-Currently, these checks, tests, etc. are run just on the packages used in your code in the repository tested - not the dependencies of the packages you use.
+Currently, these checks, tests, etc. are run just on the packages used in your code in the
+repository tested - not the dependencies of the packages you use.
 }
 \details{
-You can see a visual breakdown of check results using \link{rrt_browse} if you have run this function in your repository.
+Make sure to run \code{devtools::has_devel()} before running this function to make sure you
+have the reuquired setup to run this function.
+
+You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
+function in your repository.
 
 Details for each option passed to the \code{what}:
 
-\bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we don't run examples, or tests. Examples and test are run in separate options passed to the \code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
+\bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we
+don't run examples, or tests. Examples and test are run in separate options passed to the
+\code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
 
-\bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a package we return TRUE, otherwise we link to a report for the tests.
+\bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL
+returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a
+package we return TRUE, otherwise we link to a report for the tests.
 
-\bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by default, but you can run them by passing on args to \code{devtools::run_examples()}.
+\bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by
+default, but you can run them by passing on args to \code{devtools::run_examples()}.
 
-\bold{update:} We check for any available updates on CRAN for your packages using \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and Bioconductor packages.
+\bold{update:} We check for any available updates on CRAN for your packages using
+\code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and
+Bioconductor packages.
 }
 \examples{
 \dontrun{
 rrt_compat(what="update")
+rrt_compat(what="check")
+rrt_compat(what="tests")
+rrt_compat(what="examples")
 rrt_compat(what=c("update","check"))
 }
 }

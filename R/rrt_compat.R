@@ -1,21 +1,34 @@
 #' Local test for package compatibility
 #'
-#' Currently, these checks, tests, etc. are run just on the packages used in your code in the repository tested - not the dependencies of the packages you use.
+#' Currently, these checks, tests, etc. are run just on the packages used in your code in the
+#' repository tested - not the dependencies of the packages you use.
 #'
 #' @import testthat devtools digest
 #' @export
 #'
-#' @details You can see a visual breakdown of check results using \link{rrt_browse} if you have run this function in your repository.
+#' @details 
+#' Make sure to run \code{devtools::has_devel()} before running this function to make sure you 
+#' have the reuquired setup to run this function.
+#' 
+#' You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
+#' function in your repository.
 #'
 #' Details for each option passed to the \code{what}:
 #'
-#' \bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we don't run examples, or tests. Examples and test are run in separate options passed to the \code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
+#' \bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we
+#' don't run examples, or tests. Examples and test are run in separate options passed to the
+#' \code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
 #'
-#' \bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a package we return TRUE, otherwise we link to a report for the tests.
+#' \bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL
+#' returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a
+#' package we return TRUE, otherwise we link to a report for the tests.
 #'
-#' \bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by default, but you can run them by passing on args to \code{devtools::run_examples()}.
+#' \bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by
+#' default, but you can run them by passing on args to \code{devtools::run_examples()}.
 #'
-#' \bold{update:} We check for any available updates on CRAN for your packages using \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and Bioconductor packages.
+#' \bold{update:} We check for any available updates on CRAN for your packages using
+#' \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and 
+#' Bioconductor packages.
 #'
 #' @param repo Repository path. Defaults to your working directory.
 #' @param what What to test, one or more of check, tests, examples, or udpate. \code{match.arg} is
@@ -26,15 +39,14 @@
 #'
 #' @examples \dontrun{
 #' rrt_compat(what="update")
+#' rrt_compat(what="check")
+#' rrt_compat(what="tests")
+#' rrt_compat(what="examples")
 #' rrt_compat(what=c("update","check"))
 #' }
 
 rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 {
-  # write check file
-  compatfile <- file.path(repo, "rrt/rrt_check.txt")
-  cat("", file = compatfile)
-
   # Check for appropriate values of what
   what <- match.arg(what, c('check','tests','examples','update'), TRUE)
 
@@ -52,6 +64,13 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # check for rrt directory in the repo
   lib <- check_rrt_dir(verbose, repo)
+  
+  # Clean out any files for previous checks
+  clean_previous(repo)
+  
+  # write check file
+  compatfile <- file.path(repo, "rrt/rrt_check.txt")
+  cat("", file = compatfile)
 
   # get pkgs list in the rrt repo
   pkgs <- getpkgslist(repo)
@@ -60,6 +79,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   # separate pkgs by source
   cranpkgs <- pkgnames[ is_cran_pkg(pkgnames) ]
   biocpkgs <- pkgnames[ is_bioc_pkg(pkgnames) ]
+#   ghpkgs <- pkgnames[ is_(pkgnames) ]
 
   # check: R CMD CHECK via devtools::check
   if("check" %in% what){
@@ -76,18 +96,20 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   if("tests" %in% what){
     testrepo(pkgs, repo=repo, verbose=verbose)
     tfiles <- list.files(file.path(repo, "rrt", "tests"), full.names = TRUE)
-    cat(tfiles, file = compatfile, sep = "\n")
+    cat(tfiles, file = compatfile, sep = "\n", append = TRUE)
     tdf <- data.frame(pkg=pkgnames, testfile=tfiles, stringsAsFactors = FALSE)
   } else { tdf <- data.frame(pkg=pkgnames, testfile=NA, stringsAsFactors = FALSE) }
 
   # run examples
   if("examples" %in% what){
-    egsres <- NULL
-  }
+    runegs(pkgs, repo=repo, verbose=verbose)
+    egfiles <- list.files(file.path(repo, "rrt", "examples"), full.names = TRUE)
+    cat(egfiles, file = compatfile, sep = "\n", append = TRUE)
+    egsdf <- data.frame(pkg=pkgnames, examplesfile=egfiles, stringsAsFactors = FALSE)
+  } else { egsdf <- data.frame(pkg=pkgnames, examplesfile=NA, stringsAsFactors = FALSE) }
 
   # check for packages that need updating
   if("update" %in% what){
-    
     # cran updates
     oldpkgs <- old.packages(lib.loc = lib)
     oldpkgs <- oldpkgs[,c('Package','Installed','ReposVer')]
@@ -96,25 +118,25 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
       update <- data.frame(repo='CRAN', hh, stringsAsFactors = FALSE, row.names = NULL)
       names(update)[2] <- 'pkg'
     } else { update <- data.frame(repo='CRAN', pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
-    
     # bioconductor updates
-    biocup <- biocupdates(lib, biocpkgs)
-    
+    biocup <- biocupdates(lib, bioc_pkgs = biocpkgs)
     # github updates
     ### FIXME - for now any github packages are not checked
     # combine updates
     allupdates <- rbind(update, biocup)
-  }
+  } else { allupdates <- data.frame(pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
 
   df <- merge(check, tdf, by="pkg")
+  df <- merge(df, egsdf, by="pkg")
   df <- merge(df, allupdates, by="pkg", all = TRUE)
   saveRDS(df, file = file.path(repo, "rrt", "check_result.rds"))
 
-  message("Tests complete!")
+  message("Compatibility checks complete!")
+  return( df )
 }
 
 check_rrt_dir <- function(verbose, repo){
-  mssg(verbose, "Checing to make sure rrt directory exists inside your repository...")
+  mssg(verbose, "Checking to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   present <- list.dirs(lib)
   if(!all(grepl("rrt", present))){
@@ -131,7 +153,10 @@ getpkgslist <- function(repo){
     tmp <- grep(z, pkgs, value = TRUE)
     if(length(tmp) > 1){
       justnames <- sapply(tmp, function(n){ b <- strsplit(n, "/")[[1]]; sub("_.+", "", b[length(b)]) })
-      names(justnames)[justnames %in% z]
+      zz <- names(justnames)[justnames %in% z]
+      if(length(zz) > 1){
+        zz[grep("\\.tar.gz", zz)]
+      } else { zz }
     } else { tmp }
   }, "", USE.NAMES = FALSE)
 }
@@ -154,7 +179,8 @@ checkrepo <- function(x, repo, verbose){
   out <- tryCatch(check(file.path(tmpdir, dirname), document = FALSE, doc_clean = FALSE, cleanup = FALSE, force_suggests = FALSE,
         args = c('--no-manual','--no-vignettes','--no-build-vignettes','--no-examples','--no-tests', checkout)), 
         error = function(e) e)
-  if(is(out, 'simpleError')) "not a source package"
+  if(is(out, 'simpleError'))
+    "not a source package"
   else
     if(out) "passed" else "failed"
 }
@@ -174,15 +200,44 @@ testrepo <- function(x, repo, verbose){
   unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
 }
 
+runegs <- function(x, repo, verbose){
+  tmpdir <- file.path(repo, "rrt", "examples", "tmp")# create temporary directory
+  suppressWarnings(dir.create(tmpdir, recursive = TRUE))
+  runeg <- function(y){
+    untar(y, exdir = tmpdir)
+    dirs <- list.dirs(tmpdir, recursive = FALSE, full.names = FALSE)
+    pkgname <- sub("_.+|\\.[A-Za-z]+", "", strsplit(y, "/")[[1]][length(strsplit(y, "/")[[1]])])
+    dirname <- grep(pkgname, dirs, value = TRUE)
+    capture.output(
+      tryCatch(run_examples(file.path(tmpdir, sprintf("%s", dirname))), error=function(e) "no examples found"), file = paste0(repo, "/rrt/examples/", pkgname, ".txt"))
+  }
+  lapply(x, runeg)
+  unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
+}
+
 ### bioc updates
 biocupdates <- function(lib, bioc_pkgs){
-  type <- getOption('pkgType')
-  repos <- biocinstallRepos()
-  pkgs <- installed.packages(lib)
-  contribUrl <- contrib.url(repos, type = type)
-  availPkgs <- available.packages(contribUrl, type = type)
-  df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
-  df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
-  names(df)[2] <- 'pkg'
-  df
+  if(!length(bioc_pkgs) == 0){
+    type <- getOption('pkgType')
+    repos <- biocinstallRepos()
+    pkgs <- installed.packages(lib)
+    contribUrl <- contrib.url(repos, type = type)
+    availPkgs <- available.packages(contribUrl, type = type)
+    df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
+    if(is.null(df)){ data.frame(NULL) } else {  
+      df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
+      names(df)[2] <- 'pkg'
+      df
+    }
+  } else { data.frame(NULL) }
+}
+
+# Clean out previous check files to keep things clean. 
+# In the future, could just update files.
+clean_previous <- function(repo){
+  unlink(file.path(repo, 'rrt', 'tests'), recursive = TRUE)
+  unlink(file.path(repo, 'rrt', 'examples'), recursive = TRUE)
+  unlink(file.path(repo, 'rrt', 'check'), recursive = TRUE)
+  unlink(file.path(repo, 'rrt', 'rrt_check.txt'))
+  unlink(file.path(repo, 'rrt', 'check_result.rds'))
 }

@@ -1,7 +1,8 @@
 #' Download R packages from the MRAN server
 #'
-#' This function uses rsync, which is faster than the method (wget) \code{install.packages} uses
-#' by default. This function does not install packages, but only downloads them to your machine.
+#' This function uses rsync on *unix machines, which is faster than the method (wget)
+#' \code{install.packages} uses by default. On Windows we use your default method of downloading
+#' files. This function does not install packages, but only downloads them to your machine.
 #'
 #' @export
 #' @param repo Repository path
@@ -10,12 +11,14 @@
 #' @param snapshotid Optional. You can give the exact snapshot ID insetad of a date.
 #' @param outdir Output directory
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
+#' @param verbose (logical) Print messages or not.
+#' @param quiet (logical) Passed on to install.packages
 #' @examples \dontrun{
 #' # By default installs most recent version
-#' pkgs_mran(date='2014-07-08', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
+#' pkgs_mran(date='2014-08-04', pkgs=c("plyr","ggplot2"), outdir="~/mran_snaps/")
 #'
 #' pkgs_mran(date='2014-06-19', pkgs=c("plyr_1.8.1","ggplot2_1.0.0"), outdir="~/mran_snaps/stuff/")
-#' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps/stuff/")
+#' pkgs_mran(date='2014-06-19', pkgs="rgbif_0.6.2", outdir="~/mran_snaps")
 #' }
 
 pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL, outdir=NULL, verbose=FALSE, quiet=FALSE)
@@ -28,11 +31,11 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
 
   # parse versions from pkgs
   get_pkg_versions <- function(x){
-    vers <- tryCatch(mran_pkg_avail(snapshot=snapshot_use, package=x[[1]]), error=function(e) e)
+    vers <- tryCatch(mran_pkg_versions(snapshot=snapshot_use, package=x[[1]]), error=function(e) e)
     if("error" %in% class(vers)){
       sprintf("%s/__notfound__", x[[1]])
     } else {
-      splitvers <- vapply(vers, strsplit, list(1), "\\.")
+      splitvers <- vapply(vers, strsplit, list(1), "\\.|-")
       tmp <- lapply(splitvers, function(x) data.frame(rbind(x), stringsAsFactors = FALSE))
       lengths <- vapply(tmp, length, numeric(1))
       toadd <- max(lengths) - min(lengths)
@@ -49,8 +52,12 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
       df[is.na(df)] <- 0
       row.names(df) <- names(splitvers)
       df <- suppressWarnings(colClasses(df, "numeric"))
-      if(NCOL(df) == 3){ df <- sort_df(df, c("X1","X2","X3")) } else {
-        df <- sort_df(df, c("X1","X2"))
+      df <- if(NCOL(df) == 4){
+        sort_df(df, c("X1","X2","X3","X4"))
+      } else if(NCOL(df) == 3) {
+        sort_df(df, c("X1","X2","X3"))
+      } else {
+        sort_df(df, c("X1","X2"))
       }
       pkgver <- tryCatch(x[[2]], error=function(e) e)
       if('error' %in% class(pkgver)) {
@@ -72,29 +79,29 @@ pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL
     for(i in seq_along(pkgpaths)){
       windows_install(pkgpaths[[i]], lib=lib, snapshotid=snapshotid, quiet=quiet)
     }
-  } else {  
+  } else {
     setwd(outdir)
     tmppkgsfileloc <- "_rsync-file-locations.txt"
     cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
-    
+
     if(length(pkgpaths > 0)){
-      
+
       mssg(verbose, "... Downloading package files")
       url <- mran_server_url()
       url <- sub("http://", "", url)
       cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', tmppkgsfileloc, url, snapshot_use)
       system(cmd, intern=TRUE)
-      
+
       mvcmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
       system(mvcmd)
-      
+
       rmcmd <- sprintf("rm -rf %s", paste(
         sapply(pkgpaths, function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
       )
       system(rmcmd)
       system(sprintf("rm %s", tmppkgsfileloc))
     }
-    
+
   }
 }
 

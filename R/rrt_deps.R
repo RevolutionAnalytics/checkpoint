@@ -16,8 +16,24 @@
 #' @return Vector of package names on which R code in the repository depends.
 #' @details Dependencies are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
 #'
-#' @example inst\examples\example_rrt_deps.R 
+#' @examples \dontrun{
+#' # dependencies for the repo in the current working dir
+#' rrt_deps()
 #' 
+#' # dependencies for an repo in another directory
+#' rrt_deps("~/newrepo")
+#' 
+#' # include only certain file extensions
+#' rrt_deps(fileext=c('Rmd'))
+#' 
+#' # exclude some file extensions
+#' rrt_deps(fileext=c('-Rmd'))
+#' rrt_deps(fileext=c('-Rmd','Rnw'))
+#' 
+#' # suppress messages
+#' rrt_deps(verbose=FALSE)
+#' }
+
 rrt_deps <- function(repo = NULL, fileext = NULL, verbose = TRUE){
   if(is.null(repo)) repo <- getwd()
   repo <- path.expand(repo)
