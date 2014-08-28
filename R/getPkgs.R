@@ -38,7 +38,7 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
         on.exit(setwd(repo))
         dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
         snapdateid <- getOption('RRT_snapshotID')
-        pkgs_mran(repo=repo, lib=lib, snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
+        download_pkgs_mran(repo=repo, lib=lib, snapshotid = snapdateid, pkgs=pkgs2get, outdir=pkgloc)
       }
       
       # download pkgs from Github
@@ -50,9 +50,7 @@ getPkgs <- function(x, repo, lib, recursive=FALSE, verbose=TRUE, install=TRUE, m
 }
 
 get_github_pkgs <- function(lib, pkgs, repo){
-#   got <- list.files(normalizePath(file.path(lib, "src/contrib")))
-#   got2 <- vapply(got, function(x) strsplit(x, "_")[[1]][[1]], character(1), USE.NAMES = FALSE)
-#   dontgot <- pkgs[!pkgs %in% got2]
+  mssg(TRUE, "get_github_packages in getPkgs.R")
   availcranpkgs <- row.names(availCRANpkgs())
   notoncran <- pkgs[!pkgs %in% availcranpkgs]
   message(sprintf("Not found on CRAN:\n%s", paste0(notoncran, collapse = ", ")))

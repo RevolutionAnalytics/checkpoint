@@ -40,11 +40,11 @@
 rrt_deps <- function(repo = NULL, fileext = NULL, verbose = TRUE){
   if(is.null(repo)) repo <- getwd()
   repo <- path.expand(repo)
-  as.vector(unique(repo_deps(dir = repo)))
+  as.vector(unique(deps_in_dir(dir = repo)))
 }
 
 # detect all package dependencies for a repo
-repo_deps <- function(dir) {
+deps_in_dir <- function(dir) {
   dir <- normalizePath(dir, winslash='/')
   #   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$|\\.txt$|\\.md$"
   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
@@ -56,16 +56,6 @@ repo_deps <- function(dir) {
   unlist(unique(sapply(R_files, deps_by_ext, dir=dir)))
 }
 
-# r <- "\\.[rR]$"
-# rmd <- "\\.[rR]md$"
-# rnw <- "\\.[rR]nw$"
-# rpres <- "\\.[rR]pres$"
-# txt <- "\\.txt$"
-# extstrings <- c(r, rmd, rnw, rpres, txt)
-# extstringsuse <- if(is.null(fileext)) extstrings else switch(fileext,
-# )
-# removeexcl <- function(x) if( grepl('^-', x) ) FALSE else TRUE
-# sapply(fileext, removeexcl)
 
 # ad-hoc dispatch based on the file extension
 deps_by_ext <- function(file, dir) {

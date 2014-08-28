@@ -35,16 +35,16 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ..
   pkgs_used <- rrt_deps(repo)
   # remove RRT, manipulate, rstudio, and packrat
   pkgs_used <- pkgs_used[!pkgs_used %in% c('RRT','manipulate','packrat','rstudio')]
-
+  
   # Get package dependencies using miniCRAN
   pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, suggests=suggests)
   names(pkg_deps) <- pkgs_used
-
+  
   if(simplify){
     allpkgs <- unname(do.call(c, pkg_deps))
     pkg_deps <- unique(allpkgs)
   }
-
+  
   # remove base R pkgs
   if(!base){
     availpkgs <- available.packages(contrib.url(getOption("repos"), "source"))
@@ -54,16 +54,17 @@ repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ..
         if(!is.na(zz[['Priority']]) && zz[['Priority']] == "base") TRUE else FALSE
       }
     })]
-    pkg_deps <- pkg_deps[!pkg_deps %in%
-          c('base','compiler','datasets','graphics','grDevices','grid','methods','parallel',
-            'splines','stats','stats4','tcltk','tools','utils')]
+    basePackages <- c('base','compiler','datasets','graphics','grDevices','grid','methods','parallel',
+                      'splines','stats','stats4','tcltk','tools','utils')
+    pkg_deps <- pkg_deps[!pkg_deps %in% basePackages]
   }
-
+  
   return(pkg_deps)
 }
 
+#' @importFrom miniCRAN pkgDep
 pkgDep_try <- function(x, repo=NULL, suggests=FALSE){
-  tmp <- tryCatch(pkgDep(x, type="source", suggests = suggests), error=function(e) e)
+  tmp <- tryCatch(miniCRAN::pkgDep(x, type="source", suggests = suggests), error=function(e) e)
   if(!"error" %in% class(tmp)){ tmp } else {
     pkg_deps_noncran(repo, x)
   }
@@ -74,32 +75,34 @@ pkg_deps_noncran <- function(repo, x){
     pkgDep(x, repos = c(CRAN=biocinstallRepos(siteRepos=character())[[1]]))
   } else {
     # look for user specified manifest file, and read from there if any
-    usermanfile <- file.path(repo, "manifest.yml")
-
+    userManifestFile <- file.path(repo, "manifest.yml")
+    
     # look for package mention in manifest, return message if not
-    if(!file.exists(usermanfile)){ out <- "not found" } else {
-      tt <- suppressWarnings(yaml.load_file(usermanfile))
+    if(!file.exists(userManifestFile)){ 
+      out <- "not found" 
+    } else {
+      tt <- suppressWarnings(yaml.load_file(userManifestFile))
       nn <- tt[names(tt) %in% c("Github","MRAN","Bitbucket","Bioconductor","Gitorious")]
       trymatch <- lapply(nn, function(y) y[sapply(y, function(z) grepl(x, z))])
       if(all(sapply(trymatch, length)==0)){ out <- "not found" } else {
         out <- trymatch[!sapply(trymatch, length)==0]
       }
     }
-
+    
     if(!out == "not found"){
       from <- tolower(names(out))
       from <- match.arg(from, c('github','mran','bitbucket','bioconductor','gitorious'))
       switch(from,
              github = c(x, get_desc_github(out[[1]])))
     } else {
-      sprintf("%s not found - make sure to specify info in the manifest file at %s", x, usermanfile)
+      sprintf("%s not found - make sure to specify info in the manifest file at %s", x, userManifestFile)
     }
   }
 }
 
 #' @importFrom RCurl base64Decode
 get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FALSE){
-#   GET /repos/:owner/:repo/contents/:path
+  #   GET /repos/:owner/:repo/contents/:path
   url <- "https://api.github.com/repos/%s/%s/contents/DESCRIPTION"
   ur <- strsplit(userrepo, "/")[[1]]
   url <- sprintf(url, ur[[1]], ur[[2]])
