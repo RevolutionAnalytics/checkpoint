@@ -27,7 +27,7 @@
 #' }
 install_mran <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quiet=FALSE, ..., dependencies = TRUE)
 {
-  pkgs_mran(date=date, pkgs=pkg, outdir=lib, quiet=quiet)
+  download_pkgs_mran(date=date, pkgs=pkg, outdir=lib, quiet=quiet)
   files <- list.files(lib, pattern = ".tar.gz")
   files <- grep(pkg, files, value = TRUE)
   sapply(files, install_mran_single, ..., lib=lib, destdir=destdir, dependencies=dependencies, quiet=quiet)
@@ -75,7 +75,7 @@ download_deps <- function (pkg = NULL, info, lib, dependencies = NA, quiet=FALSE
   deps <- info$name[as.logical(needed)]
   if (length(deps) == 0) return(invisible())
   message("Downloading dependencies for ", pkg$package, ":\n", paste(deps, collapse = ", "))
-  pkgs_mran(date=date, pkgs=deps, outdir=lib, quiet=quiet)
+  download_pkgs_mran(date=date, pkgs=deps, outdir=lib, quiet=quiet)
   invisible(deps)
 }
 

@@ -12,8 +12,7 @@
 
 rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, suggests=FALSE, verbose=TRUE, quiet=FALSE)
 {
-  #   pkgslist <- list.files(file.path(lib, "src/contrib"))  
-  mssg(verbose, "Looking for packages used in your repository...")
+  mssg(verbose, "Downloading packages used in your repository...")
   x <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
   
   # make src/contrib
@@ -42,22 +41,29 @@ rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, 
     # check for any failed intalls and install from binary from default CRAN mirror
     notinst <- cranpkgs[!vapply(file.path(lib, cranpkgs), file.exists, logical(1))]
     if(!length(notinst) == 0) {
+      mssg(verbose, "... Installing from default CRAN mirror")
       utils::install.packages(notinst, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
     }
     
     # install github pkgs
-    if(!length(githubpkgs) == 0) install_github_pkgs(lib, githubpkgs)
+    if(!length(githubpkgs) == 0) {
+      mssg(verbose, "... Installing from github")
+      install_github_pkgs(lib, githubpkgs)
+    }
     
     # install (and download bioc pkgs)
-    if(!length(biocPkgs) == 0) get_bioconductor_pkgs(lib, biocPkgs, repo)
+    if(!length(biocPkgs) == 0) {
+      mssg(verbose, "... Installing from BioConductor")
+      get_bioconductor_pkgs(lib, biocPkgs, repo)
+    }
   } else {
-    mssg(verbose, "nothing to install")
+    mssg(verbose, "... nothing to install")
   }
 }
 
 install_mran_pkgs <- function(lib, yyy, verbose, quiet=FALSE){
   if(length(yyy)==0){
-    mssg(verbose, "No packages found to install")
+    mssg(verbose, "... No MRAN packages found to install")
   } else {
     mssg(verbose, "Installing packages...")
     allPkgs <- list.files(file.path(lib, "src/contrib"), full.names = TRUE)
@@ -67,7 +73,7 @@ install_mran_pkgs <- function(lib, yyy, verbose, quiet=FALSE){
     pkgsWithPath <- pkgsWithPath[!sapply(pkgsWithPath, length) == 0]
     
     if(length(pkgsWithPath) == 0){
-      mssg(verbose, "No packages found to install")
+      mssg(verbose, "... No MRAN packages found to install")
     } else {
       pkgsWithPath <- pkgsWithPath[!grepl("\\.zip", pkgsWithPath)]
       pkgsWithPath <- unlist(pkgsWithPath)
@@ -87,18 +93,10 @@ pkgs_mran_get <- function(lib, repo, pkgs2get, quiet=FALSE){
   setwd(lib)
   on.exit(setwd(repo))
   suppressWarnings(dir.create(file.path(lib, "src/contrib"), recursive = TRUE))
-  pkgs_mran(repo=repo, lib=lib, snapshotid = getOption('RRT_snapshotID'), pkgs=pkgs2get, outdir=pkgloc, quiet=quiet)
+  download_pkgs_mran(repo=repo, lib=lib, snapshotid = getOption('RRT_snapshotID'), 
+                     pkgs=pkgs2get, outdir=pkgloc, quiet=quiet)
 }
 
-# not sure we need this to separate download from install from CRAN, since we can also put 
-# source of each pkgs where we want using the destdir parameter. in `install.packages`
-# install_from_cran <- function(x){
-#   setwd(lib)
-#   on.exit(setwd(repo))
-#   dir.create("src/contrib", showWarnings = FALSE, recursive = TRUE)
-#   #   get_github_pkgs(lib, pkgs2get, repo)  
-#   makeLibrary(pkgs = pkgs2get, path = file.path(lib, "src/contrib"))
-# }
 
 is_cran_pkg <- function (pkgs, repos = c(CRAN="http://cran.r-project.org/"), type = "source"){
   if (!grepl("^file", repos) && file.exists(repos)) {
@@ -129,7 +127,11 @@ is_bioc_pkg <- function(pkgs){
 #' @param pkgs Vector of package names
 #' @param lib Library path
 get_github_pkgs <- function(repo, pkgs, lib){
-  githubPaths <- yaml.load_file(file.path(repo, "manifest.yml"))$Github
+  mssg(TRUE, "get_github_packages in rrt_install.R")
+  yaml_file <- file.path(repo, "manifest.yml")
+  githubPaths <- if(file.exists(yaml_file)){
+    yaml.load_file(yaml_file)$Github
+  } else NULL
   if(is.null(githubPaths)) { character(0) } else {
     toinstall <- sapply(pkgs, function(x) grep(x, githubPaths, value = TRUE), USE.NAMES = FALSE)
     for(i in seq_along(toinstall)){
