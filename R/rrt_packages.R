@@ -1,13 +1,13 @@
-#' Detect repository dependencies
+#' Detect repository packages
 #'
-#' Recursively detect all repository dependencies. Parses all .R, .Rmd, .Rnw, .Rpres, and other files in the repository directory to determine what packages the repo depends directly.
+#' Detect all packages used in repository. Parses all .R, .Rmd, .Rnw, .Rpres, and other files in the repository directory to determine what packages the repo depends directly.
 #'
 #' Only direct dependencies are detected (i.e. no recursion).
 #'
 #' NOTE: Modified from dependencies.R in the packrat github repo
 #' NOTE: Working on adding support for other file types, including .md
 #'
-#' Dependencies are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
+#' Packages are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
 #' 
 #' @export
 #'
@@ -19,25 +19,9 @@
 #'
 #' @family rrt
 #' 
-#' @examples \dontrun{
-#' # dependencies for the repo in the current working dir
-#' rrt_deps()
-#' 
-#' # dependencies for an repo in another directory
-#' rrt_deps("~/newrepo")
-#' 
-#' # include only certain file extensions
-#' rrt_deps(fileext=c('Rmd'))
-#' 
-#' # exclude some file extensions
-#' rrt_deps(fileext=c('-Rmd'))
-#' rrt_deps(fileext=c('-Rmd','Rnw'))
-#' 
-#' # suppress messages
-#' rrt_deps(verbose=FALSE)
-#' }
+#' @example /inst/examples/example_rrt_packages.R
 
-rrt_deps <- function(repo = NULL, fileext = NULL, verbose = TRUE){
+rrt_packages <- function(repo = NULL, fileext = NULL, verbose = TRUE){
   if(is.null(repo)) repo <- getwd()
   repo <- path.expand(repo)
   as.vector(unique(deps_in_dir(dir = repo)))
