@@ -42,7 +42,7 @@
 checkpoint <- function(snapshotdate=NULL, repo=getwd(), mran=TRUE, autosnap=TRUE, verbose=TRUE, 
                      rprofile=NULL, interactive=FALSE, suggests=FALSE)
 {
-  if(!has_rsync()) mran <- FALSE
+  if(mran & !has_rsync()) stop("rsync not found. Installing packages from MRAN requires rsync to be installed on your machine.")
   
   if(is_rrt(repo, verbose = FALSE)){
     mssg(verbose, "RRT repo recognized...refreshing...\n")
