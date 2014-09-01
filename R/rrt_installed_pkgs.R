@@ -2,8 +2,7 @@
 #' 
 #' @export
 #' 
-#' @param repo A repository path. This is the path to the root of your RRT repository. By default,
-#' we use the current working directory via \code{getwd()}.
+#' @param repo A repository path. This is the path to the root of your RRT repository. By default, we use the current working directory via \code{getwd()}.
 #' @param simplify (logical) Whether to simplify to just package name and version or print entire
 #' matrix of package information.
 #' @family rrt

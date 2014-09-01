@@ -12,13 +12,13 @@
 
 rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, suggests=FALSE, verbose=TRUE, quiet=FALSE)
 {
-  mssg(verbose, "Downloading packages used in your repository...")
-  x <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
+  x <- repoDependencies(repo, simplify = TRUE, base=FALSE, suggests=suggests)
   
   # make src/contrib
   suppressWarnings(dir.create(file.path(lib, "src/contrib"), recursive = TRUE))
   
   if(length(x) > 0) {
+    mssg(verbose, "Downloading packages used in your repository...")
     installedpkgs <- list.files(lib)
     installedpkgs <- installedpkgs[!installedpkgs %in% "src"]
     p2inst <- sort(x)[!sort(x) %in% sort(installedpkgs)]
@@ -27,12 +27,12 @@ rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, 
     biocPkgs <- p2inst[is_bioc_pkg(p2inst)]
     pkgsrem <- p2inst[!p2inst %in% c(cranpkgs, biocPkgs)]
     if(length(pkgsrem) > 0) {
-      get_github_pkgs(repo, pkgs = pkgsrem, lib)
+      download_github_pkgs(repo, pkgs = pkgsrem, lib)
       githubpkgs <- pkgsrem
     } else { githubpkgs <- character(0) }
     
     if(mran){
-      pkgs_mran_get(lib, repo, cranpkgs, quiet=quiet)
+      download_mran_pkgs(lib, repo, cranpkgs, quiet=quiet)
       install_mran_pkgs(lib, cranpkgs, verbose=verbose, quiet=quiet)
     } else {
       utils::install.packages(cranpkgs, lib = lib, destdir = file.path(lib, "src/contrib"), quiet=quiet, verbose=verbose)
@@ -54,7 +54,7 @@ rrt_install <- function(repo=getwd(), repoid, lib=rrt_libpath(repo), mran=TRUE, 
     # install (and download bioc pkgs)
     if(!length(biocPkgs) == 0) {
       mssg(verbose, "... Installing from BioConductor")
-      get_bioconductor_pkgs(lib, biocPkgs, repo)
+      download_bioconductor_pkgs(lib, biocPkgs, repo)
     }
   } else {
     mssg(verbose, "... nothing to install")
@@ -88,7 +88,7 @@ install_mran_pkgs <- function(lib, yyy, verbose, quiet=FALSE){
   }
 }
 
-pkgs_mran_get <- function(lib, repo, pkgs2get, quiet=FALSE){
+download_mran_pkgs <- function(lib, repo, pkgs2get, quiet=FALSE){
   pkgloc <- file.path(lib, "src/contrib")
   setwd(lib)
   on.exit(setwd(repo))
@@ -108,6 +108,7 @@ is_cran_pkg <- function (pkgs, repos = c(CRAN="http://cran.r-project.org/"), typ
 }
 
 #' Determine if a package is on Bioconductor or not.
+#' 
 #' @keywords internal
 #' @param pkgs Vector of package names
 #' @return A logical vector of same length as input vector
@@ -122,12 +123,13 @@ is_bioc_pkg <- function(pkgs){
 }
 
 #' Download github packages.
+#' 
 #' @keywords internal
 #' @param repo Repository path
 #' @param pkgs Vector of package names
 #' @param lib Library path
-get_github_pkgs <- function(repo, pkgs, lib){
-  mssg(TRUE, "get_github_packages in rrt_install.R")
+download_github_pkgs <- function(repo, pkgs, lib, verbose=TRUE){
+  mssg(verbose, "Downloading github packages")
   yaml_file <- file.path(repo, "manifest.yml")
   githubPaths <- if(file.exists(yaml_file)){
     yaml.load_file(yaml_file)$Github
@@ -136,7 +138,7 @@ get_github_pkgs <- function(repo, pkgs, lib){
     toinstall <- sapply(pkgs, function(x) grep(x, githubPaths, value = TRUE), USE.NAMES = FALSE)
     for(i in seq_along(toinstall)){
       pathsplit <- strsplit(toinstall[i], "/")[[1]]
-      get_github(pkg=pathsplit[[2]], username=pathsplit[[1]], lib=lib)
+      download_one_github_pkg(pkg=pathsplit[[2]], username=pathsplit[[1]], lib=lib)
     }
   }
 }
@@ -161,7 +163,8 @@ install_github_pkgs <- function(lib, pkgs){
   }
 }
 
-get_bioconductor_pkgs <- function(lib, pkgs, repo){
+download_bioconductor_pkgs <- function(lib, pkgs, repo, verbose=TRUE){
+  mssg(verbose, "Downloading BioConductor packages")
   biocPkgs <- all_group()
   pkgs_bioc <- pkgs[pkgs %in% biocPkgs]
   if(!length(pkgs_bioc) == 0){

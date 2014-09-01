@@ -3,15 +3,18 @@
 #' @import httr devtools
 #' @keywords internal
 #' @examples \dontrun{
-#' get_github(lib=lib, pkg="cowsay", username="sckott")
+#' download_one_github_pkg(lib=tempdir(), pkg="cowsay", username="sckott")
+#' dir(file.path(tempdir, "src/contrib"))
 #' }
 
-get_github <- function(pkg, username, lib, ...){
+download_one_github_pkg <- function(pkg, username, lib, ...){
   refurl <- devtools:::github_get_conn(pkg, username, ...)
   res <- GET(refurl$url)
   stop_for_status(res)
-  installtmpfile <- file.path(lib, "src/contrib", paste0(pkg, ".zip"))
-  writeBin(content(res), installtmpfile)
+  instPath <- file.path(lib, "src/contrib")
+  if(!file.exists(instPath)) dir.create(instPath, recursive = TRUE)
+  instFile <- file.path(instPath, paste0(pkg, ".zip"))
+  writeBin(content(res), instFile)
 }
 
 

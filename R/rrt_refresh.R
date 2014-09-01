@@ -47,7 +47,7 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, 
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
-  pkgs <- repodeps(repo, simplify = TRUE, base=FALSE, suggests=suggests)
+  pkgs <- repoDependencies(repo, simplify = TRUE, base=FALSE, suggests=suggests)
   writeManifest(repository = repo, librar = lib, packs = pkgs, snapshot = getOption('RRT_snapshotID'), repoid)
 
   # write package versions to manifest file
