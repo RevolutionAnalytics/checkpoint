@@ -19,7 +19,7 @@ repository tested - not the dependencies of the packages you use.
 }
 \details{
 Make sure to run \code{devtools::has_devel()} before running this function to make sure you
-have the reuquired setup to run this function.
+have the required setup to run this function.
 
 You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
 function in your repository.
@@ -57,9 +57,8 @@ Other rrt: \code{\link{checkpoint}};
   \code{\link{print.rrtrepos}},
   \code{\link{rrt_repos_list}},
   \code{\link{rrt_repos_write}}; \code{\link{rrt_browse}};
-  \code{\link{rrt_deps}}; \code{\link{rrt_init}};
-  \code{\link{rrt_installed_pkgs}};
-  \code{\link{rrt_refresh}};
+  \code{\link{rrt_init}}; \code{\link{rrt_installed_pkgs}};
+  \code{\link{rrt_packages}}; \code{\link{rrt_refresh}};
   \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
 }
 

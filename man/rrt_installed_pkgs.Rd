@@ -6,8 +6,7 @@
 rrt_installed_pkgs(repo = getwd(), simplify = TRUE)
 }
 \arguments{
-\item{repo}{A repository path. This is the path to the root of your RRT repository. By default,
-we use the current working directory via \code{getwd()}.}
+\item{repo}{A repository path. This is the path to the root of your RRT repository. By default, we use the current working directory via \code{getwd()}.}
 
 \item{simplify}{(logical) Whether to simplify to just package name and version or print entire
 matrix of package information.}
@@ -26,8 +25,8 @@ Other rrt: \code{\link{checkpoint}};
   \code{\link{print.rrtrepos}},
   \code{\link{rrt_repos_list}},
   \code{\link{rrt_repos_write}}; \code{\link{rrt_browse}};
-  \code{\link{rrt_compat}}; \code{\link{rrt_deps}};
-  \code{\link{rrt_init}}; \code{\link{rrt_refresh}};
+  \code{\link{rrt_compat}}; \code{\link{rrt_init}};
+  \code{\link{rrt_packages}}; \code{\link{rrt_refresh}};
   \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
 }
 
