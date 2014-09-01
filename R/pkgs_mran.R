@@ -20,13 +20,13 @@
 #' }
 
 download_pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, pkgs=NULL, 
-                      outdir=NULL, verbose=FALSE, quiet=FALSE)
+                      outdir=file.path(lib, "src/contrib"), verbose=FALSE, quiet=FALSE)
 {
   if(is.null(outdir)) stop("You must specify a directory to download packages to")
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
 
   # get available snapshots
-  snapshot_use <- if(is.null(snapshotid)) getsnapshotid(date) else snapshotid
+  snapshot_use <- if(is.null(snapshotid)) getSnapshotId(date) else snapshotid
 
   # parse versions from pkgs
   get_pkg_versions <- function(x){
@@ -75,39 +75,42 @@ download_pkgs_mran <- function(repo=NULL, lib=NULL, date=NULL, snapshotid=NULL, 
   notonmran <- grep("__notfound__", pkgpaths, value = TRUE)
   pkgpaths <- pkgpaths[!grepl("__notfound__", pkgpaths)]
 
+  mssg(verbose, "... Downloading package files")
+  
   if(!.Platform$OS.type == "unix"){
     for(i in seq_along(pkgpaths)){
-      windows_install(pkgpaths[[i]], lib=lib, snapshotid=snapshotid, quiet=quiet)
+      windows_download(pkgpaths[[i]], lib=lib, snapshotid=snapshot_use, quiet=quiet)
     }
   } else {
+    oldwd <- getwd()
+    on.exit(setwd(oldwd))
     setwd(outdir)
-    tmppkgsfileloc <- "_rsync-file-locations.txt"
-    cat(pkgpaths, file = tmppkgsfileloc, sep = "\n")
+    tmpPkgsFileLoc <- "_rsync-file-locations.txt"
+    cat(pkgpaths, file = tmpPkgsFileLoc, sep = "\n")
 
     if(length(pkgpaths > 0)){
 
-      mssg(verbose, "... Downloading package files")
       url <- mran_server_url()
       url <- sub("http://", "", url)
-      cmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', 
-                     tmppkgsfileloc, url, snapshot_use)
-      system(cmd, intern=TRUE)
+      rsyncCmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', 
+                     tmpPkgsFileLoc, url, snapshot_use)
+      system(rsyncCmd, intern=TRUE)
 
-      mvcmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
-      system(mvcmd)
+      mvCmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
+      system(mvCmd)
 
-      rmcmd <- sprintf("rm -rf %s", paste(
+      rmCmd <- sprintf("rm -rf %s", paste(
         sapply(pkgpaths, 
                function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
       )
-      system(rmcmd)
-      system(sprintf("rm %s", tmppkgsfileloc))
+      system(rmCmd)
+      system(sprintf("rm %s", tmpPkgsFileLoc))
     }
 
   }
 }
 
-windows_install <- function(x, lib, snapshotid, quiet=FALSE){
+windows_download <- function(x, lib, snapshotid, quiet=FALSE){
   pkg <- strsplit(x, "/")[[1]]
   url <- sprintf("%s/snapshots/src/%s/%s", mran_server_url(), snapshotid, x)
   destfile <- file.path(lib, 'src/contrib', pkg[[2]])
@@ -131,14 +134,14 @@ sort_df <- function (data, vars = names(data)){
   data[do.call("order", data[, vars, drop = FALSE]), , drop = FALSE]
 }
 
-getsnapshotid <- function(date, forcelast=FALSE){
+getSnapshotId <- function(date, forceLast=FALSE){
   # get available snapshots
   availsnaps <- suppressMessages(mran_snaps())
 
   if(is.null(date)) date <- Sys.Date()
   snapshots <- grep(date, availsnaps, value = TRUE)
   if(length(snapshots) > 1){
-    if(!forcelast){
+    if(!forceLast){
       print(data.frame(snapshots))
       message("\nMore than one snapshot matching your date found \n",
               "Enter rownumber of snapshot (other inputs will return 'NA'):\n")

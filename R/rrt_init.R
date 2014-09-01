@@ -95,7 +95,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # get packages in a private location for this project
 #   mssg(verbose, "Getting new packages...")
-  set_snapshot_date(repo, snapdate, autosnap)
+  set_snapshot_date(repo, snapdate=snapdate, autosnap=autosnap)
 
   # Write new .Rprofile file
   if(is.null(rprofile)){
@@ -192,16 +192,16 @@ get_snapshot_date <- function(repository){
 set_snapshot_date <- function(repo, snapdate, autosnap){
   if(is.null(snapdate)){
     tt <- get_snapshot_date(repository=repo)
-    if(!is.null(tt)){ snapshotid <- tt } else {
+    if(!is.null(tt)){ snapshotId <- tt } else {
       if(autosnap){
         availsnaps <- suppressMessages(mran_snaps())
-        snapshotid <- availsnaps[length(availsnaps)]
+        snapshotId <- availsnaps[length(availsnaps)]
       } else { stop("You must provide a date or set autosnap=TRUE") }
     }
   } else {
     # as of 2014-07-11, we're moving to one snapshot per day, so forcing to last
     # snapshot of any day if there are more than 1
-    snapshotid <- getsnapshotid(snapdate, forcelast = TRUE)
+    snapshotId <- getSnapshotId(snapdate, forceLast = TRUE)
   }
-  options(RRT_snapshotID = snapshotid)
+  options(RRT_snapshotID = snapshotId)
 }

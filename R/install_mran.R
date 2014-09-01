@@ -21,10 +21,7 @@
 #' @return Installs a package, or throws warnings/errors on failures
 #' @family mran
 #'
-#' @examples \dontrun{
-#' install_mran(pkg="plyr", date="2014-08-01", lib="~/mran_snaps/")
-#' install_mran(pkg="calmate", date="2014-08-01", lib="~/mran_snaps/")
-#' }
+#' @example \inst\examples\example_install_mran.R 
 install_mran <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quiet=FALSE, ..., dependencies = TRUE)
 {
   download_pkgs_mran(date=date, pkgs=pkg, outdir=lib, quiet=quiet)
@@ -57,7 +54,13 @@ install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quie
 }
 
 
-#' Function copied from devtools:::pkg_deps
+#' Determine packages dependencies.
+#'  
+#' @keywords Internal
+#' @param pkg package description, can be path or package name. See \code{\link[devtools]{as.package}} for more information
+#' @param dependencies logical indicating to also install uninstalled packages which this \code{pkg} depends on/links to/suggests. See argument \code{dependencies} of \code{\link[utils]{install.packages}}.
+#' @note This function copied from devtools:::pkg_deps
+#' 
 pkg_deps <- function (pkg = ".", dependencies = NA){
   pkg <- as.package(pkg)
   deps <- if (identical(dependencies, NA)) {
