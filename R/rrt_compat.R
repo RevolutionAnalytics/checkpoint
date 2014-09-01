@@ -8,7 +8,7 @@
 #'
 #' @details 
 #' Make sure to run \code{devtools::has_devel()} before running this function to make sure you 
-#' have the reuquired setup to run this function.
+#' have the required setup to run this function.
 #' 
 #' You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
 #' function in your repository.
@@ -64,18 +64,18 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   }
 
   # check for rrt directory in the repo
-  lib <- check_rrt_dir(verbose, repo)
+  lib <- rrtDirExists(verbose, repo)
   
   # Clean out any files for previous checks
-  clean_previous(repo)
+  cleanPrevious(repo)
   
   # write check file
   compatfile <- file.path(repo, "rrt/rrt_check.txt")
   cat("", file = compatfile)
 
   # get pkgs list in the rrt repo
-  pkgs <- getpkgslist(repo)
-  pkgnames <- getpkgnames(pkgs)
+  pkgs <- getPkgsList(repo)
+  pkgnames <- getPkgNames(pkgs)
   
   # separate pkgs by source
   cranpkgs <- pkgnames[ is_cran_pkg(pkgnames) ]
@@ -84,7 +84,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # check: R CMD CHECK via devtools::check
   if("check" %in% what){
-    checksres <- lapply(pkgs, checkrepo, repo=repo, verbose=verbose)
+    checksres <- lapply(pkgs, checkRepo, repo=repo, verbose=verbose)
     names(checksres) <- pkgnames
     check <- data.frame(pkg=NA, check_result=NA)
     for(i in seq_along(checksres)){
@@ -95,7 +95,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # run tests
   if("tests" %in% what){
-    testrepo(pkgs, repo=repo, verbose=verbose)
+    testRepo(pkgs, repo=repo, verbose=verbose)
     tfiles <- list.files(file.path(repo, "rrt", "tests"), full.names = TRUE)
     cat(tfiles, file = compatfile, sep = "\n", append = TRUE)
     tdf <- data.frame(pkg=pkgnames, testfile=tfiles, stringsAsFactors = FALSE)
@@ -103,7 +103,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
 
   # run examples
   if("examples" %in% what){
-    runegs(pkgs, repo=repo, verbose=verbose)
+    runExamples(pkgs, repo=repo, verbose=verbose)
     egfiles <- list.files(file.path(repo, "rrt", "examples"), full.names = TRUE)
     cat(egfiles, file = compatfile, sep = "\n", append = TRUE)
     egsdf <- data.frame(pkg=pkgnames, examplesfile=egfiles, stringsAsFactors = FALSE)
@@ -120,7 +120,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
       names(update)[2] <- 'pkg'
     } else { update <- data.frame(repo='CRAN', pkg=pkgnames, update=NA, stringsAsFactors = FALSE) }
     # bioconductor updates
-    biocup <- biocupdates(lib, bioc_pkgs = biocpkgs)
+    biocup <- biocUpdates(lib, bioc_pkgs = biocpkgs)
     # github updates
     ### FIXME - for now any github packages are not checked
     # combine updates
@@ -136,7 +136,7 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   return( df )
 }
 
-check_rrt_dir <- function(verbose, repo){
+rrtDirExists <- function(verbose, repo){
   mssg(verbose, "Checking to make sure rrt directory exists inside your repository...")
   lib <- file.path(repo, "rrt", "lib", R.version$platform, getRversion())
   present <- list.dirs(lib)
@@ -146,8 +146,8 @@ check_rrt_dir <- function(verbose, repo){
   return( lib )
 }
 
-getpkgslist <- function(repo){
-  pkgs_used <- rrt_deps(repo)
+getPkgsList <- function(repo){
+  pkgs_used <- rrt_packages(repo)
   tocheckpath <- file.path(repo, "rrt", "lib", R.version$platform, getRversion(), "src/contrib")
   pkgs <- list.files(tocheckpath, full.names = TRUE, recursive = FALSE)
   vapply(pkgs_used, function(z){
@@ -162,12 +162,12 @@ getpkgslist <- function(repo){
   }, "", USE.NAMES = FALSE)
 }
 
-getpkgnames <- function(zzz){
+getPkgNames <- function(zzz){
   sapply(zzz, function(x)
     strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_|\\.")[[1]][[1]], USE.NAMES = FALSE)
 }
 
-checkrepo <- function(x, repo, verbose){
+checkRepo <- function(x, repo, verbose){
   pkgname <- strsplit(strsplit(x, "/")[[1]][ length(strsplit(x, "/")[[1]]) ], "_|\\.")[[1]][[1]]
   tmpdir <- tempdir()
   untar(x, exdir = tmpdir)
@@ -186,7 +186,7 @@ checkrepo <- function(x, repo, verbose){
     if(out) "passed" else "failed"
 }
 
-testrepo <- function(x, repo, verbose){
+testRepo <- function(x, repo, verbose){
   tmpdir <- file.path(repo, "rrt", "tests", "tmp")# create temporary directory
   suppressWarnings(dir.create(tmpdir, recursive = TRUE))
   testit <- function(y){
@@ -201,7 +201,7 @@ testrepo <- function(x, repo, verbose){
   unlink(tmpdir, recursive = TRUE, force = TRUE)# cleanup temp dir
 }
 
-runegs <- function(x, repo, verbose){
+runExamples <- function(x, repo, verbose){
   tmpdir <- file.path(repo, "rrt", "examples", "tmp")# create temporary directory
   suppressWarnings(dir.create(tmpdir, recursive = TRUE))
   runeg <- function(y){
@@ -217,7 +217,7 @@ runegs <- function(x, repo, verbose){
 }
 
 ### bioc updates
-biocupdates <- function(lib, bioc_pkgs){
+biocUpdates <- function(lib, bioc_pkgs){
   if(!length(bioc_pkgs) == 0){
     type <- getOption('pkgType')
     repos <- biocinstallRepos()
@@ -235,7 +235,7 @@ biocupdates <- function(lib, bioc_pkgs){
 
 # Clean out previous check files to keep things clean. 
 # In the future, could just update files.
-clean_previous <- function(repo){
+cleanPrevious <- function(repo){
   unlink(file.path(repo, 'rrt', 'tests'), recursive = TRUE)
   unlink(file.path(repo, 'rrt', 'examples'), recursive = TRUE)
   unlink(file.path(repo, 'rrt', 'check'), recursive = TRUE)
