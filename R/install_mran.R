@@ -33,6 +33,8 @@ install_mran <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quiet=FALSE
   sapply(files, install_mran_single, ..., lib=lib, destdir=destdir, dependencies=dependencies, quiet=quiet)
 }
 
+
+
 install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quiet=FALSE, ..., dependencies = TRUE){
   path <- file.path(lib, pkg)
   pkgname <- strsplit(strsplit(pkg, "/")[[1]][ length(strsplit(pkg, "/")[[1]]) ], "_")[[1]][[1]]
@@ -54,6 +56,8 @@ install_mran_single <- function(pkg, date=NULL, lib = NULL, destdir = NULL, quie
                    lib=lib, dependencies=FALSE, repos=NULL, type = "source", quiet=quiet, ...)
 }
 
+
+#' Function copied from devtools:::pkg_deps
 pkg_deps <- function (pkg = ".", dependencies = NA){
   pkg <- as.package(pkg)
   deps <- if (identical(dependencies, NA)) {
@@ -67,6 +71,8 @@ pkg_deps <- function (pkg = ".", dependencies = NA){
   parse_deps(paste(deps, collapse = ","))
 }
 
+
+
 download_deps <- function (pkg = NULL, info, lib, dependencies = NA, quiet=FALSE)
 {
   pkg <- as.package(pkg)
@@ -78,6 +84,8 @@ download_deps <- function (pkg = NULL, info, lib, dependencies = NA, quiet=FALSE
   download_pkgs_mran(date=date, pkgs=deps, outdir=lib, quiet=quiet)
   invisible(deps)
 }
+
+
 
 needs_install <- function(pkg, compare, version, lib) {
   if (length(find.package(pkg, lib.loc=lib, quiet = TRUE)) == 0) return(TRUE)
