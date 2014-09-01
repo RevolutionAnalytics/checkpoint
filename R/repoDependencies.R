@@ -1,9 +1,6 @@
 #' Get repository dependencies
 #'
-#' This function first determines packages used in the repo, then recursively gets dependencies
-#' of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}).
-#' Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE:
-#' Enhances not working right now.
+#' This function first determines packages used in the repo, then recursively gets dependencies of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}).  Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE: Enhances not working right now.
 #'
 #' @import yaml httr
 #' @export
@@ -18,21 +15,21 @@
 #' @keywords internal  
 #' @return A named list of packages, named by the package that requires said dependencies
 #' @examples \dontrun{
-#' repodeps(repo="~/newrepo")
-#' repodeps(repo="~/newrepo", simplify=TRUE)
+#' repoDependencies(repo="~/newrepo")
+#' repoDependencies(repo="~/newrepo", simplify=TRUE)
 #'
 #' # defaults to working directory
 #' setwd("~/newrepo")
-#' repodeps()
+#' repoDependencies()
 #'
 #' # Get Suggests too, not retrieved by default
-#' repodeps(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
+#' repoDependencies(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
 #' }
 
-repodeps <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ...)
+repoDependencies <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ...)
 {
   # Get packages used in the repository
-  pkgs_used <- rrt_deps(repo)
+  pkgs_used <- rrt_packages(repo)
   # remove RRT, manipulate, rstudio, and packrat
   pkgs_used <- pkgs_used[!pkgs_used %in% c('RRT','manipulate','packrat','rstudio')]
   
