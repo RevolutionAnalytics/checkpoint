@@ -25,6 +25,7 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=TRUE, v
   
   # check for rrt directory in the repo, and stop if it doesn't exist
   libPath <- rrtPath(repo, "lib")
+  srcPath <- rrtPath(repo, type = "src")
   createRepoFolders(repo)
   
   # get packages in a private location for this project
@@ -43,7 +44,7 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=TRUE, v
   writeManifest(repository = repo, libPath = libPath, packs = pkgs, snapshot = getOption('RRT_snapshotID'), repoid)
 
   # write package versions to manifest file
-  write_pkg_versions(libPath, repo)
+  write_pkg_versions(repo, srcPath)
 
   # Write repo log file
   rrt_repos_write(repo, repoid)

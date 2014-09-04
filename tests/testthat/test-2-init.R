@@ -29,6 +29,8 @@ test_that("init works as expected", {
   
   
   rrt_init(rrt_path, verbose = FALSE, autosnap = TRUE)
+  dir(rrt_path)
+  expect_true(file.exists(rrtPath(rrt_path, "manifest")))
   getSnapshotFromManifest(repo=rrt_path)
   
   rrt_init(rrt_path, snapdate="2014-08-01", verbose = FALSE, autosnap = TRUE)

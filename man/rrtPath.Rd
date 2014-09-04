@@ -3,7 +3,7 @@
 \alias{rrtPath}
 \title{Returns folder paths for rrt library and src for repo.}
 \usage{
-rrtPath(repo, type = c("lib", "src", "manifest"))
+rrtPath(repo, type = c("lib", "src", "manifest", "rootdir", "rootfile"))
 }
 \arguments{
 \item{repo}{Repo path}

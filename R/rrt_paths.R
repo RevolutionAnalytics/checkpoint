@@ -10,18 +10,32 @@ repo.exists <- function(repo){
 #' @param type Either "lib" or "src"
 #' @export
 #' @family Repo path
-rrtPath <- function(repo, type = c("lib", "src", "manifest")){
+rrtPath <- function(repo, type = c("lib", "src", "manifest", "rootdir", "rootfile")){
   type <- match.arg(type)
-  libPath <- normalizePath(
-    file.path(repo, "rrt", "lib", R.version$platform, base::getRversion()), 
+  if(!missing("repo")){
+    libPath <- normalizePath(
+      file.path(repo, "rrt", "lib", R.version$platform, base::getRversion()), 
+      mustWork = FALSE)
+    srcPath <- normalizePath(
+      file.path(libPath, "src/contrib"),
+      mustWork = FALSE)
+    manifest <- normalizePath(
+      file.path(repo, "rrt", "rrt_manifest.yml"), 
+      mustWork = FALSE)
+  }
+  rootdir <- normalizePath(
+    file.path("~", ".rrt"), 
     mustWork = FALSE)
-  srcPath <- normalizePath(
-    file.path(libPath, "src/contrib"),
+  rootfile <- normalizePath(
+    file.path(rootdir, "rrt.txt"), 
     mustWork = FALSE)
-  manifest <- normalizePath(
-    file.path(repo, "rrt", "rrt_manifest.yml"), 
-    mustWork = FALSE)
-  switch(type, lib = libPath, src = srcPath, manifest = manifest)
+  switch(type, 
+         lib      = libPath, 
+         src      = srcPath, 
+         manifest = manifest,
+         rootdir  = rootdir,
+         rootfile = rootfile
+         )
 }
 
 

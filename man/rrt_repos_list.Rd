@@ -28,7 +28,11 @@ This function is used internally to write a .rrt file in your home directory, an
 Print rrtrepos class
 }
 \details{
-If for some reason your .rrt file gets deleted, you can also use this function to rewrite that file and its contents. Ideally you could make a vector or list of all your RRT repositories and pass those in an apply like functon to this function, like \code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
+If for some reason your .rrt file gets deleted, you can also use this function to rewrite that file and its contents. Ideally you could make a vector or list of all your RRT repositories and pass those in an \code{apply} like function to this function, e.g:
+
+\code{lapply(repos, rrt_repos_write)}
+
+where \code{repos} is a list of path names to RRT repos.
 }
 \examples{
 \dontrun{

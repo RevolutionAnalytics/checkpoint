@@ -15,7 +15,7 @@
 
 rrt_browse <- function(repoid=NULL, output=NULL, browse=TRUE)
 {
-  wwwdir <- file.path(Sys.getenv("HOME"), ".rrt", "www")
+  wwwdir <- file.path(rrtPath(type="rootdir"), "www")
   if(!file.exists(wwwdir)) dir.create(wwwdir, recursive = TRUE)
 
   if(is.null(output))

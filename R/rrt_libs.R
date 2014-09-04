@@ -11,28 +11,30 @@
 #' rrt_repos_write(repo="~/testrepo/")
 #' }
 rrt_repos_write <- function(repo, repoid=NULL){
-  rrtdir <- file.path(Sys.getenv("HOME"), ".rrt")
-  if(!file.exists(rrtdir)) dir.create(normalizePath(rrtdir, mustWork = FALSE), recursive = TRUE)
+  rrtdir <- rrtPath(repo, "rootdir")
+  if(!file.exists(rrtdir)) dir.create(rrtdir, recursive = TRUE)
   
-  gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
-  append <- if(file.exists(gg)) TRUE else FALSE
+  rrtTextFile <- file.path(rrtdir, "rrt.txt")
+  append <- if(file.exists(rrtTextFile)) TRUE else FALSE
   out <- tryCatch(rrt_repos_list(), error=function(e) e)
   if("error" %in% class(out)){
       infofile <- rrtPath(repo, "manifest")
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
-      cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
+      cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), 
+          file = rrtTextFile, sep = "\n", append = append)
   } else {
-    existingrepoids <- names(out)
+    existingRepoIds <- names(out)
     if(is.null(repoid)){
       linez <- readLines(rrtPath(repo, "manifest"))
       repoid <- strsplit(linez[grep("RepoID", linez)], ":\\s")[[1]][[2]]
     }
-    if(repoid %in% existingrepoids){ NULL } else {
+    if(repoid %in% existingRepoIds){ NULL } else {
       infofile <- path.expand(rrtPath(repo, "manifest"))
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
-      cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
+      cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), 
+          file = rrtTextFile, sep = "\n", append = append)
     }
   }
 }
@@ -70,20 +72,27 @@ rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
       dfmiss <- data.frame(do.call(rbind, idmisstodf), stringsAsFactors = FALSE)
       names(dfmiss) <- c('path','repoid')
       # remove repos - wipe current rrt.txt file first
-      gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
+      gg <- rrtPath(repo, "rootfile")
       file.remove(gg)
-      invisible(sapply(vapply(notmisspaths, function(x) x[[1]], character(1)), rrt_repos_write))
+      invisible(sapply(vapply(notmisspaths, 
+                              function(x) x[[1]], character(1)), rrt_repos_write))
       mssg(verbose, "Removed the following from the global list of RRT repos\n:")
       print(dfmiss)
     } else { mssg(verbose, "No missing RRT repos to remove.") }
   }
 }
 
+
+
 #' Read rrt libraries from user's global list of RRT repos.
 #'
 #' This function is used internally to write a .rrt file in your home directory, and within that file writes a list of all RRT repositories.
 #'
-#' If for some reason your .rrt file gets deleted, you can also use this function to rewrite that file and its contents. Ideally you could make a vector or list of all your RRT repositories and pass those in an apply like functon to this function, like \code{lapply(repos, rrt_repos_write)}, where \code{repos} is a list of path names to RRT repos.
+#' If for some reason your .rrt file gets deleted, you can also use this function to rewrite that file and its contents. Ideally you could make a vector or list of all your RRT repositories and pass those in an \code{apply} like function to this function, e.g:
+#' 
+#'  \code{lapply(repos, rrt_repos_write)}
+#'  
+#'  where \code{repos} is a list of path names to RRT repos.
 #'
 #' @export
 #' @family rrt
@@ -92,7 +101,7 @@ rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
 #' names(repos)
 #' }
 rrt_repos_list <- function(repoid=NULL){
-  gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
+  gg <- rrtPath(type="rootfile")
   if(file.exists(gg)){
     hh <- readLines(gg)
     start <- grep("repo:", hh)
@@ -117,9 +126,11 @@ rrt_repos_list <- function(repoid=NULL){
         tmp2$repo_root <- sub("/rrt/rrt_manifest.yml", "", x[['repo']])
         c(x['repo'], tmp2, missing=FALSE)
       } else {
-        addfields <- c(RepositoryName = NA, Authors = NA, License = NA, Description = NA, 
-                       Remote = NA, InstalledWith = NA, InstalledFrom = NA, RRT_version = NA, 
-                       R_version = NA, DateCreated = NA, PkgsInstalledAt = NA, x['RepoID'], 
+        addfields <- c(RepositoryName = NA, Authors = NA, License = NA, 
+                       Description = NA, Remote = NA, InstalledWith = NA, 
+                       InstalledFrom = NA, RRT_version = NA, 
+                       R_version = NA, DateCreated = NA, PkgsInstalledAt = NA, 
+                       x['RepoID'], 
                        Packages = NA, SystemRequirements = NA, repo_root = NA)
         c(x['repo'], addfields, missing=TRUE)
       }
@@ -127,7 +138,12 @@ rrt_repos_list <- function(repoid=NULL){
 
     class(out) <- 'rrtrepos'
     if(is.null(repoid)) out else out[[repoid]]
-  } else { stop("You have no rrt repos or your .rrt file does not exist.\nIf the latter, run rrt_repos_write() with paths for each RRT repository.") }
+  } else { 
+    msg <- paste("You have no rrt repos or your .rrt file does not exist.", 
+                 "If the latter, run rrt_repos_write() with paths for each RRT repository.",
+                 sep="\n")
+    stop(msg) 
+  }
 }
 
 
@@ -180,7 +196,7 @@ wrap <- function (..., indent = 0, width=getOption("width")) {
 }
 
 rrt_repos_check <- function(){
-  gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")
+  gg <- rrtPath(type="rootfile")
   if(!file.exists(gg)) rrt_repos_write() else TRUE
   invisible(gg)
 }

@@ -59,6 +59,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   if(!file.exists(repo)) stop ("repo folder does not exist")
   createRepoFolders(repo)
   libPath <- rrtPath(repo, type = "lib")
+  srcPath <- rrtPath(repo, type = "src")
   
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
@@ -87,7 +88,8 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   if(is.null(rprofile)){
     rprofilepath <- file.path(repo, ".Rprofile")
     mirror <- 'options(repos = c(CRAN = "http://cran.revolutionanalytics.com/"))'
-    libpaths <- sprintf(".libPaths(c('%s'))", paste0(c(libPath, .libPaths()), collapse = "','"))
+    libpaths <- sprintf(".libPaths(c('%s'))", 
+                        paste0(c(libPath, .libPaths()), collapse = "','"))
     
     msg <- paste0(
       "cat('",
@@ -115,7 +117,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
                 snapshot = getOption('RRT_snapshotID'), verbose=verbose)
 
   # write package versions to manifest file
-  write_pkg_versions(libPath, repo)
+  write_pkg_versions(repo, srcPath)
   
   # Write repo log file
   mssg(verbose, "Writing repository log file...")
@@ -133,10 +135,10 @@ rrt_readline <- function(default=""){
 }
 
 
-write_pkg_versions <- function(libPath, repo){
-  instPkgs <- list.files(normalizePath(libPath), full.names = TRUE)
+write_pkg_versions <- function(repo, srcPath=rrtPath(repo, "src")){
+  instPkgs <- list.files(srcPath, full.names = TRUE)
   if(!length(instPkgs) == 0){
-    names(instPkgs) <- list.files(normalizePath(libPath))
+    names(instPkgs) <- list.files(srcPath)
     instPkgs <- setdiff(instPkgs, "src")
     instPkgs_ver <- lapply(instPkgs, function(x) as.package(x)$version)
     out <- sprintf("Packages:\n%s", catPkgVersion(instPkgs_ver) )
@@ -166,12 +168,21 @@ writeUserManifest <- function(repo, verbose){
   }
 }
 
-getSnapshotFromManifest <- function(repo){
-  manfile <- rrtPath(repo, "manifest")
-  if(file.exists(manfile)){
-    manfile_contents <- yaml.load_file(manfile)
-    manfile_contents$RRT_snapshotID
+
+#' @importFrom yaml yaml.load_file
+readManifestFile <- function(repo, filename=rrtPath(repo, "manifest")){
+  if(!file.exists(filename)) {
+    warning("Manifest file not found")
+    list()
+  } else {
+    yaml.load_file(filename)
   }
+}
+
+
+getSnapshotFromManifest <- function(repo){
+    x <- readManifestFile(repo)
+    x$RRT_snapshotID
 }
 
 setSnapshotInOptions <- function(repo, snapdate, autosnap=TRUE){
