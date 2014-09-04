@@ -35,23 +35,23 @@ If for some reason your .rrt file gets deleted, you can also use this function t
 rrt_repos_write(repo="~/testrepo/")
 }
 \dontrun{
-(repos <- rrt_repos_list())
+repos <- rrt_repos_list()
 names(repos)
-rrt_repos_list(names(repos)[1])
-rrt_repos_list(names(repos)[2])
 }
 }
 \seealso{
 Other rrt: \code{\link{checkpoint}};
   \code{\link{rrt_browse}}; \code{\link{rrt_compat}};
   \code{\link{rrt_init}}; \code{\link{rrt_installed_pkgs}};
-  \code{\link{rrt_packages}}; \code{\link{rrt_refresh}};
-  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
+  \code{\link{rrt_refresh}};
+  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}};
+  \code{\link{scanRepoPackages}}
 
 Other rrt: \code{\link{checkpoint}};
   \code{\link{rrt_browse}}; \code{\link{rrt_compat}};
   \code{\link{rrt_init}}; \code{\link{rrt_installed_pkgs}};
-  \code{\link{rrt_packages}}; \code{\link{rrt_refresh}};
-  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
+  \code{\link{rrt_refresh}};
+  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}};
+  \code{\link{scanRepoPackages}}
 }
 

@@ -3,28 +3,28 @@
 \alias{writeManifest}
 \title{Function to write manifest file}
 \usage{
-writeManifest(repository, librar, packs, repoid, reponame = "", author = "",
-  license = "", description = "", remote = "", snapshot = NULL,
-  verbose = FALSE)
+writeManifest(repo, libPath = rrtPath(repo, "lib"), packs, repoid,
+  reponame = "", author = "", license = "", description = "",
+  remote = "", snapshot = NULL, verbose = FALSE)
 }
 \arguments{
-\item{repository}{Repository root path}
+\item{repo}{repo root path}
 
-\item{librar}{Library to install packages in}
+\item{libPath}{libPathy to install packages in}
 
-\item{packs}{Packages used in the repository}
+\item{packs}{Packages used in the repo}
 
 \item{repoid}{Respository ID}
 
-\item{reponame}{Repository name}
+\item{reponame}{repo name}
 
 \item{author}{Authors, comma separated}
 
 \item{license}{License, e.g., MIT}
 
-\item{description}{Character description of repository}
+\item{description}{Character description of repo}
 
-\item{remote}{Remote git/svn/mercurial repository}
+\item{remote}{Remote git/svn/mercurial repo}
 }
 \value{
 Writes a RRT manifest file ("rrt_manifest.yml") to disk

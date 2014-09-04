@@ -4,7 +4,7 @@
 \title{Refresh package - look for any new packages used and install those in rrt library.}
 \usage{
 rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
-  autosnap = FALSE, verbose = TRUE, suggests = FALSE, quiet = FALSE)
+  autosnap = TRUE, verbose = TRUE, suggests = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
@@ -25,17 +25,6 @@ rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
 \description{
 Refresh package - look for any new packages used and install those in rrt library.
 }
-\examples{
-\dontrun{
-rrt_init(repo="~/testrepo")
-rrt_refresh(repo="~/testrepo")
-rrt_refresh(repo="~/testrepo", mran=TRUE)
-rrt_install(repo="~/testrepo")
-
-# Optionally, do an interactive repo intitialization
-rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
-}
-}
 \seealso{
 \code{\link{rrt_init}}, \code{\link{rrt_install}}
 
@@ -45,7 +34,7 @@ Other rrt: \code{\link{checkpoint}};
   \code{\link{rrt_repos_write}}; \code{\link{rrt_browse}};
   \code{\link{rrt_compat}}; \code{\link{rrt_init}};
   \code{\link{rrt_installed_pkgs}};
-  \code{\link{rrt_packages}};
-  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
+  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}};
+  \code{\link{scanRepoPackages}}
 }
 

@@ -3,7 +3,8 @@
 \alias{install_mran}
 \title{Install packages from MRAN}
 \usage{
-install_mran(pkg, date = NULL, lib = NULL, destdir = NULL,
+install_mran(pkg, repo, date = NULL, libPath = rrtPath(repo, "lib"),
+  srcPath = rrtPath(repo, "src"), snapshot = getSnapshotId(date),
   quiet = FALSE, ..., dependencies = TRUE)
 }
 \arguments{
@@ -11,9 +12,9 @@ install_mran(pkg, date = NULL, lib = NULL, destdir = NULL,
 
 \item{date}{MRAN snapshot date}
 
-\item{lib}{Library to install packages in}
+\item{libPath}{Library to install packages in}
 
-\item{destdir}{Destination directory to install packages to}
+\item{srcPath}{Destination directory to install packages to}
 
 \item{...}{Further args passed on to \code{\link[utils]{install.packages}}}
 
@@ -34,13 +35,10 @@ Steps (for each pkg):
 }
 \examples{
 \dontrun{
-  libPath <- tempdir()
-  instPath <- file.path(libPath, "src/contrib")
-  if(file.exists(instPath)) unlink(instPath, recursive = TRUE)
-  if(!file.exists(instPath)) dir.create(instPath)
-  dir(instPath)
+  repo_path <- tempdir()
+  createRepoFolders(repo_path)
   
-  install_mran(pkg="plyr", date="2014-08-23", lib=instPath)
+  install_mran(repo=repo_path, pkg="plyr", date="2014-08-01")
   
   dir(instPath)
   unlink(instPath, recursive = TRUE)
@@ -48,14 +46,10 @@ Steps (for each pkg):
 
 
 
-getSnapshotId(date='2014-08-04')
-download_pkgs_mran(date='2014-08-04', pkgs=c("plyr","ggplot2"), lib=libPath)
-dir(instPath)
 }
 \seealso{
-Other mran: \code{\link{mran_diffs}};
-  \code{\link{mran_pkg_metadata}};
-  \code{\link{mran_pkg_versions}}; \code{\link{mran_set}};
-  \code{\link{mran_snaps}}
+Other mran: \code{\link{mranPkgMetadata}};
+  \code{\link{mranPkgVersions}};
+  \code{\link{mranSnapshots}}; \code{\link{mran_diffs}}
 }
 

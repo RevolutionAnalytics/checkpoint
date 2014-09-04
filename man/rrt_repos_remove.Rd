@@ -16,11 +16,6 @@ Prints message saying what has been done.
 \description{
 Remove any missing RRT repos from the user's global list of RRT repos
 }
-\examples{
-\dontrun{
-rrt_repos_remove()
-}
-}
 \seealso{
 Other rrt: \code{\link{checkpoint}};
   \code{\link{print.rrtrepos}},
@@ -28,7 +23,7 @@ Other rrt: \code{\link{checkpoint}};
   \code{\link{rrt_repos_write}}; \code{\link{rrt_browse}};
   \code{\link{rrt_compat}}; \code{\link{rrt_init}};
   \code{\link{rrt_installed_pkgs}};
-  \code{\link{rrt_packages}}; \code{\link{rrt_refresh}};
-  \code{\link{rrt_sweep}}
+  \code{\link{rrt_refresh}}; \code{\link{rrt_sweep}};
+  \code{\link{scanRepoPackages}}
 }
 

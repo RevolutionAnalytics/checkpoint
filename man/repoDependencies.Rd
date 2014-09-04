@@ -3,8 +3,8 @@
 \alias{repoDependencies}
 \title{Get repository dependencies}
 \usage{
-repoDependencies(repo = getwd(), simplify = FALSE, base = TRUE,
-  suggests = FALSE, ...)
+repoDependencies(pkgs, simplify = FALSE, base = TRUE, suggests = FALSE,
+  ...)
 }
 \arguments{
 \item{repo}{(character) A path to a RRT repository; defaults to current working directory.}
@@ -23,19 +23,6 @@ A named list of packages, named by the package that requires said dependencies
 }
 \description{
 This function first determines packages used in the repo, then recursively gets dependencies of the packages you use (for Depends, Imports and LinkLibrary only, see \code{?pkgDep}).  Optionally, you can get dependencies for Suggests and Enhances (non-recursively). NOTE: Enhances not working right now.
-}
-\examples{
-\dontrun{
-repoDependencies(repo="~/newrepo")
-repoDependencies(repo="~/newrepo", simplify=TRUE)
-
-# defaults to working directory
-setwd("~/newrepo")
-repoDependencies()
-
-# Get Suggests too, not retrieved by default
-repoDependencies(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
-}
 }
 \keyword{internal}
 

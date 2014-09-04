@@ -10,8 +10,7 @@ rrt_init(repo = getwd(), mran = TRUE, snapdate = NULL, autosnap = FALSE,
 \arguments{
 \item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
 
-\item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See
-\url{http://mran.revolutionanalytics.com} for more information.}
+\item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See \url{http://mran.revolutionanalytics.com} for more information.}
 
 \item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
 
@@ -53,7 +52,8 @@ Other rrt: \code{\link{checkpoint}};
   \code{\link{rrt_repos_write}}; \code{\link{rrt_browse}};
   \code{\link{rrt_compat}};
   \code{\link{rrt_installed_pkgs}};
-  \code{\link{rrt_packages}}; \code{\link{rrt_refresh}};
-  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}}
+  \code{\link{rrt_refresh}};
+  \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}};
+  \code{\link{scanRepoPackages}}
 }
 
