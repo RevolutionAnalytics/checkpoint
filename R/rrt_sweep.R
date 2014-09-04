@@ -1,6 +1,5 @@
 #' Clean out installed packages and their sources in your repository
 #'
-#' @import digest
 #' @export
 #' @param repo Repository path, Defaults to the current working directory
 #' @param pkgs A vector of package names
@@ -13,8 +12,8 @@
 
 rrt_sweep <- function(repo=getwd(), pkgs = NULL, verbose=TRUE)
 {
-  ## create repo id using digest
-  repoid <- digest(normalizePath(repo))
+  ## create repo id
+  repoid <- repoDigest(repo)
 
   ## check for repo
   mssg(verbose, "Checking to make sure repository exists...")
@@ -24,14 +23,14 @@ rrt_sweep <- function(repo=getwd(), pkgs = NULL, verbose=TRUE)
 
   # check for rrt directory in the repo
   mssg(verbose, "Checking to make sure rrt directory exists inside your repository...")
-  lib <- rrt_libpath(repo)
+  lib <- rrtPath(repo, "lib")
   present <- list.dirs(lib)
   if(!all(grepl("rrt", present))){
     mssg(verbose, "rrt directory doesn't exist...")
   }
 
   # get pkgs list in the rrt repo
-  pathToRemove <- rrt_libpath(repo)
+  pathToRemove <- rrtPath(repo, "lib")
   dirsToRemove <- list.files(pathToRemove, full.names = TRUE, recursive = FALSE)
   srcToRemove <- grep("src", dirsToRemove, value = TRUE)
   if(is.null(pkgs)){

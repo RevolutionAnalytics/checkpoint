@@ -1,11 +1,9 @@
-#' Detect repository packages
+#' Detect repository packages.
 #'
 #' Detect all packages used in repository. Parses all .R, .Rmd, .Rnw, .Rpres, and other files in the repository directory to determine what packages the repo depends directly.
 #'
 #' Only direct dependencies are detected (i.e. no recursion).
 #'
-#' NOTE: Modified from dependencies.R in the packrat github repo
-#' NOTE: Working on adding support for other file types, including .md
 #'
 #' Packages are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
 #' 
@@ -19,26 +17,25 @@
 #'
 #' @family rrt
 #' 
-#' @example /inst/examples/example_rrt_packages.R
+#' @example /inst/examples/example_scanRepoPackages.R
+#' @note Modified from dependencies.R in the packrat github repo
 
-rrt_packages <- function(repo = NULL, fileext = NULL, verbose = TRUE){
-  if(is.null(repo)) repo <- getwd()
-  repo <- path.expand(repo)
-  as.vector(unique(deps_in_dir(dir = repo)))
-}
-
-# detect all package dependencies for a repo
-deps_in_dir <- function(dir) {
-  dir <- normalizePath(dir, winslash='/')
-  #   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$|\\.txt$|\\.md$"
+scanRepoPackages <- function(repo = getwd(), fileext = NULL, verbose = TRUE){
+  repo <- normalizePath(repo, mustWork=FALSE)
+  
+  # detect all package dependencies for a repo
+  dir <- normalizePath(repo, winslash='/')
   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
-
+  
   ## ignore anything in the rrt directory
   R_files <- grep("^rrt", R_files, invert = TRUE, value = TRUE)
-
-  unlist(unique(sapply(R_files, deps_by_ext, dir=dir)))
+  
+  pkgs <- unlist(unique(sapply(R_files, deps_by_ext, dir=dir)))
+  as.vector(pkgs)
+  
 }
+
 
 
 # ad-hoc dispatch based on the file extension
@@ -51,13 +48,12 @@ deps_by_ext <- function(file, dir) {
          rnw = deps.Rnw(file),
          rpres = deps.Rpres(file),
          txt = deps.txt(file),
-         #           md = deps.md(file),
          stop("Unrecognized file type '", file, "'")
   )
 }
 
+#' @import knitr
 deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
-#   if (require("knitr")) {
     tempfile <- tempfile()
     on.exit(unlink(tempfile))
     tryCatch(knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE), error = function(e) {
@@ -65,10 +61,6 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
       character()
     })
     deps.R(tempfile)
-#   } else {
-#     warning("knitr is required to parse dependencies from .Rmd files, but is not available")
-#     character(0)
-#   }
 }
 
 deps.Rnw <- function(file, verbose=TRUE) {

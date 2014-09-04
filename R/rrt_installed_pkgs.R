@@ -14,7 +14,7 @@
 rrt_installed_pkgs <- function(repo=getwd(), simplify=TRUE)
 {
   if(is_rrt(repo, verbose = FALSE)){
-    lib <- rrt_libpath(repo)
+    lib <- rrtPath(repo, "lib")
     tmp <- installed.packages(lib.loc = lib)
     if(simplify){
       if(!NROW(tmp) == 0){

@@ -14,24 +14,10 @@
 #'
 #' @keywords internal  
 #' @return A named list of packages, named by the package that requires said dependencies
-#' @examples \dontrun{
-#' repoDependencies(repo="~/newrepo")
-#' repoDependencies(repo="~/newrepo", simplify=TRUE)
-#'
-#' # defaults to working directory
-#' setwd("~/newrepo")
-#' repoDependencies()
-#'
-#' # Get Suggests too, not retrieved by default
-#' repoDependencies(repo="~/newrepo", simplify=TRUE, suggests=TRUE)
-#' }
-
-repoDependencies <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=FALSE, ...)
-{
-  # Get packages used in the repository
-  pkgs_used <- rrt_packages(repo)
+#' 
+repoDependencies <- function(pkgs, simplify=FALSE, base=TRUE, suggests=FALSE, ...) {
   # remove RRT, manipulate, rstudio, and packrat
-  pkgs_used <- pkgs_used[!pkgs_used %in% c('RRT','manipulate','packrat','rstudio')]
+  pkgs_used <- setdiff(pkgs, c('RRT','manipulate','packrat','rstudio'))
   
   # Get package dependencies using miniCRAN
   pkg_deps <- lapply(pkgs_used, pkgDep_try, repo=repo, suggests=suggests)
@@ -53,11 +39,12 @@ repoDependencies <- function(repo=getwd(), simplify=FALSE, base=TRUE, suggests=F
     })]
     basePackages <- c('base','compiler','datasets','graphics','grDevices','grid','methods','parallel',
                       'splines','stats','stats4','tcltk','tools','utils')
-    pkg_deps <- pkg_deps[!pkg_deps %in% basePackages]
+    pkg_deps <- setdiff(pkg_deps, basePackages)
   }
   
-  return(pkg_deps)
+  pkg_deps
 }
+
 
 #' @importFrom miniCRAN pkgDep
 pkgDep_try <- function(x, repo=NULL, suggests=FALSE){
@@ -67,8 +54,9 @@ pkgDep_try <- function(x, repo=NULL, suggests=FALSE){
   }
 }
 
+
 pkg_deps_noncran <- function(repo, x){
-  if(is_bioc_pkg(x)){
+  if(is.biocPackage(x)){
     pkgDep(x, repos = c(CRAN=biocinstallRepos(siteRepos=character())[[1]]))
   } else {
     # look for user specified manifest file, and read from there if any
@@ -97,6 +85,7 @@ pkg_deps_noncran <- function(repo, x){
   }
 }
 
+
 #' @importFrom RCurl base64Decode
 get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FALSE){
   #   GET /repos/:owner/:repo/contents/:path
@@ -120,6 +109,7 @@ get_desc_github <- function(userrepo, depends=TRUE, suggests=FALSE, enhances=FAL
     vapply(tmp4, function(x) x[[1]], "")
   } else { "No DESCRIPTION file found" }
 }
+
 
 parse_pkg_ver <- function(input){
   lapply(input, function(v){

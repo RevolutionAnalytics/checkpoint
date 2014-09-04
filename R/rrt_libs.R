@@ -18,18 +18,18 @@ rrt_repos_write <- function(repo, repoid=NULL){
   append <- if(file.exists(gg)) TRUE else FALSE
   out <- tryCatch(rrt_repos_list(), error=function(e) e)
   if("error" %in% class(out)){
-      infofile <- path.expand(file.path(repo, "rrt", "rrt_manifest.yml"))
+      infofile <- rrtPath(repo, "manifest")
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
   } else {
     existingrepoids <- names(out)
     if(is.null(repoid)){
-      linez <- readLines(file.path(repo, "rrt", "rrt_manifest.yml"))
+      linez <- readLines(rrtPath(repo, "manifest"))
       repoid <- strsplit(linez[grep("RepoID", linez)], ":\\s")[[1]][[2]]
     }
     if(repoid %in% existingrepoids){ NULL } else {
-      infofile <- path.expand(file.path(repo, "rrt", "rrt_manifest.yml"))
+      infofile <- path.expand(rrtPath(repo, "manifest"))
       info <- readLines(infofile)
       repoidline <- info[grep("RepoID", info)]
       cat(c("\n", sprintf("repo: %s", infofile), repoidline, "__end__"), file = gg, sep = "\n", append = append)
@@ -48,10 +48,6 @@ rrt_repos_write <- function(repo, repoid=NULL){
 #' @export
 #' @family rrt
 #'
-#' @examples \dontrun{
-#' rrt_repos_remove()
-#' }
-
 rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
 {
   if(is_rrt(repo, verbose)){
@@ -92,10 +88,8 @@ rrt_repos_remove <- function(repo=getwd(), verbose=TRUE)
 #' @export
 #' @family rrt
 #' @examples \dontrun{
-#' (repos <- rrt_repos_list())
+#' repos <- rrt_repos_list()
 #' names(repos)
-#' rrt_repos_list(names(repos)[1])
-#' rrt_repos_list(names(repos)[2])
 #' }
 rrt_repos_list <- function(repoid=NULL){
   gg <- file.path(Sys.getenv("HOME"), ".rrt", "rrt.txt")

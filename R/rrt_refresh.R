@@ -14,44 +14,36 @@
 #' @family rrt
 #' @seealso \code{\link{rrt_init}}, \code{\link{rrt_install}}
 #'
-#' @examples \dontrun{
-#' rrt_init(repo="~/testrepo")
-#' rrt_refresh(repo="~/testrepo")
-#' rrt_refresh(repo="~/testrepo", mran=TRUE)
-#' rrt_install(repo="~/testrepo")
-#' 
-#' # Optionally, do an interactive repo intitialization
-#' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
-#' }
 
-rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE,
+rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=TRUE, verbose=TRUE,
                         suggests=FALSE, quiet=FALSE)
 {
-  repoid <- digest(suppressWarnings(normalizePath(repo)))
+  repoid <- repoDigest(repo)
 
   # check to make sure repo exists
-  check4repo(repo, verbose)
-
+  if(!repo.exists(repo)) create_repo_folder(repo)
+  
   # check for rrt directory in the repo, and stop if it doesn't exist
-  lib <- rrt_libpath(repo)
-  check4rrt(repo, lib, verbose)
-
+  libPath <- rrtPath(repo, "lib")
+  createRepoFolders(repo)
+  
   # get packages in a private location for this project
-  set_snapshot_date(repo, snapdate, autosnap)
+  setSnapshotInOptions(repo=repo, snapdate=snapdate, autosnap=autosnap)
 
   # Write blank user manifest file
-  writeUserManifest(repository = repo, verbose = verbose)
+  writeUserManifest(repo = repo, verbose = verbose)
   
   # download and install packages
-  rrt_install(repo, repoid=repoid, lib=lib, mran=mran, suggests=suggests, verbose=verbose, quiet=quiet)
+  rrt_install(repo, repoid=repoid, libPath=libPath, mran=mran, suggests=suggests, verbose=verbose, quiet=quiet)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository manifest...")
-  pkgs <- repoDependencies(repo, simplify = TRUE, base=FALSE, suggests=suggests)
-  writeManifest(repository = repo, librar = lib, packs = pkgs, snapshot = getOption('RRT_snapshotID'), repoid)
+  pkgs <- scanRepoPackages(repo)
+  pkgs <- repoDependencies(pkgs, simplify = TRUE, base=FALSE, suggests=suggests)
+  writeManifest(repository = repo, libPath = libPath, packs = pkgs, snapshot = getOption('RRT_snapshotID'), repoid)
 
   # write package versions to manifest file
-  write_pkg_versions(lib, repo)
+  write_pkg_versions(libPath, repo)
 
   # Write repo log file
   rrt_repos_write(repo, repoid)

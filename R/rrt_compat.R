@@ -3,7 +3,7 @@
 #' Currently, these checks, tests, etc. are run just on the packages used in your code in the
 #' repository tested - not the dependencies of the packages you use.
 #'
-#' @import testthat devtools digest
+#' @import testthat devtools
 #' @export
 #'
 #' @details 
@@ -54,8 +54,8 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   # set defaults
   checksres <- testsres <- egsres <- oldpkgs <- "passed"
 
-  ## create repo id using digest
-  repoid <- digest(suppressWarnings(normalizePath(repo)))
+  ## create repo id
+  repoid <- repoDigest(repo)
 
   ## check for repo
   mssg(verbose, "Checking to make sure repository exists...")
@@ -78,8 +78,8 @@ rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
   pkgnames <- getPkgNames(pkgs)
   
   # separate pkgs by source
-  cranpkgs <- pkgnames[ is_cran_pkg(pkgnames) ]
-  biocpkgs <- pkgnames[ is_bioc_pkg(pkgnames) ]
+  cranpkgs <- pkgnames[ is.cranPackage(pkgnames) ]
+  biocpkgs <- pkgnames[ is.biocPackage(pkgnames) ]
 #   ghpkgs <- pkgnames[ is_(pkgnames) ]
 
   # check: R CMD CHECK via devtools::check
@@ -147,7 +147,7 @@ rrtDirExists <- function(verbose, repo){
 }
 
 getPkgsList <- function(repo){
-  pkgs_used <- rrt_packages(repo)
+  pkgs_used <- scanRepoPackages(repo)
   tocheckpath <- file.path(repo, "rrt", "lib", R.version$platform, getRversion(), "src/contrib")
   pkgs <- list.files(tocheckpath, full.names = TRUE, recursive = FALSE)
   vapply(pkgs_used, function(z){

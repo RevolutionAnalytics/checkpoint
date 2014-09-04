@@ -1,5 +1,5 @@
 # get mran_server url, if none found, defaults to global url: http://mran.revolutionanalytics.com
-mran_server_url <- function(){
+mranServerUrl <- function(){
   x <- Sys.getenv('MRAN_SERVER')
   if(identical(x, "")) 'http://mran.revolutionanalytics.com' else x
 }
@@ -12,13 +12,13 @@ mran_server_url <- function(){
 #' @param date (character) A date, in the format YYY-MM-DD
 #' @examples \dontrun{
 #' # List all available snapshots
-#' mran_snaps()
+#' mranSnapshots()
 #' # Get code for a single snapshot
-#' mran_snaps(date='2014-08-04')
+#' mranSnapshots(date='2014-08-04')
 #' }
 
-mran_snaps <- function(date=NULL){
-  url <- file.path(mran_server_url(), 'snapshots/src')
+mranSnapshots <- function(date=NULL, message=TRUE){
+  url <- file.path(mranServerUrl(), 'snapshots/src')
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
@@ -26,7 +26,7 @@ mran_snaps <- function(date=NULL){
   snaps <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
   snaps <- gsub("/", "", snaps)
   if(!is.null(date)) snaps <- snaps[grep(date, snaps)]
-  message("Dates and times are in GMT")
+  if(message) message("Dates and times are in GMT")
   return( snaps )
 }
 
@@ -53,7 +53,7 @@ mran_snaps <- function(date=NULL){
 
 mran_diffs <- function(diff=NULL, which='src', os='macosx')
 {
-  url <- mran_server_url()
+  url <- mranServerUrl()
   which <- match.arg(which, c('src','bin'))
   url <- if(which=='src') file.path(url, sprintf('diffs/%s/2014', which)) else file.path(url, sprintf('diffs/%s/%s/2014', which, os))
   if(!is.null(diff)){
@@ -63,9 +63,9 @@ mran_diffs <- function(diff=NULL, which='src', os='macosx')
   if(res$status_code > 202)
     stop(sprintf("%s - You don't have an internet connection, or other error...", res$status_code))
   text <- content(res, as = "text")
-
+  
   message("Dates and times are in GMT")
-
+  
   if(is.null(diff)){
     diffs <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
     diffs <- gsub("RRT_|.txt", "", diffs)
@@ -76,25 +76,24 @@ mran_diffs <- function(diff=NULL, which='src', os='macosx')
   }
 }
 
-#' Get available package level metadata from MRAN
+#' Get available package level metadata from MRAN.
 #'
 #' @import httr RJSONIO
 #' @export
 #' @param package Required. A package name
-#' @param snapshot An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most 
-#' recent snapshot.
+#' @param snapshot An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most recent snapshot.
 #' @family mran
 #' @examples \dontrun{
-#' mran_pkg_metadata(package="plyr", snapshot="2014-08-04")
+#' mranPkgMetadata(package="plyr", snapshot="2014-08-04")
 #' }
-
-mran_pkg_metadata <- function(package, snapshot=NULL)
-{
-  snapshot <- snapshot_from_date(snapshot)
-  url <- sprintf("%s/%s/%s.json", file.path(mran_server_url(), 'metadata/logs'), snapshot, package)
+mranPkgMetadata <- function(package, snapshot=NULL){
+  snapshot <- snapshotFromDate(snapshot)
+  url <- sprintf("%s/%s/%s.json", paste0(mranServerUrl(), '/metadata/logs'), snapshot, package)
   res <- GET(url)
-  if(res$status_code > 202)
-    stop(sprintf("%s - Package not found, you don't have an internet connection, or other error...", res$status_code))
+  if(res$status_code > 202){
+    msg <- "%s - Package not found, you don't have an internet connection, or other error."
+    stop(sprintf(msg, res$status_code))
+  }
   text <- content(res, as = "text")
   RJSONIO::fromJSON(text, simplifyWithNames = FALSE)
 }
@@ -102,76 +101,196 @@ mran_pkg_metadata <- function(package, snapshot=NULL)
 
 #' Get available package versions from MRAN
 #'
-#' @import httr RJSONIO
 #' @export
 #' @param package (character) Required. A package name
-#' @param snapshot (date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most 
-#' recent snapshot.
+#' @param snapshot (date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most recent snapshot.
 #' @param which (character) One of src or bin
 #' @param os (character) Operating system. One of 'macosx', 'linux', or 'windows'
 
 #' @family mran
 #' @examples \dontrun{
-#' mran_pkg_versions(snapshot="2014-07-14", package="plyr")
-#' mran_pkg_versions(snapshot="2014-08-04", package="plyr", which="bin", os="windows")
+#' mranPkgVersions(snapshot="2014-07-14", package="plyr")
+#' mranPkgVersions(snapshot="2014-08-04", package="plyr", which="bin", os="windows")
 #' }
 
-mran_pkg_versions <- function(package, snapshot=NULL, which="src", os='macosx')
-{
-  snapshot <- snapshot_from_date(snapshot)
-  md <- mran_pkg_metadata(package, snapshot)
-  which <- match.arg(which, c('src','bin'))
-  if(which=='src'){ names(md$source$ver) } else {
-    tmp <- switch(os, macosx = md$osx[[1]], windows = md$windows[[1]])
-    tmp2 <- strsplit(tmp, '/')[[1]]
-    gsub("\\.zip|\\.tgz|[A-Za-z]+_", "", tmp2[length(tmp2)])
+mranPkgVersions <- function(package, snapshot=NULL, type=c("src", "mac.binary", "win.binary")) {
+  type <- match.arg(type)
+  snapshot <- snapshotFromDate(snapshot)
+  metadata <- mranPkgMetadata(package, snapshot)
+  getBinary <- function(x){
+    xx <- strsplit(x, '/')[[1]]
+    gsub("\\.zip|\\.tgz|[A-Za-z]+_", "", xx[length(xx)])
+  }
+  switch(type, 
+         src = names(metadata$source$ver),
+         mac.binary = getBinary(metadata$osx[[1]]),
+         win.binary = getBinary(metadata$windows[[1]])
+  )
+}
+
+
+
+# parse versions from pkgs
+pkgVersionAtSnapshot <- function(package, snapshot, type=c("src", "bin"), os=c("macosx", "windows")){
+  package <- package[[1]]
+  os   <- match.arg(os)
+  type <- match.arg(type)
+  snapshot <- snapshotFromDate(snapshot)
+  
+  vers <- tryCatch(mranPkgVersions(package=package, snapshot=snapshot), 
+                   error=function(e) e)
+  if("error" %in% class(vers)){
+    sprintf("%s/__notfound__", package)
+  } else {
+    latestVersion <- function(a, b) if(utils::compareVersion(a, b) <= 0) b else a
+    versionInUse <- Reduce(latestVersion, vers)
+    
+    sprintf("%s/%s_%s.tar.gz", package, package, versionInUse)
   }
 }
 
-snapshot_from_date <- function(x){
-  if(is.null(x)){
-    gg <- suppressMessages(mran_snaps())
+
+snapshotFromDate <- function(date){
+  if(is.null(date)){
+    gg <- mranSnapshots(message=FALSE)
     gg[length(gg)]
   } else {
-    suppressMessages(mran_snaps(x))
+    mranSnapshots(date, message=FALSE)
   }
 }
 
 
-#' Set the MRAN snapshot to get packages from.
+#' Download R packages from the MRAN server
 #'
-#' @import httr RJSONIO
+#' This function uses rsync on *unix machines, which is faster than the method (wget) \code{install.packages} uses by default. On Windows we use your default method of downloading files. This function does not install packages, but only downloads them to your machine.
+#'
 #' @export
-#'
-#' @param snapshot A MRAN snapshot. Defaults to most recent snapshot
-#' @param repo Repository path.
-#'
-#' @family mran
-#' 
-#' @examples \dontrun{
-#' mran_set()
-#' mran_set(snapshot="2014-07-01_2000")
-#' }
+#' @param repo Repository path
+#' @param libPath (character) Library location, a directory
+#' @param date Date as "year-month-day" (YY-MM-DD)
+#' @param snapshotid Optional. You can give the exact snapshot ID insetad of a date.
+#' @param srcPath Output directory
+#' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
+#' @param quiet Passed to \code{\link[utils]{install.packages}}
+#' @param verbose (logical) Whether to print messages or not (Default: FALSE)
+#' @param downloadType Either 'rsync' or 'default'
 
-mran_set <- function(snapshot=NULL, repo=getwd())
+downloadPackageFromMran <- function(repo, snapshot=getSnapshotId(date),
+                                    date=NULL, pkgs=NULL,  
+                                    srcPath=rrtPath(repo, "src"),  
+                                    verbose=FALSE, quiet=FALSE, 
+                                    downloadType=c("rsync", "default"))
 {
-  if(is.null(snapshot)){
-    gg <- suppressMessages(mran_snaps())
-    snapshot <- gg[length(gg)] # get the latest snapshot (latest date that is)
+  downloadType <- match.arg(downloadType)
+  if(is.null(srcPath)) stop("You must specify a directory to download packages to")
+  if(is.null(pkgs)) stop("You must specify one or more packages to get")
+  
+  # get available snapshots
+  if(is.null(snapshot)) snapshot <- getSnapshotId(date, force=TRUE)
+  
+  
+  pkgs <- lapply(pkgs, function(x) strsplit(x, "_")[[1]])
+  pkgpaths <- sapply(pkgs, pkgVersionAtSnapshot, snapshot=snapshot)
+  
+  notonmran <- grep("__notfound__", pkgpaths, value = TRUE)
+  pkgpaths <- setdiff(pkgpaths, "__notfound__")
+  
+  mssg(verbose, "... Downloading package files")
+  
+  #if(!.Platform$OS.type == "unix"){
+  switch(downloadType,
+         rsync   = downloadPackageSourceUsingRsync(
+           pkgpaths, 
+           srcPath=srcPath, 
+           snapshotid=snapshot, 
+           quiet=quiet
+         ),
+         default = downloadPackageSourceUsingDefault(
+           pkgpaths, 
+           srcPath=srcPath, 
+           snapshotid=snapshot, 
+           quiet=quiet
+         )
+  )
+}
+
+downloadPackageSourceUsingRsync <- function(pkgpaths, srcPath, snapshotid, quiet=FALSE){
+  oldwd <- getwd()
+  on.exit(setwd(oldwd))
+  setwd(srcPath)
+  tmpPkgsFileLoc <- "_rsync-file-locations.txt"
+  cat(pkgpaths, file = tmpPkgsFileLoc, sep = "\n")
+  
+  if(length(pkgpaths > 0)){
+    
+    url <- mranServerUrl()
+    url <- sub("http://", "", url)
+    rsyncCmd <- sprintf('rsync -rt --progress --files-from=%s %s::MRAN-src-snapshots/%s .', 
+                        tmpPkgsFileLoc, url, snapshotid)
+    system(rsyncCmd, intern=TRUE)
+    
+    mvCmd <- sprintf("mv %s ./", paste(pkgpaths, collapse = " "))
+    system(mvCmd)
+    
+    rmCmd <- sprintf("rm -rf %s", paste(
+      sapply(pkgpaths, 
+             function(x) strsplit(x, "/")[[1]][[1]], USE.NAMES = FALSE), collapse = " ")
+    )
+    system(rmCmd)
+    system(sprintf("rm %s", tmpPkgsFileLoc))
   }
   
-  url <- sprintf("%s/%s/", file.path(mran_server_url(), 'snapshots'), snapshot)
-  res <- GET(url)
-  if(res$status_code >= 300)
-    stop(sprintf("%s - snapshot not found, you don't have an internet connection, or other error...", res$status_code))
-  
-  # check for folder, and rrt folder inside
-  check4repo(repo, TRUE)
-  lib <- rrt_libpath(repo)
-  check4rrt(repo, lib, TRUE)
-  
-  # write MRAN snapshot id
-  message("Writing new snapshotID...")
-  writeManifest(repo, lib, packs = NULL, repoid = digest(normalizePath(repo)), snapshot = snapshot)
-  message("...Done")
 }
+
+downloadPackageSourceUsingDefault <- function(pkgpaths, srcPath, snapshotid, quiet=FALSE){
+  downloadOne <- function(x, srcPath, snapshotid, quiet=FALSE){
+    pkg <- strsplit(x, "/")[[1]]
+    url <- sprintf("%s/snapshots/src/%s/%s", mranServerUrl(), snapshotid, x)
+    destfile <- file.path(srcPath, pkg[[2]])
+    download.file(url, destfile=destfile, quiet=quiet)
+  }
+  for(i in seq_along(pkgpaths)){
+    downloadOne(pkgpaths[[i]], srcPath=srcPath, snapshotid=snapshotid, quiet=quiet)
+  }
+  
+}
+
+# modifyColClasses <- function (d, colClasses){
+#   colClasses <- rep(colClasses, length.out = length(d))
+#   d[] <- lapply(seq_along(d), 
+#                 function(i) {
+#                   switch(colClasses[i],
+#                          numeric = as.numeric(d[[i]]), 
+#                          character = as.character(d[[i]]),
+#                          Date = as.Date(d[[i]], origin = "1970-01-01"), 
+#                          POSIXct = as.POSIXct(d[[i]], origin = "1970-01-01"), 
+#                          factor = as.factor(d[[i]]), as(d[[i]], colClasses[i]))
+#                 })
+#   d
+# }
+
+# sortDataFrame <- function (data, vars = names(data)){
+#   if (length(vars) == 0 || is.null(vars)) {
+#     data
+#   } else {
+#     data[do.call("order", data[, vars, drop = FALSE]), , drop = FALSE]
+#   }
+# }
+
+getSnapshotId <- function(date=Sys.Date(), forceLast=TRUE){
+  # get available snapshots
+  availsnaps <- mranSnapshots(message=FALSE)
+  
+  snapshots <- grep(date, availsnaps, value = TRUE)
+  if(length(snapshots) > 1){
+    if(!forceLast){
+      print(data.frame(snapshots))
+      message("\nMore than one snapshot matching your date found \n",
+              "Enter rownumber of snapshot (other inputs will return 'NA'):\n")
+      take <- scan(n = 1, quiet = TRUE, what = 'raw')
+      if(is.na(take)){ message("No snapshot found or you didn't select one") }
+      snapshots[as.numeric(take)]
+    } else { snapshots[length(snapshots)] }
+  } else { snapshots }
+}
+
