@@ -1,4 +1,4 @@
 
 # RRT test common functions
-cleanRRTfolder <- function(rrtPath = "~/rrttemp") unlink(rrtPath, recursive = TRUE, force = TRUE)
+cleanRRTfolder <- function(rrt_path = "~/rrttemp") unlink(rrt_path, recursive = TRUE, force = TRUE)
 
