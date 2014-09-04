@@ -1,17 +1,18 @@
-RRT
-===
+# RRT - The Reproducibile R Toolkit
 
-## Reproducibile R Toolkit
+
+Build status
 
 master: [![](https://api.travis-ci.org/RevolutionAnalytics/RRT.png?branch=master)](https://travis-ci.org/RevolutionAnalytics/RRT)
 dev: [![](https://api.travis-ci.org/RevolutionAnalytics/RRT.png?branch=dev)](https://travis-ci.org/RevolutionAnalytics/RRT)
 
 Active development is on the `dev` branch - A more stable version on the `master` branch
 
-Active development is on the `dev` branch - A more stable version on the `master` branch
 
 
-### Installation
+## Installation
+
+### System requirements
 
 On Linux, get xml C library first (on the command line)
 
@@ -22,32 +23,20 @@ On Linux, get xml C library first (on the command line)
 
 You may need libcurl too. Do report in the issues tab if you run into this problem.
 
-<!-- Get dependency `miniCRAN` that is not on CRAN -->
 
-In an `R` session
+### Installing RRT from github
 
-```coffee
+Then install `RRT` from your R session:
+
+```
 install.packages("devtools")
 library("devtools")
-```
-<!--
-```coffee
-devtools::install_github("andrie/miniCRAN")
-devtools::install_github("ropensci/git2r")
-```
-
-_Optionally_, install `git2r` to use git from within R. `git2r` is in Enhances in `RRT`, so you don't need it to install `RRT`
-
-```coffee
-devtools::install_github("ropensci/git2r")
-``` -->
-
-Then install `RRT`
-
-```coffee
 devtools::install_github("RevolutionAnalytics/RRT")
 library("RRT")
 ```
+
+
+## More information
 
 ### Examples
 
