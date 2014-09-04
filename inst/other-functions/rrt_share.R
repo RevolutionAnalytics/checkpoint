@@ -56,7 +56,7 @@ rrt_share <- function(repo=getwd(), to="zip", output=NULL, address = NULL, ...)
   tt <- list.files(repo, full.names = TRUE)
   names(tt) <- list.files(repo)
   tt <- unname(tt[!names(tt) %in% 'rrt'])
-  toinclude <- c(tt, file.path(repo, "rrt/rrt_manifest.yml"))
+  toinclude <- c(tt, rrtPath(repo, "manifest"))
   switch(to,
          zip = do_zip(outfile=output, include=toinclude),
          tar = do_tar(outfile=output, include=toinclude),

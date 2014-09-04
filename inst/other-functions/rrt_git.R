@@ -1,6 +1,5 @@
 #' Commit versions of an RRT repository to git
 #'
-#' @import digest
 #' @template rrt
 #' @keywords internal
 #'
@@ -10,12 +9,10 @@
 #' rrt_git(repo="~/testrepo")
 #' }
 
-rrt_git <- function(repo=NULL, verbose=TRUE)
-{
+rrt_git <- function(repo=getwd(), verbose=TRUE){
 
-  # create repo id using digest
-  repoid <- digest(normalizePath(repo))
-  if(is.null(repo)) repo <- getwd()
+  # create repo id
+  repoid <- repoDigest(repo)
 
   # initiate git repo
   mssg(verbose, sprintf("git initiated in %s ...", repo))
