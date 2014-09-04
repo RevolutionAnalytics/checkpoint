@@ -18,10 +18,7 @@ Imports:
     httr,
     RJSONIO,
     XML,
-    yaml,
-    BiocInstaller,
-    RCurl,
-    testthat,
-    miniCRAN
+    yaml
 Suggests:
-    roxygen2
+    roxygen2,
+    testthat

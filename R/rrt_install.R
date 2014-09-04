@@ -25,7 +25,7 @@ rrt_install <- function(repo=getwd(), snapshot,
     return(NULL)
   }
   
-  repo_deps <- repoDependencies(repo_pkgs, simplify = TRUE, base=FALSE, suggests=suggests)
+#   repo_deps <- repoDependencies(repo_pkgs, simplify = TRUE, base=FALSE, suggests=suggests)
   
   
   mssg(verbose, "Downloading packages used in your repository...")

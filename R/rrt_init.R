@@ -63,7 +63,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
   # Look for packages in the project
   mssg(verbose, "Looking for packages used in your repository...")
   pkgs <- scanRepoPackages(repo)
-  pkgs <- repoDependencies(pkgs, simplify = TRUE, base=FALSE, suggests=suggests)
+#   pkgs <- repoDependencies(pkgs, simplify = TRUE, base=FALSE, suggests=suggests)
   mssg(verbose, sprintf("... %s", paste(pkgs, collapse=", ")))
   ## remove packages not found on MRAN
   if(!is.null(pkgs)){
