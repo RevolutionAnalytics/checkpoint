@@ -18,7 +18,7 @@ Imports:
     httr,
     RJSONIO,
     XML,
-    yaml
-Suggests:
-    roxygen2,
+    yaml,
     testthat
+Suggests:
+    roxygen2

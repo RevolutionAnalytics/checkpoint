@@ -1,6 +1,5 @@
 #' Install packages within an RRT repository.
 #' 
-#' @import BiocInstaller
 #' @keywords internal
 #'
 #' @param repo A repository path. This is the path to the root of your RRT repository. By default, we use the current working directory via \code{\link{getwd}}.
