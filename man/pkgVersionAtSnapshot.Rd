@@ -8,18 +8,23 @@ pkgVersionAtSnapshot(pkgs, snapshotdate,
   "win.binary"), Rversion = "R3.0")
 }
 \arguments{
-\item{package}{(character) Required. A package name}
-
-\item{snapshot}{(date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most recent snapshot.}
+\item{pkgs}{(character) Required. A package name}
 
 \item{type}{(character) "src", "mac.binary" or "win.binary"}
+
+\item{Rversion}{not yet used}
+
+\item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+will be supplied with options.}
+
+\item{snapshotid}{(character) The identifying snapshot id, consisting of a date and semi-timestamp, e.g. "2014-08-01_0500"}
 }
 \description{
 Get available package versions from MRAN
 }
 \examples{
-pkgVersionAtSnapshot(snapshot="2014-07-14", package="plyr")
-pkgVersionAtSnapshot(snapshot="2014-08-01", package="plyr", type="win.binary")
+pkgVersionAtSnapshot(snapshotdate="2014-07-14", pkgs="plyr")
+pkgVersionAtSnapshot(snapshotdate="2014-08-01", pkgs="plyr", type="win.binary")
 }
 \seealso{
 Other mran: \code{\link{install_mran}};

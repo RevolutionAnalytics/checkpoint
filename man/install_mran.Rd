@@ -10,8 +10,6 @@ install_mran(pkg, repo, snapshotdate = NULL, libPath = rrtPath(repo, "lib"),
 \arguments{
 \item{pkg}{Package name}
 
-\item{snapshot}{MRAN snapshot id}
-
 \item{...}{Further args passed on to \code{\link[utils]{install.packages}}}
 
 \item{dependencies}{Whether to install dependencies or not. Default: TRUE. See}
@@ -26,6 +24,8 @@ will be supplied with options.}
 \item{libPath}{(character) Location of package library in repo}
 
 \item{srcPath}{(character) Location of package src in repo}
+
+\item{snapshotid}{(character) The identifying snapshot id, consisting of a date and semi-timestamp, e.g. "2014-08-01_0500"}
 }
 \value{
 Installs a package, or throws warnings/errors on failures

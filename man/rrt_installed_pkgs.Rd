@@ -25,8 +25,7 @@ Other rrt: \code{\link{checkpoint}};
   \code{\link{print.rrtrepos}},
   \code{\link{rrt_repos_list}},
   \code{\link{rrt_repos_write}}; \code{\link{rrt_browse}};
-  \code{\link{rrt_compat}}; \code{\link{rrt_init}};
-  \code{\link{rrt_refresh}};
+  \code{\link{rrt_init}}; \code{\link{rrt_refresh}};
   \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}};
   \code{\link{scanRepoPackages}}
 }

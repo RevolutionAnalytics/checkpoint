@@ -45,15 +45,15 @@ names(repos)
 }
 \seealso{
 Other rrt: \code{\link{checkpoint}};
-  \code{\link{rrt_browse}}; \code{\link{rrt_compat}};
-  \code{\link{rrt_init}}; \code{\link{rrt_installed_pkgs}};
+  \code{\link{rrt_browse}}; \code{\link{rrt_init}};
+  \code{\link{rrt_installed_pkgs}};
   \code{\link{rrt_refresh}};
   \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}};
   \code{\link{scanRepoPackages}}
 
 Other rrt: \code{\link{checkpoint}};
-  \code{\link{rrt_browse}}; \code{\link{rrt_compat}};
-  \code{\link{rrt_init}}; \code{\link{rrt_installed_pkgs}};
+  \code{\link{rrt_browse}}; \code{\link{rrt_init}};
+  \code{\link{rrt_installed_pkgs}};
   \code{\link{rrt_refresh}};
   \code{\link{rrt_repos_remove}}; \code{\link{rrt_sweep}};
   \code{\link{scanRepoPackages}}
