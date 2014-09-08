@@ -14,7 +14,7 @@
 # #' }
 # mran_set <- function(snapshot=NULL, repo=getwd(), verbose=TRUE){
 #   if(is.null(snapshot)){
-#     gg <- mranSnapshots(message=FALSE)
+#     gg <- mranSnapshots(verbose=FALSE)
 #     snapshot <- gg[length(gg)] # get the latest snapshot (latest date that is)
 #   }
 #   
@@ -46,7 +46,7 @@
 # #' @param install (logical) Install packages or just download packages. Not used yet...
 # #' @param mran (logical) If TRUE, packages are installed from the MRAN server. See
 # #' \url{http://mran.revolutionanalytics.com} for more information.
-# #' @param snapdate Date of MRAN snapshot to use. E.g. "2014-06-20"
+# #' @param snapshotdate Date of MRAN snapshot to use. E.g. "2014-06-20"
 # #' @param snapshotid MRAN snapshotID to use. E.g. "2014-06-30_1700"
 # #'
 # #' @keywords internal

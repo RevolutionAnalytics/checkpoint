@@ -1,21 +1,15 @@
 #' Refresh package - look for any new packages used and install those in rrt library.
 #'
 #' @export
-#'
-#' @param repo (character) A path to create a RRT repository; defaults to current working directory.
-#' @param mran (logical) If TRUE (default), packages are installed from the MRAN server. See
-#' \url{http://mran.revolutionanalytics.com} for more information.
-#' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
-#' @param autosnap (logical) Get most recent snapshot. Default: FALSE
-#' @param verbose (logical) Whether to print messages or not (Default: TRUE).
-#' @param suggests (logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.
-#' @param quiet Passed to \code{\link[utils]{install.packages}}
+#' 
+#' @inheritParams checkpoint
+#' @inheritParams rrt_init
 #'
 #' @family rrt
 #' @seealso \code{\link{rrt_init}}, \code{\link{rrt_install}}
 #'
 
-rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=TRUE, verbose=TRUE,
+rrt_refresh <- function(repo=getwd(), mran=TRUE, snapshotdate=NULL, autosnap=TRUE, verbose=TRUE,
                         suggests=FALSE, quiet=FALSE)
 {
   repoid <- repoDigest(repo)
@@ -29,7 +23,7 @@ rrt_refresh <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=TRUE, v
   createRepoFolders(repo)
   
   # get packages in a private location for this project
-  setSnapshotInOptions(repo=repo, snapdate=snapdate, autosnap=autosnap)
+  setSnapshotInOptions(repo=repo, snapshotdate=snapshotdate, autosnap=autosnap)
 
   # Write blank user manifest file
   writeUserManifest(repo = repo, verbose = verbose)

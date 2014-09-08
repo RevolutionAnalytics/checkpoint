@@ -8,15 +8,17 @@ rrt_install(repo = getwd(), snapshot, libPath = rrtPath(repo, "lib"),
   quiet = FALSE)
 }
 \arguments{
-\item{repo}{A repository path. This is the path to the root of your RRT repository. By default, we use the current working directory via \code{\link{getwd}}.}
+\item{srcPath}{(character) Location of package src in repo}
 
-\item{lib}{Library path}
+\item{libPath}{(character) Location of package library in repo}
 
 \item{suggests}{Install suggests or not. Default: FALSE.}
 
 \item{verbose}{Print messages. Default: TRUE}
 
 \item{quiet}{Passed to \code{\link[utils]{install.packages}}}
+
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
 }
 \description{
 Install packages within an RRT repository.

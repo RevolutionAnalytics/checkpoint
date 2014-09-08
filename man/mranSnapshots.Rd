@@ -3,10 +3,13 @@
 \alias{mranSnapshots}
 \title{Get available snapshots from MRAN}
 \usage{
-mranSnapshots(date = NULL, message = TRUE)
+mranSnapshots(snapshotdate = NULL, verbose = TRUE)
 }
 \arguments{
-\item{date}{(character) A date, in the format YYY-MM-DD}
+\item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+will be supplied with options.}
+
+\item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 }
 \description{
 Get available snapshots from MRAN

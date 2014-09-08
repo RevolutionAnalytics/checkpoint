@@ -3,16 +3,16 @@
 \alias{rrt_refresh}
 \title{Refresh package - look for any new packages used and install those in rrt library.}
 \usage{
-rrt_refresh(repo = getwd(), mran = TRUE, snapdate = NULL,
+rrt_refresh(repo = getwd(), mran = TRUE, snapshotdate = NULL,
   autosnap = TRUE, verbose = TRUE, suggests = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
 
-\item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See
-\url{http://mran.revolutionanalytics.com} for more information.}
+\item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See \url{http://mran.revolutionanalytics.com} for more information.}
 
-\item{snapdate}{Date of snapshot to use. E.g. "2014-06-20"}
+\item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+will be supplied with options.}
 
 \item{autosnap}{(logical) Get most recent snapshot. Default: FALSE}
 

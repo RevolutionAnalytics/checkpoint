@@ -8,24 +8,25 @@
 #'
 #' @import devtools
 #' @export
+#' 
+#' @inheritParams checkpoint
+#' @inheritParams rrt_init
+#' @inheritParams rrt_install
+#' 
 #'
 #' @param pkg Package name
-#' @param date MRAN snapshot date
-#' @param libPath Library to install packages in
-#' @param srcPath Destination directory to install packages to
+#' @param snapshot MRAN snapshot id
 #' @param ... Further args passed on to \code{\link[utils]{install.packages}}
 #' @param dependencies Whether to install dependencies or not. Default: TRUE. See 
-#' @param quiet Passed to \code{\link[utils]{install.packages}}
-#' \link{install.packages}
 #'
 #' @return Installs a package, or throws warnings/errors on failures
 #' @family mran
 #'
 #' @example \inst\examples\example_install_mran.R 
-install_mran <- function(pkg, repo, date=NULL, 
+install_mran <- function(pkg, repo, snapshotdate=NULL, 
                          libPath = rrtPath(repo, "lib"), 
                          srcPath = rrtPath(repo, "src"), 
-                         snapshot=getSnapshotId(date),
+                         snapshot=getSnapshotId(snapshotdate),
                          quiet=FALSE, ..., dependencies = TRUE)
 {
   downloadPackageFromMran(pkgs=pkg, snapshot=snapshot, srcPath=srcPath, quiet=quiet)
@@ -37,7 +38,7 @@ install_mran <- function(pkg, repo, date=NULL,
 
 
 
-install_mran_single <- function(pkg, repo, date=NULL, 
+install_mran_single <- function(pkg, repo, snapshotdate=NULL, 
                                 libPath = rrtPath(repo, "lib"), 
                                 srcPath = rrtPath(repo, "src"), 
                                 quiet=FALSE, ..., dependencies = TRUE){

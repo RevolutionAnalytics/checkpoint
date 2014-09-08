@@ -10,13 +10,11 @@ downloadPackageFromMran(repo, snapshot = getSnapshotId(date), date = NULL,
 \arguments{
 \item{repo}{Repository path}
 
-\item{libPath}{(character) Library location, a directory}
+\item{snapshot}{You can give the exact snapshot ID instead of a date.}
+
+\item{srcPath}{(character) Location of package src in repo}
 
 \item{date}{Date as "year-month-day" (YY-MM-DD)}
-
-\item{snapshotid}{Optional. You can give the exact snapshot ID insetad of a date.}
-
-\item{srcPath}{Output directory}
 
 \item{pkgs}{Packages to install with version numbers, e.g. plyr_1.8.1}
 

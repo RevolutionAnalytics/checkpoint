@@ -11,22 +11,19 @@ checkpoint(snapshotdate = NULL, repo = getwd(), mran = TRUE,
 \item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
 will be supplied with options.}
 
-\item{repo}{(character) A path to create a RRT repository; defaults to current working directory.}
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
 
-\item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See
-\url{http://mran.revolutionanalytics.com} for more information.}
+\item{mran}{(logical) If TRUE (default), packages are installed from the MRAN server. See \url{http://mran.revolutionanalytics.com} for more information.}
 
 \item{autosnap}{(logical) Get most recent snapshot. Default: FALSE}
 
 \item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
 
-\item{rprofile}{(list) pass in a list of options to include in the .Rprofile file for the repo.}
+\item{rprofile}{(list) pass in a list of options to include in the \code{.Rprofile} file for the repo.}
 
-\item{interactive}{(logical) If TRUE, function asks you for input for each item,
-otherwise, defaults are used. Default: FALSE.}
+\item{interactive}{(logical) If TRUE, function asks you for input for each item, otherwise, defaults are used. Default: FALSE.}
 
-\item{suggests}{(logical) Download and install packages in the Suggests line for packages
-used in your RRT repository, or not. Default: FALSE.}
+\item{suggests}{(logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.}
 }
 \value{
 Files written to the user's machine, with informative messages on progress

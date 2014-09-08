@@ -2,8 +2,11 @@
 #' 
 #' @keywords internal
 #'
-#' @param repo A repository path. This is the path to the root of your RRT repository. By default, we use the current working directory via \code{\link{getwd}}.
-#' @param lib Library path
+#' @inheritParams checkpoint
+
+#' @param srcPath (character) Location of package src in repo
+#' @param libPath (character) Location of package library in repo
+#' 
 #' @param suggests Install suggests or not. Default: FALSE.
 #' @param verbose Print messages. Default: TRUE
 #' @param quiet Passed to \code{\link[utils]{install.packages}}
@@ -75,8 +78,8 @@ rrt_install <- function(repo=getwd(), snapshot,
 }
 
 
-#' Installs downloaded repo packages from source.
-#' 
+# Installs downloaded repo packages from source.
+# 
 installRepoPackages <- function(repo, 
                                 libPath=rrtPath(repo, "lib"), 
                                 srcPath=rrtPath(repo, "src"), 

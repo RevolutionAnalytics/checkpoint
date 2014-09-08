@@ -1,8 +1,8 @@
 #' Function to write manifest file
 #'
 #' @export
-#' @param repo repo root path
-#' @param libPath libPathy to install packages in
+#' @inheritParams rrt_install
+
 #' @param packs Packages used in the repo
 #' @param repoid Respository ID
 #' @param reponame repo name

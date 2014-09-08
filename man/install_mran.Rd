@@ -3,25 +3,29 @@
 \alias{install_mran}
 \title{Install packages from MRAN}
 \usage{
-install_mran(pkg, repo, date = NULL, libPath = rrtPath(repo, "lib"),
-  srcPath = rrtPath(repo, "src"), snapshot = getSnapshotId(date),
+install_mran(pkg, repo, snapshotdate = NULL, libPath = rrtPath(repo, "lib"),
+  srcPath = rrtPath(repo, "src"), snapshot = getSnapshotId(snapshotdate),
   quiet = FALSE, ..., dependencies = TRUE)
 }
 \arguments{
 \item{pkg}{Package name}
 
-\item{date}{MRAN snapshot date}
-
-\item{libPath}{Library to install packages in}
-
-\item{srcPath}{Destination directory to install packages to}
+\item{snapshot}{MRAN snapshot id}
 
 \item{...}{Further args passed on to \code{\link[utils]{install.packages}}}
 
 \item{dependencies}{Whether to install dependencies or not. Default: TRUE. See}
 
-\item{quiet}{Passed to \code{\link[utils]{install.packages}}
-\link{install.packages}}
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
+
+\item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+will be supplied with options.}
+
+\item{quiet}{Passed to \code{\link[utils]{install.packages}}}
+
+\item{libPath}{(character) Location of package library in repo}
+
+\item{srcPath}{(character) Location of package src in repo}
 }
 \value{
 Installs a package, or throws warnings/errors on failures
@@ -38,7 +42,7 @@ Steps (for each pkg):
   repo_path <- tempdir()
   createRepoFolders(repo_path)
   
-  install_mran(repo=repo_path, pkg="plyr", date="2014-08-01")
+  install_mran(repo=repo_path, pkg="plyr", snapshotdate="2014-08-01")
   
   dir(instPath)
   unlink(instPath, recursive = TRUE)

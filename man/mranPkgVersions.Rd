@@ -11,9 +11,7 @@ mranPkgVersions(package, snapshot = NULL, type = c("src", "mac.binary",
 
 \item{snapshot}{(date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most recent snapshot.}
 
-\item{which}{(character) One of src or bin}
-
-\item{os}{(character) Operating system. One of 'macosx', 'linux', or 'windows'}
+\item{type}{(character) "src", "mac.binary" or "win.binary"}
 }
 \description{
 Get available package versions from MRAN

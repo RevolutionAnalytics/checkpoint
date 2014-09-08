@@ -26,6 +26,8 @@ checkUserInstall <- function(lib){
 
 #' Creates unique repo id from a digest of the file path.
 #' 
+#' @inheritParams checkpoint
+#' 
 #' @import digest
 #' @keywords Internal
 repoDigest <- function(repo){

@@ -8,10 +8,6 @@ writeManifest(repo, libPath = rrtPath(repo, "lib"), packs, repoid,
   remote = "", snapshot = NULL, verbose = FALSE)
 }
 \arguments{
-\item{repo}{repo root path}
-
-\item{libPath}{libPathy to install packages in}
-
 \item{packs}{Packages used in the repo}
 
 \item{repoid}{Respository ID}
@@ -25,6 +21,12 @@ writeManifest(repo, libPath = rrtPath(repo, "lib"), packs, repoid,
 \item{description}{Character description of repo}
 
 \item{remote}{Remote git/svn/mercurial repo}
+
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
+
+\item{libPath}{(character) Location of package library in repo}
+
+\item{verbose}{Print messages. Default: TRUE}
 }
 \value{
 Writes a RRT manifest file ("rrt_manifest.yml") to disk

@@ -3,7 +3,7 @@
 #' @keywords internal
 #'
 #' @param path Path to the RRT repository
-#' @param message Commit message. If you don't pass a message we ask you for a commit message.
+#' @param commitMessage Commit message. If you don't pass a message we ask you for a commit message.
 #' Use quotes around your commit message!
 #' @param verbose Print messages or not, Default: TRUE
 #' @param ... Further args passed on to commit() function in git2r package
@@ -12,10 +12,10 @@
 #' remote_add() function
 #'
 #' @examples \dontrun{
-#' git_add_commit(path="~/bbb", message="Made some changes to the regression function")
+#' git_add_commit(path="~/bbb", commitMessage="Made some changes to the regression function")
 #' }
 
-git_add_commit <- function(path=getwd(), message="", verbose=TRUE, ...){
+git_add_commit <- function(path=getwd(), commitMessage="", verbose=TRUE, ...){
   # setup git
   git_setup(path, verbose)
 
@@ -56,11 +56,11 @@ git_add_commit <- function(path=getwd(), message="", verbose=TRUE, ...){
       st <- git2r::status(rep)
       stagedlen <- length(st$staged)
       if(stagedlen > 0){
-        if(nchar(message) == 0){
+        if(nchar(commitMessage) == 0){
           cat("Commit message (quote your message!):")
-          message <- scan(n = 50, quiet = TRUE, what = 'character')
+          commitMessage <- scan(n = 50, quiet = TRUE, what = 'character')
         }
-        commit(rep, message, ...)
+        commit(rep, commitMessage, ...)
       } else { message("Nothing to commit") }
     }
   }

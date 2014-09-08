@@ -33,5 +33,6 @@ rrt_git <- function(repo=getwd(), verbose=TRUE){
   setwd(backto)
 
   # Commit files
-  commit(repo2, message = "changes made!")
+  commit(repo2, commitM
+         essage = "changes made!")
 }

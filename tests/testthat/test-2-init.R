@@ -33,7 +33,7 @@ test_that("init works as expected", {
   expect_true(file.exists(rrtPath(rrt_path, "manifest")))
   getSnapshotFromManifest(repo=rrt_path)
   
-  rrt_init(rrt_path, snapdate="2014-08-01", verbose = FALSE, autosnap = TRUE)
+  rrt_init(rrt_path, snapshotdate="2014-08-01", verbose = FALSE, autosnap = TRUE)
   expect_true(is_rrt(rrt_path, FALSE))
   expect_false(is_rrt("~/", FALSE))
   expect_equal(list.files(rrt_path, recursive=TRUE),
@@ -46,7 +46,7 @@ test_that("init returns messages", {
   #   expect_message(rrt_init(rrt_path), 
   #                  "Checking to see if repository exists already")
   
-  #   expect_message(rrt_init(rrt_path, snapdate="2014-08-01", autosnap = TRUE), 
+  #   expect_message(rrt_init(rrt_path, snapshotdate="2014-08-01", autosnap = TRUE), 
   #                  "Checking to see if repository exists already")
 })
 

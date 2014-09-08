@@ -6,6 +6,7 @@ source(system.file("tests/testthat/0-common-functions.R", package="RRT"))
 cleanRRTfolder()
 options(repos=c(CRAN="http://cran.revolutionanalytics.com/"))
 
+
 exp <- structure(list(package = "plyr", description = structure(list(
   Package = "plyr", Version = "1.8.1", Depends = "R (>= 2.11.0)", 
   Imports = "Rcpp (>= 0.11.0)", LinkingTo = "Rcpp", Suggests = "abind, testthat, tcltk, foreach, doMC, itertools, iterators", 
@@ -54,13 +55,13 @@ test_that("snapshot functions return correct results", {
   expect_is(snaps, "character")
   expect_equal(length(snaps), 8L)
   
-  setSnapshotInOptions(rrt_path, snapdate = "2014-08-01", autosnap = TRUE)
+  setSnapshotInOptions(rrt_path, snapshotdate = "2014-08-01", autosnap = TRUE)
   expect_equal(getOption("RRT_snapshotID"), "2014-08-01_0500")
   
   snap <- getSnapshotId("2014-06-25", forceLast=TRUE)
   expect_equal(snap, "2014-06-25_2300")
   
-  setSnapshotInOptions(rrt_path, snapdate = "2014-06-25_0500", autosnap = FALSE)
+  setSnapshotInOptions(rrt_path, snapshotdate = "2014-06-25_0500", autosnap = FALSE)
   
   expect_equal(getOption("RRT_snapshotID"), "2014-06-25_0500")
   

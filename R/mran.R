@@ -4,12 +4,15 @@ mranServerUrl <- function(){
   if(identical(x, "")) 'http://mran.revolutionanalytics.com' else x
 }
 
+
+
 #' Get available snapshots from MRAN
+#' 
+#' @inheritParams checkpoint
 #'
 #' @import httr XML
 #' @export
 #' @family mran
-#' @param date (character) A date, in the format YYY-MM-DD
 #' @examples \dontrun{
 #' # List all available snapshots
 #' mranSnapshots()
@@ -17,7 +20,7 @@ mranServerUrl <- function(){
 #' mranSnapshots(date='2014-08-04')
 #' }
 
-mranSnapshots <- function(date=NULL, message=TRUE){
+mranSnapshots <- function(snapshotdate=NULL, verbose=TRUE){
   url <- file.path(mranServerUrl(), 'snapshots/src')
   res <- GET(url)
   if(res$status_code > 202)
@@ -25,8 +28,8 @@ mranSnapshots <- function(date=NULL, message=TRUE){
   text <- content(res, as = "text")
   snaps <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
   snaps <- gsub("/", "", snaps)
-  if(!is.null(date)) snaps <- snaps[grep(date, snaps)]
-  if(message) message("Dates and times are in GMT")
+  if(!is.null(snapshotdate)) snaps <- snaps[grep(snapshotdate, snaps)]
+  mssg(verbose, "Dates and times are in GMT")
   return( snaps )
 }
 
@@ -104,8 +107,7 @@ mranPkgMetadata <- function(package, snapshot=NULL){
 #' @export
 #' @param package (character) Required. A package name
 #' @param snapshot (date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most recent snapshot.
-#' @param which (character) One of src or bin
-#' @param os (character) Operating system. One of 'macosx', 'linux', or 'windows'
+#' @param type (character) "src", "mac.binary" or "win.binary"
 
 #' @family mran
 #' @examples \dontrun{
@@ -152,10 +154,10 @@ pkgVersionAtSnapshot <- function(package, snapshot, type=c("src", "bin"), os=c("
 
 snapshotFromDate <- function(date){
   if(is.null(date)){
-    gg <- mranSnapshots(message=FALSE)
+    gg <- mranSnapshots(verbose=FALSE)
     gg[length(gg)]
   } else {
-    mranSnapshots(date, message=FALSE)
+    mranSnapshots(date, verbose=FALSE)
   }
 }
 
@@ -166,10 +168,9 @@ snapshotFromDate <- function(date){
 #'
 #' @export
 #' @param repo Repository path
-#' @param libPath (character) Library location, a directory
+#' @param snapshot You can give the exact snapshot ID instead of a date.
+#' @param srcPath (character) Location of package src in repo
 #' @param date Date as "year-month-day" (YY-MM-DD)
-#' @param snapshotid Optional. You can give the exact snapshot ID insetad of a date.
-#' @param srcPath Output directory
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
 #' @param quiet Passed to \code{\link[utils]{install.packages}}
 #' @param verbose (logical) Whether to print messages or not (Default: FALSE)
@@ -279,7 +280,7 @@ downloadPackageSourceUsingDefault <- function(pkgpaths, srcPath, snapshotid, qui
 
 getSnapshotId <- function(date=Sys.Date(), forceLast=TRUE){
   # get available snapshots
-  availsnaps <- mranSnapshots(message=FALSE)
+  availsnaps <- mranSnapshots(verbose=FALSE)
   
   snapshots <- grep(date, availsnaps, value = TRUE)
   if(length(snapshots) > 1){

@@ -3,15 +3,9 @@
 #' This function initiates a repository. You can run this function to start a new repository, without any work done yet, creating a new folder and RRT files, or you can initiate a RRT repository inside an existing project/folder you already have. If the latter, we don't alter your files at all, but simply write a few files needed for RRT to work properly. By detault repo initialization is done interactively, so that you can choose your settings or accept reasonable defaults.
 #'
 #' @export
+#' 
+#' @inheritParams checkpoint
 #'
-#' @param repo (character) A path to create a RRT repository; defaults to current working directory.
-#' @param mran (logical) If TRUE (default), packages are installed from the MRAN server. See \url{http://mran.revolutionanalytics.com} for more information.
-#' @param snapdate Date of snapshot to use. E.g. "2014-06-20"
-#' @param autosnap (logical) Get most recent snapshot. Default: FALSE
-#' @param verbose (logical) Whether to print messages or not (Default: TRUE).
-#' @param rprofile (list) pass in a list of options to include in the .Rprofile file for the repo.
-#' @param interactive (logical) If TRUE, function asks you for input for each item, otherwise, defaults are used. Default: FALSE.
-#' @param suggests (logical) Download and install packages in the Suggests line for packages used in your RRT repository, or not. Default: FALSE.
 #' @param quiet Passed to \code{\link[utils]{install.packages}}
 #'
 #' @family rrt
@@ -29,7 +23,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, verbose=TRUE,
+rrt_init <- function(repo=getwd(), mran=TRUE, snapshotdate=NULL, autosnap=FALSE, verbose=TRUE,
                      rprofile=NULL, interactive=FALSE, suggests=FALSE, quiet=FALSE)
 {
   
@@ -82,7 +76,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapdate=NULL, autosnap=FALSE, ver
 
   # get packages in a private location for this project
   # mssg(verbose, "Getting new packages...")
-  snapshot <- setSnapshotInOptions(repo, snapdate=snapdate, autosnap=autosnap)
+  snapshot <- setSnapshotInOptions(repo, snapshotdate=snapshotdate, autosnap=autosnap)
 
   # Write new .Rprofile file
   if(is.null(rprofile)){
@@ -185,19 +179,19 @@ getSnapshotFromManifest <- function(repo){
     x$RRT_snapshotID
 }
 
-setSnapshotInOptions <- function(repo, snapdate, autosnap=TRUE){
-  if(is.null(snapdate)){
+setSnapshotInOptions <- function(repo, snapshotdate, autosnap=TRUE){
+  if(is.null(snapshotdate)){
     tt <- getSnapshotFromManifest(repo=repo)
     if(!is.null(tt)){ snapshotId <- tt } else {
       if(autosnap){
-        availsnaps <- mranSnapshots(message=FALSE)
+        availsnaps <- mranSnapshots(verbose=FALSE)
         snapshotId <- availsnaps[length(availsnaps)]
       } else { stop("You must provide a date or set autosnap=TRUE") }
     }
   } else {
     # as of 2014-07-11, we're moving to one snapshot per day, so forcing to last
     # snapshot of any day if there are more than 1
-    snapshotId <- getSnapshotId(snapdate, forceLast = TRUE)
+    snapshotId <- getSnapshotId(snapshotdate, forceLast = TRUE)
   }
   options(RRT_snapshotID = snapshotId)
   snapshotId
