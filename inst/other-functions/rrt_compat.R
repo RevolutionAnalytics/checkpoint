@@ -1,34 +1,24 @@
 #' Local test for package compatibility
 #'
-#' Currently, these checks, tests, etc. are run just on the packages used in your code in the
-#' repository tested - not the dependencies of the packages you use.
+#' Currently, these checks, tests, etc. are run just on the packages used in your code in the repository tested - not the dependencies of the packages you use.
 #'
 #' @import testthat devtools
 #' @export
 #'
 #' @details 
-#' Make sure to run \code{devtools::has_devel()} before running this function to make sure you 
-#' have the required setup to run this function.
+#' Make sure to run \code{devtools::has_devel()} before running this function to make sure you have the required setup to run this function.
 #' 
-#' You can see a visual breakdown of check results using \link{rrt_browse} if you have run this
-#' function in your repository.
+#' You can see a visual breakdown of check results using \link{rrt_browse} if you have run this function in your repository.
 #'
 #' Details for each option passed to the \code{what}:
 #'
-#' \bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we
-#' don't run examples, or tests. Examples and test are run in separate options passed to the
-#' \code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
+#' \bold{check:} We run \code{devtools::check()}, and skip building the package manual, vignettes, and we don't run examples, or tests. Examples and test are run in separate options passed to the \code{what} parameter. If check passes for a package TRUE is returned; otherwise FALSE.
 #'
-#' \bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL
-#' returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a
-#' package we return TRUE, otherwise we link to a report for the tests.
+#' \bold{tests:} We first check for the existence of test in the package. If no tests exist, NULL returns. If tests exist we run them with \code{testthat::test_package()}. If tests pass for a package we return TRUE, otherwise we link to a report for the tests.
 #'
-#' \bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by
-#' default, but you can run them by passing on args to \code{devtools::run_examples()}.
+#' \bold{examples:} We run examples. Some examples are wrapped in dontrun, which we don't run by default, but you can run them by passing on args to \code{devtools::run_examples()}.
 #'
-#' \bold{update:} We check for any available updates on CRAN for your packages using
-#' \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and 
-#' Bioconductor packages.
+#' \bold{update:} We check for any available updates on CRAN for your packages using \code{old.packages}. NA is returned if no updates available. FIXME: add checks for github and Bioconductor packages.
 #'
 #' @param repo Repository path. Defaults to your working directory.
 #' @param what What to test, one or more of check, tests, examples, or udpate. \code{match.arg} is
@@ -38,18 +28,10 @@
 #' @family rrt
 #' @seealso \link{rrt_browse}
 #'
-#' @examples \dontrun{
-#' rrt_compat(what="update")
-#' rrt_compat(what="check")
-#' rrt_compat(what="tests")
-#' rrt_compat(what="examples")
-#' rrt_compat(what=c("update","check"))
-#' }
-
-rrt_compat <- function(repo=getwd(), what = 'check', verbose=TRUE)
+rrt_compat <- function(repo=getwd(), what = c('check','tests','examples','update'), verbose=TRUE)
 {
   # Check for appropriate values of what
-  what <- match.arg(what, c('check','tests','examples','update'), TRUE)
+  what <- match.arg(what)
 
   # set defaults
   checksres <- testsres <- egsres <- oldpkgs <- "passed"
@@ -224,9 +206,12 @@ biocUpdates <- function(lib, bioc_pkgs){
     pkgs <- installed.packages(lib)
     contribUrl <- contrib.url(repos, type = type)
     availPkgs <- available.packages(contribUrl, type = type)
-    df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, checkBuilt = TRUE, type = type)
+    df <- old.packages(lib, repos = repos, instPkgs = pkgs, available = availPkgs, 
+                       checkBuilt = TRUE, type = type)
     if(is.null(df)){ data.frame(NULL) } else {  
-      df <- data.frame(repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), stringsAsFactors = FALSE)
+      df <- data.frame(
+        repo="Bioconductor", t(df[bioc_pkgs, c('Package','Installed','ReposVer')]), 
+        stringsAsFactors = FALSE)
       names(df)[2] <- 'pkg'
       df
     }
