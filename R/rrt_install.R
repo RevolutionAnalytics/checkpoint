@@ -6,6 +6,7 @@
 
 #' @param srcPath (character) Location of package src in repo
 #' @param libPath (character) Location of package library in repo
+#' @param snapshotid (character) The identifying snapshot id, consisting of a date and semi-timestamp, e.g. "2014-08-01_0500"
 #' 
 #' @param suggests Install suggests or not. Default: FALSE.
 #' @param verbose Print messages. Default: TRUE

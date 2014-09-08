@@ -15,7 +15,6 @@
 #' 
 #'
 #' @param pkg Package name
-#' @param snapshot MRAN snapshot id
 #' @param ... Further args passed on to \code{\link[utils]{install.packages}}
 #' @param dependencies Whether to install dependencies or not. Default: TRUE. See 
 #'
@@ -48,7 +47,7 @@ install_mran_single <- function(pkg, repo, snapshotdate=NULL,
   untar(path, exdir = tmpdir)
   downloadedPkg <- file.path(tmpdir, pkgname)
   info <- pkg_deps(downloadedPkg)
-  download_deps(pkg = downloadedPkg, info=info, srcPath=srcPath, dependencies = dependencies, quiet=quiet)
+  download_deps(pkg = downloadedPkg, info=info, srcPath=srcPath, dependencies = dependencies, quiet=quiet, snapshotdate=snapshotdate)
   depscheck <- Map(needs_install, info$name, info$compare, info$version, libPath)
   depsinstall <- info$name[as.logical(depscheck)]
   just_deps <- sapply(depsinstall, function(x) {
@@ -91,14 +90,14 @@ pkg_deps <- function (pkg = ".", dependencies = NA){
 
 
 
-download_deps <- function (pkg = NULL, info, srcPath, dependencies = NA, quiet=FALSE, snapshot){
-  if(missing("snapshot")) stop("snapshot missing")
+download_deps <- function (pkg = NULL, info, srcPath, dependencies = NA, quiet=FALSE, snapshotdate){
+  if(missing("snapshotdate")) stop("snapshotdate missing")
   pkg <- as.package(pkg)
   needed <- Map(needs_install, info$name, info$compare, info$version, lib=srcPath)
   deps <- info$name[as.logical(needed)]
   if (length(deps) == 0) return(invisible())
   message("Downloading dependencies for ", pkg$package, ":\n", paste(deps, collapse = ", "))
-  downloadPackageFromMran(pkgs=deps, snapshot=snapshot, srcPath=srcPath, quiet=quiet)
+  downloadPackageFromMran(pkgs=deps, snapshotdate=snapshotdate, srcPath=srcPath, quiet=quiet)
   invisible(deps)
 }
 

@@ -106,16 +106,19 @@ mranPkgMetadata <- function(package, snapshot=NULL){
 
 
 #' Get available package versions from MRAN
+#' 
+#' @inheritParams checkpoint
+#' @inheritParams rrt_install
 #'
 #' @export
-#' @param package (character) Required. A package name
-#' @param snapshot (date) An MRAN snapshot ('YYYY-MM-DD_TTTT') or a date ('YYYY-MM-DD'). Defaults to most recent snapshot.
+#' @param pkgs (character) Required. A package name
 #' @param type (character) "src", "mac.binary" or "win.binary"
+#' @param Rversion not yet used
 
 #' @family mran
 #' @examples 
-#' pkgVersionAtSnapshot(snapshot="2014-07-14", package="plyr")
-#' pkgVersionAtSnapshot(snapshot="2014-08-01", package="plyr", type="win.binary")
+#' pkgVersionAtSnapshot(snapshotdate="2014-07-14", pkgs="plyr")
+#' pkgVersionAtSnapshot(snapshotdate="2014-08-01", pkgs="plyr", type="win.binary")
 
 pkgVersionAtSnapshot <- function(pkgs, snapshotdate, snapshotid=snapshotFromDate(snapshotdate), 
                             type=c("src", "mac.binary", "win.binary"), Rversion="R3.0") {
@@ -169,10 +172,9 @@ snapshotFromDate <- function(date){
 #' @export
 #' 
 #' @inheritParams checkpoint
+#' @inheritParams rrt_install
 #' 
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
-#' @param quiet Passed to \code{\link[utils]{install.packages}}
-#' @param verbose (logical) Whether to print messages or not (Default: FALSE)
 #' @param downloadType Either 'rsync' or 'default'
 
 downloadPackageFromMran <- function(repo, snapshotdate, snapshotid=getSnapshotId(snapshotdate),
@@ -186,7 +188,7 @@ downloadPackageFromMran <- function(repo, snapshotdate, snapshotid=getSnapshotId
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
   
   # get available snapshots
-  if(is.null(snapshotid)) snapshotid <- getSnapshotId(snapshotdate, force=TRUE)
+  if(is.null(snapshotid)) snapshotid <- getSnapshotId(snapshotdate, forceLast=TRUE)
   
   
   pkgs <- lapply(pkgs, function(x) strsplit(x, "_")[[1]])

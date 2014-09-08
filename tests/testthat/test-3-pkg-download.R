@@ -50,12 +50,12 @@ test_that("downloadPackageFromMran downloads files using default mechanism", {
 test_that("pkgVersionAtSnapshot returns latest package version", {
   
   expect_equal(
-    pkgVersionAtSnapshot("plyr", "2014-08-01"),
+    pkgVersionAtSnapshot(pkgs="plyr", "2014-08-01"),
     c(plyr = "plyr/plyr_1.8.1.tar.gz")
   )
     
   expect_equal(
-    pkgVersionAtSnapshot("ggplot2", "2014-08-01"),
+    pkgVersionAtSnapshot(pkgs="ggplot2", "2014-08-01"),
     c(ggplot2 = "ggplot2/ggplot2_1.0.0.tar.gz")
   )
   

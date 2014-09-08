@@ -31,7 +31,7 @@ rrtInteractive <- function(){
   x$reponame <- rrt_readline(randomname)
   
   message("\nRepository path (default: home directory + repository name):")
-  defaultpath <- file.path(Sys.getenv("HOME"), reponame)
+  defaultpath <- file.path(Sys.getenv("HOME"), x$reponame)
   x$repo <- rrt_readline(defaultpath)
   
   message("\nRepository author(s) (default: left blank):")
