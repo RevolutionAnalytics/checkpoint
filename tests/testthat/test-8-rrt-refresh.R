@@ -25,8 +25,8 @@ test_that("refresh works as expected", {
   )
     
   expect_equal(
-    list.files(rrt_path, recursive = TRUE),
-    c("code.R", "manifest.yml", "rrt/rrt_manifest.yml")
+    list.files(rrt_path, recursive = FALSE),
+    c("code.R", "manifest.yml", "rrt")
   )
   
   snapshotid <- getSnapshotFromManifest(repo = rrt_path)
@@ -36,26 +36,24 @@ test_that("refresh works as expected", {
     scanRepoPackages(rrt_path),
     "MASS"
   )
+
+  expect_message(
+    rrt_refresh(rrt_path, snapshotdate="2014-08-01"),
+    ">>> RRT refresh completed."
+  )
   
-  rrt_install(rrt_path, snapshotid=snapshotid, verbose = FALSE, quiet=TRUE)
-  list.files(rrt_path, recursive = TRUE)
+  list.files(rrt_path, recursive = FALSE)
   
   
-  expect_equal(list.files(rrt_path, recursive = TRUE), 
-               c("code.R", "manifest.yml", "rrt/rrt_manifest.yml"))
-  rrt_refresh(repo=rrt_path, autosnap = TRUE, verbose = FALSE, quiet=TRUE)
-  rrt_refresh(repo=rrt_path, autosnap = TRUE, verbose = TRUE, quiet=FALSE)
-  list.files(rrt_path, recursive = TRUE)
+  expect_equal(list.files(rrt_path, recursive = FALSE), 
+               c("code.R", "manifest.yml", "rrt")
+  )
   
   expect_true(is_rrt(rrt_path, FALSE))
   expect_that(is_rrt("~/", FALSE), not(is_true()))
   expect_true("rrt" %in% list.files(rrt_path))
 })
 
-test_that("refresh returns messages", {
-  expect_message(rrt_refresh(repo=rrt_path), 
-                 "Checking to make sure repository exists")
-})
 
 # cleanup
 cleanRRTfolder()
