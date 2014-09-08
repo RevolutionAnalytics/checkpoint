@@ -32,7 +32,7 @@ mran_diffs(diffs[length(diffs)-1])
 \seealso{
 Other mran: \code{\link{install_mran}};
   \code{\link{mranPkgMetadata}};
-  \code{\link{mranPkgVersions}};
-  \code{\link{mranSnapshots}}
+  \code{\link{mranSnapshots}};
+  \code{\link{pkgVersionAtSnapshot}}
 }
 

@@ -3,19 +3,12 @@
 \alias{downloadPackageFromMran}
 \title{Download R packages from the MRAN server}
 \usage{
-downloadPackageFromMran(repo, snapshot = getSnapshotId(date), date = NULL,
-  pkgs = NULL, srcPath = rrtPath(repo, "src"), verbose = FALSE,
-  quiet = FALSE, downloadType = c("rsync", "default"))
+downloadPackageFromMran(repo, snapshotdate,
+  snapshotid = getSnapshotId(snapshotdate), pkgs = NULL,
+  srcPath = rrtPath(repo, "src"), verbose = FALSE, quiet = FALSE,
+  downloadType = c("rsync", "default"))
 }
 \arguments{
-\item{repo}{Repository path}
-
-\item{snapshot}{You can give the exact snapshot ID instead of a date.}
-
-\item{srcPath}{(character) Location of package src in repo}
-
-\item{date}{Date as "year-month-day" (YY-MM-DD)}
-
 \item{pkgs}{Packages to install with version numbers, e.g. plyr_1.8.1}
 
 \item{quiet}{Passed to \code{\link[utils]{install.packages}}}
@@ -23,6 +16,11 @@ downloadPackageFromMran(repo, snapshot = getSnapshotId(date), date = NULL,
 \item{verbose}{(logical) Whether to print messages or not (Default: FALSE)}
 
 \item{downloadType}{Either 'rsync' or 'default'}
+
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
+
+\item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+will be supplied with options.}
 }
 \description{
 This function uses rsync on *unix machines, which is faster than the method (wget) \code{install.packages} uses by default. On Windows we use your default method of downloading files. This function does not install packages, but only downloads them to your machine.

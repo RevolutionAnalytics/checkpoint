@@ -24,7 +24,7 @@ mranSnapshots(date='2014-08-04')
 }
 \seealso{
 Other mran: \code{\link{install_mran}};
-  \code{\link{mranPkgMetadata}};
-  \code{\link{mranPkgVersions}}; \code{\link{mran_diffs}}
+  \code{\link{mranPkgMetadata}}; \code{\link{mran_diffs}};
+  \code{\link{pkgVersionAtSnapshot}}
 }
 

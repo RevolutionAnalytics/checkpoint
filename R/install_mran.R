@@ -26,10 +26,10 @@
 install_mran <- function(pkg, repo, snapshotdate=NULL, 
                          libPath = rrtPath(repo, "lib"), 
                          srcPath = rrtPath(repo, "src"), 
-                         snapshot=getSnapshotId(snapshotdate),
+                         snapshotid=getSnapshotId(snapshotdate),
                          quiet=FALSE, ..., dependencies = TRUE)
 {
-  downloadPackageFromMran(pkgs=pkg, snapshot=snapshot, srcPath=srcPath, quiet=quiet)
+  downloadPackageFromMran(pkgs=pkg, snapshotid=snapshotid, srcPath=srcPath, quiet=quiet)
   files <- list.files(srcPath, pattern = ".tar.gz")
   files <- grep(pkg, files, value = TRUE)
   sapply(files, install_mran_single, ..., libPath=libPath, srcPath=srcPath, 
@@ -42,7 +42,6 @@ install_mran_single <- function(pkg, repo, snapshotdate=NULL,
                                 libPath = rrtPath(repo, "lib"), 
                                 srcPath = rrtPath(repo, "src"), 
                                 quiet=FALSE, ..., dependencies = TRUE){
-  browser()
   path <- file.path(srcPath, pkg)
   pkgname <- gsub("(.*?)_.*", "\\1", pkg)
   tmpdir <- tempdir()

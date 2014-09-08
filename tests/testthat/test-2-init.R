@@ -5,7 +5,8 @@ context("init")
 
 rrt_path <- "~/rrttemp"
 source(system.file("tests/testthat/0-common-functions.R", package="RRT"))
-cleanRRTfolder()
+cleanRRTfolder(folder=rrt_path)
+dir(rrt_path, recursive = TRUE, all.files = TRUE)
 options(repos=c(CRAN="http://cran.revolutionanalytics.com/"))
 
 
@@ -27,15 +28,16 @@ test_that("createRepoFolders creates correct folders", {
 
 test_that("init works as expected", {
   
+  createRepoFolders(rrt_path)
   
   rrt_init(rrt_path, verbose = FALSE, autosnap = TRUE)
   dir(rrt_path)
   expect_true(file.exists(rrtPath(rrt_path, "manifest")))
-  getSnapshotFromManifest(repo=rrt_path)
+  snapshotId <- getSnapshotFromManifest(repo=rrt_path)
   
   rrt_init(rrt_path, snapshotdate="2014-08-01", verbose = FALSE, autosnap = TRUE)
-  expect_true(is_rrt(rrt_path, FALSE))
-  expect_false(is_rrt("~/", FALSE))
+  expect_true(is_rrt(rrt_path, verbose=FALSE))
+  expect_false(is_rrt("~/", verbose=FALSE))
   expect_equal(list.files(rrt_path, recursive=TRUE),
                c("manifest.yml", "rrt/rrt_manifest.yml"))
   
@@ -43,14 +45,16 @@ test_that("init works as expected", {
 })
 
 test_that("init returns messages", {
-  #   expect_message(rrt_init(rrt_path), 
-  #                  "Checking to see if repository exists already")
+    expect_message(rrt_init(rrt_path), 
+                   "Looking for packages used in your repository...")
   
-  #   expect_message(rrt_init(rrt_path, snapshotdate="2014-08-01", autosnap = TRUE), 
-  #                  "Checking to see if repository exists already")
+    expect_message(rrt_init(rrt_path, snapshotdate="2014-08-01", autosnap = TRUE), 
+                   ">>> RRT initialization completed.")
 })
 
 
+# readLines(file.path(rrt_path, "manifest.yml"))
+# readLines(file.path(rrt_path, "rrt/rrt_manifest.yml"))
 
 # cleanup
 cleanRRTfolder()

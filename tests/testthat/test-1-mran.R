@@ -55,13 +55,13 @@ test_that("snapshot functions return correct results", {
   expect_is(snaps, "character")
   expect_equal(length(snaps), 8L)
   
-  setSnapshotInOptions(rrt_path, snapshotdate = "2014-08-01", autosnap = TRUE)
+  snapshotid <- setSnapshotInOptions(rrt_path, snapshotdate = "2014-08-01", autosnap = TRUE)
   expect_equal(getOption("RRT_snapshotID"), "2014-08-01_0500")
   
   snap <- getSnapshotId("2014-06-25", forceLast=TRUE)
   expect_equal(snap, "2014-06-25_2300")
   
-  setSnapshotInOptions(rrt_path, snapshotdate = "2014-06-25_0500", autosnap = FALSE)
+  snapshotid <- setSnapshotInOptions(rrt_path, snapshotdate = "2014-06-25_0500", autosnap = FALSE)
   
   expect_equal(getOption("RRT_snapshotID"), "2014-06-25_0500")
   
@@ -70,6 +70,52 @@ test_that("snapshot functions return correct results", {
   
   expect_error(mranPkgMetadata(package="_not_exist_", snapshot="2014-08-04"), 
                "404 - Package not found, you don't have an internet connection, or other error.")
+  
+  
+})
+
+
+test_that("pkgVersionAtSnapshot return correct results", {
+  expect_equal(
+    pkgVersionAtSnapshot(pkgs = "MASS", snapshotdate = "2014-08-01", type = "src"),
+    c(MASS       = "MASS/MASS_7.3-33.tar.gz")
+  )
+
+  expect_equal(
+    pkgVersionAtSnapshot(pkgs = "MASS", snapshotdate = "2014-08-01", type = "mac.binary"),
+    c(MASS       = "MASS/MASS_7.3-33.tar.gz")
+  )
+  
+  expect_equal(
+    pkgVersionAtSnapshot(pkgs = "MASS", snapshotdate = "2014-08-01", type = "win.binary"),
+    c(MASS       = "MASS/MASS_7.3-33.tar.gz")
+  )
+  
+  expect_equal(
+    pkgVersionAtSnapshot(pkgs = c("MASS", "ggplot2", "data.table"), 
+                    snapshotdate = "2014-08-01", type = "src"),
+    c(MASS       = "MASS/MASS_7.3-33.tar.gz", 
+      ggplot2    = "ggplot2/ggplot2_1.0.0.tar.gz",
+      data.table = "data.table/data.table_1.9.2.tar.gz")
+  )
+    
+    
+    
+  expect_equal(
+    pkgVersionAtSnapshot(pkgs = c("MASS", "ggplot2", "data.table"), 
+                    snapshotdate = "2014-08-01", type = "mac.binary"),
+    c(MASS       = "MASS/MASS_7.3-33.tar.gz", 
+      ggplot2    = "ggplot2/ggplot2_1.0.0.tar.gz",
+      data.table = "data.table/data.table_1.9.2.tar.gz")
+  )
+
+  expect_equal(
+    pkgVersionAtSnapshot(pkgs = c("MASS", "ggplot2", "data.table"), 
+                    snapshotdate = "2014-08-01", type = "win.binary"),
+    c(MASS       = "MASS/MASS_7.3-33.tar.gz", 
+      ggplot2    = "ggplot2/ggplot2_1.0.0.tar.gz",
+      data.table = "data.table/data.table_1.9.2.tar.gz")
+  )
   
   
 })

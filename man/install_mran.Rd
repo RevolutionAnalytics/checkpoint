@@ -4,7 +4,7 @@
 \title{Install packages from MRAN}
 \usage{
 install_mran(pkg, repo, snapshotdate = NULL, libPath = rrtPath(repo, "lib"),
-  srcPath = rrtPath(repo, "src"), snapshot = getSnapshotId(snapshotdate),
+  srcPath = rrtPath(repo, "src"), snapshotid = getSnapshotId(snapshotdate),
   quiet = FALSE, ..., dependencies = TRUE)
 }
 \arguments{
@@ -53,7 +53,7 @@ Steps (for each pkg):
 }
 \seealso{
 Other mran: \code{\link{mranPkgMetadata}};
-  \code{\link{mranPkgVersions}};
-  \code{\link{mranSnapshots}}; \code{\link{mran_diffs}}
+  \code{\link{mranSnapshots}}; \code{\link{mran_diffs}};
+  \code{\link{pkgVersionAtSnapshot}}
 }
 

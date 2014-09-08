@@ -39,18 +39,22 @@
 #' checkpoint()
 #' }
 
-checkpoint <- function(snapshotdate=NULL, repo=getwd(), mran=TRUE, autosnap=TRUE, verbose=TRUE, 
-                     rprofile=NULL, interactive=FALSE, suggests=FALSE)
-{
-  if(mran & !has_rsync()) stop("rsync not found. Installing packages from MRAN requires rsync to be installed on your machine.")
+checkpoint <- function(snapshotdate=NULL, repo=getwd(), mran=TRUE, 
+                       autosnap=TRUE, rprofile=NULL, interactive=FALSE, suggests=FALSE, 
+                       verbose=TRUE) {
+  
+  createRepoFolders(repo)
+  
+  msg <- "rsync not found. Installing packages from MRAN requires rsync to be installed on your machine."
+  if(mran & !has_rsync()) stop(msg)
   
   if(is_rrt(repo, verbose = FALSE)){
-    mssg(verbose, "RRT repo recognized...refreshing...\n")
-    rrt_refresh(repo=repo, mran=mran, snapshotdate=snapshotdate, autosnap=autosnap, verbose=verbose, 
+    mssg(verbose, "RRT repo recognized... refreshing...\n")
+    rrt_refresh(repo=repo, snapshotdate=snapshotdate, mran=mran, autosnap=autosnap, verbose=verbose, 
                 suggests=suggests) 
   } else {
     mssg(verbose, "Creating a new RRT repo...\n")
-    rrt_init(repo=repo, mran=mran, snapshotdate=snapshotdate, autosnap=autosnap, verbose=verbose, 
+    rrt_init(repo=repo, snapshotdate=snapshotdate, mran=mran, autosnap=autosnap, verbose=verbose, 
              rprofile=rprofile, interactive=interactive, suggests=suggests)
   }
 }

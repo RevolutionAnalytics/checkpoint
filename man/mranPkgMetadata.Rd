@@ -20,7 +20,7 @@ mranPkgMetadata(package="plyr", snapshot="2014-08-04")
 }
 \seealso{
 Other mran: \code{\link{install_mran}};
-  \code{\link{mranPkgVersions}};
-  \code{\link{mranSnapshots}}; \code{\link{mran_diffs}}
+  \code{\link{mranSnapshots}}; \code{\link{mran_diffs}};
+  \code{\link{pkgVersionAtSnapshot}}
 }
 

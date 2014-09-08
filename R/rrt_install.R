@@ -11,14 +11,14 @@
 #' @param verbose Print messages. Default: TRUE
 #' @param quiet Passed to \code{\link[utils]{install.packages}}
 
-rrt_install <- function(repo=getwd(), snapshot,
+rrt_install <- function(repo=getwd(), snapshotid,
                         libPath=rrtPath(repo, "lib"), 
                         srcPath=rrtPath(repo, "src"),
                         suggests=FALSE, 
                         verbose=TRUE, quiet=FALSE)
 {
   # make src/contrib
-  if(missing("snapshot")) stop("missing snapshot")
+  if(missing("snapshotid")) stop("missing snapshotid")
   createRepoFolders(repo)
 
   repo_pkgs <- scanRepoPackages(repo)
@@ -33,11 +33,13 @@ rrt_install <- function(repo=getwd(), snapshot,
   mssg(verbose, "Downloading packages used in your repository...")
   
   installed_pkgs <- list.files(libPath, recursive=FALSE, include.dirs=FALSE)
-  pkgs_to_install <- setdiff(repo_deps, installed_pkgs)
-  pkgs_to_install <- sort(pkgs_to_install)
+#   pkgs_to_install <- setdiff(repo_deps, installed_pkgs)
+#   pkgs_to_install <- sort(pkgs_to_install)
+  pkgs_to_install <- sort(setdiff(repo_pkgs, installed_pkgs))
   
-  cran_pkgs <- pkgs_to_install[is.cranPackage(pkgs_to_install)]
+#   cran_pkgs <- pkgs_to_install[is.cranPackage(pkgs_to_install)]
 #   bioc_pkgs <- pkgs_to_install[is.biocPackage(pkgs_to_install)]
+  cran_pkgs <- character(0)
   bioc_pkgs <- character(0)
   pkgsRemaining <- setdiff(pkgs_to_install, c(cran_pkgs, bioc_pkgs))
   
@@ -45,22 +47,29 @@ rrt_install <- function(repo=getwd(), snapshot,
 #     download_github_pkgs(repo, pkgs = pkgsRemaining, libPath)
 #     githubpkgs <- pkgsRemaining
 #   } else { githubpkgs <- character(0) }
-  
-  downloadPackageFromMran(repo=repo, libPath=libPath, date=NULL,
-                     snapshot = snapshot, 
-                     pkgs=cran_pkgs, 
-                     srcPath=srcPath, 
-                     verbose=verbose,
-                     quiet=quiet)
 
-  installRepoPackages(libPath, cran_pkgs, verbose=verbose, quiet=quiet)
+  
+  downloadPackageFromMran(repo=repo, snapshotid = snapshotid,
+                          srcPath=srcPath, 
+                          pkgs=pkgsRemaining, 
+                          verbose=verbose,
+                          quiet=quiet)
+
+
+  installRepoPackages(repo=repo, pkgs=pkgsRemaining, libPath=libPath, srcPath=srcPath, 
+                      verbose=verbose, quiet=quiet)
   
   # check for any failed intalls and install from binary from default CRAN mirror
-  notinst <- cran_pkgs[!vapply(file.path(srcPath, cran_pkgs), file.exists, logical(1))]
-  if(!length(notinst) == 0) {
-    mssg(verbose, "... Installing from default CRAN mirror")
-    utils::install.packages(notinst, lib = srcPath, destdir = srcPath, 
-                            quiet=quiet, verbose=verbose)
+  installed <- vapply(repo_pkgs, FUN=function(p){ 
+    file.exists(file.path(libPath, p)) 
+    }, 
+    FUN.VALUE=logical(1), USE.NAMES=TRUE
+    )
+  if(any(!installed)) {
+#     mssg(verbose, "... Installing from default CRAN mirror")
+#     utils::install.packages(notinst, lib = srcPath, destdir = srcPath, 
+#                             quiet=quiet, verbose=verbose)
+    stop("Some packages required but not found on MRAN")
   }
   
 #   # install github pkgs
@@ -80,17 +89,16 @@ rrt_install <- function(repo=getwd(), snapshot,
 
 # Installs downloaded repo packages from source.
 # 
-installRepoPackages <- function(repo, 
+installRepoPackages <- function(repo, pkgs, 
                                 libPath=rrtPath(repo, "lib"), 
                                 srcPath=rrtPath(repo, "src"), 
-                                pkgs, verbose, quiet=FALSE){
-  if(length(yyy)==0){
+                                verbose, quiet=FALSE){
+  if(length(pkgs)==0){
     mssg(verbose, "... No MRAN packages found to install")
   } else {
     mssg(verbose, "Installing packages...")
     allPkgs <- list.files(srcPath, full.names = TRUE)
     names(allPkgs) <- gsub("_[0-9].+", "", list.files(srcPath))
-    allPkgs <- setdiff(allPkgs, "PACKAGES")
     pkgsWithPath <- unname(sapply(pkgs, function(x) allPkgs[grepl(x, names(allPkgs))]))
     pkgsWithPath <- pkgsWithPath[!sapply(pkgsWithPath, length) == 0]
     
@@ -99,8 +107,8 @@ installRepoPackages <- function(repo,
     } else {
       pkgsWithPath <- pkgsWithPath[!grepl("\\.zip", pkgsWithPath)]
       pkgsWithPath <- unlist(pkgsWithPath)
-      pkgsWithPath <- normalizePath(pkgsWithPath, winslash="/")
-      utils::install.packages(basename(pkgsWithPath), lib = libPath, repos=NULL, 
+      pkgsWithPath <- normalizePath(pkgsWithPath)
+      utils::install.packages(pkgsWithPath, lib = libPath, repos=NULL, 
                               type = "source", dependencies=FALSE, quiet=quiet)
     }
   }
@@ -108,18 +116,18 @@ installRepoPackages <- function(repo,
 
 
 
-is.cranPackage <- function (pkgs, 
-                            repos = c(CRAN="http://cran.r-project.org/"), 
-                            type = "source"){
-  if (!grepl("^file", repos) && file.exists(repos)) {
-    repos <- paste0("file:///", repos)
-  }
-  tt <- available.packages(contrib.url(repos, type = type))
-  availcran_pkgs <- row.names(tt)
-  pkgs %in% availcran_pkgs
-}
-
-
+# is.cranPackage <- function (pkgs, 
+#                             repos = c(CRAN="http://cran.r-project.org/"), 
+#                             type = "source"){
+#   if (!grepl("^file", repos) && file.exists(repos)) {
+#     repos <- paste0("file:///", repos)
+#   }
+#   tt <- available.packages(contrib.url(repos, type = type))
+#   availcran_pkgs <- row.names(tt)
+#   pkgs %in% availcran_pkgs
+# }
+# 
+# 
 
 
 

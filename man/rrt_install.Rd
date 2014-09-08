@@ -3,7 +3,7 @@
 \alias{rrt_install}
 \title{Install packages within an RRT repository.}
 \usage{
-rrt_install(repo = getwd(), snapshot, libPath = rrtPath(repo, "lib"),
+rrt_install(repo = getwd(), snapshotid, libPath = rrtPath(repo, "lib"),
   srcPath = rrtPath(repo, "src"), suggests = FALSE, verbose = TRUE,
   quiet = FALSE)
 }

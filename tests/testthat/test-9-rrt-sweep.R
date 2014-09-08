@@ -9,9 +9,9 @@ options(repos=c(CRAN="http://cran.revolutionanalytics.com/"))
 
 
 test_that("sweep works as expected", {
-  rrt_init(rrt_path, verbose = FALSE, autosnap = TRUE, quiet=TRUE)
+  rrt_init(repo=rrt_path, verbose = FALSE, autosnap = TRUE, quiet=TRUE)
   cat("library(stringr)", file=file.path(rrt_path, "code.R"))
-  rrt_refresh(rrt_path, autosnap = TRUE, verbose = FALSE, quiet=TRUE)
+  rrt_refresh(repo=rrt_path, autosnap = TRUE, verbose = FALSE, quiet=TRUE)
 
   expect_true(is_rrt(rrt_path, FALSE))
   expect_false(is_rrt("~/", FALSE))
@@ -19,9 +19,9 @@ test_that("sweep works as expected", {
 })
 
 test_that("sweep returns messages", {
-  expect_message(rrt_sweep(rrt_path), "Checking to make sure repository exists")
-  expect_message(rrt_sweep(rrt_path), "Package sources removed")
-  expect_message(rrt_sweep(rrt_path), "Checking to make sure rrt directory exists inside your repository")
+  expect_message(rrt_sweep(repo=rrt_path), "Checking to make sure repository exists")
+  expect_message(rrt_sweep(repo=rrt_path), "Package sources removed")
+  expect_message(rrt_sweep(repo=rrt_path), "Checking to make sure rrt directory exists inside your repository")
 })
 
 

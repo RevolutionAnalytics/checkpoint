@@ -3,12 +3,12 @@
 \alias{writeManifest}
 \title{Function to write manifest file}
 \usage{
-writeManifest(repo, libPath = rrtPath(repo, "lib"), packs, repoid,
+writeManifest(repo, libPath = rrtPath(repo, "lib"), pkgs, repoid,
   reponame = "", author = "", license = "", description = "",
   remote = "", snapshot = NULL, verbose = FALSE)
 }
 \arguments{
-\item{packs}{Packages used in the repo}
+\item{pkgs}{Packages used in the repo}
 
 \item{repoid}{Respository ID}
 

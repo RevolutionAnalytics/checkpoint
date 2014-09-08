@@ -3,7 +3,7 @@
 \alias{getSysreq}
 \title{Function to get system requirements, if any, from installed packages}
 \usage{
-getSysreq(pkgs, srcPath)
+getSysreq(pkgs, libPath)
 }
 \arguments{
 \item{x}{(character) Name of package. One to many in a vector or list}

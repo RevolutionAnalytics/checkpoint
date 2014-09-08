@@ -102,6 +102,9 @@ mranPkgMetadata <- function(package, snapshot=NULL){
 }
 
 
+
+
+
 #' Get available package versions from MRAN
 #'
 #' @export
@@ -110,46 +113,43 @@ mranPkgMetadata <- function(package, snapshot=NULL){
 #' @param type (character) "src", "mac.binary" or "win.binary"
 
 #' @family mran
-#' @examples \dontrun{
-#' mranPkgVersions(snapshot="2014-07-14", package="plyr")
-#' mranPkgVersions(snapshot="2014-08-04", package="plyr", which="bin", os="windows")
-#' }
+#' @examples 
+#' pkgVersionAtSnapshot(snapshot="2014-07-14", package="plyr")
+#' pkgVersionAtSnapshot(snapshot="2014-08-01", package="plyr", type="win.binary")
 
-mranPkgVersions <- function(package, snapshot=NULL, type=c("src", "mac.binary", "win.binary")) {
+pkgVersionAtSnapshot <- function(pkgs, snapshotdate, snapshotid=snapshotFromDate(snapshotdate), 
+                            type=c("src", "mac.binary", "win.binary"), Rversion="R3.0") {
   type <- match.arg(type)
-  snapshot <- snapshotFromDate(snapshot)
-  metadata <- mranPkgMetadata(package, snapshot)
-  getBinary <- function(x){
-    xx <- strsplit(x, '/')[[1]]
-    gsub("\\.zip|\\.tgz|[A-Za-z]+_", "", xx[length(xx)])
-  }
-  switch(type, 
-         src = names(metadata$source$ver),
-         mac.binary = getBinary(metadata$osx[[1]]),
-         win.binary = getBinary(metadata$windows[[1]])
-  )
-}
-
-
-
-# parse versions from pkgs
-pkgVersionAtSnapshot <- function(package, snapshot, type=c("src", "bin"), os=c("macosx", "windows")){
-  package <- package[[1]]
-  os   <- match.arg(os)
-  type <- match.arg(type)
-  snapshot <- snapshotFromDate(snapshot)
   
-  vers <- tryCatch(mranPkgVersions(package=package, snapshot=snapshot), 
-                   error=function(e) e)
-  if("error" %in% class(vers)){
-    sprintf("%s/__notfound__", package)
-  } else {
-    latestVersion <- function(a, b) if(utils::compareVersion(a, b) <= 0) b else a
-    versionInUse <- Reduce(latestVersion, vers)
-    
-    sprintf("%s/%s_%s.tar.gz", package, package, versionInUse)
+  doOne <- function(package){
+    metadata <- mranPkgMetadata(package, snapshotid)
+    getBinary <- function(x) gsub(".*_(.*)\\.(zip|tgz)", "\\1", basename(x))
+    switch(type, 
+           src = names(metadata$source$ver),
+           mac.binary = getBinary(metadata$osx[[1]]),
+           win.binary = getBinary(metadata$windows[[1]])
+    )
   }
+  
+  doOneWithErrorChecking <- function(package){
+    versions <- tryCatch(doOne(package=package), error=function(e) e)
+    if(inherits(versions, "error")){
+      sprintf("%s/__notfound__", package)
+    } else {
+      latestVersion <- function(a, b) if(utils::compareVersion(a, b) <= 0) b else a
+      versionInUse <- Reduce(latestVersion, versions)
+      
+      sprintf("%s/%s_%s.tar.gz", package, package, versionInUse)
+    }
+    
+  }
+  
+  sapply(pkgs, doOneWithErrorChecking)
+  
 }
+
+
+
 
 
 snapshotFromDate <- function(date){
@@ -167,17 +167,16 @@ snapshotFromDate <- function(date){
 #' This function uses rsync on *unix machines, which is faster than the method (wget) \code{install.packages} uses by default. On Windows we use your default method of downloading files. This function does not install packages, but only downloads them to your machine.
 #'
 #' @export
-#' @param repo Repository path
-#' @param snapshot You can give the exact snapshot ID instead of a date.
-#' @param srcPath (character) Location of package src in repo
-#' @param date Date as "year-month-day" (YY-MM-DD)
+#' 
+#' @inheritParams checkpoint
+#' 
 #' @param pkgs Packages to install with version numbers, e.g. plyr_1.8.1
 #' @param quiet Passed to \code{\link[utils]{install.packages}}
 #' @param verbose (logical) Whether to print messages or not (Default: FALSE)
 #' @param downloadType Either 'rsync' or 'default'
 
-downloadPackageFromMran <- function(repo, snapshot=getSnapshotId(date),
-                                    date=NULL, pkgs=NULL,  
+downloadPackageFromMran <- function(repo, snapshotdate, snapshotid=getSnapshotId(snapshotdate),
+                                    pkgs=NULL,  
                                     srcPath=rrtPath(repo, "src"),  
                                     verbose=FALSE, quiet=FALSE, 
                                     downloadType=c("rsync", "default"))
@@ -187,11 +186,11 @@ downloadPackageFromMran <- function(repo, snapshot=getSnapshotId(date),
   if(is.null(pkgs)) stop("You must specify one or more packages to get")
   
   # get available snapshots
-  if(is.null(snapshot)) snapshot <- getSnapshotId(date, force=TRUE)
+  if(is.null(snapshotid)) snapshotid <- getSnapshotId(snapshotdate, force=TRUE)
   
   
   pkgs <- lapply(pkgs, function(x) strsplit(x, "_")[[1]])
-  pkgpaths <- sapply(pkgs, pkgVersionAtSnapshot, snapshot=snapshot)
+  pkgpaths <- sapply(pkgs, pkgVersionAtSnapshot, snapshotid=snapshotid)
   
   notonmran <- grep("__notfound__", pkgpaths, value = TRUE)
   pkgpaths <- setdiff(pkgpaths, "__notfound__")
@@ -203,26 +202,26 @@ downloadPackageFromMran <- function(repo, snapshot=getSnapshotId(date),
          rsync   = downloadPackageSourceUsingRsync(
            pkgpaths, 
            srcPath=srcPath, 
-           snapshotid=snapshot, 
+           snapshotid=snapshotid, 
            quiet=quiet
          ),
          default = downloadPackageSourceUsingDefault(
            pkgpaths, 
            srcPath=srcPath, 
-           snapshotid=snapshot, 
+           snapshotid=snapshotid, 
            quiet=quiet
          )
   )
 }
 
 downloadPackageSourceUsingRsync <- function(pkgpaths, srcPath, snapshotid, quiet=FALSE){
-  oldwd <- getwd()
-  on.exit(setwd(oldwd))
-  setwd(srcPath)
-  tmpPkgsFileLoc <- "_rsync-file-locations.txt"
-  cat(pkgpaths, file = tmpPkgsFileLoc, sep = "\n")
-  
   if(length(pkgpaths > 0)){
+    oldwd <- getwd()
+    on.exit(setwd(oldwd))
+    setwd(srcPath)
+    tmpPkgsFileLoc <- "_rsync-file-locations.txt"
+    cat(pkgpaths, file = tmpPkgsFileLoc, sep = "\n")
+  
     
     url <- mranServerUrl()
     url <- sub("http://", "", url)
@@ -278,11 +277,11 @@ downloadPackageSourceUsingDefault <- function(pkgpaths, srcPath, snapshotid, qui
 #   }
 # }
 
-getSnapshotId <- function(date=Sys.Date(), forceLast=TRUE){
+getSnapshotId <- function(snapshotdate=Sys.Date(), forceLast=TRUE){
   # get available snapshots
   availsnaps <- mranSnapshots(verbose=FALSE)
   
-  snapshots <- grep(date, availsnaps, value = TRUE)
+  snapshots <- grep(snapshotdate, availsnaps, value = TRUE)
   if(length(snapshots) > 1){
     if(!forceLast){
       print(data.frame(snapshots))

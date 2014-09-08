@@ -23,7 +23,7 @@
 #' rrt_init(repo="~/mynewcoolrepo", interactive=TRUE)
 #' }
 
-rrt_init <- function(repo=getwd(), mran=TRUE, snapshotdate=NULL, autosnap=FALSE, verbose=TRUE,
+rrt_init <- function(repo=getwd(), snapshotdate=NULL, mran=TRUE, autosnap=FALSE, verbose=TRUE,
                      rprofile=NULL, interactive=FALSE, suggests=FALSE, quiet=FALSE)
 {
   
@@ -76,7 +76,7 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapshotdate=NULL, autosnap=FALSE,
 
   # get packages in a private location for this project
   # mssg(verbose, "Getting new packages...")
-  snapshot <- setSnapshotInOptions(repo, snapshotdate=snapshotdate, autosnap=autosnap)
+  snapshotid <- setSnapshotInOptions(repo, snapshotdate=snapshotdate, autosnap=autosnap)
 
   # Write new .Rprofile file
   if(is.null(rprofile)){
@@ -98,20 +98,20 @@ rrt_init <- function(repo=getwd(), mran=TRUE, snapshotdate=NULL, autosnap=FALSE,
   }
 
   # install packages
-  rrt_install(repo, snapshot=snapshot, libPath=libPath, suggests=suggests, verbose=verbose, quiet=quiet)
+  rrt_install(repo, snapshotid=snapshotid, libPath=libPath, suggests=suggests, verbose=verbose, quiet=quiet)
 
   # Write blank user manifest file, or not if already present
   writeUserManifest(repo = repo, verbose = verbose)
 
   # Write to internal manifest file
   mssg(verbose, "Writing repository locked manifest file...")
-  writeManifest(repo = repo, libPath = libPath, packs = pkgs, 
+  writeManifest(repo = repo, libPath = libPath, pkgs = pkgs, 
                 repoid=repoid, reponame=reponame, author=author, 
                 license=licence, description=description, remote=remote, 
                 snapshot = getOption('RRT_snapshotID'), verbose=verbose)
 
   # write package versions to manifest file
-  write_pkg_versions(repo, srcPath)
+  writePackagesToManifest(repo, libPath)
   
   # Write repo log file
   mssg(verbose, "Writing repository log file...")
@@ -129,11 +129,15 @@ rrt_readline <- function(default=""){
 }
 
 
-write_pkg_versions <- function(repo, srcPath=rrtPath(repo, "src")){
-  instPkgs <- list.files(srcPath, full.names = TRUE)
+repoInstalledPackages <- function(repo, libPath=rrtPath(repo, "lib")){
+  instPkgs <- list.files(libPath, full.names = TRUE, recursive = FALSE)
+  names(instPkgs) <- list.files(libPath, recursive = FALSE)
+  instPkgs[!names(instPkgs) == "src"]
+}
+
+writePackagesToManifest <- function(repo, libPath=rrtPath(repo, "lib")){
+  instPkgs <- repoInstalledPackages(repo, libPath)
   if(!length(instPkgs) == 0){
-    names(instPkgs) <- list.files(srcPath)
-    instPkgs <- setdiff(instPkgs, "src")
     instPkgs_ver <- lapply(instPkgs, function(x) as.package(x)$version)
     out <- sprintf("Packages:\n%s", catPkgVersion(instPkgs_ver) )
     cat(out, 

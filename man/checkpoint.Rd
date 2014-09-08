@@ -4,8 +4,8 @@
 \title{Initiate or refresh an RRT repository.}
 \usage{
 checkpoint(snapshotdate = NULL, repo = getwd(), mran = TRUE,
-  autosnap = TRUE, verbose = TRUE, rprofile = NULL, interactive = FALSE,
-  suggests = FALSE)
+  autosnap = TRUE, rprofile = NULL, interactive = FALSE,
+  suggests = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you

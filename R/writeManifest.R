@@ -3,7 +3,7 @@
 #' @export
 #' @inheritParams rrt_install
 
-#' @param packs Packages used in the repo
+#' @param pkgs Packages used in the repo
 #' @param repoid Respository ID
 #' @param reponame repo name
 #' @param author Authors, comma separated
@@ -13,7 +13,7 @@
 #'
 #' @keywords internal
 #' @return Writes a RRT manifest file ("rrt_manifest.yml") to disk
-writeManifest <- function(repo, libPath=rrtPath(repo, "lib"), packs, repoid, reponame="", author="",
+writeManifest <- function(repo, libPath=rrtPath(repo, "lib"), pkgs, repoid, reponame="", author="",
                           license="", description="", remote="", snapshot=NULL, verbose=FALSE)
 {
   # look first for user manifest file in root directory - overrides user input for fields:
@@ -50,7 +50,7 @@ writeManifest <- function(repo, libPath=rrtPath(repo, "lib"), packs, repoid, rep
   
   
   mssg(verbose, "... checking for package system requirements")
-  sysreq <- sprintf("SystemRequirements:\n%s", getSysreq(packs, srcPath=rrtPath(repo, "src")))
+  sysreq <- sprintf("SystemRequirements:\n%s", getSysreq(pkgs, libPath=libPath))
 
   repositoryid <- sprintf("RepoID: %s", repoid)
 
@@ -104,8 +104,8 @@ check4github <- function(x){
 #' getsysreq(c('RCurl','doMC','ggplot2','XML','rgdal'))
 #' }
 
-getSysreq <- function(pkgs, srcPath){
-  tmp <- lapply(pkgs, function(pkg) getSysreqFromDescriptionFile(pkg, srcPath = srcPath))
+getSysreq <- function(pkgs, libPath){
+  tmp <- lapply(pkgs, function(pkg) getSysreqFromDescriptionFile(pkg, libPath = libPath))
   names(tmp) <- pkgs
   tmp <- rrt_compact(tmp)
   if(!length(tmp) == 0){
@@ -118,10 +118,10 @@ getSysreq <- function(pkgs, srcPath){
   } else { if(length(tmp) == 0) "" else tmp }
 }
 
-getSysreqFromDescriptionFile <- function(pkg, srcPath){
+getSysreqFromDescriptionFile <- function(pkg, libPath){
   tmpdir <- tempdir()
-  tarfiles <- list.files(srcPath, pattern = ".tar.gz", full.names = TRUE)
-  use <- grep(rr, tarfiles, value = TRUE)
+  tarfiles <- list.files(libPath, pattern = ".tar.gz", full.names = TRUE)
+  use <- grep(pkg, tarfiles, value = TRUE)
   if(length(use) == 0){ return(NULL) } else {
     if(length(use) > 1){
       pkgs <- gsub("_.+", "", sapply(use, 
