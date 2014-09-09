@@ -112,6 +112,8 @@ setMranMirror <- function(snapshotdate, autosnap="last",
   options(repos = snapshotUrl)
 }
 
+
+
 #' Configure library path so that repo library is at top of search path.
 #' 
 #' @inheritParams checkpoint

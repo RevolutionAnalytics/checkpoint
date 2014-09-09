@@ -39,7 +39,7 @@ repoScanPackages(repo_root)
 repoInstalledPackages(repo_root)
 
 # Write dummy code file to repo
-cat("library(MASS)", "library(plyr)", "library(XML)", 
+cat("library(MASS)", "library(XML)", 
     sep="\\n", 
     file = file.path(repo_root, "code.R")
 )
