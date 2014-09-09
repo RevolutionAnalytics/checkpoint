@@ -1,4 +1,4 @@
-.onLoad <- function(...) {
+.onAttach <- function(...) {
   msg <- paste(
     "",
     "RRT: the Reproducible R Toolkit from Revolution Analytics",

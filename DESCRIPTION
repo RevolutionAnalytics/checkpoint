@@ -1,8 +1,8 @@
 Package: RRT
 Title: R Reproducibility Toolkit
 Description: R Reproducibility Toolkit.
-Version: 0.1.11
-Date: 2014-09-08
+Version: 0.1.12
+Date: 2014-09-09
 Authors@R: c(person("Andrie", "de Vries", role = c("aut", "cre"),
     email = "apdevries@gmail.com"),
     person("Scott", "Chamberlain", role = "aut",
@@ -12,13 +12,8 @@ URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
     digest,
-    knitr,
-    whisker,
-    devtools,
     httr,
-    RJSONIO,
     XML,
-    yaml,
-    testthat
+    knitr
 Suggests:
-    roxygen2
+    testthat
