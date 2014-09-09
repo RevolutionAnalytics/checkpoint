@@ -4,27 +4,19 @@
 #'
 #' Only direct dependencies are detected (i.e. no recursion).
 #'
-#'
 #' Packages are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
 #' 
 #' @export
-#'
-#' @param repo Repository path. Defaults to current working directory.
-#' @param fileext (character) File extensions to search for. Default is .R, .Rmd, .Rnw, and .Rpres.  Specify a certain file extension(s) in a charcter vector. Exclude a file extension by e.g. "-.Rmd"
-#' @param verbose (logical) Print messages or not.
+#' 
+#' @inheritParams checkpoint
 #'
 #' @return Vector of package names on which R code in the repository depends.
 #'
-#' @family rrt
-#' 
-#' @example /inst/examples/example_scanRepoPackages.R
 #' @note Modified from dependencies.R in the packrat github repo
 
-scanRepoPackages <- function(repo = getwd(), fileext = NULL, verbose = TRUE){
-  repo <- normalizePath(repo, mustWork=FALSE)
-  
+repoScanPackages <- function(repo = getwd(), verbose = TRUE){
   # detect all package dependencies for a repo
-  dir <- normalizePath(repo, winslash='/')
+  dir <- normalizePath(repo, winslash='/', mustWork=FALSE)
   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
   

@@ -3,22 +3,15 @@
 \alias{is_rrt}
 \title{Find out if a repository is an RRT repository.}
 \usage{
-is_rrt(repo = getwd(), verbose = TRUE)
+is_rrt(repo)
 }
 \arguments{
-\item{repo}{(character) A path to create a RRT repository; defaults to current working directory}
-
-\item{verbose}{Print messages or not, Default: TRUE}
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
 }
 \value{
 A logical, TRUE or FALSE
 }
 \description{
 Find out if a repository is an RRT repository.
-}
-\examples{
-\dontrun{
-is_rrt(repo="~/testrepo")
-}
 }
 

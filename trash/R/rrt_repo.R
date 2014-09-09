@@ -1,3 +1,4 @@
+
 #' Functions to check if an object is a rrt_repo, or coerce it if possible.
 #' 
 #' @param x A list to coerce into an rrt_repo object
@@ -6,6 +7,7 @@
 is.rrt_repo <- function(x){
   inherits(x, "rrt_repo")
 }
+
 
 #' @export
 #' @rdname as.rrt_repo

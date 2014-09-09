@@ -1,6 +1,6 @@
 #' Browse rrt libraries
 #'
-#' Open up a dashboard in your default browse.
+#' Open up a dashboard in your default browser.
 #'
 #' @import whisker
 #' @param repoid Respository id, default is NULL, so gets all repos

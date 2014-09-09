@@ -1,7 +1,7 @@
 
 rrt_compact <- function (l) Filter(Negate(is.null), l)
 
-mssg <- function(x, ...) if(x) message(...)
+
 
 checkUserInstall <- function(lib){
   if(file.exists(file.path(lib))){
@@ -22,15 +22,5 @@ checkUserInstall <- function(lib){
   }
   
   return(if(!length(haveinst) == 0) haveinst[!haveinst %in% havesource] else NULL)
-}
-
-#' Creates unique repo id from a digest of the file path.
-#' 
-#' @inheritParams checkpoint
-#' 
-#' @import digest
-#' @keywords Internal
-repoDigest <- function(repo){
-  digest(normalizePath(repo, mustWork=FALSE))
 }
 

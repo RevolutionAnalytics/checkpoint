@@ -33,6 +33,28 @@ mranSnapshots <- function(snapshotdate=NULL, verbose=TRUE){
   return( snaps )
 }
 
+
+
+
+
+getSnapshotId <- function(snapshotdate=Sys.Date(), forceLast=TRUE){
+  # get available snapshots
+  availsnaps <- mranSnapshots(verbose=FALSE)
+  
+  snapshots <- grep(snapshotdate, availsnaps, value = TRUE)
+  if(length(snapshots) > 1){
+    if(!forceLast){
+      print(data.frame(snapshots))
+      message("\nMore than one snapshot matching your date found \n",
+              "Enter rownumber of snapshot (other inputs will return 'NA'):\n")
+      take <- scan(n = 1, quiet = TRUE, what = 'raw')
+      if(is.na(take)){ message("No snapshot found or you didn't select one") }
+      snapshots[as.numeric(take)]
+    } else { snapshots[length(snapshots)] }
+  } else { snapshots }
+}
+
+
 #' Get available diffs from MRAN
 #'
 #' @import httr XML
@@ -279,20 +301,4 @@ downloadPackageSourceUsingDefault <- function(pkgpaths, srcPath, snapshotid, qui
 #   }
 # }
 
-getSnapshotId <- function(snapshotdate=Sys.Date(), forceLast=TRUE){
-  # get available snapshots
-  availsnaps <- mranSnapshots(verbose=FALSE)
-  
-  snapshots <- grep(snapshotdate, availsnaps, value = TRUE)
-  if(length(snapshots) > 1){
-    if(!forceLast){
-      print(data.frame(snapshots))
-      message("\nMore than one snapshot matching your date found \n",
-              "Enter rownumber of snapshot (other inputs will return 'NA'):\n")
-      take <- scan(n = 1, quiet = TRUE, what = 'raw')
-      if(is.na(take)){ message("No snapshot found or you didn't select one") }
-      snapshots[as.numeric(take)]
-    } else { snapshots[length(snapshots)] }
-  } else { snapshots }
-}
 

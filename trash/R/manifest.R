@@ -1,3 +1,53 @@
+writeUserManifest <- function(repo, verbose){
+  usermanfile <- suppressWarnings(normalizePath(file.path(repo, "manifest.yml")))
+  if(file.exists(usermanfile)){
+    mssg(verbose, "User manifest file already exists")
+  } else {
+    mssg(verbose, "Writing blank user manifest file...")
+    fields <- c('RepositoryName:', 'Authors:', 'License:', 'Description:', 'Remote:')
+    cat(fields, file = usermanfile, sep = "\n")
+  }
+}
+
+
+#' @importFrom yaml yaml.load_file
+readManifestFile <- function(repo, filename=rrtPath(repo, "manifest")){
+  if(!file.exists(filename)) {
+    warning("Manifest file not found")
+    list()
+  } else {
+    yaml.load_file(filename)
+  }
+}
+
+
+getSnapshotFromManifest <- function(repo){
+  x <- readManifestFile(repo)
+  x$RRT_snapshotID
+}
+
+
+writePackagesToManifest <- function(repo, libPath=rrtPath(repo, "lib")){
+  instPkgs <- repoInstalledPackages(repo, libPath)
+  if(!length(instPkgs) == 0){
+    instPkgs_ver <- lapply(instPkgs, function(x) as.package(x)$version)
+    out <- sprintf("Packages:\n%s", catPkgVersion(instPkgs_ver) )
+    cat(out, 
+        file = rrtPath(repo, "manifest"), 
+        sep = "\n", append = TRUE)
+  }
+}
+
+catPkgVersion <- function(x){
+  tt <- list()
+  for(i in seq_along(x)){
+    tt[[i]] <- paste0(sprintf(" - %s~", names(x[i])), gsub("\n", " ", x[[i]]))
+  }
+  vv <- paste(tt, collapse = "\n")
+  if(length(vv) == 0) "" else vv
+}
+
+
 #' Function to write manifest file
 #'
 #' @export
