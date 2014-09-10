@@ -1,3 +1,5 @@
 .travis.yml
 Makefile
 tests/test-all.R
+^.*\.Rproj$
+^\.Rproj\.user$
