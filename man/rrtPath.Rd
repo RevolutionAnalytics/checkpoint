@@ -14,6 +14,6 @@ rrtPath(repo, type = c("lib", "src", "manifest", "rootdir", "rootfile"))
 Returns folder paths for rrt library and src for repo.
 }
 \seealso{
-Other Repo path: \code{\link{createRepoFolders}}
+Other res: \code{\link{checkpoint}}
 }
 

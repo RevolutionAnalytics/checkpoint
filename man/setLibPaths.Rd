@@ -6,7 +6,7 @@
 setLibPaths(repo, libPath = rrtPath(repo, "lib"))
 }
 \arguments{
-\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via \code{\link{getwd}}.}
+\item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.}
 
 \item{libPath}{(character) Location of package library in repo}
 }

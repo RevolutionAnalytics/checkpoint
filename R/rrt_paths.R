@@ -5,7 +5,7 @@ repo.exists <- function(repo){
 
 
 #' Returns folder paths for rrt library and src for repo.
-#' 
+#'
 #' @param repo Repo path
 #' @param type Either "lib" or "src"
 #' @export
@@ -14,24 +14,24 @@ rrtPath <- function(repo, type = c("lib", "src", "manifest", "rootdir", "rootfil
   type <- match.arg(type)
   if(!missing("repo")){
     libPath <- normalizePath(
-      file.path(repo, "rrt", "lib", R.version$platform, base::getRversion()), 
+      file.path(repo, "rrt", "lib", R.version$platform, base::getRversion()),
       mustWork = FALSE)
     srcPath <- normalizePath(
       file.path(libPath, "src/contrib"),
       mustWork = FALSE)
     manifest <- normalizePath(
-      file.path(repo, "rrt", "rrt_manifest.yml"), 
+      file.path(repo, "rrt", "rrt_manifest.yml"),
       mustWork = FALSE)
   }
   rootdir <- normalizePath(
-    file.path("~", ".rrt"), 
+    file.path("~", ".rrt"),
     mustWork = FALSE)
   rootfile <- normalizePath(
-    file.path(rootdir, "rrt.txt"), 
+    file.path(rootdir, "rrt.txt"),
     mustWork = FALSE)
-  switch(type, 
-         lib      = libPath, 
-         src      = srcPath, 
+  switch(type,
+         lib      = libPath,
+         src      = srcPath,
          manifest = manifest,
          rootdir  = rootdir,
          rootfile = rootfile
@@ -39,16 +39,11 @@ rrtPath <- function(repo, type = c("lib", "src", "manifest", "rootdir", "rootfil
 }
 
 
-#' Create all required repo folders.
-#' 
-#' @param repo Repo
-#' @export
-#' @family Repo path
 createRepoFolders <- function(repo){
   repoPth <- normalizePath(repo, mustWork=FALSE)
   libPath <- rrtPath(repo, "lib")
   srcPath <- rrtPath(repo, "src")
-  
+
   if(!file.exists(repoPth)) dir.create(repoPth, recursive=TRUE)
   if(!file.exists(libPath)) dir.create(libPath, recursive = TRUE)
   if(!file.exists(srcPath)) dir.create(srcPath, recursive = TRUE)
@@ -61,18 +56,18 @@ createRepoFolders <- function(repo){
 
 
 # #' Returns library path string for repo.
-# #' 
+# #'
 # #' @param repo Repo
 # #' @export
 # #' @family paths
 # rrt_libpath <- function(repo){
 #   normalizePath(
-#     file.path(repo, "rrt", "lib", R.version$platform, base::getRversion()), 
+#     file.path(repo, "rrt", "lib", R.version$platform, base::getRversion()),
 #     mustWork=FALSE)
 # }
-# 
+#
 # #' Returns source path string for repo.
-# #' 
+# #'
 # #' @param repo Repo
 # #' @export
 # #' @family paths
@@ -81,14 +76,14 @@ createRepoFolders <- function(repo){
 #     file.path(rrt_libpath(repo), "src/contrib"),
 #     mustWork=FALSE)
 # }
-# 
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
+#
 # #' Create folder for repo library path
-# #' 
+# #'
 # #' @param repo Repo
 # #' @export
 # #' @family paths
@@ -96,9 +91,9 @@ createRepoFolders <- function(repo){
 #   pth <- rrt_libpath(repo)
 #   if(!file.exists(pth)) dir.create(pth, recursive=TRUE)
 # }
-# 
+#
 # #' Create folder for repo package source path
-# #' 
+# #'
 # #' @param repo Repo
 # #' @export
 # #' @family paths
