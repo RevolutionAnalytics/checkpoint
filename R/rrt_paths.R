@@ -4,12 +4,7 @@ repo.exists <- function(repo){
 }
 
 
-#' Returns folder paths for rrt library and src for repo.
-#'
-#' @param repo Repo path
-#' @param type Either "lib" or "src"
-#' @export
-#' @family Repo path
+
 rrtPath <- function(repo, type = c("lib", "src", "manifest", "rootdir", "rootfile")){
   type <- match.arg(type)
   if(!missing("repo")){
@@ -49,55 +44,3 @@ createRepoFolders <- function(repo){
   if(!file.exists(srcPath)) dir.create(srcPath, recursive = TRUE)
 }
 
-
-
-#  ------------------------------------------------------------------------
-
-
-
-# #' Returns library path string for repo.
-# #'
-# #' @param repo Repo
-# #' @export
-# #' @family paths
-# rrt_libpath <- function(repo){
-#   normalizePath(
-#     file.path(repo, "rrt", "lib", R.version$platform, base::getRversion()),
-#     mustWork=FALSE)
-# }
-#
-# #' Returns source path string for repo.
-# #'
-# #' @param repo Repo
-# #' @export
-# #' @family paths
-# rrt_srcpath <- function(repo){
-#   normalizePath(
-#     file.path(rrt_libpath(repo), "src/contrib"),
-#     mustWork=FALSE)
-# }
-#
-#
-#
-#
-#
-#
-# #' Create folder for repo library path
-# #'
-# #' @param repo Repo
-# #' @export
-# #' @family paths
-# create_libpath_folder <- function(repo){
-#   pth <- rrt_libpath(repo)
-#   if(!file.exists(pth)) dir.create(pth, recursive=TRUE)
-# }
-#
-# #' Create folder for repo package source path
-# #'
-# #' @param repo Repo
-# #' @export
-# #' @family paths
-# create_srcpath_folder <- function(repo){
-#   pth <- rrt_srcpath(repo)
-#   if(!file.exists(pth)) dir.create(pth, recursive=TRUE)
-# }

@@ -1,7 +1,0 @@
-getSnapshotUrl()
-getSnapshotUrl(autosnap = "first")
-getSnapshotUrl(autosnap = "last")
-getSnapshotUrl(autosnap = "all")
-getSnapshotUrl("2014-08-18")
-getSnapshotUrl("2014-09-08")
-getSnapshotUrl("2014-09-08", autosnap = "last")

@@ -9,5 +9,6 @@ URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
     httr,
+    devtools
 Suggests:
     testthat

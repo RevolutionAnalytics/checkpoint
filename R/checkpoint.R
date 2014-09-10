@@ -12,7 +12,7 @@
 #'
 #' @param repo A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.
 #'
-#' @param autosnap One of first, last or all. Determines how to resolve the snapshot id for a given date, if more than one snapshot exists on MRAN for that date.
+
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #'
 #'
@@ -24,11 +24,10 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 
-checkpoint <- function(snapshotdate=NULL, repo=getwd(),
-                       autosnap="last", verbose=TRUE) {
+checkpoint <- function(snapshotdate=NULL, repo=getwd(), verbose=TRUE) {
 
   createRepoFolders(repo)
-  snapshoturl <- getSnapshotUrl(snapshotdate=snapshotdate, autosnap = autosnap)
+  snapshoturl <- getSnapshotUrl(snapshotdate=snapshotdate)
 
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
@@ -36,25 +35,36 @@ checkpoint <- function(snapshotdate=NULL, repo=getwd(),
   # Set lib path
   setLibPaths(repo)
 
+  mssg(verbose, "Scanning for loaded pkgs")
+
+  untouchables = c("RRT", "stats", "graphics", "grDevices", "utils", "datasets", "methods", "base")
+  packages.to.install =
+    setdiff(
+      do.call(rbind, strsplit(grep("^package:", search(), value = TRUE), ":"))[,2],
+      untouchables)
 
   # Scan for packages used
   mssg(verbose, "Scanning for packages used in this repository")
-  pkgsUsed <- repoScanPackages(repo)
+  packages.to.install = c(repoScanPackages(repo), packages.to.install)
 
   # Identify packages already installed
 
   # download and install missing packages
 
-  if(length(pkgsUsed) > 0) {
-    mssg(verbose, "Installing packages used in this repository")
-    utils::install.packages(pkgs = pkgsUsed, repos=snapshoturl, verbose=FALSE, quiet=TRUE)
+  if(length(packages.to.install) > 0) {
+    mssg(verbose, "Installing packages used in this repository or currently loaded")
+    utils::install.packages(pkgs = packages.to.install, verbose=FALSE, quiet=TRUE)
   } else {
     mssg(verbose, "No packages found to install")
   }
 
-  # write / update manifest
+lapply(
+  packages.to.install,
+  function(x) {
+    detach(paste0("package:", x), unload = TRUE, force = TRUE)
+    library(x, character.only = TRUE)})
 
-  # write .Rprofile in repo root folder
+# write .Rprofile in repo root folder
 
 
 }
@@ -107,62 +117,35 @@ repoInstalledPackages <- function(repo, libPath = rrtPath(repo, "lib")){
 #' @param snapshotUrl URL for CRAN snapshot mirror
 #'
 #' @export
-setMranMirror <- function(snapshotdate, autosnap="last",
-                          snapshotUrl = getSnapShotUrl(snapshotdate, autosnap=autosnap)){
+setMranMirror <- function(snapshotdate, snapshotUrl = getSnapShotUrl(snapshotdate)){
   options(repos = snapshotUrl)
 }
 
 
-
-#' Configure library path so that repo library is at top of search path.
-#'
-#' @inheritParams checkpoint
-#' @inheritParams repoInstalledPackages
 setLibPaths <- function(repo, libPath=rrtPath(repo, "lib")){
-  .libPaths(libPath)
-}
+  assign(".lib.loc", libPath, envir = environment(.libPaths))}
 
 
 #  ------------------------------------------------------------------------
 
 
+#' @importFrom httr GET build_url parse_url
 
 mranUrl <- function()"http://cran-snapshots.revolutionanalytics.com/"
 
 
-getSnapshotUrl <- function(snapshotdate, autosnap=c("first", "last", "all"),
-                           url = mranUrl(), returnUrl = TRUE){
-  autosnap <- match.arg(autosnap)
+getSnapshotUrl <- function(snapshotdate, url = mranUrl()){
+  url = parse_url(url)
+  url$path = gsub("^/", "", gsub("/+", "/", paste(url$path, snapshotdate, sep = "/")))
+  url = build_url(url)
   res <- GET(url)
   if(res$status_code > 202)
     stop(sprintf("%s - Unable to download from MRAN", res$status_code))
-  text <- content(res, as = "text")
-  snaps <- xpathSApply(htmlParse(text), "//a", xmlValue)[-1]
-  snaps <- gsub("/", "", snaps)
-  if(!missing("snapshotdate") && !is.null(snapshotdate)) {
-    snaps <- snaps[grep(snapshotdate, snaps)]
-  }
-
-  snapshotdates <- substr(snaps, 1, 10)
-  res <- switch(autosnap,
-                first = tapply(snaps, snapshotdates, FUN=head, n=1),
-                last  = tapply(snaps, snapshotdates, FUN=tail, n=1),
-                all   = snaps
-  )
-  res <- unname(res)
-  if(returnUrl) paste0(url, res) else res
-}
-
-
+  url}
 
 
 #  ------------------------------------------------------------------------
 
-
-is_rrt <- function(repo) { file.exists(file.path(repo, "rrt")) }
-
-
-#  ------------------------------------------------------------------------
 
 
 
@@ -170,7 +153,7 @@ is_rrt <- function(repo) { file.exists(file.path(repo, "rrt")) }
 #'
 #' @inheritParams checkpoint
 #'
-#' @import digest
+#' @importFrom digest digest
 #' @keywords Internal
 repoDigest <- function(repo){
   digest(normalizePath(repo, mustWork=FALSE))
