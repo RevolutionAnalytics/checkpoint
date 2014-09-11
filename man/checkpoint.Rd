@@ -3,10 +3,10 @@
 \alias{checkpoint}
 \title{Set MRAN checkpoint and create local project package library.}
 \usage{
-checkpoint(snapshotdate = NULL, repo = getwd(), verbose = TRUE)
+checkpoint(snapshotDate = NULL, repo = getwd(), verbose = TRUE)
 }
 \arguments{
-\item{snapshotdate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+\item{snapshotDate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
 will be supplied with options.}
 
 \item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.}

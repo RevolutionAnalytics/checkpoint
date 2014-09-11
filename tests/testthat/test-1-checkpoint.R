@@ -2,13 +2,12 @@
 context("checkpoint")
 
 repo_root <- file.path(tempdir(), "rrttemp")
-RRT:::cleanRRTfolder(repo_root)
-
-
+dir.create(repo_root)
+snap_date <- "2014-09-08"
 
 test_that("snapshot functions return correct results", {
 
-  snap_date <- "2014-09-08"
+  RRT:::cleanRRTfolder(snap_date)
 
   expect_equal(
     RRT:::getSnapshotUrl(snap_date),
@@ -53,7 +52,7 @@ test_that("snapshot functions return correct results", {
 
 
   expect_equal(
-    RRT:::rrtPath(repo_root, "lib"),
+    RRT:::rrtPath(snap_date, "lib"),
     normalizePath(.libPaths()[1])
   )
 
@@ -63,6 +62,6 @@ test_that("snapshot functions return correct results", {
 
 
 # cleanup
-RRT:::cleanRRTfolder(repo_root)
+RRT:::cleanRRTfolder(snap_date)
 
 

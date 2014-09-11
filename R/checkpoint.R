@@ -7,7 +7,7 @@
 #' You can run this function to start a new RRT repo, and to refresh a repo with new work. This function downloads packages and installs them, as needed.
 #'
 #'
-#' @param snapshotdate (date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
+#' @param snapshotDate (date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
 #' will be supplied with options.
 #'
 #' @param repo A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.
@@ -24,16 +24,16 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 
-checkpoint <- function(snapshotdate=NULL, repo=getwd(), verbose=TRUE) {
+checkpoint <- function(snapshotDate=NULL, repo=getwd(), verbose=TRUE) {
 
-  createRepoFolders(repo)
-  snapshoturl <- getSnapshotUrl(snapshotdate=snapshotdate)
+  createFolders(snapshotDate)
+  snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
 
   # Set lib path
-  setLibPaths(repo)
+  setLibPaths(snapshotDate)
 
   mssg(verbose, "Scanning for loaded pkgs")
 
@@ -66,19 +66,19 @@ checkpoint <- function(snapshotdate=NULL, repo=getwd(), verbose=TRUE) {
     # write .Rprofile in repo root folder
 }
 
-setMranMirror <- function(snapshotdate, snapshotUrl = getSnapShotUrl(snapshotdate)){
+setMranMirror <- function(snapshotDate, snapshotUrl = getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)
 }
 
-setLibPaths <- function(repo, libPath=rrtPath(repo, "lib")){
+setLibPaths <- function(snapshotDate, libPath=rrtPath(snapshotDate, "lib")){
   assign(".lib.loc", libPath, envir = environment(.libPaths))}
 
 mranUrl <- function()"http://cran-snapshots.revolutionanalytics.com/"
 
-getSnapshotUrl <- function(snapshotdate, url = mranUrl()){
-  url = paste(gsub("/$", "", url), snapshotdate, sep = "/")
-  url = url(url)
-  readLines(url)
+getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
+  url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
+  con = url(url)
+  readLines(con)
   url}
 
 mssg <- function(x, ...) if(x) message(...)
