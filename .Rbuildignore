@@ -1,5 +1,5 @@
-notes.md
 .travis.yml
-man-roxygen
 Makefile
 tests/test-all.R
+^.*\.Rproj$
+^\.Rproj\.user$

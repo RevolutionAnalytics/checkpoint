@@ -1,4 +1,4 @@
-# RRT - The Reproducibile R Toolkit
+# RRT - The Reproducible R Toolkit
 
 
 Build status
