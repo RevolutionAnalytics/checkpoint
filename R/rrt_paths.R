@@ -5,7 +5,7 @@ repo.exists <- function(repo){
 
 
 
-rrtPath <- function(repo, type = c("lib", "src", "manifest", "rootdir", "rootfile")){
+rrtPath <- function(repo, type = c("lib", "src", "rootdir", "rootfile")){
   type <- match.arg(type)
   if(!missing("repo")){
     libPath <- normalizePath(
@@ -13,9 +13,6 @@ rrtPath <- function(repo, type = c("lib", "src", "manifest", "rootdir", "rootfil
       mustWork = FALSE)
     srcPath <- normalizePath(
       file.path(libPath, "src/contrib"),
-      mustWork = FALSE)
-    manifest <- normalizePath(
-      file.path(repo, "rrt", "rrt_manifest.yml"),
       mustWork = FALSE)
   }
   rootdir <- normalizePath(
@@ -27,7 +24,6 @@ rrtPath <- function(repo, type = c("lib", "src", "manifest", "rootdir", "rootfil
   switch(type,
          lib      = libPath,
          src      = srcPath,
-         manifest = manifest,
          rootdir  = rootdir,
          rootfile = rootfile
          )

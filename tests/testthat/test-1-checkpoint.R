@@ -28,19 +28,22 @@ test_that("snapshot functions return correct results", {
 
   expect_message(
     checkpoint(snap_date, repo = repo_root),
-    "Installing packages used in this repository or currently loaded"
+    "Installing packages used in this repository"
   )
 
-  x <- repoInstalledPackages(repo_root)
-  expect_equal(
-    x[, "Package"],
-    c("bitops", "digest", "httr", "jsonlite", "MASS", "plyr", "Rcpp",
-      "RcppTestA", "testRcppClass", "testRcppModule", "RCurl", "stringr", "XML")
+  x <- installed.packages(fields = "Date/Publication")
+  expect_equivalent(
+    sort(x[, "Package"]),
+    sort(c("bitops", "digest", "httr", "jsonlite", "MASS", "plyr", "Rcpp",
+           "RCurl", "stringr", "XML"))
   )
 
   expect_true(
-    all(na.omit(x[, "Date/Publication"]) <= as.POSIXct(snap_date, tz="UTC"))
-    )
+    all(
+      na.omit(
+        x[, "Date/Publication"]) <=
+        as.POSIXct(snap_date, tz="UTC"))
+  )
 
 
   expect_equal(
@@ -50,7 +53,7 @@ test_that("snapshot functions return correct results", {
 
 
   expect_equal(
-    rrtPath(repo_root, "lib"),
+    RRT:::rrtPath(repo_root, "lib"),
     normalizePath(.libPaths()[1])
   )
 
@@ -60,6 +63,6 @@ test_that("snapshot functions return correct results", {
 
 
 # cleanup
-cleanRRTfolder(repo_root)
+RRT:::cleanRRTfolder(repo_root)
 
 

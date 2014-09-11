@@ -1,31 +1,16 @@
-#' Detect repository packages.
-#'
-#' Detect all packages used in repository. Parses all .R, .Rmd, .Rnw, .Rpres, and other files in the repository directory to determine what packages the repo depends directly.
-#'
-#' Only direct dependencies are detected (i.e. no recursion).
-#'
-#' Packages are determined by parsing repository source code and looking for calls to \code{library}, \code{require}, \code{::}, and \code{:::}.
-#' 
-#' @export
-#' 
-#' @inheritParams checkpoint
-#'
-#' @return Vector of package names on which R code in the repository depends.
-#'
-#' @note Modified from dependencies.R in the packrat github repo
 
 repoScanPackages <- function(repo = getwd(), verbose = TRUE){
   # detect all package dependencies for a repo
   dir <- normalizePath(repo, winslash='/', mustWork=FALSE)
   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
-  
+
   ## ignore anything in the rrt directory
   R_files <- grep("^rrt", R_files, invert = TRUE, value = TRUE)
-  
+
   pkgs <- unlist(unique(sapply(R_files, deps_by_ext, dir=dir)))
   as.vector(pkgs)
-  
+
 }
 
 
