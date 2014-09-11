@@ -2,6 +2,3 @@
 
 export(checkpoint)
 import(knitr)
-importFrom(httr,GET)
-importFrom(httr,build_url)
-importFrom(httr,parse_url)

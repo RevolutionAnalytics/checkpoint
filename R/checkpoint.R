@@ -75,14 +75,10 @@ setLibPaths <- function(repo, libPath=rrtPath(repo, "lib")){
 
 mranUrl <- function()"http://cran-snapshots.revolutionanalytics.com/"
 
-#' @importFrom httr GET build_url parse_url
 getSnapshotUrl <- function(snapshotdate, url = mranUrl()){
-  url = parse_url(url)
-  url$path = gsub("^/", "", gsub("/+", "/", paste(url$path, snapshotdate, sep = "/")))
-  url = build_url(url)
-  res <- GET(url)
-  if(res$status_code > 202)
-    stop(sprintf("%s - Unable to download from MRAN", res$status_code))
+  url = paste(gsub("/$", "", url), snapshotdate, sep = "/")
+  url = url(url)
+  readLines(url)
   url}
 
 mssg <- function(x, ...) if(x) message(...)
