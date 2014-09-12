@@ -3,7 +3,8 @@
 \alias{checkpoint}
 \title{Set MRAN checkpoint and create local project package library.}
 \usage{
-checkpoint(snapshotDate = NULL, repo = getwd(), verbose = TRUE)
+checkpoint(snapshotDate = NULL, repo = getwd(), persistent = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{snapshotDate}{(date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you

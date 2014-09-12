@@ -24,7 +24,7 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 
-checkpoint <- function(snapshotDate=NULL, repo=getwd(), verbose=TRUE) {
+checkpoint <- function(snapshotDate=NULL, repo=getwd(), persistent = FALSE, verbose=TRUE) {
 
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
@@ -41,8 +41,6 @@ checkpoint <- function(snapshotDate=NULL, repo=getwd(), verbose=TRUE) {
   mssg(verbose, "Scanning for packages used in this repository")
   packages.to.install = repoScanPackages(repo)
 
-  # Identify packages already installed
-
   # download and install missing packages
 
   if(length(packages.to.install) > 0) {
@@ -52,6 +50,7 @@ checkpoint <- function(snapshotDate=NULL, repo=getwd(), verbose=TRUE) {
     mssg(verbose, "No packages found to install")
   }
 
+  # detach and reload checkpointed pkgs already loaded
   search.path = search()
   lapply(
     unlist(
@@ -63,12 +62,34 @@ checkpoint <- function(snapshotDate=NULL, repo=getwd(), verbose=TRUE) {
       detach(x, unload = TRUE, force = TRUE)
       library(search.path[x], character.only = TRUE)})
 
+  RProfilePath = file.path(repo, ".Rprofile")
+  if(persistent) {
     # write .Rprofile in repo root folder
-}
+    ll = lapply(match.call()[-1], eval)
+    checkpointLine =
+      paste0(
+        "RRT::",
+        paste(capture.output(print(do.call(call, c(list("checkpoint"), ll)))), collapse = " "),
+        " #RRT config")
+    if(!file.exists(RProfilePath))
+      file.create(RProfilePath)
+    RProfile = readLines(RProfilePath)
+    rrtLine = grep("#RRT config$", RProfile)
+    if(length(rrtLine) == 0)
+      RProfile = append(checkpointLine, RProfile)
+    else
+      RProfile[rrtLine] = checkpointLine
+    writeLines(RProfile, RProfilePath)}
+  else {
+    if(file.exists(RProfilePath)) {
+      RProfile = readLines(RProfilePath)
+      rrtLine = grep("#RRT config$", RProfile)
+      RProfile = RProfile[-rrtLine]
+      writeLines(RProfile, RProfilePath)}}
+  NULL}
 
 setMranMirror <- function(snapshotDate, snapshotUrl = getSnapShotUrl(snapshotDate)){
-  options(repos = snapshotUrl)
-}
+  options(repos = snapshotUrl)}
 
 setLibPaths <- function(snapshotDate, libPath=rrtPath(snapshotDate, "lib")){
   assign(".lib.loc", libPath, envir = environment(.libPaths))}
