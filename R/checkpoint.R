@@ -1,10 +1,16 @@
-#' Set MRAN checkpoint and create local project package library.
+#' Set checkpoint date, downloads required packages from MRAN and sets libPath as well as CRAN mirror.
+#' 
+#' The aim of the MRAN server combined with the RRT package is to serve as a "CRAN time machine".  Once a day, MRAN mirrors all of CRAN and saves a snapshot.  This allows you to install packages from a snapshot, and go back in time to this date, by installing packages as they were at that snapshot date.
+#' 
+#' When you create a checkpoint, the following happens:
+#' 
+#' \itemize{
+#' \item{Create a snapshot folder to download packages. This library folder is at \code{~/.rrt}}
+#' \item{Set options for your CRAN mirror to point to a MRAN snapshot, i.e. modify \code{options(repos)}}
+#' \item{Scan your project folder for all packages used and install these using \code{\link[utils]{download.packages}}}
+#' \item{Create a file \code{.Rprofile}} to initialise your library path to the snapshot library path
+#' }
 #'
-#' This function decides what to do with your repository based on commands you give, and on skimming through your repo. You can run this function to start a new repository, without any work done yet, creating a new folder and RRT files, or you can initiate a RRT repository inside an existing project/folder you already have. If the latter, we don't alter your files at all, but simply write a few files needed for RRT to work properly.
-#'
-#' By detault initialization is done interactively, so that you can choose your settings or accept reasonable defaults.
-#'
-#' You can run this function to start a new RRT repo, and to refresh a repo with new work. This function downloads packages and installs them, as needed.
 #'
 #'
 #' @param snapshotDate (date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
@@ -16,10 +22,9 @@
 #' @param verbose (logical) Whether to print messages or not (Default: TRUE).
 #'
 #'
-#' @return Files written to the user's machine, with informative messages on progress
+#' @return NULL. See the \code{details} section for side effects.
 #'
 #' @export
-#' @family rrt
 #'
 #' @example /inst/examples/example_checkpoint.R
 #'
