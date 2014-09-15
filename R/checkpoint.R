@@ -17,9 +17,10 @@
 #' will be supplied with options.
 #'
 #' @param repo A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.
+#' 
+#' @param persistent If TRUE, adds library path to .Rprofile, else removes library path from .Rprofile
 #'
-
-#' @param verbose (logical) Whether to print messages or not (Default: TRUE).
+#' @param verbose If TRUE, displays progress messages.
 #'
 #'
 #' @return NULL. See the \code{details} section for side effects.

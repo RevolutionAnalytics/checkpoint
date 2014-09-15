@@ -12,7 +12,9 @@ will be supplied with options.}
 
 \item{repo}{A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.}
 
-\item{verbose}{(logical) Whether to print messages or not (Default: TRUE).}
+\item{persistent}{If TRUE, adds library path to .Rprofile, else removes library path from .Rprofile}
+
+\item{verbose}{If TRUE, displays progress messages.}
 }
 \value{
 NULL. See the \code{details} section for side effects.
