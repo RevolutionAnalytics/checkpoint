@@ -108,4 +108,34 @@ getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
   readLines(con)
   url}
 
+
+getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
+  if(missing("snapshotDate")) stop("snapshotDate not supplied")
+  page <- url(url)
+  on.exit(close(page))
+  
+  text <- tryCatch(suppressWarnings(readLines(page)), error=function(e)e)
+  if(inherits(text, "error")) {
+    stop(sprintf("Unable to download from MRAN: %s", text$message))
+  }
+  ptn <- "<a .*?>(.{10,})</a>.*"
+  idx <- grep(ptn, text)
+  text <- text[idx]
+  snaps <- gsub(ptn, "\\1", text)
+  
+  snaps <- gsub("/", "", snaps)
+  snaps <- snaps[grep(snapshotDate, snaps)]
+  
+  snapshotdates <- substr(snaps, 1, 10)
+  res <- if(length(snapshotdates) == 1 ) {
+    snapshotdates 
+    } else {
+      tapply(snaps, snapshotdates, FUN=head, n=1)
+    }
+  res <- unname(as.vector(res))
+  paste0(url, res)
+}
+
+
+
 mssg <- function(x, ...) if(x) message(...)
