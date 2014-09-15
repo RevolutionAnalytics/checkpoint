@@ -1,9 +1,9 @@
 #' Set checkpoint date, downloads required packages from MRAN and sets libPath as well as CRAN mirror.
-#' 
+#'
 #' The aim of the MRAN server combined with the RRT package is to serve as a "CRAN time machine".  Once a day, MRAN mirrors all of CRAN and saves a snapshot.  This allows you to install packages from a snapshot, and go back in time to this date, by installing packages as they were at that snapshot date.
-#' 
+#'
 #' When you create a checkpoint, the following happens:
-#' 
+#'
 #' \itemize{
 #' \item{Create a snapshot folder to download packages. This library folder is at \code{~/.rrt}}
 #' \item{Set options for your CRAN mirror to point to a MRAN snapshot, i.e. modify \code{options(repos)}}
@@ -17,7 +17,7 @@
 #' will be supplied with options.
 #'
 #' @param repo A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.
-#' 
+#'
 #' @param persistent If TRUE, adds library path to .Rprofile, else removes library path from .Rprofile
 #'
 #' @param verbose If TRUE, displays progress messages.
@@ -103,39 +103,22 @@ setLibPaths <- function(snapshotDate, libPath=rrtPath(snapshotDate, "lib")){
 mranUrl <- function()"http://cran-snapshots.revolutionanalytics.com/"
 
 getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
-  url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
+  mran.root = url(url)
+  on.exit(close(mran.root))
+  tryCatch(
+    suppressWarnings(readLines(mran.root)),
+    error =
+      function(e) {
+        stop(sprintf("Unable to reach MRAN: %s", e$message))})
+  snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
   con = url(url)
-  readLines(con)
-  url}
-
-
-getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
-  if(missing("snapshotDate")) stop("snapshotDate not supplied")
-  page <- url(url)
-  on.exit(close(page))
-  
-  text <- tryCatch(suppressWarnings(readLines(page)), error=function(e)e)
-  if(inherits(text, "error")) {
-    stop(sprintf("Unable to download from MRAN: %s", text$message))
-  }
-  ptn <- "<a .*?>(.{10,})</a>.*"
-  idx <- grep(ptn, text)
-  text <- text[idx]
-  snaps <- gsub(ptn, "\\1", text)
-  
-  snaps <- gsub("/", "", snaps)
-  snaps <- snaps[grep(snapshotDate, snaps)]
-  
-  snapshotdates <- substr(snaps, 1, 10)
-  res <- if(length(snapshotdates) == 1 ) {
-    snapshotdates 
-    } else {
-      tapply(snaps, snapshotdates, FUN=head, n=1)
-    }
-  res <- unname(as.vector(res))
-  paste0(url, res)
-}
-
+  on.exit(close(con))
+  tryCatch(
+    suppressWarnings(readLines(snapshot.url)),
+    error =
+      function(e) {
+        stop("Unable to find snapshot on MRAN")})
+  snapshot.url}
 
 
 mssg <- function(x, ...) if(x) message(...)
