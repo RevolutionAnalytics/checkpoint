@@ -30,7 +30,7 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 
-checkpoint <- function(snapshotDate=NULL, repo=getwd(), persistent = FALSE, verbose=TRUE) {
+checkpoint <- function(snapshotDate, repo=getwd(), persistent = FALSE, verbose=TRUE) {
 
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
