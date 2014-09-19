@@ -4,7 +4,7 @@ library(quickcheck)
 
   #snap_date <- "2014-09-08"
 
-MRAN.start = as.Date("2014-09-08")
+MRAN.start = as.Date("2014-09-17")
 for(snap_date in as.character(rDate(from = MRAN.start, to = Sys.Date() - 1))) {
   repo_root <- file.path(tempfile(), "rrttemp")
   dir.create(repo_root, recursive = TRUE)
@@ -44,7 +44,7 @@ for(snap_date in as.character(rDate(from = MRAN.start, to = Sys.Date() - 1))) {
 
     expect_equal(
       getOption("repos"),
-      "http://cran-snapshots.revolutionanalytics.com/2014-09-08")
+      file.path("http://cran-snapshots.revolutionanalytics.com", snap_date))
 
     expect_equal(
       RRT:::rrtPath(snap_date, "lib"),
