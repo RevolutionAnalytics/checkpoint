@@ -3,7 +3,7 @@
 \alias{checkpoint}
 \title{Set checkpoint date, downloads required packages from MRAN and sets libPath as well as CRAN mirror.}
 \usage{
-checkpoint(snapshotDate = NULL, repo = getwd(), persistent = FALSE,
+checkpoint(snapshotDate, repo = getwd(), persistent = FALSE,
   verbose = TRUE)
 }
 \arguments{

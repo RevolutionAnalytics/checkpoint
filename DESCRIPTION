@@ -12,4 +12,5 @@ Imports:
     devtools,
     knitr
 Suggests:
-    testthat
+    testthat,
+    quickcheck (>= 2.1.0)
