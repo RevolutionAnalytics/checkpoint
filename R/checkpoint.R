@@ -30,7 +30,7 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 
-checkpoint <- function(snapshotDate, repo=getwd(), persistent = FALSE, verbose=TRUE) {
+checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
 
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
@@ -68,30 +68,6 @@ checkpoint <- function(snapshotDate, repo=getwd(), persistent = FALSE, verbose=T
       detach(x, unload = TRUE, force = TRUE)
       library(search.path[x], character.only = TRUE)})
 
-  RProfilePath = file.path(repo, ".Rprofile")
-  if(persistent) {
-    # write .Rprofile in repo root folder
-    ll = lapply(match.call()[-1], eval)
-    checkpointLine =
-      paste0(
-        "RRT::",
-        paste(capture.output(print(do.call(call, c(list("checkpoint"), ll)))), collapse = " "),
-        " #RRT config")
-    if(!file.exists(RProfilePath))
-      file.create(RProfilePath)
-    RProfile = readLines(RProfilePath)
-    rrtLine = grep("#RRT config$", RProfile)
-    if(length(rrtLine) == 0)
-      RProfile = append(checkpointLine, RProfile)
-    else
-      RProfile[rrtLine] = checkpointLine
-    writeLines(RProfile, RProfilePath)}
-  else {
-    if(file.exists(RProfilePath)) {
-      RProfile = readLines(RProfilePath)
-      rrtLine = grep("#RRT config$", RProfile)
-      RProfile = RProfile[-rrtLine]
-      writeLines(RProfile, RProfilePath)}}
   NULL}
 
 setMranMirror <- function(snapshotDate, snapshotUrl = getSnapShotUrl(snapshotDate)){
