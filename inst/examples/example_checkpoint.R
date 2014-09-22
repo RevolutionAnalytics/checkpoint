@@ -5,7 +5,7 @@ if(!file.exists(project_root)) dir.create(project_root)
 
 snap_date <- "2014-09-08"
 
-checkpoint(snap_date, repo = project_root)
+checkpoint(snap_date, project = project_root)
 
 # Check that CRAN mirror is set to MRAN snapshot
 getOption("repos")
@@ -14,14 +14,14 @@ getOption("repos")
 .libPaths()
 installed.packages()
 
-# Write dummy code file to repo
+# Write dummy code file to project
 cat("library(MASS)", "library(XML)",
     sep="\n",
     file = file.path(project_root, "code.R")
 )
 
 
-checkpoint(snap_date, repo = project_root)
+checkpoint(snap_date, project = project_root)
 installed.packages()
 
 # cleanup

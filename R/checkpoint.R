@@ -16,7 +16,7 @@
 #' @param snapshotDate (date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
 #' will be supplied with options.
 #'
-#' @param repo A repository path. This is the path to the root of your RRT repository. Defaults to current working directory current working directory via /code{/link{getwd}}.
+#' @param project A project  path. This is the path to the root of the project you want checkpointed. Defaults to current working directory per /code{/link{getwd}}.
 #'
 #' @param persistent If TRUE, adds library path to .Rprofile, else removes library path from .Rprofile
 #'
@@ -44,13 +44,13 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
   mssg(verbose, "Scanning for loaded pkgs")
 
   # Scan for packages used
-  mssg(verbose, "Scanning for packages used in this repository")
-  packages.to.install = repoScanPackages(repo)
+  mssg(verbose, "Scanning for packages used in this project")
+  packages.to.install = projectScanPackages(project)
 
   # download and install missing packages
 
   if(length(packages.to.install) > 0) {
-    mssg(verbose, "Installing packages used in this repository")
+    mssg(verbose, "Installing packages used in this project ")
     utils::install.packages(pkgs = packages.to.install, verbose=FALSE, quiet=TRUE)
   } else {
     mssg(verbose, "No packages found to install")
@@ -70,7 +70,7 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
 
   NULL}
 
-setMranMirror <- function(snapshotDate, snapshotUrl = getSnapShotUrl(snapshotDate)){
+setMranMirror <- function(snapshotDate, snapshotUrl = RRT:::getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
 
 setLibPaths <- function(snapshotDate, libPath=rrtPath(snapshotDate, "lib")){

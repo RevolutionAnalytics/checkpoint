@@ -4,8 +4,8 @@ library(quickcheck)
 
 MRAN.start = as.Date("2014-09-17")
 for(snap_date in as.character(rDate(from = MRAN.start, to = Sys.Date() - 1))) {
-  repo_root <- file.path(tempfile(), "rrttemp")
-  dir.create(repo_root, recursive = TRUE)
+  project_root <- file.path(tempfile(), "rrttemp")
+  dir.create(project_root, recursive = TRUE)
 
   test_that("snapshot functions return correct results", {
 
@@ -16,17 +16,17 @@ for(snap_date in as.character(rDate(from = MRAN.start, to = Sys.Date() - 1))) {
       file.path("http://cran-snapshots.revolutionanalytics.com", snap_date))
 
     expect_message(
-      checkpoint(snap_date, repo = repo_root),
+      checkpoint(snap_date, project = project_root),
       "No packages found to install")
 
-    # Write dummy code file to repo
+    # Write dummy code file to project
     cat("library(MASS)", "library(plyr)", "library(XML)", "library('httr')",
         sep="\n",
-        file = file.path(repo_root, "code.R"))
+        file = file.path(project_root, "code.R"))
 
     expect_message(
-      checkpoint(snap_date, repo = repo_root),
-      "Installing packages used in this repository")
+      checkpoint(snap_date, project = project_root),
+      "Installing packages used in this project")
 
     x <- installed.packages(fields = "Date/Publication")
     expect_equivalent(

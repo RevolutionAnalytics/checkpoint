@@ -1,7 +1,7 @@
 
-repoScanPackages <- function(repo = getwd(), verbose = TRUE){
-  # detect all package dependencies for a repo
-  dir <- normalizePath(repo, winslash='/', mustWork=FALSE)
+projectScanPackages <- function(project = getwd(), verbose = TRUE){
+  # detect all package dependencies for a project
+  dir <- normalizePath(project, winslash='/', mustWork=FALSE)
   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
 
