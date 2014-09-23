@@ -1,24 +1,17 @@
-#' Set checkpoint date, downloads required packages from MRAN and sets libPath as well as CRAN mirror.
+#' Configure session as if it took place on snapshot date as far as packages are concerned.
 #'
-#' The aim of the MRAN server combined with the RRT package is to serve as a "CRAN time machine".  Once a day, MRAN mirrors all of CRAN and saves a snapshot.  This allows you to install packages from a snapshot, and go back in time to this date, by installing packages as they were at that snapshot date.
+#' The aim of this function is configure a session as if it had occured right after the snapshot date. That way you can reproduce how a computation took place at a certain time. This is intended to support reproducibility, that is you only need to add a checkpoint call to your scripts or packages to make sure that subsequent updates to packages do not modify the results of running those scripts or using those packages.
 #'
 #' When you create a checkpoint, the following happens:
 #'
-#' \itemize{
-#' \item{Create a snapshot folder to download packages. This library folder is at \code{~/.rrt}}
-#' \item{Set options for your CRAN mirror to point to a MRAN snapshot, i.e. modify \code{options(repos)}}
-#' \item{Scan your project folder for all packages used and install these using \code{\link[utils]{download.packages}}}
-#' \item{Create a file \code{.Rprofile}} to initialise your library path to the snapshot library path
-#' }
+#' As a consequence of running checkpoint, a specialized library will be set up that contains only packages as they were available on CRAN on the snapshot date; a session will only be able to install packages into or load them from said library. As an additional convenience, a heuristic is applied to find packages that are used in the project directory and install them in the snapshot specific library. Currently loaded packages are reloaded from the snapshot specific library.
 #'
 #'
 #'
-#' @param snapshotDate (date) Required. Date of snapshot to use. E.g. "2014-06-20". If left blank, you
-#' will be supplied with options.
+#' @param snapshotDate Date of snapshot to use in YYYY-MM-DD format,  e.g. "2014-06-20". .
 #'
 #' @param project A project  path. This is the path to the root of the project you want checkpointed. Defaults to current working directory per /code{/link{getwd}}.
 #'
-#' @param persistent If TRUE, adds library path to .Rprofile, else removes library path from .Rprofile
 #'
 #' @param verbose If TRUE, displays progress messages.
 #'
