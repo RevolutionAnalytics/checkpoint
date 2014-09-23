@@ -3,7 +3,8 @@ context("checkpoint")
 library(quickcheck)
 
 MRAN.start = as.Date("2014-09-17")
-for(snap_date in as.character(rDate(from = MRAN.start, to = Sys.Date() - 1))) {
+MRAN.dates = as.Date(MRAN.start:(Sys.Date()-1), origin = as.Date("1970-01-01"))
+for(snap_date in as.character(MRAN.dates[sample(length(MRAN.dates), 10, replace = TRUE)])) {
   project_root <- file.path(tempfile(), "rrttemp")
   dir.create(project_root, recursive = TRUE)
 
