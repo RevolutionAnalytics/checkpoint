@@ -87,10 +87,10 @@ getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
       function(e) {
         stop(sprintf("Unable to reach MRAN: %s", e$message))})
   snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
-  con = url(url)
+  con = url(snapshot.url)
   on.exit(close(con))
   tryCatch(
-    suppressWarnings(readLines(snapshot.url)),
+    suppressWarnings(readLines(con)),
     error =
       function(e) {
         stop("Unable to find snapshot on MRAN")})
