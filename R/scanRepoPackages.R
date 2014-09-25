@@ -5,8 +5,8 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE){
   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
 
-  ## ignore anything in the rrt directory
-  R_files <- grep("^rrt", R_files, invert = TRUE, value = TRUE)
+#   ## ignore anything in the rrt directory
+#   R_files <- grep("^rrt", R_files, invert = TRUE, value = TRUE)
 
   pkgs <- unlist(unique(sapply(R_files, deps_by_ext, dir=dir)))
   as.vector(pkgs)
