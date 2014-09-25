@@ -9,8 +9,6 @@ License: GPL-2|GPL-3
 URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
-    devtools,
     knitr
 Suggests:
-    testthat,
-    quickcheck (>= 2.1.0)
+    testthat
