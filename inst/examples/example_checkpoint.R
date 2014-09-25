@@ -1,29 +1,36 @@
-# tests for initialize
+\dontrun{
 
-project_root <- file.path(tempdir(), "rrttemp")
-if(!file.exists(project_root)) dir.create(project_root)
+# Create temporary project and set working directory
 
-snap_date <- "2014-09-08"
+example_project <- paste0("~/rrt_example_project_", Sys.Date())
 
-checkpoint(snap_date, project = project_root)
+dir.create(example_project, recursive = TRUE)
+oldwd <- setwd(example_project)
+
+
+# Write dummy code file to project
+
+cat("library(MASS)", "library(foreach)",
+    sep="\n", 
+    file="rrt_example_code.R")
+
+
+# Create a checkpoint by specifying a snapshot date
+
+library(RRT)
+checkpoint("2014-09-17")
 
 # Check that CRAN mirror is set to MRAN snapshot
 getOption("repos")
 
 # Check that library path is set to ~/.rrt
 .libPaths()
-installed.packages()
 
-# Write dummy code file to project
-cat("library(MASS)", "library(XML)",
-    sep="\n",
-    file = file.path(project_root, "code.R")
-)
-
-
-checkpoint(snap_date, project = project_root)
+# Check which packages are installed in RRT library
 installed.packages()
 
 # cleanup
-unlink(project_root, recursive=TRUE)
+unlink(example_project, recursive = TRUE)
+setwd(oldwd)
 
+}
