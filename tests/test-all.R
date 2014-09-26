@@ -1,2 +1,2 @@
-if(require(testthat))
-  devtools::test()
+library(testthat)
+test_check("RRT")
