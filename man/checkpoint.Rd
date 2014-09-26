@@ -8,7 +8,7 @@ checkpoint(snapshotDate, project = getwd(), verbose = TRUE)
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Daily snapshots exists on the MRAN server starting from \code{"2014-09-17"}.}
 
-\item{project}{A project path. This is the path to the root of the project you want checkpointed. Defaults to current working directory using \code{\link{getwd()}}.}
+\item{project}{A project path. This is the path to the root of the project you want checkpointed. Defaults to current working directory using \code{\link{getwd}()}.}
 
 \item{verbose}{If TRUE, displays progress messages.}
 }
@@ -21,7 +21,9 @@ Together, the RRT package and the MRAN server act as a CRAN time machine. The \c
 \section{Details}{
 
 
-As a consequence of running checkpoint, a specialized library will be set up that contains only packages as they were available on CRAN on the snapshot date; a session will only be able to install packages into or load them from said library. As an additional convenience, a heuristic is applied to find packages that are used in the project directory and install them in the snapshot specific library. Currently loaded packages are reloaded from the snapshot specific library.
+\code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they were on CRAN on the specified snapshot date. Your R session is updated to use only these packages.
+
+To automatically determine all packages used in your project, the function scans all R code files for \code{library()} and \code{requires()} statements.  During this scan, the function searches for all R and Rmarkdown scripts, in other words file with extensions \code{.R}, \code{.Rmd} and \code{.Rpres}.
 
 Specifically, the function will:
 
@@ -29,7 +31,6 @@ Specifically, the function will:
 \item{Create a new local snapshot library to download packages. This library folder is at \code{~/.rrt}}
 \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{options(repos)}}
 \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{download.packages}}}
-\item{Create a new profile to initialize your library path to the snapshot library path using \code{.Rprofile}}
 }
 }
 \examples{
