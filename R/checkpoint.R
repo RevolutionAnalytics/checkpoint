@@ -1,16 +1,25 @@
-#' Configure session as if it took place on snapshot date as far as packages are concerned.
+#' Configures R session to use packages as they existed on CRAN at a snapshot date.
 #'
-#' The aim of this function is configure a session as if it had occured right after the snapshot date. That way you can reproduce how a computation took place at a certain time. This is intended to support reproducibility, that is you only need to add a checkpoint call to your scripts or packages to make sure that subsequent updates to packages do not modify the results of running those scripts or using those packages.
+#' Together, the RRT package and the MRAN server act as a CRAN time machine. The \code{checkpoint()} function downloads the packages to a local library exactly as they were at the specified point in time. Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using RRT's \code{checkpoint()} can ensure the reproducibility of your scripts or projects at any time.
+#' 
+#' @section Details:
+#' 
+#' \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they were on CRAN on the specified snapshot date. Your R session is updated to use only these packages.
 #'
-#' When you create a checkpoint, the following happens:
+#' To automatically determine all packages used in your project, the function scans all R code files for \code{library()} and \code{requires()} statements.  During this scan, the function searches for all R and Rmarkdown scripts, in other words file with extensions \code{.R}, \code{.Rmd} and \code{.Rpres}.
+#' 
+#' Specifically, the function will:
+#' 
+#' \itemize{
+#' \item{Create a new local snapshot library to download packages. This library folder is at \code{~/.rrt}}
+#' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{options(repos)}}
+#' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{download.packages}}}
+#' }
 #'
-#' As a consequence of running checkpoint, a specialized library will be set up that contains only packages as they were available on CRAN on the snapshot date; a session will only be able to install packages into or load them from said library. As an additional convenience, a heuristic is applied to find packages that are used in the project directory and install them in the snapshot specific library. Currently loaded packages are reloaded from the snapshot specific library.
 #'
+#' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Daily snapshots exists on the MRAN server starting from \code{"2014-09-17"}.
 #'
-#'
-#' @param snapshotDate Date of snapshot to use in YYYY-MM-DD format,  e.g. "2014-06-20". .
-#'
-#' @param project A project  path. This is the path to the root of the project you want checkpointed. Defaults to current working directory per /code{/link{getwd}}.
+#' @param project A project path. This is the path to the root of the project you want checkpointed. Defaults to current working directory using \code{\link{getwd}()}.
 #'
 #'
 #' @param verbose If TRUE, displays progress messages.

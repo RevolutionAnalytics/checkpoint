@@ -1,10 +1,19 @@
 Package: RRT
-Title: R Reproducibility Toolkit
-Description: R Reproducibility Toolkit.
-Version: 0.3.0
-Date: 2014-09-09
+Title: R Reproducibility Toolkit.
+Description: The goal of RRT is to solve the problem of package reproducibility
+    in R. Specifically, RRT allows you to install packages as they existed on
+    CRAN at a specific snapshot date, as if you had a CRAN time machine.  To
+    achieve reproducibility, the checkpoint() function installs the packages
+    to a local library exactly as they were at the specified point in time.
+    Only those packages are available to your project, thereby avoiding any
+    package updates that came later and may have altered your results. In this
+    way, anyone using RRT's checkpoint() can ensure the reproducibility of
+    your scripts or projects at any time.
+Version: 0.3.1
+Date: 2014-09-26
 Author: Revolution Analytics
-Maintainer: Revolution Analytics <packages@revolutionanalytics.com>
+Maintainer: Andrie de Vries <andrie@revolutionanalytics.com>
+Copyright: Revolution Analytics
 License: GPL-2|GPL-3
 URL: https://github.com/RevolutionAnalytics/RRT
 BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
