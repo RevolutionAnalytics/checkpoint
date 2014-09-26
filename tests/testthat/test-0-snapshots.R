@@ -1,7 +1,7 @@
 context("MRAN snapshots")
 
 test_that("snapshot functions return correct results", {
-
+  skip_on_cran()
   expect_error(
     getSnaphostUrl("1972-01-01"))
 
