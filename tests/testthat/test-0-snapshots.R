@@ -3,7 +3,7 @@ context("MRAN snapshots")
 test_that("snapshot functions return correct results", {
   skip_on_cran()
   expect_error(
-    getSnaphostUrl("1972-01-01"))
+    getSnapshotUrl("1972-01-01"))
 
   dd <- "2014-09-08"
   mm <- getSnapshotUrl(dd)
