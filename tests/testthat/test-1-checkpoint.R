@@ -13,8 +13,8 @@ for(snap_date in as.character(MRAN.dates[sample(length(MRAN.dates), 10, replace 
     checkpoint:::cleanCheckpointFolder(snap_date)
 
     expect_equal(
-      file.path("http://cran-snapshots.revolutionanalytics.com", snap_date))
       checkpoint:::getSnapshotUrl(snap_date),
+      file.path("http://mran.revolutionanalytics.com/snapshot", snap_date))
 
     expect_message(
       checkpoint(snap_date, project = project_root),
@@ -43,7 +43,7 @@ for(snap_date in as.character(MRAN.dates[sample(length(MRAN.dates), 10, replace 
 
     expect_equal(
       getOption("repos"),
-      file.path("http://cran-snapshots.revolutionanalytics.com", snap_date))
+      file.path("http://mran.revolutionanalytics.com/snapshot", snap_date))
 
     expect_equal(
       checkpoint:::checkpointPath(snap_date, "lib"),

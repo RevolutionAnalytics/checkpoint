@@ -78,7 +78,7 @@ setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUr
 setLibPaths <- function(snapshotDate, libPath=checkpointPath(snapshotDate, "lib")){
   assign(".lib.loc", libPath, envir = environment(.libPaths))}
 
-mranUrl <- function()"http://cran-snapshots.revolutionanalytics.com/"
+mranUrl <- function()"http://mran.revolutionanalytics.com/snapshot/"
 
 getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
   mran.root = url(url)
