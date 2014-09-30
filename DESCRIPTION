@@ -25,4 +25,4 @@ BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
 Imports:
     knitr
 Suggests:
-    testthat
+    testthat(>= 0.9)
