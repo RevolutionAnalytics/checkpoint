@@ -1,2 +1,2 @@
 library(testthat)
-test_check("RRT")
+test_check("checkpoint")

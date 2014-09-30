@@ -4,17 +4,17 @@ context("checkpoint")
 MRAN.start = as.Date("2014-09-17")
 MRAN.dates = as.Date(MRAN.start:(Sys.Date()-1), origin = as.Date("1970-01-01"))
 for(snap_date in as.character(MRAN.dates[sample(length(MRAN.dates), 10, replace = TRUE)])) {
-  project_root <- file.path(tempfile(), "rrttemp")
+  project_root <- file.path(tempfile(), "checkpointtemp")
   dir.create(project_root, recursive = TRUE)
 
   test_that("snapshot functions return correct results", {
     skip_on_cran()
 
-    RRT:::cleanRRTfolder(snap_date)
+    checkpoint:::cleanCheckpointFolder(snap_date)
 
     expect_equal(
-      RRT:::getSnapshotUrl(snap_date),
       file.path("http://cran-snapshots.revolutionanalytics.com", snap_date))
+      checkpoint:::getSnapshotUrl(snap_date),
 
     expect_message(
       checkpoint(snap_date, project = project_root),
@@ -46,8 +46,8 @@ for(snap_date in as.character(MRAN.dates[sample(length(MRAN.dates), 10, replace 
       file.path("http://cran-snapshots.revolutionanalytics.com", snap_date))
 
     expect_equal(
-      RRT:::rrtPath(snap_date, "lib"),
+      checkpoint:::checkpointPath(snap_date, "lib"),
       normalizePath(.libPaths()[1]))})
   # cleanup
-  RRT:::cleanRRTfolder(snap_date)
+  checkpoint:::cleanCheckpointFolder(snap_date)
 }

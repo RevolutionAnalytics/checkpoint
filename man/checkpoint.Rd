@@ -38,7 +38,7 @@ Specifically, the function will:
 
 # Create temporary project and set working directory
 
-example_project <- paste0("~/rrt_example_project_", Sys.Date())
+example_project <- paste0("~/checkpoint_example_project_", Sys.Date())
 
 dir.create(example_project, recursive = TRUE)
 oldwd <- setwd(example_project)
@@ -47,22 +47,22 @@ oldwd <- setwd(example_project)
 # Write dummy code file to project
 
 cat("library(MASS)", "library(foreach)",
-    sep="\\n", 
-    file="rrt_example_code.R")
+    sep="\\n",
+    file="checkpoint_example_code.R")
 
 
 # Create a checkpoint by specifying a snapshot date
 
-library(RRT)
+library(checkpoint)
 checkpoint("2014-09-17")
 
 # Check that CRAN mirror is set to MRAN snapshot
 getOption("repos")
 
-# Check that library path is set to ~/.rrt
+# Check that library path is set to ~/.checkpoint
 .libPaths()
 
-# Check which packages are installed in RRT library
+# Check which packages are installed in checkpoint library
 installed.packages()
 
 # cleanup
