@@ -1,17 +1,17 @@
 #' Configures R session to use packages as they existed on CRAN at time of snapshot.
 #'
-#' Together, the RRT package and the MRAN server act as a CRAN time machine.  The \code{checkpoint()} function downloads the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the RRT \code{checkpoint()} function can ensure the reproducibility of your scripts or projects at any time.
-#' 
+#' Together, the checkpoint package and the MRAN server act as a CRAN time machine.  The \code{checkpoint()} function downloads the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the checkpoint \code{checkpoint()} function can ensure the reproducibility of your scripts or projects at any time.
+#'
 #' @section Details:
-#' 
+#'
 #' \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 #'
 #' To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{library()} and \code{requires()} statements.
-#' 
+#'
 #' Specifically, the function will:
-#' 
+#'
 #' \itemize{
-#' \item{Create a new local snapshot library to download packages.  This library folder is at \code{~/.rrt}}
+#' \item{Create a new local snapshot library to download packages.  This library folder is at \code{~/.checkpoint}}
 #' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{options(repos)}}
 #' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
 #' }
@@ -72,10 +72,10 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
 
   NULL}
 
-setMranMirror <- function(snapshotDate, snapshotUrl = RRT:::getSnapShotUrl(snapshotDate)){
+setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
 
-setLibPaths <- function(snapshotDate, libPath=rrtPath(snapshotDate, "lib")){
+setLibPaths <- function(snapshotDate, libPath=checkpointPath(snapshotDate, "lib")){
   assign(".lib.loc", libPath, envir = environment(.libPaths))}
 
 mranUrl <- function()"http://cran-snapshots.revolutionanalytics.com/"

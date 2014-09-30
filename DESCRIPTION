@@ -1,27 +1,28 @@
-Package: RRT
+Package: checkpoint
 Title: Reproducible R Toolkit
-Description: The goal of RRT is to solve the problem of package reproducibility
-    in R. Specifically, RRT allows you to install packages as they existed on
-    CRAN on a specific snapshot date as if you had a CRAN time machine.  To
-    achieve reproducibility, the checkpoint() function installs the packages
-    required or called by your project and scripts to a local library exactly
-    as they existed at the specified point in time. Only those packages are
-    available to your project, thereby avoiding any package updates that came
-    later and may have altered your results. In this way, anyone using RRT's
-    checkpoint() can ensure the reproducibility of your scripts or projects at
-    any time. To create the snapshot archives, once a day (at midnight UTC) we
-    refresh the Austria CRAN mirror, on the "Managed R Archived Network" server
-    (http://mran.revolutionanalytics.com/).  Immediately after completion of
-    the rsync mirror process, we take a snapshot, thus creating the archive.
-    Snapshot archives exist starting from 2014-09-17.
+Description: The goal of checkpoint is to solve the problem of package
+    reproducibility in R. Specifically, checkpoint allows you to install
+    packages as they existed on CRAN on a specific snapshot date as if you had
+    a CRAN time machine.  To achieve reproducibility, the checkpoint() function
+    installs the packages required or called by your project and scripts to a
+    local library exactly as they existed at the specified point in time. Only
+    those packages are available to your project, thereby avoiding any package
+    updates that came later and may have altered your results. In this way,
+    anyone using checkpoint's checkpoint() can ensure the reproducibility of
+    your scripts or projects at any time. To create the snapshot archives, once
+    a day (at midnight UTC) we refresh the Austria CRAN mirror, on the "Managed
+    R Archived Network" server (http://mran.revolutionanalytics.com/).
+    Immediately after completion of the rsync mirror process, we take a
+    snapshot, thus creating the archive. Snapshot archives exist starting from
+    2014-09-17.
 Version: 0.3.1
 Date: 2014-09-26
 Author: Revolution Analytics
 Maintainer: Andrie de Vries <andrie@revolutionanalytics.com>
 Copyright: Revolution Analytics
 License: GPL-2|GPL-3
-URL: https://github.com/RevolutionAnalytics/RRT
-BugReports: http://www.github.com/RevolutionAnalytics/RRT/issues
+URL: https://github.com/RevolutionAnalytics/checkpoint
+BugReports: http://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
     knitr
 Suggests:
