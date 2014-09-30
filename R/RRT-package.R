@@ -1,23 +1,19 @@
-#' R Reproducibility Toolkit.
-#'
-#' The goal of RRT is to solve the problem of reproducibility in R. Specifically, RRT solve the problems that occur when you don't have the correct versions of R packages.  Since packages get updated on CRAN all the time, it is very difficult to recreate an environment where all your packages are consistent with some earlier state.
-#'
-#' To solve this, RRT allows you to install package from a specific snapshot date.  In other words, RRT makes it possible to install packages from a specific date in the past, as if you had a CRAN time machine.
-#'
-#' To achieve reproducibility, once a day we create a complete snapshot of CRAN, on our "Managed R archived network" (MRAN) server.  Once a day, MRAN mirrors all of CRAN and saves a snapshot.  This allows you to install packages from a snapshot date, thus "going back in time"" to this date, by installing packages as they were at that snapshot date.
+#' Reproducible R Toolkit.
 #' 
-#' Together, the RRT package and the MRAN server act as a CRAN time machine. The \code{\link{checkpoint}} function installs the packages to a local library exactly as they were at the specified point in time. Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using RRT's \code{\link{checkpoint}} can ensure the reproducibility of your scripts or projects at any time.
+#' The goal of RRT is to solve the problem of package reproducibility in R. Specifically, RRT allows you to install packages as they existed on CRAN on a specific snapshot date as if you had a CRAN time machine.
+#'
+#' To achieve reproducibility, the checkpoint() function installs the packages required or called by your project and scripts to a local library exactly as they existed at the specified point in time. Only those packages are available to your project, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using the RRT checkpoint() function can ensure the reproducibility of your scripts or projects at any time.
 #' 
-#'  
+#' To create the snapshot archives, once a day (at midnight UTC) we refresh the Austria CRAN mirror, on the "Managed R Archived Network" server (http://mran.revolutionanalytics.com/).  Immediately after completion of the rsync mirror process, we take a snapshot, thus creating the archive.  Snapshot archives exist starting from 2014-09-17.
+#' 
 #' RRT exposes only a single function:
 #'
 #' \describe{
-#' \item{\code{\link{checkpoint}}}{Create a checkpoint}
+#' \item{\code{\link{checkpoint}}}{Configures R session to use packages as they existed on CRAN at time of snapshot.}
 #' }
 #'
 #' @name RRT-package
-#' @aliases RRT
+#' @aliases RRT rrt
 #' @docType package
-#' @title R Reproducibility Toolkit
 #' @keywords package
 NULL

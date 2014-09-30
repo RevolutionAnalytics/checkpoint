@@ -1,31 +1,31 @@
-#' Configures R session to use packages as they existed on CRAN at a snapshot date.
+#' Configures R session to use packages as they existed on CRAN at time of snapshot.
 #'
-#' Together, the RRT package and the MRAN server act as a CRAN time machine. The \code{checkpoint()} function downloads the packages to a local library exactly as they were at the specified point in time. Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using RRT's \code{checkpoint()} can ensure the reproducibility of your scripts or projects at any time.
+#' Together, the RRT package and the MRAN server act as a CRAN time machine.  The \code{checkpoint()} function downloads the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the RRT \code{checkpoint()} function can ensure the reproducibility of your scripts or projects at any time.
 #' 
 #' @section Details:
 #' 
-#' \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they were on CRAN on the specified snapshot date. Your R session is updated to use only these packages.
+#' \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 #'
-#' To automatically determine all packages used in your project, the function scans all R code files for \code{library()} and \code{requires()} statements.  During this scan, the function searches for all R and Rmarkdown scripts, in other words file with extensions \code{.R}, \code{.Rmd} and \code{.Rpres}.
+#' To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{library()} and \code{requires()} statements.
 #' 
 #' Specifically, the function will:
 #' 
 #' \itemize{
-#' \item{Create a new local snapshot library to download packages. This library folder is at \code{~/.rrt}}
+#' \item{Create a new local snapshot library to download packages.  This library folder is at \code{~/.rrt}}
 #' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{options(repos)}}
-#' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{download.packages}}}
+#' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
 #' }
 #'
 #'
-#' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Daily snapshots exists on the MRAN server starting from \code{"2014-09-17"}.
+#' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.
 #'
-#' @param project A project path. This is the path to the root of the project you want checkpointed. Defaults to current working directory using \code{\link{getwd}()}.
+#' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.
 #'
 #'
 #' @param verbose If TRUE, displays progress messages.
 #'
 #'
-#' @return NULL. See the \code{details} section for side effects.
+#' @return NULL.  See the \code{Details} section for side effects.
 #'
 #' @export
 #'
