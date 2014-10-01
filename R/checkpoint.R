@@ -1,6 +1,6 @@
 #' Configures R session to use packages as they existed on CRAN at time of snapshot.
 #'
-#' Together, the checkpoint package and the MRAN server act as a CRAN time machine.  The \code{checkpoint()} function downloads the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the checkpoint \code{checkpoint()} function can ensure the reproducibility of your scripts or projects at any time.
+#' Together, the checkpoint package and the checkpoint server act as a CRAN time machine.  The \code{checkpoint()} function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the checkpoint \code{checkpoint()} function can ensure the reproducibility of your scripts or projects at any time.
 #'
 #' @section Details:
 #'
@@ -11,11 +11,13 @@
 #' Specifically, the function will:
 #'
 #' \itemize{
-#' \item{Create a new local snapshot library to download packages.  This library folder is at \code{~/.checkpoint}}
+#' \item{Create a new local snapshot library to install packages.  This library folder is at \code{~/.checkpoint}}
 #' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{options(repos)}}
 #' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
 #' }
 #'
+#' @section Resetting the checkpoint:
+#' To reset the checkpoint, simply restart your R session.
 #'
 #' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.
 #'
@@ -49,7 +51,7 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
   mssg(verbose, "Scanning for packages used in this project")
   packages.to.install = projectScanPackages(project)
 
-  # download and install missing packages
+  # install missing packages
 
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")

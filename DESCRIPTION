@@ -1,5 +1,6 @@
 Package: checkpoint
-Title: Reproducible R Toolkit
+Title: Install Packages from Snapshots on the Checkpoint Server for
+    Reproducibility
 Description: The goal of checkpoint is to solve the problem of package
     reproducibility in R. Specifically, checkpoint allows you to install
     packages as they existed on CRAN on a specific snapshot date as if you had
@@ -15,12 +16,12 @@ Description: The goal of checkpoint is to solve the problem of package
     Immediately after completion of the rsync mirror process, we take a
     snapshot, thus creating the archive. Snapshot archives exist starting from
     2014-09-17.
-Version: 0.3.1
-Date: 2014-09-26
+Version: 0.3.2
+Date: 2014-10-01
 Author: Revolution Analytics
 Maintainer: Andrie de Vries <andrie@revolutionanalytics.com>
 Copyright: Revolution Analytics
-License: GPL-2|GPL-3
+License: GPL-2
 URL: https://github.com/RevolutionAnalytics/checkpoint
 BugReports: http://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
