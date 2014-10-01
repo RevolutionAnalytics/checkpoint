@@ -21,7 +21,7 @@ Date: 2014-10-01
 Author: Revolution Analytics
 Maintainer: Andrie de Vries <andrie@revolutionanalytics.com>
 Copyright: Revolution Analytics
-License: GPL-2|GPL-3
+License: GPL-2
 URL: https://github.com/RevolutionAnalytics/checkpoint
 BugReports: http://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
