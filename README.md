@@ -106,7 +106,7 @@ To install `checkpoint` directly from github, use the `devtools` package.  In yo
 
 ```
 install.packages("devtools")
-devtools::install_github("RevolutionAnalytics/checkpoint", ref="v0.3.1")
+devtools::install_github("RevolutionAnalytics/checkpoint", ref="v0.3.2")
 library("checkpoint")
 ```
 
