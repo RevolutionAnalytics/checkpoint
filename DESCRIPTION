@@ -1,5 +1,6 @@
 Package: checkpoint
-Title: Reproducible R Toolkit
+Title: Install packages from snapshots on the checkpoint server for
+    reproducibility
 Description: The goal of checkpoint is to solve the problem of package
     reproducibility in R. Specifically, checkpoint allows you to install
     packages as they existed on CRAN on a specific snapshot date as if you had
