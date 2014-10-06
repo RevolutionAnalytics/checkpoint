@@ -9,7 +9,8 @@ for(snap_date in as.character(MRAN.dates[sample(length(MRAN.dates), 10, replace 
 
   test_that("snapshot functions return correct results", {
     skip_on_cran()
-
+    Sys.setenv("R_TESTS" = "") # Need this line to configure Travis for tests https://github.com/RevolutionAnalytics/checkpoint/issues/139
+    
     checkpoint:::cleanCheckpointFolder(snap_date)
 
     expect_equal(
