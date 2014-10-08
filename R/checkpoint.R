@@ -49,7 +49,8 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
 
   # Scan for packages used
   mssg(verbose, "Scanning for packages used in this project")
-  packages.to.install = projectScanPackages(project)
+  exclude.packages = c("checkpoint", "stats", "graphics", "grDevices", "utils", "datasets", "methods", "base")
+  packages.to.install = setdiff(projectScanPackages(project), exclude.packages)
 
   # install missing packages
 
