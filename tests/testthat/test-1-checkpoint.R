@@ -11,7 +11,7 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
   test_that("snapshot functions return correct results", {
     skip_on_cran()
     Sys.setenv("R_TESTS" = "") # Need this line to configure Travis for tests https://github.com/RevolutionAnalytics/checkpoint/issues/139
-    
+
     checkpoint:::cleanCheckpointFolder(snap_date)
 
     expect_equal(
@@ -23,9 +23,9 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       "No packages found to install")
 
     # Write dummy code file to project
-    cat("library(MASS)", "library(plyr)", "library(XML)", "library('httr')",
-        sep="\n",
-        file = file.path(project_root, "code.R"))
+    packages.to.test = c("MASS", "plyr", "XML", "httr","checkpoint", "stats", "stats4")
+    code = paste("library('", packages.to.test, "')", sep ="", collapse ="\n")
+    cat(code, file = file.path(project_root, "code.R"))
 
     expect_message(
       checkpoint(snap_date, project = project_root),
