@@ -1,13 +1,5 @@
 # checkpoint - Install packages from snapshots on the checkpoint server for reproducibility
 
-Build status
-
-master: [![](https://api.travis-ci.org/RevolutionAnalytics/checkpoint.png?branch=master)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
-dev: [![](https://api.travis-ci.org/RevolutionAnalytics/checkpoint.png?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
-
-Active development is on the `dev` branch - A more stable version on the `master` branch
-
-
 ## Overview
 
 The goal of `checkpoint` is to solve the problem of package reproducibility in R. Specifically, `checkpoint` solve the problems that occur when you don't have the correct versions of R packages.  Since packages get updated on CRAN all the time, it can be difficult to recreate an environment where all your packages are consistent with some earlier state.
