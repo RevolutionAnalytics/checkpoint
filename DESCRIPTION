@@ -16,7 +16,7 @@ Description: The goal of checkpoint is to solve the problem of package
     Immediately after completion of the rsync mirror process, we take a
     snapshot, thus creating the archive. Snapshot archives exist starting from
     2014-09-17.
-Version: 0.3.2
+Version: 0.3.3
 Date: 2014-10-01
 Author: Revolution Analytics
 Maintainer: Andrie de Vries <andrie@revolutionanalytics.com>
