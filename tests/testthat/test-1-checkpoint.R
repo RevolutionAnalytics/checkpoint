@@ -23,7 +23,7 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       "No packages found to install")
 
     # Write dummy code file to project
-    packages.to.test = c("MASS", "plyr", "XML", "httr","checkpoint", "stats", "stats4")
+    packages.to.test = c("MASS", "plyr", "XML", "httr","checkpoint", "stats", "stats4", "compiler")
     code = paste("library('", packages.to.test, "')", sep ="", collapse ="\n")
     cat(code, file = file.path(project_root, "code.R"))
 
@@ -31,11 +31,25 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       checkpoint(snap_date, project = project_root),
       "Installing packages used in this project")
 
-    x <- installed.packages(fields = "Date/Publication")
-    expect_equivalent(
-      sort(x[, "Package"]),
-      sort(c("bitops", "digest", "httr", "jsonlite", "MASS", "plyr", "Rcpp",
-             "RCurl", "stringr", "XML")))
+    x <- installed.packages(fields = "Date/Publication", noCache = TRUE)
+
+#     message("\n", "Installed packages: ", paste(x[, "Package"], collapse = ", "), "\n")
+#     message(".libPaths:", paste(.libPaths(), collapse=", "), "\n")
+
+    base.packages <- unname(installed.packages(priority = "base", lib.loc = .Library)[, "Package"])
+    packages.expected <- sort(unique(unlist(
+
+    sapply(setdiff(packages.to.test, c("checkpoint", base.packages)), function(p){
+        z <- tools::pkgDepends(p)
+        c(z$Depends, z$Imports)
+      }, USE.NAMES = FALSE)
+    )))
+
+    expect_true(
+      all(setdiff(packages.to.test, c("checkpoint", base.packages)) %in% unname(x[, "Package"])))
+
+    expect_true(
+      all(setdiff(packages.expected, c("checkpoint", base.packages)) %in% unname(x[, "Package"])))
 
     expect_true(
       all(
