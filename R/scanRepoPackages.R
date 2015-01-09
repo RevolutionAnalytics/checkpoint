@@ -1,12 +1,12 @@
 
-repoScanPackages <- function(repo = getwd(), verbose = TRUE){
-  # detect all package dependencies for a repo
-  dir <- normalizePath(repo, winslash='/', mustWork=FALSE)
+projectScanPackages <- function(project = getwd(), verbose = TRUE){
+  # detect all package dependencies for a project
+  dir <- normalizePath(project, winslash='/', mustWork=FALSE)
   pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
 
-  ## ignore anything in the rrt directory
-  R_files <- grep("^rrt", R_files, invert = TRUE, value = TRUE)
+#   ## ignore anything in the checkpoint directory
+#   R_files <- grep("^checkpoint", R_files, invert = TRUE, value = TRUE)
 
   pkgs <- unlist(unique(sapply(R_files, deps_by_ext, dir=dir)))
   as.vector(pkgs)

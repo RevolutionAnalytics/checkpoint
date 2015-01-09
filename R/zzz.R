@@ -1,8 +1,8 @@
 .onAttach <- function(...) {
   msg <- paste(
     "",
-    "RRT: the Reproducible R Toolkit from Revolution Analytics",
-    "https://github.com/RevolutionAnalytics/RRT/wiki", 
+    "checkpoint: Part of the Reproducible R Toolkit from Revolution Analytics",
+    "http://projects.revolutionanalytics.com/rrt/",
     sep="\n")
   packageStartupMessage(msg)
 }
