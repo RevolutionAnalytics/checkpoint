@@ -30,3 +30,4 @@ Imports:
     knitr
 Suggests:
     testthat(>= 0.9)
+VignetteBuilder: knitr
