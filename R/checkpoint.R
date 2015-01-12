@@ -40,15 +40,20 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
 
-  compiler.path= system.file(package = "compiler")
+  compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
 
   # Set lib path
   setLibPaths(snapshotDate)
 
-  install.packages(repos = NULL, pkgs = compiler.path, type = "source")
-
+  if(.Platform$OS.type == "windows"){
+    dir.create(file.path(.libPaths(), "compiler"), showWarnings = FALSE)
+    file.copy(to = .libPaths(), from = compiler.path, recursive = TRUE)
+  } else {
+    install.packages(repos = NULL, pkgs = compiler.path, type = "source")
+  }
+  
   mssg(verbose, "Scanning for loaded pkgs")
 
   # Scan for packages used
@@ -57,7 +62,30 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
                        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
-  packages.to.install = setdiff(projectScanPackages(project), exclude.packages)
+  packages.to.install <- setdiff(projectScanPackages(project), exclude.packages)
+
+  # detach checkpointed pkgs already loaded
+  
+  local({
+    findInSearchPath <- function(p){
+      g <- grep(sprintf("package:%s$", paste(p, collapse="|")), search())
+      if(length(g)) min(g) else character(0)
+    }
+    
+    p <- packages.to.install
+    max.n <- 10 * length(p) # Prevent endless loop as a failsafe
+    n <- 0
+    repeat {
+      d <- findInSearchPath(p)
+      if(length(d) == 0) break # Stop if all packages unloaded
+      try(
+        detach(pos = d, unload = TRUE, force = TRUE),
+        silent = TRUE
+      )
+      n <- n + 1
+      if(n > max.n) break
+    }
+  })
 
   # install missing packages
 
@@ -68,18 +96,7 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
     mssg(verbose, "No packages found to install")
   }
 
-  # detach and reload checkpointed pkgs already loaded
-  search.path = search()
-  lapply(
-    unlist(
-      lapply(
-        packages.to.install,
-        grep,
-        x = search.path)),
-    function(x) {
-      detach(x, unload = TRUE, force = TRUE)
-      library(search.path[x], character.only = TRUE)})
-
+  
   NULL}
 
 setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
