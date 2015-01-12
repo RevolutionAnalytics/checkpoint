@@ -7,7 +7,7 @@ MRAN.start = as.Date("2014-09-17")
 MRAN.default = as.Date("2014-10-01")
 MRAN.dates = as.Date(MRAN.start:(Sys.Date()-1), origin = as.Date("1970-01-01"))
 
-packages.to.test = c("MASS", "plyr", "XML", "httr","checkpoint", "stats", "stats4")
+packages.to.test = c("MASS", "plyr", "XML", "httr","checkpoint", "stats", "stats4", "compiler")
 
 for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.dates), 1, replace = FALSE)]))) {
   project_root <- file.path(tempfile(), "checkpointtemp")
@@ -34,12 +34,22 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       checkpoint(snap_date, project = project_root),
       "Installing packages used in this project")
     
-    x <- installed.packages(fields = "Date/Publication")
-    expect_equivalent(
-      sort(x[, "Package"]),
-      sort(c("bitops", "digest", "httr", "jsonlite", "MASS", "plyr", "Rcpp",
-             "RCurl", "stringr", "XML")))
+    x <- installed.packages(fields = "Date/Publication", noCache = TRUE)
     
+    base.packages <- unname(installed.packages(priority = "base", lib.loc = .Library)[, "Package"])
+    packages.expected <- sort(unique(unlist(
+      
+      sapply(setdiff(packages.to.test, c("checkpoint", base.packages)), function(p){
+        z <- tools::pkgDepends(p)
+        c(z$Depends, z$Imports)
+      }, USE.NAMES = FALSE)
+    )))
+    
+    expect_true(
+      all(setdiff(packages.to.test, c("checkpoint", base.packages)) %in% unname(x[, "Package"])))
+    
+    expect_true(
+      all(setdiff(packages.expected, c("checkpoint", base.packages)) %in% unname(x[, "Package"])))    
     expect_true(
       all(
         na.omit(
