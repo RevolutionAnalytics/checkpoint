@@ -40,7 +40,7 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
 
-  compiler.path= system.file(package = "compiler")
+  compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
 
@@ -48,8 +48,8 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
   setLibPaths(snapshotDate)
 
   if(.Platform$OS.type == "windows"){
-    dir.create(file.path(.libPaths()[1], "compiler"))
-    file.copy(to = .libPaths()[1], from = compiler.path[1], recursive = TRUE)
+    dir.create(file.path(.libPaths(), "compiler"))
+    file.copy(to = .libPaths(), from = compiler.path, recursive = TRUE)
   } else {
     install.packages(repos = NULL, pkgs = compiler.path, type = "source")
   }
