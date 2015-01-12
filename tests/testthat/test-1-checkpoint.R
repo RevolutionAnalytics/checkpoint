@@ -13,8 +13,9 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
   project_root <- file.path(tempfile(), "checkpointtemp")
   dir.create(project_root, recursive = TRUE)
   
-  test_that("snapshot functions return correct results", {
+  test_that(paste("snapshot functions work correctly with snapshot", snap_date), {
     skip_on_cran()
+    message("\n", "Snapshot date: ", snap_date)
     
     checkpoint:::cleanCheckpointFolder(snap_date)
     
