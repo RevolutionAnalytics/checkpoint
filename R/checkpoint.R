@@ -47,7 +47,8 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
   # Set lib path
   setLibPaths(snapshotDate)
 
-  install.packages(repos = NULL, pkgs = compiler.path, type = "source")
+  if(.Platform$OS.type != "windows")
+    install.packages(repos = NULL, pkgs = compiler.path, type = "source")
 
   mssg(verbose, "Scanning for loaded pkgs")
 
