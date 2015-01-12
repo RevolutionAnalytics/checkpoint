@@ -62,7 +62,7 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
                        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
-  packages.to.install = setdiff(projectScanPackages(project), exclude.packages)
+  packages.to.install <- setdiff(projectScanPackages(project), exclude.packages)
 
   # install missing packages
 
