@@ -50,13 +50,17 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       all(setdiff(packages.to.test, c("checkpoint", base.packages)) %in% unname(x[, "Package"])))
     
     expect_true(
-      all(setdiff(packages.expected, c("checkpoint", base.packages)) %in% unname(x[, "Package"])))    
+      all(setdiff(packages.expected, c("checkpoint", base.packages)) %in% unname(x[, "Package"])))   
+
     expect_true(
       all(
         na.omit(
           x[, "Date/Publication"]) <=
           as.POSIXct(snap_date, tz="UTC")))
-    
+
+    expect_true(
+      all(sapply(setdiff(packages.to.test, "checkpoint"), require, character.only=TRUE)))
+
     expect_equal(
       getOption("repos"),
       file.path("http://mran.revolutionanalytics.com/snapshot", snap_date))
