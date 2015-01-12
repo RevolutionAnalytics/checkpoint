@@ -9,7 +9,7 @@ MRAN.dates = as.Date(MRAN.start:(Sys.Date()-1), origin = as.Date("1970-01-01"))
 
 packages.to.test = c("MASS", "plyr", "XML", "httr","checkpoint", "stats", "stats4", "compiler")
 
-for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.dates), 1, replace = FALSE)]))) {
+for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.dates), 10, replace = FALSE)]))) {
   project_root <- file.path(tempfile(), "checkpointtemp")
   dir.create(project_root, recursive = TRUE)
   
@@ -59,7 +59,7 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
           as.POSIXct(snap_date, tz="UTC")))
 
     expect_true(
-      all(sapply(setdiff(packages.to.test, "checkpoint"), require, character.only=TRUE)))
+      all(sapply(setdiff(packages.to.test, "checkpoint"), require, character.only = TRUE, quietly = TRUE)))
 
     expect_equal(
       getOption("repos"),
