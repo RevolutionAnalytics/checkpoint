@@ -66,32 +66,14 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
 
   # detach checkpointed pkgs already loaded
   
-  local({
-    findInSearchPath <- function(p){
-      g <- grep(sprintf("package:%s$", paste(p, collapse="|")), search())
-      if(length(g)) min(g) else character(0)
-    }
-    
-    p <- packages.to.install
-    max.n <- 10 * length(p) # Prevent endless loop as a failsafe
-    n <- 0
-    repeat {
-      d <- findInSearchPath(p)
-      if(length(d) == 0) break # Stop if all packages unloaded
-      try(
-        detach(pos = d, unload = TRUE, force = TRUE),
-        silent = TRUE
-      )
-      n <- n + 1
-      if(n > max.n) break
-    }
-  })
-
+  packages.in.search <- findInSearchPath(packages.to.install)
+  detachFromSearchPath(packages.in.search)
+  
   # install missing packages
 
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
-    utils::install.packages(pkgs = packages.to.install, verbose=FALSE, quiet=TRUE)
+    utils::install.packages(pkgs = packages.to.install, verbose = FALSE, quiet = TRUE)
   } else {
     mssg(verbose, "No packages found to install")
   }
