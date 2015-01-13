@@ -78,6 +78,10 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
     mssg(verbose, "No packages found to install")
   }
 
+  # Reload detached packages
+  if(length(packages.in.search > 0)){
+    lapply(packages.in.search, library, character.only = TRUE, quietly = TRUE)
+  }
   
   NULL}
 

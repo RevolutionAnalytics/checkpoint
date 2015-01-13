@@ -13,7 +13,7 @@ findInSearchPath <- function(pkg){
   z <- unlist(
     regmatches(s, gregexpr(makeSearchString(pkg), s))
   )
-  gsub("package:", "", z)
+  setdiff(gsub("package:", "", z), "")
 }
 
 # Detach package from search()
