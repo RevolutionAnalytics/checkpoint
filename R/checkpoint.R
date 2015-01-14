@@ -83,7 +83,7 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
     lapply(packages.in.search, library, character.only = TRUE, quietly = TRUE)
   }
   
-  NULL}
+  invisible(NULL)}
 
 setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
