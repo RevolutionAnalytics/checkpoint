@@ -34,7 +34,7 @@ This means the remainder of your script will run with the packages from a specif
 Sharing your script to be reproducible is as easy as:
 
 - Load the `checkpoint` package using `library(checkpoint)`
-- Ensure you specify `checkpoint()` with your checkpoint date, e.g. `checkpoint("2014-09-17")`
+- Ensure you specify `checkpoint()` with your checkpoint date, e.g. `checkpoint("2014-10-01")`
 
 Then send this script to your collaborators.  When they run this script on their machine, `checkpoint` will perform the same steps of installing the necessary packages, creating the `checkpoint` snapshot folder and producing the same results.
 
@@ -67,7 +67,7 @@ cat("library(MASS)", "library(foreach)",
 # Create a checkpoint by specifying a snapshot date
 
 library(checkpoint)
-checkpoint("2014-09-17")
+checkpoint("2014-10-01")
 
 # Check that CRAN mirror is set to MRAN snapshot
 getOption("repos")
@@ -98,7 +98,7 @@ To install `checkpoint` directly from github, use the `devtools` package.  In yo
 
 ```
 install.packages("devtools")
-devtools::install_github("RevolutionAnalytics/checkpoint", ref="v0.3.3")
+devtools::install_github("RevolutionAnalytics/checkpoint", ref="v0.3.4")
 library("checkpoint")
 ```
 
