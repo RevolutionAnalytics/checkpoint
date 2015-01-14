@@ -71,13 +71,46 @@ To reset the checkpoint, simply restart your R session.
 
 ## Worked example
 
-```{r}
+To create a checkpoint project, you do:
+
+1. Create a new folder and change your working directory to this folder.  If you use an IDE like RStudio, this is identical to creating a new RStudio project.
+2. Add your R script files to this folder.
+3. Add a checkpoint to the top of the script:
+
+    ```{r, eval=FALSE}
+    library(checkpoint)
+    checkpoint("2014-10-01")
+    ```
+
+4. Run the script.
+
+### Create a checkpoint project
+
+For example, your script may look like this:
+
+```{r, eval=FALSE}
+library(checkpoint)
+checkpoint("2014-10-01")
+
+library(ggplot2)
+ggplot(mtcars, aes(mpg, cyl)) +
+  geom_point()
+```
+
+
+### Run the checkpoint code
+
+Next you want to run the script.  Here is what `checkpoint` does:
+
+
+```{r setup, include=FALSE}
 
 ## Create temporary project and set working directory
 
 example_project <- paste0("checkpoint_example_project_", Sys.Date())
 
 dir.create(example_project, recursive = TRUE)
+unlink("~/.checkpoint/2014-10-01", recursive=TRUE)
 oldwd <- setwd(example_project)
 oldRepos <- getOption("repos")
 oldLibPaths <- .libPaths()
@@ -85,30 +118,47 @@ oldLibPaths <- .libPaths()
 
 ## Write dummy code file to project
 
-cat("library(MASS)", "library(foreach)",
-    sep="\n", 
-    file="checkpoint_example_code.R")
+example_code <- '
+library(checkpoint)
+checkpoint("2014-10-01")
 
+library(ggplot2)
+ggplot(mtcars, aes(mpg, cyl)) +
+  geom_point()
+'
 
+cat(example_code, file="checkpoint_example_code.R")
+```
+
+```{r checkpoint}
 ## Create a checkpoint by specifying a snapshot date
 
 library(checkpoint)
-checkpoint("2014-09-18")
+checkpoint("2014-10-01")
+```
 
+### Inspecting the results
+
+Now inspect the results:
+
+```{r inspect}
 ## Check that CRAN mirror is set to MRAN snapshot
 getOption("repos")
 
 ## Check that library path is set to ~/.checkpoint
-.libPaths()
+normalizePath(.libPaths(), winslash = "/")
 
 # Check which packages are installed in checkpoint library
-installed.packages()
+installed.packages()[, "Package"]
+```
 
 
+
+```{r cleanup, include=FALSE}
 ## cleanup
 
-unlink(example_project, recursive = TRUE)
 setwd(oldwd)
+unlink(example_project, recursive = TRUE)
 options(repos = oldRepos)
 .libPaths(oldLibPaths)
 ```
