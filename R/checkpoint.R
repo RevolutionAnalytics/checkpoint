@@ -62,7 +62,9 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
                        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
-  packages.to.install <- setdiff(projectScanPackages(project), exclude.packages)
+  packages.installed <- unname(installed.packages()[, "Package"])
+  packages.detected <- projectScanPackages(project)
+  packages.to.install <- setdiff(packages.detected, unique(c(packages.installed, exclude.packages)))
 
   # detach checkpointed pkgs already loaded
   
@@ -73,7 +75,11 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
 
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
-    utils::install.packages(pkgs = packages.to.install, verbose = FALSE, quiet = TRUE)
+    suppressWarnings(
+      utils::install.packages(pkgs = packages.to.install, verbose = FALSE, quiet = TRUE)
+    )
+  } else if(length(packages.detected > 0)){
+    mssg(verbose, "All detected packages already installed")
   } else {
     mssg(verbose, "No packages found to install")
   }
