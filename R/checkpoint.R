@@ -68,7 +68,7 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr 
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
   packages.installed <- unname(installed.packages()[, "Package"])
   packages.detected <- projectScanPackages(project, use.knitr = use.knitr)
-  packages.to.install <- setdiff(packages.detected, unique(c(packages.installed, exclude.packages)))
+  packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
 
   # detach checkpointed pkgs already loaded
   
