@@ -73,7 +73,9 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
 
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
-    utils::install.packages(pkgs = packages.to.install, verbose = FALSE, quiet = TRUE)
+    suppressWarnings(
+      utils::install.packages(pkgs = packages.to.install, verbose = FALSE, quiet = TRUE)
+    )
   } else {
     mssg(verbose, "No packages found to install")
   }
