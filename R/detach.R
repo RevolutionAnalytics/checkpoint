@@ -25,8 +25,9 @@ detachFromSearchPath <- function(p){
     if(length(d) == 0) break # Stop if all packages unloaded
     for(to.detach in d){
       try({
+        suppressWarnings(
         detach(name = makeDetachString(to.detach), unload = TRUE, force = TRUE, character.only = TRUE)
-      },
+      )},
       silent = TRUE
       )
     }
