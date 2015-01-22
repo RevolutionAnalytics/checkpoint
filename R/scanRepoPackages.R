@@ -1,10 +1,10 @@
 
-projectScanPackages <- function(project = getwd(), verbose = TRUE){
+projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = FALSE){
   # detect all package dependencies for a project
   dir <- normalizePath(project, winslash='/', mustWork=FALSE)
   pattern <- "\\.[rR]$"
   pattern_knitr <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
-  if(require("knitr")) pattern <- paste(pattern, pattern_knitr, sep = "|")
+  if(use.knitr) pattern <- paste(pattern, pattern_knitr, sep = "|")
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
 
 #   ## ignore anything in the checkpoint directory
