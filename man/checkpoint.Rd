@@ -3,7 +3,8 @@
 \alias{checkpoint}
 \title{Configures R session to use packages as they existed on CRAN at time of snapshot.}
 \usage{
-checkpoint(snapshotDate, project = getwd(), verbose = TRUE)
+checkpoint(snapshotDate, project = getwd(), verbose = TRUE,
+  use.knitr = system.file(package = "knitr") != "")
 }
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
@@ -11,6 +12,8 @@ checkpoint(snapshotDate, project = getwd(), verbose = TRUE)
 \item{project}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.}
 
 \item{verbose}{If TRUE, displays progress messages.}
+
+\item{use.knitr}{If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.}
 }
 \value{
 NULL.  See the \code{Details} section for side effects.
