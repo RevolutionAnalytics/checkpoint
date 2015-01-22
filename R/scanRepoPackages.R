@@ -2,7 +2,9 @@
 projectScanPackages <- function(project = getwd(), verbose = TRUE){
   # detect all package dependencies for a project
   dir <- normalizePath(project, winslash='/', mustWork=FALSE)
-  pattern <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
+  pattern <- "\\.[rR]$"
+  pattern_knitr <- "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
+  if(require("knitr")) pattern <- paste(pattern, pattern_knitr, sep = "|")
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
 
 #   ## ignore anything in the checkpoint directory
@@ -29,10 +31,10 @@ deps_by_ext <- function(file, dir) {
   )
 }
 
-#' @import knitr
 deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
     tempfile <- tempfile()
     on.exit(unlink(tempfile))
+    stopifnot(require("knitr"))
     tryCatch(knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE), error = function(e) {
       mssg(verbose, "Unable to knit file '", file, "'; cannot parse dependencies")
       character()
