@@ -23,6 +23,7 @@
 #'
 #' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.
 #'
+#' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.  
 #'
 #' @param verbose If TRUE, displays progress messages.
 #'
@@ -34,8 +35,11 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 
-checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
+checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr = system.file(package="knitr") != "") {
 
+  if(use.knitr) {
+    if(!require("knitr")) warning("The knitr package is not available and Rmarkdown files will not be parsed")
+  }
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
@@ -63,8 +67,8 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE) {
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
   packages.installed <- unname(installed.packages()[, "Package"])
-  packages.detected <- projectScanPackages(project)
-  packages.to.install <- setdiff(packages.detected, unique(c(packages.installed, exclude.packages)))
+  packages.detected <- projectScanPackages(project, use.knitr = use.knitr)
+  packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
 
   # detach checkpointed pkgs already loaded
   
