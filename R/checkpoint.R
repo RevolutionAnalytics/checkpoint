@@ -79,20 +79,29 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr 
 
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
-    suppressWarnings(
-      utils::install.packages(pkgs = packages.to.install, verbose = FALSE, quiet = TRUE)
-    )
+    for(pkg in packages.to.install){
+      if(pkg %in% unname(installed.packages()[, "Package"])) {
+        message(" - Previously installed ", sQuote(pkg))
+      } else {
+        message(" - Installing ", sQuote(pkg))
+        suppressWarnings(
+          utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = TRUE)
+        )
+      }
+    }
   } else if(length(packages.detected > 0)){
     mssg(verbose, "All detected packages already installed")
   } else {
     mssg(verbose, "No packages found to install")
   }
-
+  
   # Reload detached packages
   if(length(packages.in.search > 0)){
     lapply(packages.in.search, library, character.only = TRUE, quietly = TRUE)
   }
   
+  message("checkpoint process complete")
+  message("---")
   invisible(NULL)}
 
 setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
