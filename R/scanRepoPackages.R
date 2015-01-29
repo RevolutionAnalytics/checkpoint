@@ -10,10 +10,28 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
   #   ## ignore anything in the checkpoint directory
   #   R_files <- grep("^checkpoint", R_files, invert = TRUE, value = TRUE)
   
-  pkgs <- unlist(unique(sapply(R_files, deps_by_ext, dir=dir)))
+  pkgs <- unlist(unique(sapplyProgressBar(R_files, deps_by_ext, dir=dir)))
   as.vector(pkgs)
   
 }
+
+sapplyProgressBar <- function(X, FUN, ...){
+  env <- environment()
+  N <- length(X)
+  counter <- 0
+  pb <- txtProgressBar(min = 0, max = N, style = 3)
+  on.exit(close(pb))
+  
+  
+  wrapper <- function(...){
+    curVal <- get("counter", envir = env)
+    assign("counter", curVal +1 ,envir=env)
+    setTxtProgressBar(get("pb", envir=env), curVal +1)
+    FUN(...)
+  }
+  sapply(X, wrapper, ...)
+}
+
 
 
 
