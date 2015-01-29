@@ -34,6 +34,7 @@
 #'
 #' @example /inst/examples/example_checkpoint.R
 #'
+#' @importFrom utils install.packages
 
 checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr = system.file(package="knitr") != "") {
 
