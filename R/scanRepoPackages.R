@@ -10,8 +10,8 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
   #   ## ignore anything in the checkpoint directory
   #   R_files <- grep("^checkpoint", R_files, invert = TRUE, value = TRUE)
   
-  pkgs <- unlist(unique(sapplyProgressBar(R_files, deps_by_ext, dir=dir)))
-  as.vector(pkgs)
+  pkgs <- sapplyProgressBar(R_files, deps_by_ext, dir=dir)
+  sort(unique(unlist(pkgs)))
   
 }
 
