@@ -56,7 +56,9 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr 
     dir.create(file.path(.libPaths(), "compiler"), showWarnings = FALSE)
     file.copy(to = .libPaths(), from = compiler.path, recursive = TRUE)
   } else {
-    install.packages(repos = NULL, pkgs = compiler.path, type = "source")
+    if(! "compiler" %in% installed.packages()[, "Package"]) {
+      install.packages(repos = NULL, pkgs = compiler.path, type = "source")
+    }
   }
   
   mssg(verbose, "Scanning for loaded pkgs")
