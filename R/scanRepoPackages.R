@@ -19,11 +19,10 @@ sapplyProgressBar <- function(X, FUN, ...){
   pb <- txtProgressBar(min = 0, max = N, style = 3)
   on.exit(close(pb))
   
-  
   wrapper <- function(...){
     curVal <- get("counter", envir = env)
-    assign("counter", curVal +1 ,envir=env)
-    setTxtProgressBar(get("pb", envir=env), curVal +1)
+    assign("counter", curVal + 1, envir = env)
+    setTxtProgressBar(get("pb", envir = env), curVal + 1)
     FUN(...)
   }
   sapply(X, wrapper, ...)
