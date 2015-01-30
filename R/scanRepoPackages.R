@@ -7,12 +7,20 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
   
   R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
   
-  pkgs <- sapplyProgressBar(R_files, deps_by_ext, dir=dir)
-  sort(unique(unlist(pkgs)))
+  if(length(R_files) == 0){
+    list(pkgs = character(), error = character())
+  } else {
+    z <- lapplyProgressBar(R_files, deps_by_ext, dir=dir, verbose=verbose)
+    
+    pkgs <- sort(unique(do.call(c, sapply(z, "[[", "pkgs"))))
+    error <- sort(unique(do.call(c, sapply(z, "[[", "error"))))
+    error <- gsub(sprintf("%s[//|\\]*", dir), "", error)
+    list(pkgs = pkgs, error = error)
+  }
   
 }
 
-sapplyProgressBar <- function(X, FUN, ...){
+lapplyProgressBar <- function(X, FUN, ...){
   env <- environment()
   N <- length(X)
   counter <- 0
@@ -25,45 +33,61 @@ sapplyProgressBar <- function(X, FUN, ...){
     setTxtProgressBar(get("pb", envir = env), curVal + 1)
     FUN(...)
   }
-  sapply(X, wrapper, ...)
+  lapply(X, wrapper, ...)
 }
 
 
 
 
 # ad-hoc dispatch based on the file extension
-deps_by_ext <- function(file, dir) {
+deps_by_ext <- function(file, dir, verbose = TRUE) {
   file <- file.path(dir, file)
   fileext <- tolower(gsub(".*\\.", "", file))
   switch(fileext,
-         r = deps.R(file),
-         rmd = deps.Rmd(file),
-         rnw = deps.Rnw(file),
-         rpres = deps.Rpres(file),
-         txt = deps.txt(file),
+         r = deps.R(file, verbose = verbose),
+         rmd = deps.Rmd(file, verbose = verbose),
+         rnw = deps.Rnw(file, verbose = verbose),
+         rpres = deps.Rpres(file, verbose = verbose),
+         txt = deps.txt(file, verbose = verbose),
          stop("Unrecognized file type '", file, "'")
   )
 }
 
 deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
-  tempfile <- tempfile()
+  tempfile <- tempfile(fileext = ".Rmd")
   on.exit(unlink(tempfile))
   stopifnot(require("knitr"))
-  tryCatch(knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE), error = function(e) {
-    mssg(verbose, "Unable to knit file '", file, "'; cannot parse dependencies")
-    character()
-  })
-  deps.R(tempfile)
+  p <- tryCatch(
+    knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE), 
+    error = function(e) e
+    )
+  if(inherits(p, "error")) {
+    return(list(pkgs=character(), error=file))
+  }
+  
+  p <- deps.R(tempfile)
+  if(length(p[["error"]]) != 0 ) {
+    p[["error"]] <- file
+  }
+  p
 }
 
 deps.Rnw <- function(file, verbose=TRUE) {
   tempfile <- tempfile()
   on.exit(unlink(tempfile))
-  tryCatch(Stangle(file, output = tempfile, quiet = TRUE), error = function(e) {
-    mssg(verbose, "Unable to stangle file '", file, "'; cannot parse dependencies")
-    character()
-  })
-  deps.R(tempfile)
+  p <- tryCatch(
+    Stangle(file, output = tempfile, quiet = TRUE), 
+    error = function(e) e
+  )
+  if(inherits(p, "error")) {
+    return(list(pkgs=character(), error=file))
+  }
+  
+  p <- deps.R(tempfile)
+  if(length(p[["error"]]) != 0 ) {
+    p[["error"]] <- file
+  }
+  p
 }
 
 deps.R <- deps.txt <- function(file, verbose=TRUE) {
@@ -77,17 +101,17 @@ deps.R <- deps.txt <- function(file, verbose=TRUE) {
   pkgs <- character()
   
   # parse file and examine expressions
-  tryCatch({
+  p <- tryCatch({
     exprs <- suppressWarnings(parse(file, n = -1L))
     for (i in seq_along(exprs))
       pkgs <- append(pkgs, expressionDependencies(exprs[[i]]))
-  }, error = function(e) {
-    warning(paste("Failed to parse", file, "; dependencies in this file will",
-                  "not be discovered."))
-  })
-  
-  # return packages
-  unique(pkgs)
+  }, error = function(e) e
+  )
+  if(inherits(p, "error")) {
+    list(pkgs=character(), error=file)
+  } else {
+    list(pkgs=unique(pkgs), error=character(0))
+  }
 }
 
 expressionDependencies <- function(e) {
