@@ -61,8 +61,6 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr 
     }
   }
   
-  mssg(verbose, "Scanning for loaded pkgs")
-
   # Scan for packages used
   mssg(verbose, "Scanning for packages used in this project")
   exclude.packages = c("checkpoint", # this very package
@@ -70,7 +68,17 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr 
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
   packages.installed <- unname(installed.packages()[, "Package"])
-  packages.detected <- projectScanPackages(project, use.knitr = use.knitr)
+  
+  pkgs <- projectScanPackages(project, use.knitr = use.knitr)
+  packages.detected <- pkgs[["pkgs"]]
+  
+  mssg(verbose, "- Discovered ", length(packages.detected), " packages")
+  
+  if(length(pkgs[["error"]]) > 0){
+    mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
+    for(file in pkgs[["error"]])  mssg(verbose, "- ", file)
+  }
+  
   packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
 
   # detach checkpointed pkgs already loaded
