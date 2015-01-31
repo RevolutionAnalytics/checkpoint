@@ -79,7 +79,7 @@ To create a checkpoint project, you do:
 
     ```{r, eval=FALSE}
     library(checkpoint)
-    checkpoint("2014-10-01")
+    checkpoint("2014-12-01")
     ```
 
 4. Run the script.
@@ -90,11 +90,11 @@ For example, your script may look like this:
 
 ```{r, eval=FALSE}
 library(checkpoint)
-checkpoint("2014-10-01")
+checkpoint("2014-12-01")
 
-library(ggplot2)
-ggplot(mtcars, aes(mpg, cyl)) +
-  geom_point()
+library(MASS)
+hist(islands)
+truehist(islands)
 ```
 
 
@@ -110,7 +110,7 @@ Next you want to run the script.  Here is what `checkpoint` does:
 example_project <- paste0("checkpoint_example_project_", Sys.Date())
 
 dir.create(example_project, recursive = TRUE)
-unlink("~/.checkpoint/2014-10-01", recursive=TRUE)
+unlink("~/.checkpoint/2014-12-01", recursive=TRUE)
 oldwd <- setwd(example_project)
 oldRepos <- getOption("repos")
 oldLibPaths <- .libPaths()
@@ -120,21 +120,22 @@ oldLibPaths <- .libPaths()
 
 example_code <- '
 library(checkpoint)
-checkpoint("2014-10-01")
+checkpoint("2014-12-01")
 
-library(ggplot2)
-ggplot(mtcars, aes(mpg, cyl)) +
-  geom_point()
+library(MASS)
+hist(islands)
+truehist(islands)
 '
 
 cat(example_code, file="checkpoint_example_code.R")
+
 ```
 
 ```{r checkpoint}
 ## Create a checkpoint by specifying a snapshot date
 
 library(checkpoint)
-checkpoint("2014-10-01")
+checkpoint("2014-12-01")
 ```
 
 ### Inspecting the results
