@@ -12,8 +12,8 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
   } else {
     z <- lapplyProgressBar(R_files, deps_by_ext, dir=dir, verbose=verbose)
     
-    pkgs <- sort(unique(do.call(c, sapply(z, "[[", "pkgs"))))
-    error <- sort(unique(do.call(c, sapply(z, "[[", "error"))))
+    pkgs <- sort(unique(do.call(c, lapply(z, "[[", "pkgs"))))
+    error <- sort(unique(do.call(c, lapply(z, "[[", "error"))))
     error <- gsub(sprintf("%s[//|\\]*", dir), "", error)
     list(pkgs = pkgs, error = error)
   }
@@ -73,7 +73,7 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
 }
 
 deps.Rnw <- function(file, verbose=TRUE) {
-  tempfile <- tempfile()
+  tempfile <- tempfile(fileext = ".Rnw")
   on.exit(unlink(tempfile))
   p <- tryCatch(
     Stangle(file, output = tempfile, quiet = TRUE), 
@@ -94,7 +94,7 @@ deps.R <- deps.txt <- function(file, verbose=TRUE) {
   
   if (!file.exists(file)) {
     warning("No file at path '", file, "'.")
-    return(character())
+    return(list(pkgs=character(), error=file))
   }
   
   # build a list of package dependencies to return
@@ -110,7 +110,7 @@ deps.R <- deps.txt <- function(file, verbose=TRUE) {
   if(inherits(p, "error")) {
     list(pkgs=character(), error=file)
   } else {
-    list(pkgs=unique(pkgs), error=character(0))
+    list(pkgs=unique(pkgs), error=character())
   }
 }
 
