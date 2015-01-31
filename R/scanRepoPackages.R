@@ -10,7 +10,11 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
   if(length(R_files) == 0){
     list(pkgs = character(), error = character())
   } else {
-    z <- lapplyProgressBar(R_files, deps_by_ext, dir=dir, verbose=verbose)
+    if(interactive()){
+      z <- lapplyProgressBar(R_files, deps_by_ext, dir=dir, verbose=verbose)
+    } else {
+      z <- lapply(R_files, deps_by_ext, dir=dir, verbose=verbose)
+    }
     
     pkgs <- sort(unique(do.call(c, lapply(z, "[[", "pkgs"))))
     error <- sort(unique(do.call(c, lapply(z, "[[", "error"))))
@@ -60,7 +64,7 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
   p <- tryCatch(
     knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE), 
     error = function(e) e
-    )
+  )
   if(inherits(p, "error")) {
     return(list(pkgs=character(), error=file))
   }
