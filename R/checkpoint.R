@@ -38,9 +38,6 @@
 
 checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr = system.file(package="knitr") != "") {
 
-  if(use.knitr) {
-    if(!require("knitr")) warning("The knitr package is not available and Rmarkdown files will not be parsed")
-  }
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 

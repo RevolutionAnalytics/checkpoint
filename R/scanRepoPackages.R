@@ -2,10 +2,30 @@
 projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = FALSE){
   # detect all package dependencies for a project
   dir <- normalizePath(project, winslash='/', mustWork=FALSE)
-  pattern <- if(!use.knitr) "\\.[rR]$" else
-    "\\.[rR]$|\\.[rR]md$|\\.[rR]nw$|\\.[rR]pres$"
+  pattern <- if(!use.knitr) "\\.[rR]$|\\.[rR]nw$" else
+    "\\.[rR]$|\\.[rR]nw$|\\.[rR]md$|\\.[rR]pres$"
   
-  R_files <- list.files(dir, pattern = pattern, ignore.case = TRUE, recursive = TRUE)
+  ext_r <- c("R", "Rnw")
+  ext_k <- c("Rmd", "Rpres", "Rhmtl") # knitr / rmarkdown extensions
+  
+  makePtn <- function(x)sprintf("\\.(%s)$", paste(c(x, tolower(x)), collapse="|"))
+  
+  files_r <- list.files(dir, pattern = makePtn(ext_r), ignore.case = TRUE, recursive = TRUE)
+  files_k <- list.files(dir, pattern = makePtn(ext_k), ignore.case = TRUE, recursive = TRUE)
+  
+  R_files <- files_r
+  
+  if(length(files_k) > 0) {
+    if(use.knitr) {
+      if(!require("knitr")) {
+        warning("The knitr package is not available and Rmarkdown files will not be parsed")
+      } else {
+        R_files <- c(files_r, files_k)
+      }
+    } else {
+      warning("rmarkdown files found and will not be parsed. Set use.knitr = TRUE")
+    }
+  }
   
   if(length(R_files) == 0){
     list(pkgs = character(), error = character())
@@ -40,13 +60,14 @@ lapplyProgressBar <- function(X, FUN, ...){
   lapply(X, wrapper, ...)
 }
 
+getFileExtension <- function(filename)tolower(gsub(".*\\.", "", filename))
 
 
 
 # ad-hoc dispatch based on the file extension
 deps_by_ext <- function(file, dir, verbose = TRUE) {
   file <- file.path(dir, file)
-  fileext <- tolower(gsub(".*\\.", "", file))
+  fileext <- getFileExtension(file)
   switch(fileext,
          r = deps.R(file, verbose = verbose),
          rmd = deps.Rmd(file, verbose = verbose),
@@ -62,9 +83,12 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
   on.exit(unlink(tempfile))
   stopifnot(require("knitr"))
   p <- tryCatch(
-    knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE), 
+    suppressWarnings(suppressMessages(
+      knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE)
+    )), 
     error = function(e) e
   )
+  
   if(inherits(p, "error")) {
     return(list(pkgs=character(), error=file))
   }
@@ -80,7 +104,9 @@ deps.Rnw <- function(file, verbose=TRUE) {
   tempfile <- tempfile(fileext = ".Rnw")
   on.exit(unlink(tempfile))
   p <- tryCatch(
-    Stangle(file, output = tempfile, quiet = TRUE), 
+    suppressWarnings(suppressMessages(
+      Stangle(file, output = tempfile, quiet = TRUE)
+    )), 
     error = function(e) e
   )
   if(inherits(p, "error")) {
