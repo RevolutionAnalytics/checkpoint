@@ -22,6 +22,8 @@
 #' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.
 #'
 #' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.
+#' 
+#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current R.version to the specified R.version, and warns if these are different.  This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.  
 #'
@@ -36,8 +38,21 @@
 #'
 #' @importFrom utils install.packages
 
-checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr = system.file(package="knitr") != "") {
+checkpoint <- function(snapshotDate, project = getwd(), R.version, 
+                       verbose=TRUE, 
+                       use.knitr = system.file(package="knitr") != "") {
 
+  if(!missing("R.version") && !is.null(R.version)){
+    if(!correctR(as.character(R.version))){
+      message <- sprintf("Specified R.version %s does not match current R (%s)", 
+                         R.version, utils::packageVersion("base"))
+      mssg(verbose, message)
+      mssg(verbose, "Terminating checkpoint")
+      mssg(verbose, "---")
+      stop(message)
+    }
+  }
+  
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
@@ -140,3 +155,6 @@ getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
 
 
 mssg <- function(x, ...) if(x) message(...)
+
+correctR <- function(x) compareVersion(as.character(utils::packageVersion("base")), x) == 0
+
