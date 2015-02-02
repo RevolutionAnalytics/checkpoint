@@ -79,7 +79,7 @@ To create a checkpoint project, you do:
 
     ```{r, eval=FALSE}
     library(checkpoint)
-    checkpoint("2014-10-01")
+    checkpoint("2014-12-01")
     ```
 
 4. Run the script.
@@ -90,11 +90,11 @@ For example, your script may look like this:
 
 ```{r, eval=FALSE}
 library(checkpoint)
-checkpoint("2014-10-01")
+checkpoint("2014-12-01")
 
-library(ggplot2)
-ggplot(mtcars, aes(mpg, cyl)) +
-  geom_point()
+library(MASS)
+hist(islands)
+truehist(islands)
 ```
 
 
@@ -107,11 +107,12 @@ Next you want to run the script.  Here is what `checkpoint` does:
 
 ## Create temporary project and set working directory
 
-example_project <- paste0("checkpoint_example_project_", Sys.Date())
+example_project <- tempdir()
 
 dir.create(example_project, recursive = TRUE)
-unlink("~/.checkpoint/2014-10-01", recursive=TRUE)
-oldwd <- setwd(example_project)
+unlink("~/.checkpoint/2014-12-01", recursive=TRUE)
+oldwd <- getwd()
+setwd(example_project)
 oldRepos <- getOption("repos")
 oldLibPaths <- .libPaths()
 
@@ -120,35 +121,46 @@ oldLibPaths <- .libPaths()
 
 example_code <- '
 library(checkpoint)
-checkpoint("2014-10-01")
+checkpoint("2014-12-01")
 
-library(ggplot2)
-ggplot(mtcars, aes(mpg, cyl)) +
-  geom_point()
+library(MASS)
+hist(islands)
+truehist(islands)
 '
 
 cat(example_code, file="checkpoint_example_code.R")
+
 ```
 
 ```{r checkpoint}
 ## Create a checkpoint by specifying a snapshot date
 
+setwd(example_project)
 library(checkpoint)
-checkpoint("2014-10-01")
+checkpoint("2014-12-01")
 ```
 
 ### Inspecting the results
 
 Now inspect the results:
 
-```{r inspect}
-## Check that CRAN mirror is set to MRAN snapshot
+Check that CRAN mirror is set to MRAN snapshot:
+
+
+```{r inspect-1}
 getOption("repos")
+```
 
-## Check that library path is set to ~/.checkpoint
+
+Check that library path is set to `~/.checkpoint`:
+
+```{r inspect-2}
 normalizePath(.libPaths(), winslash = "/")
+```
 
-# Check which packages are installed in checkpoint library
+Check which packages are installed in checkpoint library:
+
+```{r inspect-3}
 installed.packages()[, "Package"]
 ```
 

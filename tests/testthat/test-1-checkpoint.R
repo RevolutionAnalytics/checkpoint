@@ -11,7 +11,7 @@ packages.to.test.base = c("MASS", "plyr", "XML", "httr","checkpoint", "stats", "
 packages.to.test.knitr = c("foreach")
 packages.to.test = if(require("knitr")) c(packages.to.test.base, packages.to.test.knitr) else packages.to.test.base
 
-for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.dates), 10, replace = FALSE)]))) {
+for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.dates), 2, replace = FALSE)]))) {
   project_root <- file.path(tempfile(), "checkpointtemp")
   dir.create(project_root, recursive = TRUE)
   

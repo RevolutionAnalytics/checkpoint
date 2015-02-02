@@ -22,6 +22,8 @@
 #' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.
 #'
 #' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.
+#' 
+#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current R.version to the specified R.version, and warns if these are different.  This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.  
 #'
@@ -34,12 +36,23 @@
 #'
 #' @example /inst/examples/example_checkpoint.R
 #'
+#' @importFrom utils install.packages
 
-checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr = system.file(package="knitr") != "") {
+checkpoint <- function(snapshotDate, project = getwd(), R.version, 
+                       verbose=TRUE, 
+                       use.knitr = system.file(package="knitr") != "") {
 
-  if(use.knitr) {
-    if(!require("knitr")) warning("The knitr package is not available and Rmarkdown files will not be parsed")
+  if(!missing("R.version") && !is.null(R.version)){
+    if(!correctR(as.character(R.version))){
+      message <- sprintf("Specified R.version %s does not match current R (%s)", 
+                         R.version, utils::packageVersion("base"))
+      mssg(verbose, message)
+      mssg(verbose, "Terminating checkpoint")
+      mssg(verbose, "---")
+      stop(message)
+    }
   }
+  
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
@@ -55,11 +68,11 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr 
     dir.create(file.path(.libPaths(), "compiler"), showWarnings = FALSE)
     file.copy(to = .libPaths(), from = compiler.path, recursive = TRUE)
   } else {
-    install.packages(repos = NULL, pkgs = compiler.path, type = "source")
+    if(! "compiler" %in% installed.packages()[, "Package"]) {
+      install.packages(repos = NULL, pkgs = compiler.path, type = "source")
+    }
   }
   
-  mssg(verbose, "Scanning for loaded pkgs")
-
   # Scan for packages used
   mssg(verbose, "Scanning for packages used in this project")
   exclude.packages = c("checkpoint", # this very package
@@ -67,7 +80,17 @@ checkpoint <- function(snapshotDate, project = getwd(), verbose=TRUE, use.knitr 
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
   packages.installed <- unname(installed.packages()[, "Package"])
-  packages.detected <- projectScanPackages(project, use.knitr = use.knitr)
+  
+  pkgs <- projectScanPackages(project, use.knitr = use.knitr)
+  packages.detected <- pkgs[["pkgs"]]
+  
+  mssg(verbose, "- Discovered ", length(packages.detected), " packages")
+  
+  if(length(pkgs[["error"]]) > 0){
+    mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
+    for(file in pkgs[["error"]])  mssg(verbose, "- ", file)
+  }
+  
   packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
 
   # detach checkpointed pkgs already loaded
@@ -132,3 +155,6 @@ getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
 
 
 mssg <- function(x, ...) if(x) message(...)
+
+correctR <- function(x) compareVersion(as.character(utils::packageVersion("base")), x) == 0
+
