@@ -1,23 +1,51 @@
-# checkpoint - Install packages from snapshots on the checkpoint server for reproducibility
+# checkpoint - Simple reproducibility for R scripts that depend on packages
 
 ## Overview
 
 The goal of `checkpoint` is to solve the problem of package reproducibility in R. Specifically, `checkpoint` solve the problems that occur when you don't have the correct versions of R packages.  Since packages get updated on CRAN all the time, it can be difficult to recreate an environment where all your packages are consistent with some earlier state.
 
-To solve this, `checkpoint` allows you to install package from a specific snapshot date.  In other words, `checkpoint` makes it possible to install packages from a specific date in the past, as if you had a CRAN time machine.
-
-To achieve reproducibility, once a day we create a complete snapshot of CRAN, on the "Managed R archived network" (MRAN) server.  At midnight (UTC) MRAN mirrors all of CRAN and saves a snapshot.  This allows you to install packages from a snapshot date, thus "going back in time" to this date, by installing packages as they were at that snapshot date.
+To solve this, `checkpoint` allows you to install packages from a specific snapshot date.  In other words, `checkpoint` makes it possible to install package versions from a specific date in the past, as if you had a CRAN time machine.
 
 
-Together, the `checkpoint` package and the MRAN server act as a CRAN time machine. The `checkpoint()` function installs the packages to a local library exactly as they were at the specified point in time. Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using `checkpoint()` can ensure the reproducibility of your scripts or projects at any time.
+### Checkpoint Features
 
+With the `checkpoint` package, you can easily:
 
+* Write R scripts or projects using package versions from a specific point in time;
+* Write R scripts that use older versions of packages, or packages that are no longer available on CRAN;
+* Install packages (or package versions) visible only to a specific project, without affecting other R projects or R users on the same system;
+* Manage multiple projects that use different package versions;
+* Share R scripts with others that will automatically install the appropriate package versions;
+* Write and share code R whose results can be reproduced, even if new (and possibly incompatible) package versions are released later.
+
+## Using the checkpoint function
 
 Using `checkpoint` is simple:
 
-- `checkpoint` has only a single function, `checkpoint()` where you specify the snapshot date.
+- The `checkpoint` package has only a single function, `checkpoint()` where you specify the snapshot date.
+- Example: `checkpoint("2015-01-15")` instructs R to install and use only package versions that existed on January 15, 2015.
 
-## Using the checkpoint function
+To write R code for reproducibility, simply begin your master R script as follows:
+
+```R
+library(checkpoint)
+checkpoint("2015-01-15") ## or any date in YYYY-MM-DD format after 2014-09-17
+```
+
+Choose a snapshot date that includes the package versions you need for your script (or today's date, to get the latest versions). Any package version published since September 17, 2014 is available for use.
+
+### Sharing your scripts for reproducibility
+
+Sharing your R analysis reproducibly can be as easy as emailing a single R script. Begin your script with the following commands:
+
+
+- Load the `checkpoint` package using `library(checkpoint)`
+- Ensure you specify `checkpoint()` with your checkpoint date, e.g. `checkpoint("2014-10-01")`
+
+Then send this script to your collaborators.  When they run this script on their machine, `checkpoint` will perform the same steps of installing the necessary packages, creating the `checkpoint` snapshot folder and producing the same results.
+
+
+## How checkpoint works
 
 When you create a checkpoint, the `checkpoint()` function performs the following:
 
@@ -28,20 +56,20 @@ When you create a checkpoint, the `checkpoint()` function performs the following
 
 This means the remainder of your script will run with the packages from a specific date.
 
+### Where `checkpoint` finds historic package versions
 
-## Sharing your scripts for reproducibility
+To achieve reproducibility, once a day we create a complete snapshot of CRAN, on the "Managed R archived network" (MRAN) server.  At midnight (UTC) MRAN mirrors all of CRAN and saves a snapshot.  (MRAN has been storing daily snapshots since September 17, 2014.) This allows you to install packages from a snapshot date, thus "going back in time" to this date, by installing packages as they were at that snapshot date.
 
-Sharing your script to be reproducible is as easy as:
 
-- Load the `checkpoint` package using `library(checkpoint)`
-- Ensure you specify `checkpoint()` with your checkpoint date, e.g. `checkpoint("2014-10-01")`
+Together, the `checkpoint` package and the MRAN server act as a CRAN time machine. The `checkpoint()` function installs the packages to a local library exactly as they were at the specified point in time. Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using `checkpoint()` can ensure the reproducibility of your scripts or projects at any time.
 
-Then send this script to your collaborators.  When they run this script on their machine, `checkpoint` will perform the same steps of installing the necessary packages, creating the `checkpoint` snapshot folder and producing the same results.
+
+
 
 
 ## Resetting the checkpoint
 
-To reset the checkpoint, simply restart your R session.
+To revert to your default CRAN mirror and access globally-installed packages, simply restart your R session.
 
 
 
