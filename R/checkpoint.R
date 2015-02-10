@@ -53,6 +53,8 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
     }
   }
   
+  fixRstudioBug()
+  
   createFolders(snapshotDate)
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
