@@ -11,7 +11,7 @@ checkpoint(snapshotDate, project = getwd(), R.version, verbose = TRUE,
 
 \item{project}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.}
 
-\item{R.version}{Optional character string, e.g. "3.1.2".  If specified, compares the current R.version to the specified R.version, and warns if these are different.  This argument allows the original script author to specify a specific version of R to obtain the desired results.}
+\item{R.version}{Optional character string, e.g. "3.1.2".  If specified, compares the current R.version to the specified R.version. If these differ, stops processing (throw error) and make no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
 
 \item{verbose}{If TRUE, displays progress messages.}
 
