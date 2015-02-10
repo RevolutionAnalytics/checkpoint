@@ -61,18 +61,12 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
 
-  # Set lib path
-  setLibPaths(snapshotDate)
-
-  if(.Platform$OS.type == "windows"){
-    dir.create(file.path(.libPaths(), "compiler"), showWarnings = FALSE)
-    file.copy(to = .libPaths(), from = compiler.path, recursive = TRUE)
-  } else {
-    if(! "compiler" %in% installed.packages()[, "Package"]) {
-      install.packages(repos = NULL, pkgs = compiler.path, type = "source")
-    }
-  }
+  libPath <- checkpointPath(snapshotDate, "lib")
+  installMissingBasePackages()
   
+  # Set lib path
+  setLibPaths(libPath = libPath)
+    
   # Scan for packages used
   mssg(verbose, "Scanning for packages used in this project")
   exclude.packages = c("checkpoint", # this very package
@@ -131,7 +125,7 @@ setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUr
   options(repos = snapshotUrl)}
 
 setLibPaths <- function(snapshotDate, libPath=checkpointPath(snapshotDate, "lib")){
-  assign(".lib.loc", libPath, envir = environment(.libPaths))}
+    assign(".lib.loc", c(libPath, checkpointBasePkgs()), envir = environment(.libPaths))}
 
 mranUrl <- function()"http://mran.revolutionanalytics.com/snapshot/"
 
