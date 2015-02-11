@@ -1,7 +1,12 @@
 # Temporary fix for rstudio bug reported at https://support.rstudio.com/hc/communities/public/questions/203052576-setting-libpath-in-Rstudio
 
 fixRstudioBug <- function(){
-  expected <- function (){
+  .rs.uniqueLibraryPaths <- .rs.pathPackage <- .rs.packageVersion <- .rs.createAliasedPath <- .rs.addFunction <- NULL
+  rm(.rs.uniqueLibraryPaths,  .rs.pathPackage,  .rs.packageVersion,  .rs.createAliasedPath,  .rs.addFunction)
+
+  if("tools:rstudio" %in% search()){
+    
+    expected <- function (){
     uniqueLibPaths <- .rs.uniqueLibraryPaths()
     x <- suppressWarnings(library(lib.loc = uniqueLibPaths))
     x <- x$results[x$results[, 1] != "base", ]
@@ -26,7 +31,6 @@ fixRstudioBug <- function(){
     packages[order(packages$name), ]
   }
   
-  if(rstudioapi::isAvailable()){
     if(
       isTRUE(
         all.equal(expected, get(".rs.listInstalledPackages"))
