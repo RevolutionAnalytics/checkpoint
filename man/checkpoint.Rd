@@ -31,7 +31,7 @@ Together, the checkpoint package and the checkpoint server act as a CRAN time ma
 
 \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 
-To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link{library}()} and \code{\link{requires}()} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \code{package}\code{\link[base]{::}}\code{foo()} and \code{package}\code{\link[base]{:::}}\code{foo()}. Finally, any occurrences of the functions \code{\link[methods]{setClass}}, \code{\link[methods]{setRefClass}}, \code{\link[methods]{setMethod}} or \code{\link[methods]{setGeneric}} will also identify the \code{methods} package as a dependency.
+To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link{library}()} and \code{\link{require}()} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \code{package}\code{\link[base]{::}}\code{foo()} and \code{package}\code{\link[base]{:::}}\code{foo()}. Finally, any occurrences of the functions \code{\link[methods]{setClass}}, \code{\link[methods]{setRefClass}}, \code{\link[methods]{setMethod}} or \code{\link[methods]{setGeneric}} will also identify the \code{methods} package as a dependency.
 
 Specifically, the function will:
 
