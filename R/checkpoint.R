@@ -6,13 +6,13 @@
 #'
 #' \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 #'
-#' To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{library()} and \code{requires()} statements.
+#' To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link{library}()} and \code{\link{requires}()} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \code{package}\code{\link[base]{::}}\code{foo()} and \code{package}\code{\link[base]{:::}}\code{foo()}. Finally, any occurrences of the functions \code{\link[methods]{setClass}}, \code{\link[methods]{setRefClass}}, \code{\link[methods]{setMethod}} or \code{\link[methods]{setGeneric}} will also identify the \code{methods} package as a dependency.
 #'
 #' Specifically, the function will:
 #'
 #' \itemize{
 #' \item{Create a new local snapshot library to install packages.  This library folder is at \code{~/.checkpoint}}
-#' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{options(repos)}}
+#' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{\link[base]{options}(repos)}}
 #' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
 #' }
 #'
@@ -23,7 +23,7 @@
 #'
 #' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.
 #' 
-#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current R.version to the specified R.version. If these differ, stops processing (throw error) and make no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
+#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing (throw error) and make no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.  
 #'
