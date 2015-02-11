@@ -25,6 +25,8 @@
 #' 
 #' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing (throw error) and make no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
+#' @param scanForPackages If TRUE, scans for packages in project folder (see details). If false, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.
+#' 
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.  
 #'
 #' @param verbose If TRUE, displays progress messages.
@@ -38,7 +40,7 @@
 #'
 #' @importFrom utils install.packages
 
-checkpoint <- function(snapshotDate, project = getwd(), R.version, 
+checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
                        verbose=TRUE, 
                        use.knitr = system.file(package="knitr") != "") {
 
@@ -70,22 +72,26 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
   setLibPaths(libPath = libPath)
     
   # Scan for packages used
-  mssg(verbose, "Scanning for packages used in this project")
   exclude.packages = c("checkpoint", # this very package
                        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
   packages.installed <- unname(installed.packages()[, "Package"])
   
-  pkgs <- projectScanPackages(project, use.knitr = use.knitr)
-  packages.detected <- pkgs[["pkgs"]]
-  
-  mssg(verbose, "- Discovered ", length(packages.detected), " packages")
-  
-  if(length(pkgs[["error"]]) > 0){
-    mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
-    for(file in pkgs[["error"]])  mssg(verbose, "- ", file)
+  if(isTRUE(scanForPackages)){
+    mssg(verbose, "Scanning for packages used in this project")
+    pkgs <- projectScanPackages(project, use.knitr = use.knitr)
+    packages.detected <- pkgs[["pkgs"]]
+    mssg(verbose, "- Discovered ", length(packages.detected), " packages")
+    
+    if(length(pkgs[["error"]]) > 0){
+      mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
+      for(file in pkgs[["error"]])  mssg(verbose, "- ", file)
+    }
+  } else {
+    packages.detected <- character(0)
   }
+  
   
   packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
 
@@ -111,7 +117,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
   } else if(length(packages.detected > 0)){
     mssg(verbose, "All detected packages already installed")
   } else {
-    mssg(verbose, "No packages found to install")
+    if(isTRUE(scanForPackages)) mssg(verbose, "No packages found to install")
   }
   
   # Reload detached packages

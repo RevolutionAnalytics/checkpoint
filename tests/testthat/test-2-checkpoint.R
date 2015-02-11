@@ -41,6 +41,13 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       checkpoint(snap_date, project = project_root),
       "Installing packages used in this project")
     
+    # Does not display message whan scanForPackages=FALSE
+    expect_false(
+      isTRUE(
+        shows_message("Scanning for packages used in this project")(
+          checkpoint(snap_date, project = project_root, scanForPackages=FALSE))
+        ))
+    
     x <- installed.packages(fields = "Date/Publication", noCache = TRUE)
     
     base.packages <- unname(installed.packages(priority = "base", lib.loc = .Library)[, "Package"])
