@@ -91,11 +91,15 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
     mssg(verbose, "- Discovered ", length(packages.detected), " packages")
     
     if(length(pkgs[["error"]]) > 0){
+      files.not.parsed <- pkgs[["error"]]
       mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
-      for(file in pkgs[["error"]])  mssg(verbose, "- ", file)
+      for(file in files.not.parsed)  mssg(verbose, "- ", file)
+    } else {
+      files.not.parsed <- character(0)
     }
   } else {
     packages.detected <- character(0)
+    files.not.parsed <- character(0)
   }
   
   
@@ -115,6 +119,8 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
       for(pkg in packages.to.install[not.available]) mssg(verbose, " - ", pkg)
       packages.to.install <- packages.to.install[!not.available]
     }
+  } else {
+    not.available <- character(0)
   }
   
   # install missing packages
@@ -144,7 +150,14 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   
   mssg(verbose, "checkpoint process complete")
   mssg(verbose, "---")
-  invisible(NULL)}
+  
+  z <- list(
+    files_not_scanned = files.not.parsed,
+    pkgs_found = packages.detected,
+    pkgs_not_on_mran = names(not.available)[not.available],
+    pkgs_installed = packages.to.install
+  )
+  invisible(z)}
 
 setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
