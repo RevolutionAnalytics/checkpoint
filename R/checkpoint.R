@@ -65,7 +65,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
 
-  libPath <- checkpointPath(snapshotDate, "lib")
+  libPath <- checkpointPath(snapshotDate, type = "lib")
   installMissingBasePackages()
   
   # Set lib path
@@ -132,7 +132,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
 setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
 
-setLibPaths <- function(snapshotDate, libPath=checkpointPath(snapshotDate, "lib")){
+setLibPaths <- function(snapshotDate, libPath=checkpointPath(snapshotDate, type = "lib")){
     assign(".lib.loc", c(libPath, checkpointBasePkgs()), envir = environment(.libPaths))}
 
 mranUrl <- function()"http://mran.revolutionanalytics.com/snapshot/"

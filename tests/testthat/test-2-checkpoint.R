@@ -79,8 +79,8 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       file.path("http://mran.revolutionanalytics.com/snapshot", snap_date))
     
     expect_equal(
-      checkpoint:::checkpointPath(snap_date, "lib"),
-      normalizePath(.libPaths()[1]))})
+      checkpoint:::checkpointPath(snap_date, type = "lib"),
+      normalizePath(.libPaths()[1], winslash = "/"))})
   # cleanup
   checkpoint:::cleanCheckpointFolder(snap_date)
 }
