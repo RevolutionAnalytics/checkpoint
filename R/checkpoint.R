@@ -106,6 +106,17 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   packages.in.search <- findInSearchPath(packages.to.install)
   detachFromSearchPath(packages.in.search)
   
+  # check if packages are available in snapshot
+  
+  if(length(packages.to.install) > 0) {
+    not.available <- !packages.to.install %in% available.packages()[, "Package"]
+    if(sum(not.available > 0)){
+      mssg(verbose, "Packages not available in repository and won't be installed:")
+      for(pkg in packages.to.install[not.available]) mssg(verbose, " - ", pkg)
+      packages.to.install <- packages.to.install[!not.available]
+    }
+  }
+  
   # install missing packages
 
   if(length(packages.to.install) > 0) {
