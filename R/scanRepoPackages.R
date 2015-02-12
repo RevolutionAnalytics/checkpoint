@@ -156,7 +156,7 @@ expressionDependencies <- function(e) {
   # base case: a call
   fname <- as.character(e[[1L]])
   # a refclass method call, so return
-  if (length(fname) > 1) return()
+  # if (length(fname) > 1) return()
   
   if (length(fname) == 1) {
     
@@ -169,16 +169,17 @@ expressionDependencies <- function(e) {
       return(as.character(mc$package))
     }
     
-    # base case: call to :: or :::
-    if (fname %in% c("::", ":::")) (
-      return(as.character(e[[2L]]))
-    )
-    
     # base case: methods functions
     if (fname %in% c("setClass", "setRefClass", "setMethod", "setGeneric")) {
       return("methods")
     }
     
+  } else {
+    
+    # base case: call to :: or :::
+    if (fname[1] %in% c("::", ":::")) (
+      return(as.character(fname[2]))
+    )
   }
   
   # recursive case: all other calls

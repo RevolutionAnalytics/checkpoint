@@ -6,13 +6,13 @@
 #'
 #' \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 #'
-#' To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{library()} and \code{requires()} statements.
+#' To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link{library}()} and \code{\link{require}()} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \code{package}\code{\link[base]{::}}\code{foo()} and \code{package}\code{\link[base]{:::}}\code{foo()}. Finally, any occurrences of the functions \code{\link[methods]{setClass}}, \code{\link[methods]{setRefClass}}, \code{\link[methods]{setMethod}} or \code{\link[methods]{setGeneric}} will also identify the \code{methods} package as a dependency.
 #'
 #' Specifically, the function will:
 #'
 #' \itemize{
-#' \item{Create a new local snapshot library to install packages.  This library folder is at \code{~/.checkpoint}}
-#' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{options(repos)}}
+#' \item{Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint}} but you can modify the path using the \code{checkpointLocation} argument.
+#' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{\link[base]{options}(repos)}}
 #' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
 #' }
 #'
@@ -23,8 +23,12 @@
 #'
 #' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.
 #' 
-#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current R.version to the specified R.version, and warns if these are different.  This argument allows the original script author to specify a specific version of R to obtain the desired results.
+#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
+#' @param scanForPackages If TRUE, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.
+#' 
+#' @param checkpointLocation File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).
+#' 
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.  
 #'
 #' @param verbose If TRUE, displays progress messages.
@@ -38,7 +42,8 @@
 #'
 #' @importFrom utils install.packages
 
-checkpoint <- function(snapshotDate, project = getwd(), R.version, 
+checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
+                       checkpointLocation = "~/",
                        verbose=TRUE, 
                        use.knitr = system.file(package="knitr") != "") {
 
@@ -53,7 +58,12 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
     }
   }
   
-  createFolders(snapshotDate)
+  fixRstudioBug()
+  
+  if(!createFolders(snapshotDate = snapshotDate, checkpointLocation = checkpointLocation))
+    stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
+  
+  
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
 
@@ -61,35 +71,37 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
 
-  # Set lib path
-  setLibPaths(snapshotDate)
-
-  if(.Platform$OS.type == "windows"){
-    dir.create(file.path(.libPaths(), "compiler"), showWarnings = FALSE)
-    file.copy(to = .libPaths(), from = compiler.path, recursive = TRUE)
-  } else {
-    if(! "compiler" %in% installed.packages()[, "Package"]) {
-      install.packages(repos = NULL, pkgs = compiler.path, type = "source")
-    }
-  }
+  libPath <- checkpointPath(snapshotDate, type = "lib", checkpointLocation = checkpointLocation)
+  installMissingBasePackages()
   
+  # Set lib path
+  setLibPaths(libPath = libPath)
+    
   # Scan for packages used
-  mssg(verbose, "Scanning for packages used in this project")
   exclude.packages = c("checkpoint", # this very package
                        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
   packages.installed <- unname(installed.packages()[, "Package"])
   
-  pkgs <- projectScanPackages(project, use.knitr = use.knitr)
-  packages.detected <- pkgs[["pkgs"]]
-  
-  mssg(verbose, "- Discovered ", length(packages.detected), " packages")
-  
-  if(length(pkgs[["error"]]) > 0){
-    mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
-    for(file in pkgs[["error"]])  mssg(verbose, "- ", file)
+  if(isTRUE(scanForPackages)){
+    mssg(verbose, "Scanning for packages used in this project")
+    pkgs <- projectScanPackages(project, use.knitr = use.knitr)
+    packages.detected <- pkgs[["pkgs"]]
+    mssg(verbose, "- Discovered ", length(packages.detected), " packages")
+    
+    if(length(pkgs[["error"]]) > 0){
+      files.not.parsed <- pkgs[["error"]]
+      mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
+      for(file in files.not.parsed)  mssg(verbose, "- ", file)
+    } else {
+      files.not.parsed <- character(0)
+    }
+  } else {
+    packages.detected <- character(0)
+    files.not.parsed <- character(0)
   }
+  
   
   packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
 
@@ -97,6 +109,19 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
   
   packages.in.search <- findInSearchPath(packages.to.install)
   detachFromSearchPath(packages.in.search)
+  
+  # check if packages are available in snapshot
+  
+  if(length(packages.to.install) > 0) {
+    not.available <- !packages.to.install %in% available.packages()[, "Package"]
+    if(sum(not.available > 0)){
+      mssg(verbose, "Packages not available in repository and won't be installed:")
+      for(pkg in packages.to.install[not.available]) mssg(verbose, " - ", pkg)
+      packages.to.install <- packages.to.install[!not.available]
+    }
+  } else {
+    not.available <- character(0)
+  }
   
   # install missing packages
 
@@ -115,7 +140,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
   } else if(length(packages.detected > 0)){
     mssg(verbose, "All detected packages already installed")
   } else {
-    mssg(verbose, "No packages found to install")
+    if(isTRUE(scanForPackages)) mssg(verbose, "No packages found to install")
   }
   
   # Reload detached packages
@@ -125,13 +150,20 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version,
   
   mssg(verbose, "checkpoint process complete")
   mssg(verbose, "---")
-  invisible(NULL)}
+  
+  z <- list(
+    files_not_scanned = files.not.parsed,
+    pkgs_found = packages.detected,
+    pkgs_not_on_mran = names(not.available)[not.available],
+    pkgs_installed = packages.to.install
+  )
+  invisible(z)}
 
 setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
 
-setLibPaths <- function(snapshotDate, libPath=checkpointPath(snapshotDate, "lib")){
-  assign(".lib.loc", libPath, envir = environment(.libPaths))}
+setLibPaths <- function(snapshotDate, libPath=checkpointPath(snapshotDate, type = "lib")){
+    assign(".lib.loc", c(libPath, checkpointBasePkgs()), envir = environment(.libPaths))}
 
 mranUrl <- function()"http://mran.revolutionanalytics.com/snapshot/"
 

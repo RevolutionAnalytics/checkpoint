@@ -41,6 +41,13 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       checkpoint(snap_date, project = project_root),
       "Installing packages used in this project")
     
+    # Does not display message whan scanForPackages=FALSE
+    expect_false(
+      isTRUE(
+        shows_message("Scanning for packages used in this project")(
+          checkpoint(snap_date, project = project_root, scanForPackages=FALSE))
+        ))
+    
     x <- installed.packages(fields = "Date/Publication", noCache = TRUE)
     
     base.packages <- unname(installed.packages(priority = "base", lib.loc = .Library)[, "Package"])
@@ -72,8 +79,8 @@ for(snap_date in as.character(c(MRAN.default, MRAN.dates[sample(length(MRAN.date
       file.path("http://mran.revolutionanalytics.com/snapshot", snap_date))
     
     expect_equal(
-      checkpoint:::checkpointPath(snap_date, "lib"),
-      normalizePath(.libPaths()[1]))})
+      checkpoint:::checkpointPath(snap_date, type = "lib"),
+      normalizePath(.libPaths()[1], winslash = "/"))})
   # cleanup
   checkpoint:::cleanCheckpointFolder(snap_date)
 }

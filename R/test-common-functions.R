@@ -1,4 +1,4 @@
 # checkpoint test common functions
 cleanCheckpointFolder <- function(snapshotDate) {
-  folder = checkpointPath(snapshotDate, "snapshotDir")
+  folder = checkpointPath(snapshotDate, type = "snapshot")
   unlink(folder, recursive = TRUE, force = TRUE)}
