@@ -4,17 +4,19 @@
 \title{Configures R session to use packages as they existed on CRAN at time of snapshot.}
 \usage{
 checkpoint(snapshotDate, project = getwd(), R.version,
-  scanForPackages = TRUE, verbose = TRUE, use.knitr = system.file(package
-  = "knitr") != "")
+  scanForPackages = TRUE, checkpointLocation = "~/", verbose = TRUE,
+  use.knitr = system.file(package = "knitr") != "")
 }
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
 
 \item{project}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.}
 
-\item{R.version}{Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing (throw error) and make no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
+\item{R.version}{Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
 
-\item{scanForPackages}{If TRUE, scans for packages in project folder (see details). If false, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.}
+\item{scanForPackages}{If TRUE, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.}
+
+\item{checkpointLocation}{File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).}
 
 \item{verbose}{If TRUE, displays progress messages.}
 
@@ -36,7 +38,7 @@ To automatically determine all packages used in your project, the function scans
 Specifically, the function will:
 
 \itemize{
-\item{Create a new local snapshot library to install packages.  This library folder is at \code{~/.checkpoint}}
+\item{Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint}} but you can modify the path using the \code{checkpointLocation} argument.
 \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{\link[base]{options}(repos)}}
 \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
 }

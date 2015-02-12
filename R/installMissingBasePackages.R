@@ -1,4 +1,6 @@
-checkpointBasePkgs <- function() file.path("~", ".checkpoint", paste0("R-", getRversion()))
+checkpointBasePkgs <- function(checkpointLocation = "~/"){
+  checkpointPath(checkpointLocation = checkpointLocation, type = "base")
+}
 
 basePkgLocations <- function(lib = .Library){
   pkgFolder <- function(x) dirname(normalizePath(base::system.file(package=x, lib.loc=lib)))

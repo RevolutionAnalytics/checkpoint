@@ -11,7 +11,7 @@
 #' Specifically, the function will:
 #'
 #' \itemize{
-#' \item{Create a new local snapshot library to install packages.  This library folder is at \code{~/.checkpoint}}
+#' \item{Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint}} but you can modify the path using the \code{checkpointLocation} argument.
 #' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{\link[base]{options}(repos)}}
 #' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
 #' }
@@ -23,9 +23,11 @@
 #'
 #' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.
 #' 
-#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing (throw error) and make no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
+#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
-#' @param scanForPackages If TRUE, scans for packages in project folder (see details). If false, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.
+#' @param scanForPackages If TRUE, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.
+#' 
+#' @param checkpointLocation File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).
 #' 
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.  
 #'
@@ -41,6 +43,7 @@
 #' @importFrom utils install.packages
 
 checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
+                       checkpointLocation = "~/",
                        verbose=TRUE, 
                        use.knitr = system.file(package="knitr") != "") {
 
@@ -57,7 +60,10 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   
   fixRstudioBug()
   
-  createFolders(snapshotDate)
+  if(!createFolders(snapshotDate = snapshotDate, checkpointLocation = checkpointLocation))
+    stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
+  
+  
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
 
 
@@ -65,7 +71,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   # set repos
   setMranMirror(snapshotUrl = snapshoturl)
 
-  libPath <- checkpointPath(snapshotDate, type = "lib")
+  libPath <- checkpointPath(snapshotDate, type = "lib", checkpointLocation = checkpointLocation)
   installMissingBasePackages()
   
   # Set lib path
