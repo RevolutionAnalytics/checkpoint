@@ -44,6 +44,24 @@ Sharing your R analysis reproducibly can be as easy as emailing a single R scrip
 
 Then send this script to your collaborators.  When they run this script on their machine, `checkpoint` will perform the same steps of installing the necessary packages, creating the `checkpoint` snapshot folder and producing the same results.
 
+### Using `knitr` with `checkpoint`
+To ensure that the report is generated in the snapshotted environment, you should call `checkpoint()` before  `knit()`. Thus, in your report generation script, `checkpoint()` should be outside of `.Rmd` file. To allow `checkpoint` to recognize the libraries required by `knitr`, you need to specify these libraries in a separate `.R` file. For example, if you have an analysis code in `study1.Rmd` and the report generation script in `analyze.R`, here's the content of your `analyze.R`:
+
+```{r}
+# Libraries that cannot be automatically detected by checkpoint()
+library(knitr)         # required for generating HTML
+library(yaml)          # required for generating HTML
+library(htmltools)     # required for generating HTML
+library(rmarkdown)     # required for generating HTML
+library(pbkrtest)      # required by lmerTest for Kenward-Roger degrees of freedom calculation
+
+# ensure R package version
+library(checkpoint)
+checkpoint("2015-02-12", R.version = "3.1.2", use.knitr = TRUE)
+
+# compile
+knitr::knit2html("study1.Rmd")
+```
 
 ## How checkpoint works
 
