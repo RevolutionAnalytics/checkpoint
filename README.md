@@ -64,9 +64,6 @@ To achieve reproducibility, once a day we create a complete snapshot of CRAN, on
 Together, the `checkpoint` package and the MRAN server act as a CRAN time machine. The `checkpoint()` function installs the packages to a local library exactly as they were at the specified point in time. Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using `checkpoint()` can ensure the reproducibility of your scripts or projects at any time.
 
 
-
-
-
 ## Resetting the checkpoint
 
 To revert to your default CRAN mirror and access globally-installed packages, simply restart your R session.
@@ -128,6 +125,27 @@ To install `checkpoint` directly from github, use the `devtools` package.  In yo
 install.packages("devtools")
 devtools::install_github("RevolutionAnalytics/checkpoint")
 library("checkpoint")
+```
+
+
+## Using knitr and rmarkdown with checkpoint
+
+Although `checkpoint` will scan for dependencies in `.Rmd` files if `knitr` is installed, it does not automatically install the `knitr` or `rmarkdown` packages.
+
+To build your `.Rmd` files, you will have to add a script in your project that explicitly loads all the packages required to build your `.Rmd` files.
+
+A line like the following may be sufficient:
+
+```{r}
+library(rmarkdown)
+```
+
+This should automatically resolve dependencies on the packages `knitr`, `yaml` and `htmltools`
+
+To build your `rmarkdown` file, use a call to `rmarkdown::render()`.  For example, to build a file called `example.Rmd`, use:
+
+```{r}
+rmarkdown::render("example.Rmd")
 ```
 
 
