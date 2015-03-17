@@ -44,24 +44,6 @@ Sharing your R analysis reproducibly can be as easy as emailing a single R scrip
 
 Then send this script to your collaborators.  When they run this script on their machine, `checkpoint` will perform the same steps of installing the necessary packages, creating the `checkpoint` snapshot folder and producing the same results.
 
-### Using `knitr` with `checkpoint`
-To ensure that the report is generated in the snapshotted environment, you should call `checkpoint()` before  `knit()`. Thus, in your report generation script, `checkpoint()` should be outside of `.Rmd` file. To allow `checkpoint` to recognize the libraries required by `knitr`, you need to specify these libraries in a separate `.R` file. For example, if you have an analysis code in `study1.Rmd` and the report generation script in `analyze.R`, here's the content of your `analyze.R`:
-
-```{r}
-# Libraries that cannot be automatically detected by checkpoint()
-library(knitr)         # required for generating HTML
-library(yaml)          # required for generating HTML
-library(htmltools)     # required for generating HTML
-library(rmarkdown)     # required for generating HTML
-library(pbkrtest)      # required by lmerTest for Kenward-Roger degrees of freedom calculation
-
-# ensure R package version
-library(checkpoint)
-checkpoint("2015-02-12", R.version = "3.1.2", use.knitr = TRUE)
-
-# compile
-knitr::knit2html("study1.Rmd")
-```
 
 ## How checkpoint works
 
@@ -80,9 +62,6 @@ To achieve reproducibility, once a day we create a complete snapshot of CRAN, on
 
 
 Together, the `checkpoint` package and the MRAN server act as a CRAN time machine. The `checkpoint()` function installs the packages to a local library exactly as they were at the specified point in time. Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using `checkpoint()` can ensure the reproducibility of your scripts or projects at any time.
-
-
-
 
 
 ## Resetting the checkpoint
@@ -146,6 +125,27 @@ To install `checkpoint` directly from github, use the `devtools` package.  In yo
 install.packages("devtools")
 devtools::install_github("RevolutionAnalytics/checkpoint")
 library("checkpoint")
+```
+
+
+## Using knitr and rmarkdown with checkpoint
+
+Although `checkpoint` will scan for dependencies in `.Rmd` files if `knitr` is installed, it does not automatically install the `knitr` or `rmarkdown` packages.
+
+To build your `.Rmd` files, you will have to add a script in your project that explicitly loads all the packages required to build your `.Rmd` files.
+
+A line like the following may be sufficient:
+
+```{r}
+library(rmarkdown)
+```
+
+This should automatically resolve dependencies on the packages `knitr`, `yaml` and `htmltools`
+
+To build your `rmarkdown` file, use a call to `rmarkdown::render()`.  For example, to build a file called `example.Rmd`, use:
+
+```{r}
+rmarkdown::render("example.Rmd")
 ```
 
 
