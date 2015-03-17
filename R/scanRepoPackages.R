@@ -17,7 +17,7 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
   
   if(length(files_k) > 0) {
     if(use.knitr) {
-      if(!require("knitr")) {
+      if(!requireNamespace("knitr")) {
         warning("The knitr package is not available and Rmarkdown files will not be parsed")
       } else {
         R_files <- c(files_r, files_k)
@@ -81,7 +81,7 @@ deps_by_ext <- function(file, dir, verbose = TRUE) {
 deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
   tempfile <- tempfile(fileext = ".Rmd")
   on.exit(unlink(tempfile))
-  stopifnot(require("knitr"))
+  stopifnot(requireNamespace("knitr"))
   p <- tryCatch(
     suppressWarnings(suppressMessages(
       knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE)
