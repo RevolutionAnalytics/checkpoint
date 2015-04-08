@@ -11,23 +11,16 @@ basePkgLocations <- function(lib = .Library){
   locations[w]
 }
 
-installCompiler <- function(libpath){
-  pkg <- "checkpoint"
-  to.dir <- file.path(libpath, pkg)
-  compiler.path <- system.file(package = pkg, lib.loc = .Library)
-  dir.create(to.dir, showWarnings = FALSE, recursive = TRUE)
-  file.copy(to = to.dir, from = compiler.path, recursive = TRUE)
-}
-
-
 installMissingBasePackages <- function(){
   missingBase <- basePkgLocations()
+  checkpointRoot = authorizeFileSystemUse(dirname(checkpointBasePkgs()))
+  Rver = basename(checkpointBasePkgs())
   if(length(missingBase)){
     for(i in seq_along(missingBase)){
       pkg <- missingBase[i]
-      to.dir <- file.path(checkpointBasePkgs(), names(pkg))
+      to.dir <- file.path(checkpointRoot, Rver, names(pkg))
       dir.create(to.dir, showWarnings = FALSE, recursive = TRUE)
-      file.copy(to = checkpointBasePkgs(), from = file.path(unname(pkg), names(pkg)), recursive = TRUE)
+      file.copy(to = dirname(to.dir), from = file.path(unname(pkg), names(pkg)), recursive = TRUE)
     }
   }
 }
