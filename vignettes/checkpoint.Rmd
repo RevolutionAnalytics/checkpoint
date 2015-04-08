@@ -134,7 +134,7 @@ cat(example_code, file="checkpoint_example_code.R")
 
 ```{r checkpoint}
 ## Create a checkpoint by specifying a snapshot date
-
+dir.create("~/.checkpoint")
 setwd(example_project)
 library(checkpoint)
 checkpoint("2014-12-01")

@@ -1,8 +1,8 @@
 
-checkpointPath <- function(snapshotDate, checkpointLocation = "~/", 
+checkpointPath <- function(snapshotDate, checkpointLocation = "~/",
                            type = c("lib", "src", "snapshot", "root", "base")){
   rootPath <- normalizePath(
-    file.path(checkpointLocation, ".checkpoint"), 
+    file.path(checkpointLocation, ".checkpoint"),
     mustWork = FALSE)
   type <- match.arg(type)
   if(type == "base") return(
@@ -24,8 +24,27 @@ checkpointPath <- function(snapshotDate, checkpointLocation = "~/",
     winslash = "/",
     mustWork = FALSE)}
 
+
+authorizeFileSystemUse =
+  function(checkpointRoot) {
+    if(file.exists(checkpointRoot)) {
+      if(!file.info(checkpointRoot)$isdir)
+        stop("Can't use a non-directory as checkpoint root")}
+    else {
+      if(interactive()) {
+        answer = readline(paste("Can I create directory", checkpointRoot, "for internal checkpoint use?(y/n)\n"))
+        if(answer != "y")
+          stop("Cannot proceed without access to checkpoint directory")}
+      else {
+        warning("Will have to use a temporary directory for internal use. All information will be lost at the end of session")
+        checkpointRoot = file.path(tempdir(), ".checkpoint")}}
+    checkpointRoot}
+
 createFolders <- function(snapshotDate, checkpointLocation = "~/"){
-  paths <- sapply(c("root", "lib", "src"), checkpointPath, 
+  checkpointRoot = file.path(checkpointLocation, ".checkpoint")
+  checkpointRoot = authorizeFileSystemUse(checkpointRoot)
+  checkpointLocation = dirname(checkpointRoot)
+  paths <- sapply(c("root", "lib", "src"), checkpointPath,
                   snapshotDate = snapshotDate,
                   checkpointLocation = checkpointLocation)
   sapply(paths, function(x) if(!file.exists(x)) dir.create(x, recursive=TRUE, showWarnings = FALSE))
