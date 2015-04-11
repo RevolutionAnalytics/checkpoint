@@ -79,7 +79,7 @@ To create a checkpoint project, you do:
 
     ```{r, eval=FALSE}
     library(checkpoint)
-    checkpoint("2014-12-01")
+    checkpoint("2014-12-01", checkpointLocation = tempdir())
     ```
 
 4. Run the script.
@@ -90,7 +90,7 @@ For example, your script may look like this:
 
 ```{r, eval=FALSE}
 library(checkpoint)
-checkpoint("2014-12-01")
+checkpoint("2014-12-01", checkpointLocation = tempdir())
 
 library(MASS)
 hist(islands)
@@ -121,7 +121,7 @@ oldLibPaths <- .libPaths()
 
 example_code <- '
 library(checkpoint)
-checkpoint("2014-12-01")
+checkpoint("2014-12-01", checkpointLocation = tempdir())
 
 library(MASS)
 hist(islands)
@@ -137,7 +137,7 @@ cat(example_code, file="checkpoint_example_code.R")
 
 setwd(example_project)
 library(checkpoint)
-checkpoint("2014-12-01")
+checkpoint("2014-12-01", checkpointLocation = tempdir())
 ```
 
 ### Inspecting the results
