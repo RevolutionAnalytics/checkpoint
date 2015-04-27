@@ -137,6 +137,7 @@ cat(example_code, file="checkpoint_example_code.R")
 
 setwd(example_project)
 library(checkpoint)
+dir.create(file.path(tempdir(), ".checkpoint"))
 checkpoint("2014-12-01", checkpointLocation = tempdir())
 ```
 
