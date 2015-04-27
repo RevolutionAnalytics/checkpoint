@@ -1,5 +1,13 @@
 # checkpoint - Simple reproducibility for R scripts that depend on packages
 
+**Build status**
+
+master: 
+[![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=master)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
+release:
+[![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=release)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
+dev: [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
+
 ## Overview
 
 The goal of `checkpoint` is to solve the problem of package reproducibility in R. Specifically, `checkpoint` solve the problems that occur when you don't have the correct versions of R packages.  Since packages get updated on CRAN all the time, it can be difficult to recreate an environment where all your packages are consistent with some earlier state.
