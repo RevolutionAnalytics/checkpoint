@@ -11,9 +11,9 @@ Description: The goal of checkpoint is to solve the problem of package
     updates that came later and may have altered your results. In this way,
     anyone using checkpoint's checkpoint() can ensure the reproducibility of
     your scripts or projects at any time. To create the snapshot archives, once
-    a day (at midnight UTC) we refresh the Austria CRAN mirror, on the "Managed
+    a day (at midnight UTC) Revolution Analytics refreshes the Austria CRAN mirror, on the "Managed
     R Archived Network" server (http://mran.revolutionanalytics.com/).
-    Immediately after completion of the rsync mirror process, we take a
+    Immediately after completion of the rsync mirror process, the process takes a
     snapshot, thus creating the archive. Snapshot archives exist starting from
     2014-09-17.
 Version: 0.3.10
