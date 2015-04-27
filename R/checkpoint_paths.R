@@ -8,7 +8,7 @@ checkpointPath <- function(snapshotDate, checkpointLocation,
   if(type == "base") return(
     normalizePath(
       file.path(rootPath, paste0("R-", getRversion())),
-    winslash = "/", mustWork = FALSE)
+      winslash = "/", mustWork = FALSE)
   )
   snapshotPath <- file.path(rootPath, snapshotDate)
   libPath <- file.path(snapshotPath, "lib", R.version$platform, base::getRversion())
@@ -45,9 +45,14 @@ authorizeFileSystemUse =
     else {
       if(interactive()) {
         answer = readline(paste("Can I create directory", checkpointRoot, "for internal checkpoint use?(y/n)\n"))
-        if(answer != "y")
+        if(tolower(answer) != "y")
           stop("Cannot proceed without access to checkpoint directory")}
       else {
-        warning("Will have to use a temporary directory for internal use. All information will be lost at the end of session")
-        checkpointLocation = tempdir()}}
-    checkpointLocation}
+        stop(paste(
+          "The .checkpoint folder does not exist. Please try again after creating the folder at", 
+          normalizePath(checkpointRoot)
+        ))
+      }
+    }
+    checkpointLocation
+  }
