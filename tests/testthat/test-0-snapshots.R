@@ -2,7 +2,7 @@ context("MRAN snapshots")
 
 test_that("snapshot functions return correct results", {
   skip_on_cran()
-  expect_error(
+  expect_warning(
     getSnapshotUrl("1972-01-01"))
 
   dd <- "2014-09-08"
