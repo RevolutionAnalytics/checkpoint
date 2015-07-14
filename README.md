@@ -8,7 +8,7 @@ release:
 [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=release)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
 dev: [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dendextend)](http://cran.r-project.org/package=dendextend)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/checkpoint)](http://cran.r-project.org/package=checkpoint)
 
 ## Overview
 
