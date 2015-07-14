@@ -174,27 +174,12 @@ setLibPaths <- function(checkpointLocation, libPath){
 mranUrl <- function()"http://mran.revolutionanalytics.com/snapshot/"
 
 getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
-  mran.root = url(url)
   snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
-  on.exit(close(mran.root))
-  tryCatch(
-    suppressWarnings(readLines(mran.root)),
-    error =
-      function(e) {
+  if(status_code(GET(url)) != 200)
         warning(sprintf("Unable to reach MRAN: %s", e$message))
-        return(snapshot.url)
-      }
-  )
-  con = url(snapshot.url)
-  on.exit(close(con), add = TRUE)
-  tryCatch(
-    suppressWarnings(readLines(con)),
-    error =
-      function(e) {
-        warning("Unable to find snapshot on MRAN")
-        return(snapshot.url)
-      }
-  )
+  else {
+    if(status_code(GET(snapshot.url) != 200))
+        warning("Unable to find snapshot on MRAN")}
   snapshot.url}
 
 
