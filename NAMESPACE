@@ -2,6 +2,4 @@
 
 export(checkpoint)
 export(setSnapshot)
-importFrom(httr,GET)
-importFrom(memoise,memoise)
 importFrom(utils,install.packages)
