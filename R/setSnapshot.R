@@ -1,13 +1,13 @@
 #' Set default CRAN repository to MRAN snapshot date.
-#' 
+#'
 #' @inheritParams checkpoint
-#' 
+#'
 #' @export
 #' @example /inst/examples/example_setSnapshot.R
-#' 
+#'
 setSnapshot <- function(snapshotDate){
   if (missing(snapshotDate) || is.null(snapshotDate)) return(getOption("repos"))
-  repoDate <- paste0("http://mran.revolutionanalytics.com/snapshot/", snapshotDate)
+  repoDate <- paste0(mranUrl(), snapshotDate)
   response <- tryCatch(
     suppressWarnings(readLines(repoDate)),
     error = function(e)e
