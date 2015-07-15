@@ -174,6 +174,7 @@ setLibPaths <- function(checkpointLocation, libPath){
 
 mranUrl <-
   function(){
+    download.file.method = options("download.file.method")
     http = "http://mran.revolutionanalytics.com/snapshot/"
     https = gsub("http://", replacement = "https://", http)
     is.recent  = R.version$major >= 3 && R.version$minor >= 2
@@ -198,12 +199,13 @@ mranUrl <-
     dir.create(tf)
     on.exit(unlink(tf))
     testpkg = "memoise"
-    install.packages(testpkg, lib = tf, repos = paste0(https, "2014-09-12/") , dependencies = FALSE, type = "source")
+    tryCatch(install.packages(testpkg, lib = tf, repos = paste0(https, "2014-09-12/") , dependencies = FALSE, type = "source"))
     if(require(testpkg, character.only = TRUE, lib.loc = tf)) {
       on.exit(detach(paste0("package:", testpkg), unload = TRUE, character.only = TRUE), add = TRUE)
       https}
-    else
-      http}
+    else{
+      options(download.file.method = download.file.method)
+      http}}
 
 getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
   mran.root = url(url)
