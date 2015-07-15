@@ -41,6 +41,7 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 #' @importFrom utils install.packages
+#' @importFrom httr GET
 
 checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
                        checkpointLocation = "~/",
@@ -171,7 +172,10 @@ setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUr
 setLibPaths <- function(checkpointLocation, libPath){
   assign(".lib.loc", c(libPath, checkpointBasePkgs(checkpointLocation)), envir = environment(.libPaths))}
 
+#' @importFrom memoise memoise
+
 mranUrl <-
+  memoise::memoise(
   function(){
     http = "http://mran.revolutionanalytics.com/snapshot/"
     https = gsub("http://", replacement = "https://", http)
@@ -197,20 +201,20 @@ mranUrl <-
     dir.create(tf)
     on.exit(unlink(tf))
     testpkg = "MASS"
-    install.packages(testpkg, lib = tf)
-    if(require(testpkg, lib.loc = tf)) {
-      on.exit(detach(testpkg, unload = TRUE))
+    install.packages(testpkg, lib = tf, repos = paste0(https, "2014-09-12/") , dependencies = FALSE, type = "source")
+    if(require(testpkg, character.only = TRUE, lib.loc = tf)) {
+      on.exit(detach(paste0("package:", testpkg), unload = TRUE, character.only = TRUE), add = TRUE)
       https}
     else
-      http}
+      http})
 
 getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
   snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
-  if(status_code(GET(url)) != 200)
-        warning(sprintf("Unable to reach MRAN: %s", e$message))
+  if(GET(url)$status_code != 200)
+    warning(sprintf("Unable to reach MRAN: %s", e$message))
   else {
-    if(status_code(GET(snapshot.url) != 200))
-        warning("Unable to find snapshot on MRAN")}
+    if(GET(snapshot.url)$status_code != 200)
+      warning("Unable to find snapshot on MRAN")}
   snapshot.url}
 
 
