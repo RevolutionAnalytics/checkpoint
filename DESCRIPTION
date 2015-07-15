@@ -25,7 +25,7 @@ License: GPL-2
 URL: http://projects.revolutionanalytics.com/documents/rrt/rrtpkgs/
 BugReports: http://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
-    utils, httr, memoise
+    utils
 Depends:
     R(>= 3.1.1)
 Suggests:

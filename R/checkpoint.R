@@ -41,13 +41,12 @@
 #' @example /inst/examples/example_checkpoint.R
 #'
 #' @importFrom utils install.packages
-#' @importFrom httr GET
 
 checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
                        checkpointLocation = "~/",
                        verbose=TRUE,
                        use.knitr = system.file(package="knitr") != "") {
-
+  
   if(!missing("R.version") && !is.null(R.version)){
     if(!correctR(as.character(R.version))){
       message <- sprintf("Specified R.version %s does not match current R (%s)",
@@ -58,39 +57,39 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
       stop(message)
     }
   }
-
+  
   checkpointLocation = authorizeFileSystemUse(checkpointLocation)
-
+  
   fixRstudioBug()
-
+  
   if(!createFolders(snapshotDate = snapshotDate, checkpointLocation = checkpointLocation))
     stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
-
-
+  
+  
   snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
-
-
+  
+  
   compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
-
+  
   libPath <- checkpointPath(snapshotDate, type = "lib", checkpointLocation = checkpointLocation)
   installMissingBasePackages(checkpointLocation = checkpointLocation)
-
+  
   # Set lib path
   setLibPaths(checkpointLocation = checkpointLocation, libPath = libPath)
-
+  
   # Scan for packages used
   exclude.packages = c("checkpoint", # this very package
                        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
                          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
                          "tools", "utils"))  # all base priority packages, not on CRAN or MRAN
   packages.installed <- unname(installed.packages()[, "Package"])
-
+  
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
     pkgs <- projectScanPackages(project, use.knitr = use.knitr)
     packages.detected <- pkgs[["pkgs"]]
     mssg(verbose, "- Discovered ", length(packages.detected), " packages")
-
+    
     if(length(pkgs[["error"]]) > 0){
       files.not.parsed <- pkgs[["error"]]
       mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
@@ -102,17 +101,17 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
     packages.detected <- character(0)
     files.not.parsed <- character(0)
   }
-
-
+  
+  
   packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
-
+  
   # detach checkpointed pkgs already loaded
-
+  
   packages.in.search <- findInSearchPath(packages.to.install)
   detachFromSearchPath(packages.in.search)
-
+  
   # check if packages are available in snapshot
-
+  
   if(length(packages.to.install) > 0) {
     # set repos
     setMranMirror(snapshotUrl = snapshoturl)
@@ -125,9 +124,9 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   } else {
     not.available <- character(0)
   }
-
+  
   # install missing packages
-
+  
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
     for(pkg in packages.to.install){
@@ -145,15 +144,15 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   } else {
     if(isTRUE(scanForPackages)) mssg(verbose, "No packages found to install")
   }
-
+  
   # Reload detached packages
   if(length(packages.in.search > 0)){
     lapply(packages.in.search, library, character.only = TRUE, quietly = TRUE)
   }
-
+  
   mssg(verbose, "checkpoint process complete")
   mssg(verbose, "---")
-
+  
   z <- list(
     files_not_scanned = files.not.parsed,
     pkgs_found = packages.detected,
@@ -172,7 +171,6 @@ setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUr
 setLibPaths <- function(checkpointLocation, libPath){
   assign(".lib.loc", c(libPath, checkpointBasePkgs(checkpointLocation)), envir = environment(.libPaths))}
 
-#' @importFrom memoise memoise
 
 mranUrl <-
   memoise::memoise(
@@ -209,12 +207,27 @@ mranUrl <-
       http})
 
 getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
+  mran.root = url(url)
   snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
-  if(GET(url)$status_code != 200)
-    warning(sprintf("Unable to reach MRAN: %s", e$message))
-  else {
-    if(GET(snapshot.url)$status_code != 200)
-      warning("Unable to find snapshot on MRAN")}
+  on.exit(close(mran.root))
+  tryCatch(
+    suppressWarnings(readLines(mran.root)),
+    error =
+      function(e) {
+        warning(sprintf("Unable to reach MRAN: %s", e$message))
+        return(snapshot.url)
+      }
+  )
+  con = url(snapshot.url)
+  on.exit(close(con), add = TRUE)
+  tryCatch(
+    suppressWarnings(readLines(con)),
+    error =
+      function(e) {
+        warning("Unable to find snapshot on MRAN")
+        return(snapshot.url)
+      }
+  )
   snapshot.url}
 
 
