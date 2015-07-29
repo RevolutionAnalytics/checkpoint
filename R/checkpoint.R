@@ -173,85 +173,33 @@ setLibPaths <- function(checkpointLocation, libPath){
   assign(".lib.loc", c(libPath, checkpointBasePkgs(checkpointLocation)), envir = environment(.libPaths))}
 
 
-getDownloadOption <- function(){
-  getOption("download.file.method")
-}
-
-setDownloadOption <- function(){
-  is.recent  = getRversion() >= "3.2.0"
-  is.unix = .Platform$OS.type == "unix"
-  is.os.x = length(grep(pattern = "darwin", R.version$os)) > 0
-  is.win = .Platform$OS.type == "windows"
-  
-  
-  method <- switch(
-    2 * is.recent + is.unix + 1,
-    # 1 - old & win
-    {
-      utils::setInternet2(TRUE)
-      "wininet"
-    },
-    # 2 - old & unix
-    {
-      if(is.os.x) "curl" else "wget"
-    },
-    # 3 - new and win
-    "wininet",
-    # 4 - new and unix
-    if(capabilities("libcurl")) "libcurl" else "wget"
-  )
-  
-  options(download.file.method = method)
-  options(url.method = method)
-}
-
-mranUrl <-
-  function(){
-    download.file.method = getOption("download.file.method")
-    http = "http://mran.revolutionanalytics.com/snapshot/"
-    https = gsub("http://", replacement = "https://", http)
-    setDownloadOption()
-    tf = tempfile()
-    dir.create(tf)
-    on.exit(unlink(tf))
-    testpkg = "memoise"
-    tryCatch(install.packages(testpkg, lib = tf, repos = paste0(https, "2014-09-12/") ,
-                              dependencies = FALSE, 
-                              type = "source",
-                              quiet = TRUE))
-    if(require(testpkg, character.only = TRUE, lib.loc = tf, quietly = TRUE)) {
-      on.exit(detach(paste0("package:", testpkg), unload = TRUE, character.only = TRUE), add = TRUE)
-      https
-    } else {
-      options(download.file.method = download.file.method)
-      http
-    }
-  }
 
 getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
   setDownloadOption()
   mran.root = url(url)
   snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
   on.exit(close(mran.root))
-  tryCatch(
+  res <- tryCatch(
     suppressWarnings(readLines(mran.root)),
-    error =
-      function(e) {
-        warning(sprintf("Unable to reach MRAN: %s", e$message))
-        return(snapshot.url)
-      }
+    error = function(e) e
   )
+  if(inherits(res, "error")) {
+    warning("Unable to reach MRAN at ", url, call. = FALSE)
+    return(snapshot.url)
+  }
+  
   con = url(snapshot.url)
   on.exit(close(con), add = TRUE)
-  tryCatch(
+  res <- tryCatch(
     suppressWarnings(readLines(con)),
-    error =
-      function(e) {
-        warning("Unable to find snapshot on MRAN")
-        return(snapshot.url)
-      }
-  )
-  snapshot.url}
+    error = function(e) e
+    )
+  if(inherits(res, "error")) {
+    warning("Unable to find snapshot on MRAN at ", snapshot.url, call. = FALSE)
+    return(snapshot.url)
+  }
+  snapshot.url
+}
 
 
 mssg <- function(x, ...) if(x) message(...)
