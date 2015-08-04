@@ -99,12 +99,14 @@ setCheckpointUrl <- function(url){
 
 #' Read list of available snapshot dates from MRAN url.
 #' 
+#' @param mranRootUrl URL of MRAN root, e.g. \code{"http://mran.revolutionanalytics.com/snapshot/"}
+#' 
 #' @importFrom xml2 read_xml xml_find_all xml_text
 #' @export
-getValidSnapshots <- function(url = mranUrl()){
-  opts <- setDownloadOption(url)
+getValidSnapshots <- function(mranRootUrl = mranUrl()){
+  opts <- setDownloadOption(mranRootUrl)
   on.exit(resetDownloadOption(opts))
-  text <- tryCatch(suppressWarnings(read_xml(url, as_html = TRUE)), error=function(e)e)
+  text <- tryCatch(suppressWarnings(read_xml(mranRootUrl, as_html = TRUE)), error=function(e)e)
   if(inherits(text, "error")) {
     stop(sprintf("Unable to download from MRAN: %s", text$message))
   }
@@ -117,18 +119,19 @@ getValidSnapshots <- function(url = mranUrl()){
 
 #  ------------------------------------------------------------------------
 
-getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
-  opts <- setDownloadOption(url)
+getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl()){
+  
+  opts <- setDownloadOption(mranRootUrl)
   on.exit(resetDownloadOption(opts))
-  mran.root = url(url)
-  snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
+  mran.root = url(mranRootUrl)
+  snapshot.url = paste(gsub("/$", "", mranRootUrl), snapshotDate, sep = "/")
   on.exit(close(mran.root))
   res <- tryCatch(
     suppressWarnings(readLines(mran.root)),
     error = function(e) e
   )
   if(inherits(res, "error")) {
-    warning("Unable to reach MRAN root at ", url, call. = FALSE)
+    warning("Unable to reach MRAN root at ", mranRootUrl, call. = FALSE)
     return(snapshot.url)
   }
   

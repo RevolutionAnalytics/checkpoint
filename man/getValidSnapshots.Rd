@@ -4,7 +4,10 @@
 \alias{getValidSnapshots}
 \title{Read list of available snapshot dates from MRAN url.}
 \usage{
-getValidSnapshots(url = mranUrl())
+getValidSnapshots(mranRootUrl = mranUrl())
+}
+\arguments{
+\item{mranRootUrl}{URL of MRAN root, e.g. \code{"http://mran.revolutionanalytics.com/snapshot/"}}
 }
 \description{
 Read list of available snapshot dates from MRAN url.
