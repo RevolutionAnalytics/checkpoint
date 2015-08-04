@@ -47,6 +47,8 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
                        verbose=TRUE,
                        use.knitr = system.file(package="knitr") != "") {
   
+  stopIfInvalidDate(snapshotDate)
+  
   if(!missing("R.version") && !is.null(R.version)){
     if(!correctR(as.character(R.version))){
       message <- sprintf("Specified R.version %s does not match current R (%s)",
@@ -66,7 +68,10 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
     stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
   
   
-  snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
+  mran <- mranUrl()
+  opts <- setDownloadOption(mran)
+  on.exit(options(opts))
+  snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate)
   
   
   compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
@@ -127,6 +132,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   
   # install missing packages
   
+  
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
     for(pkg in packages.to.install){
@@ -135,7 +141,8 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
         suppressWarnings(
-          utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = TRUE)
+          utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = TRUE,
+                                  INSTALL_opts = "--no-lock")
         )
       }
     }
@@ -171,31 +178,8 @@ setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUr
 setLibPaths <- function(checkpointLocation, libPath){
   assign(".lib.loc", c(libPath, checkpointBasePkgs(checkpointLocation)), envir = environment(.libPaths))}
 
-mranUrl <- function()"http://mran.revolutionanalytics.com/snapshot/"
 
-getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
-  mran.root = url(url)
-  snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
-  on.exit(close(mran.root))
-  tryCatch(
-    suppressWarnings(readLines(mran.root)),
-    error =
-      function(e) {
-        warning(sprintf("Unable to reach MRAN: %s", e$message))
-        return(snapshot.url)
-      }
-  )
-  con = url(snapshot.url)
-  on.exit(close(con), add = TRUE)
-  tryCatch(
-    suppressWarnings(readLines(con)),
-    error =
-      function(e) {
-        warning("Unable to find snapshot on MRAN")
-        return(snapshot.url)
-      }
-  )
-  snapshot.url}
+
 
 
 mssg <- function(x, ...) if(x) message(...)
