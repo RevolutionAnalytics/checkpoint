@@ -16,15 +16,15 @@ testHttps <- function(https){
   dir.create(tf)
   on.exit(unlink(tf))
   testpkg = "memoise"
-  tryCatch(utils::install.packages(testpkg, lib = tf, repos = paste0(https, "snapshot/2014-09-12/") ,
+  repos <- paste0(https, "snapshot/2014-09-12/")
+  tryCatch(utils::install.packages(testpkg, lib = tf, 
+                                   repos = repos ,
                                    dependencies = FALSE, 
                                    type = "source",
                                    quiet = TRUE))
-  if(require(testpkg, character.only = TRUE, lib.loc = tf, quietly = TRUE)) {
-    on.exit(detach(paste0("package:", testpkg), unload = TRUE, character.only = TRUE), add = TRUE)
+  if(testpkg %in% names(installed.packages(lib.loc = tf)[, "Package"])) {
     TRUE
   } else {
-    options(download.file.method = download.file.method)
     FALSE
   }
 }
@@ -70,7 +70,9 @@ setDownloadOption <- function(mranUrl){
   options(download.file.method = method, url.method = method)
 }
 
-
+resetDownloadOption <- function(opts){
+  options(opts)
+}
 
 
 #  ------------------------------------------------------------------------
@@ -81,16 +83,12 @@ mranUrl <- function(){
   url <- gsub("snapshot/*$", "", url)
   if(substring(url, nchar(url)) != "/") url <- paste0(url, "/")
   
-  download.file.method = getDownloadOption()
-  setDownloadOption()
-  
   paste0(url, "snapshot/")
 }
 
 
 
 setCheckpointUrl <- function(url){
-  setDownloadOption()
   options("checkpoint.mranUrl" = url)
 }
 
@@ -104,7 +102,8 @@ setCheckpointUrl <- function(url){
 #' @importFrom xml2 read_xml xml_find_all xml_text
 #' @export
 getValidSnapshots <- function(url = mranUrl()){
-  setDownloadOption()
+  opts <- setDownloadOption(url)
+  on.exit(resetDownloadOption(opts))
   text <- tryCatch(suppressWarnings(read_xml(url, as_html = TRUE)), error=function(e)e)
   if(inherits(text, "error")) {
     stop(sprintf("Unable to download from MRAN: %s", text$message))
@@ -114,3 +113,35 @@ getValidSnapshots <- function(url = mranUrl()){
   idx <- grep("\\d{4}-\\d{2}-\\d{2}/", dates)
   gsub("/$", "", dates[idx])
 }
+
+
+#  ------------------------------------------------------------------------
+
+getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
+  opts <- setDownloadOption(url)
+  on.exit(resetDownloadOption(opts))
+  mran.root = url(url)
+  snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
+  on.exit(close(mran.root))
+  res <- tryCatch(
+    suppressWarnings(readLines(mran.root)),
+    error = function(e) e
+  )
+  if(inherits(res, "error")) {
+    warning("Unable to reach MRAN root at ", url, call. = FALSE)
+    return(snapshot.url)
+  }
+  
+  con = url(snapshot.url)
+  on.exit(close(con), add = TRUE)
+  res <- tryCatch(
+    suppressWarnings(readLines(con)),
+    error = function(e) e
+  )
+  if(inherits(res, "error")) {
+    warning("Unable to find snapshot on MRAN at ", snapshot.url, call. = FALSE)
+    return(snapshot.url)
+  }
+  snapshot.url
+}
+
