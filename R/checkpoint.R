@@ -47,6 +47,8 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
                        verbose=TRUE,
                        use.knitr = system.file(package="knitr") != "") {
   
+  stopIfInvalidDate(snapshotDate)
+  
   if(!missing("R.version") && !is.null(R.version)){
     if(!correctR(as.character(R.version))){
       message <- sprintf("Specified R.version %s does not match current R (%s)",
