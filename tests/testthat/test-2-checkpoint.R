@@ -1,6 +1,5 @@
 # tests for initialize
 if(interactive()) library(testthat)
-context("checkpoint")
 
 Sys.setenv("R_TESTS" = "") # Configure Travis for tests https://github.com/RevolutionAnalytics/checkpoint/issues/139
 
@@ -28,6 +27,9 @@ MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
 for(snap_date in unique(c(MRAN.default, MRAN.sample))) {
   # snap_date <- unique(c(MRAN.default, MRAN.sample))[1] ### <<< use only for interactive testing
   
+  context(paste("checkpoint @", snap_date))
+  
+  
   packages.to.test = if(require("knitr")) c(packages.to.test.base, packages.to.test.knitr) else packages.to.test.base
   
   project_root <- file.path(tempfile(), "checkpointtemp")
@@ -35,14 +37,12 @@ for(snap_date in unique(c(MRAN.default, MRAN.sample))) {
   
   test_that(paste("snapshot functions work correctly with snapshot", snap_date), {
     skip_on_cran()
-    message("\n", "Snapshot date: ", snap_date)
-    
+
     checkpoint:::cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
-    
-    
+
     expect_equal(
       checkpoint:::getSnapshotUrl(snap_date),
-      paste0("https://mran.revolutionanalytics.com/snapshot/", snap_date))
+      paste0("http://mran.revolutionanalytics.com/snapshot/", snap_date))
     
     expect_message(
       checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
@@ -110,7 +110,7 @@ for(snap_date in unique(c(MRAN.default, MRAN.sample))) {
     
     expect_equal(
       getOption("repos"),
-      paste0("https://mran.revolutionanalytics.com/snapshot/", snap_date)
+      paste0("http://mran.revolutionanalytics.com/snapshot/", snap_date)
     )
     
     expect_equal(
