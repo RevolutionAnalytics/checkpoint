@@ -52,7 +52,7 @@ setDownloadOption <- function(mranUrl){
   
 #   is.recent  = getRversion() >= "3.2.2"
 #   is.unix = .Platform$OS.type == "unix"
-#   is.os.x = length(grep(pattern = "darwin", R.version$os)) > 0
+  is.os.x = length(grep(pattern = "darwin", R.version$os)) > 0
 #   is.win = .Platform$OS.type == "windows"
   
   method <- if(isHttpsUrl(mranUrl)){
