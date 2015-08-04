@@ -141,7 +141,8 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
         suppressWarnings(
-          utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = TRUE)
+          utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = TRUE,
+                                  INSTALL_opts = "--no-lock")
         )
       }
     }
