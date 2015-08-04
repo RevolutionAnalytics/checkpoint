@@ -1,6 +1,30 @@
 if(interactive()) library(testthat)
 context("MRAN snapshots")
 
+test_that("checkpoint stops if invalid snapshotDate", {
+  expect_error(
+    checkpoint(), 
+    "You have to specify a snapshotDate"
+  )
+  expect_error(
+    checkpoint("2015/01/01"), 
+    "snapshotDate must be a valid date using format YYYY-MM-DD"
+  )
+  expect_error(
+    checkpoint("20150101"), 
+    "snapshotDate must be a valid date using format YYYY-MM-DD"
+  )
+  expect_error(
+    checkpoint("2014-09-16"), 
+    "Snapshots are only available after 2014-09-17"
+  )
+  expect_error(
+    checkpoint(Sys.Date() + 1), 
+    "snapshotDate can not be in the future!"
+  )
+})
+
+
 test_that("snapshot functions return correct results", {
   skip_on_cran()
   expect_warning(
@@ -18,5 +42,5 @@ test_that("snapshot functions return correct results", {
   } else {
     expect_equal(url, "http://mran.revolutionanalytics.com/snapshot/")
   }
-
+  
 })

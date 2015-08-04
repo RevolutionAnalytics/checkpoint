@@ -1,3 +1,16 @@
+
+stopIfInvalidDate <- function(snapshotDate){
+  if(missing(snapshotDate) || is.null(snapshotDate))
+    stop("You have to specify a snapshotDate", call. = FALSE)
+  if(!grepl("^\\d{4}-\\d{2}-\\d{2}$", snapshotDate))
+    stop("snapshotDate must be a valid date using format YYYY-MM-DD", call. = FALSE)
+  if(as.Date(snapshotDate) < as.Date("2014-09-17"))
+     stop("Snapshots are only available after 2014-09-17", call. = FALSE)
+  if(as.Date(snapshotDate) > Sys.Date())
+    stop("snapshotDate can not be in the future!", call. = FALSE)
+  
+}
+
 testHttps <- function(https){
   tf = tempfile()
   dir.create(tf)
@@ -30,36 +43,31 @@ getDownloadOption <- function(){
   getOption("download.file.method")
 }
 
-setDownloadOption <- function(){
-  is.recent  = getRversion() >= "3.2.0"
-  is.unix = .Platform$OS.type == "unix"
-  is.os.x = length(grep(pattern = "darwin", R.version$os)) > 0
-  is.win = .Platform$OS.type == "windows"
+
+isHttpsUrl <- function(url){
+  grepl("^https://", url)
+}
+
+setDownloadOption <- function(mranUrl){
   
+#   is.recent  = getRversion() >= "3.2.2"
+#   is.unix = .Platform$OS.type == "unix"
+#   is.os.x = length(grep(pattern = "darwin", R.version$os)) > 0
+#   is.win = .Platform$OS.type == "windows"
   
-  method <- switch(
-    2 * is.recent + is.unix + 1,
-    # 1 - old & win
-    {
-      utils::setInternet2(TRUE)
-      "wininet"
-    },
-    # 2 - old & unix
-    {
-      if(is.os.x) "curl" else "wget"
-    },
-    # 3 - new and win
-    {
-      "wininet"
-    },
-    # 4 - new and unix
-    {
-      if(capabilities("libcurl")) "libcurl" else "wget"
-    }
-  )
+  method <- if(isHttpsUrl(mranUrl)){
+    switch(.Platform$OS.type,
+           windows = "wininet",
+           unix    = if(capabilities("libcurl")) "libcurl" else "wget"
+    )
+  } else {
+    switch(.Platform$OS.type,
+           windows = {utils::setInternet2(TRUE); "wininet"},
+           unix    = if(is.os.x) "curl" else "wget"
+    )
+  }
   
-  options(download.file.method = method)
-  options(url.method = method)
+  options(download.file.method = method, url.method = method)
 }
 
 
