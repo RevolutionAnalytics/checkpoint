@@ -7,8 +7,9 @@
 #'
 setSnapshot <- function(snapshotDate){
   if (missing(snapshotDate) || is.null(snapshotDate)) return(getOption("repos"))
-  repoDate <- paste0(mranUrl(), snapshotDate)
-  setDownloadOption()
+  mran <- mranUrl()
+  repoDate <- paste0(mran, snapshotDate)
+  setDownloadOption(mran)
   response <- tryCatch(
     suppressWarnings(readLines(repoDate)),
     error = function(e)e

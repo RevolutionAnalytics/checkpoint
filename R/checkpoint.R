@@ -68,7 +68,11 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
     stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
   
   
-  snapshoturl <- getSnapshotUrl(snapshotDate=snapshotDate)
+  mran <- mranUrl()
+  opts <- setDownloadOption(mran)
+  on.exit(options(opts))
+  snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate)
+  
   
   compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
   
@@ -128,7 +132,6 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   
   # install missing packages
   
-  setDownloadOption()
   
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
@@ -176,32 +179,6 @@ setLibPaths <- function(checkpointLocation, libPath){
 
 
 
-getSnapshotUrl <- function(snapshotDate, url = mranUrl()){
-  setDownloadOption()
-  mran.root = url(url)
-  snapshot.url = paste(gsub("/$", "", url), snapshotDate, sep = "/")
-  on.exit(close(mran.root))
-  res <- tryCatch(
-    suppressWarnings(readLines(mran.root)),
-    error = function(e) e
-  )
-  if(inherits(res, "error")) {
-    warning("Unable to reach MRAN at ", url, call. = FALSE)
-    return(snapshot.url)
-  }
-  
-  con = url(snapshot.url)
-  on.exit(close(con), add = TRUE)
-  res <- tryCatch(
-    suppressWarnings(readLines(con)),
-    error = function(e) e
-    )
-  if(inherits(res, "error")) {
-    warning("Unable to find snapshot on MRAN at ", snapshot.url, call. = FALSE)
-    return(snapshot.url)
-  }
-  snapshot.url
-}
 
 
 mssg <- function(x, ...) if(x) message(...)
