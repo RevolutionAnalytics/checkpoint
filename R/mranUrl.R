@@ -5,7 +5,7 @@ stopIfInvalidDate <- function(snapshotDate){
   if(!grepl("^\\d{4}-\\d{2}-\\d{2}$", snapshotDate))
     stop("snapshotDate must be a valid date using format YYYY-MM-DD", call. = FALSE)
   if(as.Date(snapshotDate) < as.Date("2014-09-17"))
-     stop("Snapshots are only available after 2014-09-17", call. = FALSE)
+    stop("Snapshots are only available after 2014-09-17", call. = FALSE)
   if(as.Date(snapshotDate) > Sys.Date())
     stop("snapshotDate can not be in the future!", call. = FALSE)
   
@@ -50,22 +50,12 @@ isHttpsUrl <- function(url){
 
 setDownloadOption <- function(mranUrl){
   
-#   is.recent  = getRversion() >= "3.2.2"
-#   is.unix = .Platform$OS.type == "unix"
   is.os.x = length(grep(pattern = "darwin", R.version$os)) > 0
-#   is.win = .Platform$OS.type == "windows"
   
-  method <- if(isHttpsUrl(mranUrl)){
-    switch(.Platform$OS.type,
-           windows = "wininet",
-           unix    = if(capabilities("libcurl")) "libcurl" else "wget"
-    )
-  } else {
-    switch(.Platform$OS.type,
-           windows = {utils::setInternet2(TRUE); "wininet"},
-           unix    = if(is.os.x) "curl" else "wget"
-    )
-  }
+  method <- switch(.Platform$OS.type,
+                   windows = "wininet",
+                   unix    = if(capabilities("libcurl")) "libcurl" else "wget"
+  )
   
   options(download.file.method = method, url.method = method)
 }
