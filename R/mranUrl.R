@@ -96,19 +96,17 @@ setCheckpointUrl <- function(url){
 #' 
 #' @param mranRootUrl URL of MRAN root, e.g. \code{"http://mran.revolutionanalytics.com/snapshot/"}
 #' 
-#' @importFrom xml2 read_xml xml_find_all xml_text
 #' @export
 getValidSnapshots <- function(mranRootUrl = mranUrl()){
   opts <- setDownloadOption(mranRootUrl)
   on.exit(resetDownloadOption(opts))
-  text <- tryCatch(suppressWarnings(read_xml(mranRootUrl, as_html = TRUE)), error=function(e)e)
+  text <- tryCatch(readLines(mranRootUrl, warn = TRUE), error=function(e)e)
   if(inherits(text, "error")) {
     stop(sprintf("Unable to download from MRAN: %s", text$message))
   }
-  links <- xml_find_all(text, "//a")
-  dates <- xml_text(links)
-  idx <- grep("\\d{4}-\\d{2}-\\d{2}/", dates)
-  gsub("/$", "", dates[idx])
+  ptn <- "\\d{4}-\\d{2}-\\d{2}"
+  idx <- grep(ptn, text)
+  gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", ptn), "\\1", text[idx])
 }
 
 
