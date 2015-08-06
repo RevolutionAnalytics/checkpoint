@@ -117,12 +117,11 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 is.404 <- function(mran, method = "libcurl"){
   con <- url(mran, method = method)
   on.exit(close(con))
-  x <- tryCatch(readLines(con, warn = FALSE, n = 10), 
+  x <- tryCatch(readLines(con, warn = FALSE), 
                 error = function(e)e)
   if(inherits(x, "error")) return(TRUE)
-  ptn <- "<head>.*<title>404 Not Found</title>.*</head>"
-  any(grepl(ptn, x))
-}
+  ptn <- "404.*Not Found"
+  any(grepl(ptn, x))}
 
 getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl()){
   

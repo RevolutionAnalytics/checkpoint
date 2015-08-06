@@ -51,3 +51,15 @@ test_that("snapshot functions return correct results", {
   }
   
 })
+
+context("is.404")
+test_that("is.404() works as expected", {
+  expect_true(is.404("http://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+  expect_false(is.404("http://mran.revolutionanalytics.com/snapshot"))
+  expect_false(is.404("http://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+  
+  expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+  expect_false(is.404("https://mran.revolutionanalytics.com/snapshot"))
+  expect_false(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+  
+})
