@@ -17,11 +17,11 @@ testHttps <- function(https){
   on.exit(unlink(tf))
   testpkg = "memoise"
   repos <- paste0(https, "snapshot/2014-09-12/")
-  tryCatch(utils::install.packages(testpkg, lib = tf, 
+  tryCatch(suppressWarnings(utils::install.packages(testpkg, lib = tf, 
                                    repos = repos ,
                                    dependencies = FALSE, 
                                    type = "source",
-                                   quiet = TRUE))
+                                   quiet = TRUE)))
   if(testpkg %in% names(installed.packages(lib.loc = tf)[, "Package"])) {
     TRUE
   } else {
@@ -50,14 +50,19 @@ isHttpsUrl <- function(url){
 
 setDownloadOption <- function(mranUrl){
   
-  is.os.x = length(grep(pattern = "darwin", R.version$os)) > 0
-  
-  method <- switch(.Platform$OS.type,
-                   windows = "wininet",
-                   unix    = if(capabilities("libcurl")) "libcurl" else "wget"
+  download.method <- switch(
+    .Platform$OS.type,
+    windows = "wininet",
+    unix    = if(capabilities("libcurl")) "libcurl" else "curl"
+  )
+  url.method <- switch(
+    .Platform$OS.type,
+    windows = "wininet",
+    unix    = if(capabilities("libcurl")) "libcurl" else "internal"
   )
   
-  options(download.file.method = method, url.method = method)
+  options(download.file.method = download.method, 
+          url.method = url.method)
 }
 
 resetDownloadOption <- function(opts){
@@ -109,31 +114,28 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 
 #  ------------------------------------------------------------------------
 
+is.404 <- function(mran, method = "libcurl"){
+  con <- url(mran, method = method)
+  on.exit(close(con))
+  x <- tryCatch(readLines(con, warn = FALSE, n = 10), 
+                error = function(e)e)
+  if(inherits(x, "error")) return(TRUE)
+  ptn <- "<head>.*<title>404 Not Found</title>.*</head>"
+  any(grepl(ptn, x))
+}
+
 getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl()){
   
-  opts <- setDownloadOption(mranRootUrl)
-  on.exit(resetDownloadOption(opts))
-  mran.root = url(mranRootUrl)
-  snapshot.url = paste(gsub("/$", "", mranRootUrl), snapshotDate, sep = "/")
-  on.exit(close(mran.root))
-  res <- tryCatch(
-    suppressWarnings(readLines(mran.root)),
-    error = function(e) e
-  )
-  if(inherits(res, "error")) {
+  #   opts <- setDownloadOption(mranRootUrl)
+  #   on.exit(resetDownloadOption(opts))
+  
+  if(is.404(mranRootUrl)){
     warning("Unable to reach MRAN root at ", mranRootUrl, call. = FALSE)
-    return(snapshot.url)
   }
   
-  con = url(snapshot.url)
-  on.exit(close(con), add = TRUE)
-  res <- tryCatch(
-    suppressWarnings(readLines(con)),
-    error = function(e) e
-  )
-  if(inherits(res, "error")) {
+  snapshot.url = paste(gsub("/$", "", mranRootUrl), snapshotDate, sep = "/")
+  if(is.404(snapshot.url)){
     warning("Unable to find snapshot on MRAN at ", snapshot.url, call. = FALSE)
-    return(snapshot.url)
   }
   snapshot.url
 }
