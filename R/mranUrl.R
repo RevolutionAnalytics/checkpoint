@@ -110,8 +110,8 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 
 #  ------------------------------------------------------------------------
 
-is.404 <- function(mran, method = "libcurl"){
-  con <- url(mran, method = method)
+is.404 <- function(mran){
+  con <- url(mran)
   on.exit(close(con))
   x <- tryCatch(readLines(con, warn = FALSE), 
                 error = function(e)e)
