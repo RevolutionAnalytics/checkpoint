@@ -1,9 +1,6 @@
 if(interactive()) library(testthat)
 context("MRAN snapshots")
 
-getSnapshotUrl <- checkpoint:::getSnapshotUrl
-is.404 <- checkpoint:::is.404
-
 describe("Validate snapshotDate argument",{
   it("stops if missing snapshotDate", {
     expect_error(
