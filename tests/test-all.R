@@ -1,2 +1,2 @@
 library(testthat)
-test_check("checkpoint")
+test_check("checkpoint", rreporter = "tap")
