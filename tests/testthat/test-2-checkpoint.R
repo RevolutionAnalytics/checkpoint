@@ -177,6 +177,7 @@ MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
 setCheckpointUrl("https://mran.revolutionanalytics.com/")
 test_checkpoint(http = TRUE, snap.dates = MRAN.default)
 setCheckpointUrl(NULL)
+setCheckpointUrl("http://mran.revolutionanalytics.com/")
 test_checkpoint(http = FALSE, snap.dates = MRAN.default)
 setCheckpointUrl(NULL)
 

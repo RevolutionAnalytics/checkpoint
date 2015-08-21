@@ -69,8 +69,6 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   
   
   mran <- mranUrl()
-  opts <- setDownloadOption(mran)
-  on.exit(options(opts))
   snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate)
   
   
