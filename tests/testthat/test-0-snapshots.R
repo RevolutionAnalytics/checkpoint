@@ -1,6 +1,9 @@
 if(interactive()) library(testthat)
 context("MRAN snapshots")
 
+getSnapshotURL <- checkpoint:::getSnapshotUrl
+is.404 <- checkpoint:::is.404
+
 describe("Validate snapshotDate argument",{
   it("stops if missing snapshotDate", {
     expect_error(
@@ -65,15 +68,15 @@ describe("snapshot functions return correct results", {
 context("is.404")
 describe("Check if helper functions catch 404 errors", {
   it("works on http", {
-    expect_true(checkpoint:::is.404("http://mran.revolutionanalytics.com/snapshot/1972-01-01"))
-    expect_false(checkpoint:::is.404("http://mran.revolutionanalytics.com/snapshot"))
-    expect_false(checkpoint:::is.404("http://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+    expect_true(is.404("http://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+    expect_false(is.404("http://mran.revolutionanalytics.com/snapshot"))
+    expect_false(is.404("http://mran.revolutionanalytics.com/snapshot/2015-05-01"))
   })
   
   it("works on https", {
-    expect_true(checkpoint:::is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
-    expect_false(checkpoint:::is.404("https://mran.revolutionanalytics.com/snapshot"))
-    expect_false(checkpoint:::is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+    expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+    expect_false(is.404("https://mran.revolutionanalytics.com/snapshot"))
+    expect_false(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
     
   })
 })
