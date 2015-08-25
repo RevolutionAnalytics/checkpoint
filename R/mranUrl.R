@@ -11,32 +11,28 @@ stopIfInvalidDate <- function(snapshotDate){
   
 }
 
-testHttps <- function(https){
-  tf = tempfile()
-  dir.create(tf)
-  on.exit(unlink(tf))
-  testpkg = "memoise"
-  repos <- paste0(https, "snapshot/2014-09-12/")
-  tryCatch(suppressWarnings(utils::install.packages(testpkg, lib = tf, 
-                                   repos = repos ,
-                                   dependencies = FALSE, 
-                                   type = "source",
-                                   quiet = TRUE)))
-  if(testpkg %in% installed.packages(lib.loc = tf)[, "Package"]) {
-    TRUE
-  } else {
-    FALSE
-  }
-}
+# testHttps <- function(https){
+#   tf = tempfile()
+#   dir.create(tf)
+#   on.exit(unlink(tf))
+#   testpkg = "memoise"
+#   repos <- paste0(https, "snapshot/2014-09-12/")
+#   tryCatch(suppressWarnings(utils::install.packages(testpkg, lib = tf, 
+#                                    repos = repos ,
+#                                    dependencies = FALSE, 
+#                                    type = "source",
+#                                    quiet = TRUE)))
+#   if(testpkg %in% installed.packages(lib.loc = tf)[, "Package"]) {
+#     TRUE
+#   } else {
+#     FALSE
+#   }
+# }
 
 mranUrlDefault <- function(){
   http = "http://mran.revolutionanalytics.com/"
   https = gsub("http://", replacement = "https://", http)
-  if(getRversion() >= "3.2.2") {
-    if(testHttps(https)) https else  http
-  } else {
-    http
-  }
+  if(getRversion() >= "3.2.2") https else http
 }
 
 getDownloadOption <- function(){
@@ -113,8 +109,10 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 is.404 <- function(mran){
   con <- url(mran)
   on.exit(close(con))
-  x <- tryCatch(readLines(con, warn = FALSE), 
+  x <- suppressWarnings(
+    tryCatch(readLines(con, warn = FALSE), 
                 error = function(e)e)
+  )
   if(inherits(x, "error")) return(TRUE)
   ptn <- "404.*Not Found"
   any(grepl(ptn, x))}
