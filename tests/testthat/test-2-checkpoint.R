@@ -200,7 +200,7 @@ if(getRversion() >= "3.2.2"){
 context("http")
 setCheckpointUrl("http://mran.revolutionanalytics.com/")
 test_checkpoint(http = FALSE, snap.dates = MRAN.default)
-setCheckpointUrl(initialUrl)
+options("checkpoint.mranUrl" = initialUrl)
 
 
 
