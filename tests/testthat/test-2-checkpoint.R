@@ -176,7 +176,6 @@ test_checkpoint <- function(https = FALSE, snap.dates){
     # cleanup
     checkpoint:::cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
   }
-  
 }
 
 
@@ -187,14 +186,18 @@ test_checkpoint <- function(https = FALSE, snap.dates){
 MRAN.dates <- getValidSnapshots()
 MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
 
-context("Test checkpoint end-to-end")
+context("https")
 
 setCheckpointUrl("https://mran.revolutionanalytics.com/")
 test_checkpoint(http = TRUE, snap.dates = MRAN.default)
 
 setCheckpointUrl(NULL)
+
+context("http")
 setCheckpointUrl("http://mran.revolutionanalytics.com/")
 test_checkpoint(http = FALSE, snap.dates = MRAN.default)
 setCheckpointUrl(NULL)
 
-# test_checkpoint(snap.dates = unique(c(MRAN.default, MRAN.sample)))
+
+
+
