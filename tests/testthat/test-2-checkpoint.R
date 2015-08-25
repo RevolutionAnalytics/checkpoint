@@ -88,7 +88,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
           ))
       })
       
-      pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
+      pdbMRAN <- available.packages(contriburl = contrib.url(repos = checkpoint:::getSnapshotUrl(snap_date)))
       pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
       
       pkgNames <- function(pdb)unname(pdb[, "Package"])
@@ -191,16 +191,16 @@ initialUrl <- getOption("checkpoint.mranUrl")
 if(getRversion() >= "3.2.2"){
   context("https")
   
-  setCheckpointUrl("https://mran.revolutionanalytics.com/")
+  options(checkpoint.mranUrl = "https://mran.revolutionanalytics.com/")
   test_checkpoint(http = TRUE, snap.dates = MRAN.default)
   
-  setCheckpointUrl(NULL)
+  options(checkpoint.mranUrl = NULL)
 }
 
 context("http")
-setCheckpointUrl("http://mran.revolutionanalytics.com/")
+options(checkpoint.mranUrl = "http://mran.revolutionanalytics.com/")
 test_checkpoint(http = FALSE, snap.dates = MRAN.default)
-options("checkpoint.mranUrl" = initialUrl)
+options(checkpoint.mranUrl = initialUrl)
 
 
 
