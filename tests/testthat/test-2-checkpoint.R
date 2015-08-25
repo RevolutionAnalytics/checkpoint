@@ -186,17 +186,21 @@ test_checkpoint <- function(https = FALSE, snap.dates){
 MRAN.dates <- getValidSnapshots()
 MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
 
-context("https")
+initialUrl <- getOption("checkpoint.mranUrl")
 
-setCheckpointUrl("https://mran.revolutionanalytics.com/")
-test_checkpoint(http = TRUE, snap.dates = MRAN.default)
-
-setCheckpointUrl(NULL)
+if(getRversion() >= "3.2.2"){
+  context("https")
+  
+  setCheckpointUrl("https://mran.revolutionanalytics.com/")
+  test_checkpoint(http = TRUE, snap.dates = MRAN.default)
+  
+  setCheckpointUrl(NULL)
+}
 
 context("http")
 setCheckpointUrl("http://mran.revolutionanalytics.com/")
 test_checkpoint(http = FALSE, snap.dates = MRAN.default)
-setCheckpointUrl(NULL)
+setCheckpointUrl(initialUrl)
 
 
 
