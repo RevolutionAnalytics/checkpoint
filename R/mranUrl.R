@@ -106,6 +106,29 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 
 #  ------------------------------------------------------------------------
 
+httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
+  if(getRversion() >= "3.2.0"){
+    method <- "default"
+    switch(.Platform$OS.type, 
+           "unix" = if(isTRUE(unname(capabilities("libcurl")))) method <- "libcurl",
+           "windows" = method <- "wininet"
+    )
+    con <- url(mran, method = method)
+  } else {
+    con <- url(mran)
+  }
+  on.exit(close(con))
+  x <- suppressWarnings(
+    tryCatch(readLines(con, warn = FALSE), 
+             error = function(e)e)
+  )
+  if(!inherits(x, "error")) return(TRUE)
+  if(x$message == "cannot open the connection") return(FALSE)
+  warning(x$message)
+  FALSE
+}
+
+
 is.404 <- function(mran){
   con <- url(mran)
   on.exit(close(con))
@@ -115,7 +138,8 @@ is.404 <- function(mran){
   )
   if(inherits(x, "error")) return(TRUE)
   ptn <- "404.*Not Found"
-  any(grepl(ptn, x))}
+  any(grepl(ptn, x))
+}
 
 getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl()){
   
