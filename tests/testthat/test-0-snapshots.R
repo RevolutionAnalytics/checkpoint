@@ -31,8 +31,8 @@ describe("Validate snapshotDate argument",{
   })
 })
 
-describe("snapshot functions return correct results", {
-  it("snapshot functions return correct results", {
+describe("set http/https correctly", {
+  it("resolves to http/https based on R version number", {
     skip_on_cran()
     if(getRversion() >= "3.2.2"){
       expect_warning(
@@ -63,7 +63,6 @@ describe("snapshot functions return correct results", {
 
 
 context("is.404")
-is.404 <- checkpoint:::is.404
 describe("Check if helper functions catch 404 errors", {
   it("works on http", {
     expect_true(is.404("http://mran.revolutionanalytics.com/snapshot/1972-01-01"))

@@ -1,7 +1,7 @@
 library("testthat")
-context("scanRepoPackages")
+context("scan for library, require, :: and :::")
 
-describe("scan recognizes library, require, :: and :::", {
+describe("scanRepoPackages finds dependencies", {
   
   
   collapse <- function(...) paste(..., sep="\n", collapse="\n")
@@ -29,7 +29,7 @@ describe("scan recognizes library, require, :: and :::", {
     codefile <- file.path(project_root, "code.R")
     cat(code, file = codefile)
     
-    found <- checkpoint:::projectScanPackages(project = project_root)
+    found <- projectScanPackages(project = project_root)
     expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
     
     file.remove(codefile)
@@ -43,7 +43,7 @@ describe("scan recognizes library, require, :: and :::", {
     knitfile <- file.path(project_root, "knit.Rmd")
     cat(knit, file = knitfile)
     
-    found <- checkpoint:::projectScanPackages(project = project_root, use.knitr = TRUE)
+   found <- projectScanPackages(project = project_root, use.knitr = TRUE)
     expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
     file.remove(knitfile)
     

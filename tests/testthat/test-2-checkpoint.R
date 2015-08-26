@@ -46,11 +46,11 @@ test_checkpoint <- function(https = FALSE, snap.dates){
       
       if(!interactive()) skip_on_cran()
       
-      checkpoint:::cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
+      cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
       
       it("finds correct MRAN URL", {
         expect_equal(
-          checkpoint:::getSnapshotUrl(snap_date),
+          getSnapshotUrl(snap_date),
           paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date))
         
       })
@@ -88,7 +88,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
           ))
       })
       
-      pdbMRAN <- available.packages(contriburl = contrib.url(repos = checkpoint:::getSnapshotUrl(snap_date)))
+      pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
       pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
       
       pkgNames <- function(pdb)unname(pdb[, "Package"])
@@ -167,14 +167,14 @@ test_checkpoint <- function(https = FALSE, snap.dates){
       
       it("uses correct library location", {
         expect_equal(
-          checkpoint:::checkpointPath(snap_date, checkpointLocation, type = "lib"),
+          checkpointPath(snap_date, checkpointLocation, type = "lib"),
           normalizePath(.libPaths()[1], winslash = "/")
         )
       })
     })
 
     # cleanup
-    checkpoint:::cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
+    cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
   }
 }
 
