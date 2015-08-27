@@ -32,7 +32,13 @@ stopIfInvalidDate <- function(snapshotDate){
 mranUrlDefault <- function(){
   http = "http://mran.revolutionanalytics.com/"
   https = gsub("http://", replacement = "https://", http)
-  if(getRversion() >= "3.2.2") https else http
+  if(getRversion() >= "3.2.0" && httpsSupported()) {
+    https 
+#     Attempt to connect
+#     if unable to connect, stop with warning
+  } else {
+    http
+  }
 }
 
 getDownloadOption <- function(){
