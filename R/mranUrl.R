@@ -108,17 +108,21 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 
 libcurl <- function() isTRUE(unname(capabilities("libcurl")))
 
-httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
+url <- function(url){
   if(getRversion() >= "3.2.0"){
-    method <- "default"
-    switch(.Platform$OS.type, 
+    method <- switch(.Platform$OS.type, 
            "unix" = if(libcurl()) method <- "libcurl",
-           "windows" = method <- "wininet"
+           "windows" = method <- "wininet",
+           "default"
     )
-    con <- url(mran, method = method)
+    base::url(url, method = method)
   } else {
-    con <- url(mran)
+    base::url(url)
   }
+}
+
+httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
+  con <- base::url(mran)
   on.exit(close(con))
   x <- suppressWarnings(
     tryCatch(readLines(con, warn = FALSE), 
