@@ -51,7 +51,7 @@ describe("set http/https correctly", {
     expect_equal(paste0(mranUrl(), dd), mm)
     
     url <- mranUrl()
-    if(getRversion() >= "3.2.2"){
+    if(getRversion() >= "3.2.0"  && httpsSupported()){
       expect_equal(url, "https://mran.revolutionanalytics.com/snapshot/")
     } else {
       expect_equal(url, "http://mran.revolutionanalytics.com/snapshot/")
