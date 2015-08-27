@@ -122,7 +122,7 @@ url <- function(url){
 }
 
 httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
-  con <- base::url(mran)
+  con <- url(mran)
   on.exit(close(con))
   x <- suppressWarnings(
     tryCatch(readLines(con, warn = FALSE), 
