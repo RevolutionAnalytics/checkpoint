@@ -106,11 +106,13 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 
 #  ------------------------------------------------------------------------
 
+libcurl <- function() isTRUE(unname(capabilities("libcurl")))
+
 httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
   if(getRversion() >= "3.2.0"){
     method <- "default"
     switch(.Platform$OS.type, 
-           "unix" = if(isTRUE(unname(capabilities("libcurl")))) method <- "libcurl",
+           "unix" = if(libcurl()) method <- "libcurl",
            "windows" = method <- "wininet"
     )
     con <- url(mran, method = method)
@@ -130,6 +132,10 @@ httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot
 
 
 is.404 <- function(mran){
+  if(isHttpsUrl(mran) && !httpsSupported(mran)) {
+    warning("It seems that https URLs are not supported on this platform")
+    return(TRUE)
+  }
   con <- url(mran)
   on.exit(close(con))
   x <- suppressWarnings(
