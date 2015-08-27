@@ -34,7 +34,7 @@ describe("Validate snapshotDate argument",{
 describe("set http/https correctly", {
   it("resolves to http/https based on R version number", {
     skip_on_cran()
-    if(getRversion() >= "3.2."  && httpsSupported()){
+    if(getRversion() >= "3.2.0"  && httpsSupported()){
       expect_warning(
         getSnapshotUrl("1972-01-01"), 
         "Unable to find snapshot on MRAN at https://mran.revolutionanalytics.com/snapshot/1972-01-01"
