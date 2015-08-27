@@ -1,7 +1,7 @@
 library("testthat")
-context("scan for packages")
+context("scan for library, require, :: and :::")
 
-test_that("scanRepoPackages recognizes library, require, :: and :::", {
+describe("scanRepoPackages finds dependencies", {
   
   
   collapse <- function(...) paste(..., sep="\n", collapse="\n")
@@ -12,7 +12,6 @@ test_that("scanRepoPackages recognizes library, require, :: and :::", {
     collapse(sprintf(token, insert))
   }
   
-  # Write dummy code file to project
   project_root <- file.path(tempdir(), "checkpoint-test-temp")
   dir.create(project_root, showWarnings = FALSE)
   
@@ -23,27 +22,33 @@ test_that("scanRepoPackages recognizes library, require, :: and :::", {
     foo("%s:::bar()", letters[7:8]),
     "track <- setClass('track', slots = c(x='numeric', y='numeric'))"
   )
-
-  codefile <- file.path(project_root, "code.R")
-  cat(code, file = codefile)
   
-  found <- checkpoint:::projectScanPackages(project = project_root)
-  expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
+  it("finds packages in R scripts", {
+    # Write dummy code file to project
+    
+    codefile <- file.path(project_root, "code.R")
+    cat(code, file = codefile)
+    
+    found <- projectScanPackages(project = project_root)
+    expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
+    
+    file.remove(codefile)
+    
+  })
   
-  file.remove(codefile)
-  
-  
-  # Write dummy knitr code file to project
-  knit <- sprintf("```{r}\n%s\n```", code)
-  knitfile <- file.path(project_root, "knit.Rmd")
-  cat(knit, file = knitfile)
-  
-  found <- checkpoint:::projectScanPackages(project = project_root, use.knitr = TRUE)
-  expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
-  file.remove(knitfile)
-  
-  unlink(project_root)
-  
+  it("finds packages in Rmarkdown", {
+    
+    # Write dummy knitr code file to project
+    knit <- sprintf("```{r}\n%s\n```", code)
+    knitfile <- file.path(project_root, "knit.Rmd")
+    cat(knit, file = knitfile)
+    
+   found <- projectScanPackages(project = project_root, use.knitr = TRUE)
+    expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
+    file.remove(knitfile)
+    
+    unlink(project_root)
+  })
   
   
 })

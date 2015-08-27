@@ -2,11 +2,13 @@ if(interactive()) library(testthat)
 context("MRAN snapshots")
 
 describe("Validate snapshotDate argument",{
-  it("checkpoint stops if invalid snapshotDate", {
+  it("stops if missing snapshotDate", {
     expect_error(
       checkpoint(), 
       "You have to specify a snapshotDate"
     )
+  })
+  it("stops if invalid snapshotDate format", {
     expect_error(
       checkpoint("2015/01/01"), 
       "snapshotDate must be a valid date using format YYYY-MM-DD"
@@ -15,6 +17,9 @@ describe("Validate snapshotDate argument",{
       checkpoint("20150101"), 
       "snapshotDate must be a valid date using format YYYY-MM-DD"
     )
+  })
+  it("stops if snapshotDate doesn't exist on MRAN", {
+    
     expect_error(
       checkpoint("2014-09-16"), 
       "Snapshots are only available after 2014-09-17"
@@ -24,9 +29,10 @@ describe("Validate snapshotDate argument",{
       "snapshotDate can not be in the future!"
     )
   })
-  
-  
-  it("snapshot functions return correct results", {
+})
+
+describe("set http/https correctly", {
+  it("resolves to http/https based on R version number", {
     skip_on_cran()
     if(getRversion() >= "3.2.2"){
       expect_warning(
@@ -55,16 +61,35 @@ describe("Validate snapshotDate argument",{
 })
 
 
+
 context("is.404")
-describe("Check if helper functions catch 404 errors", {
-  it("is.404() works as expected", {
+describe("is.404 works with http", {
+  it("works on http", {
     expect_true(is.404("http://mran.revolutionanalytics.com/snapshot/1972-01-01"))
     expect_false(is.404("http://mran.revolutionanalytics.com/snapshot"))
     expect_false(is.404("http://mran.revolutionanalytics.com/snapshot/2015-05-01"))
-    
-    expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
-    expect_false(is.404("https://mran.revolutionanalytics.com/snapshot"))
-    expect_false(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
-    
   })
 })
+
+if(httpsSupported()){
+  describe("is.404 works with https", {
+    
+    it("works on https", {
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+      expect_false(is.404("https://mran.revolutionanalytics.com/snapshot"))
+      expect_false(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+      
+    })
+  })
+} else {
+  describe("is.404 gracefully deals with https URLs when https not supported", {
+    
+    it("works on https", {
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot"))
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+      
+    })
+  })
+}
+  

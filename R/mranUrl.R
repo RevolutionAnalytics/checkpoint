@@ -11,32 +11,28 @@ stopIfInvalidDate <- function(snapshotDate){
   
 }
 
-testHttps <- function(https){
-  tf = tempfile()
-  dir.create(tf)
-  on.exit(unlink(tf))
-  testpkg = "memoise"
-  repos <- paste0(https, "snapshot/2014-09-12/")
-  tryCatch(suppressWarnings(utils::install.packages(testpkg, lib = tf, 
-                                   repos = repos ,
-                                   dependencies = FALSE, 
-                                   type = "source",
-                                   quiet = TRUE)))
-  if(testpkg %in% names(installed.packages(lib.loc = tf)[, "Package"])) {
-    TRUE
-  } else {
-    FALSE
-  }
-}
+# testHttps <- function(https){
+#   tf = tempfile()
+#   dir.create(tf)
+#   on.exit(unlink(tf))
+#   testpkg = "memoise"
+#   repos <- paste0(https, "snapshot/2014-09-12/")
+#   tryCatch(suppressWarnings(utils::install.packages(testpkg, lib = tf, 
+#                                    repos = repos ,
+#                                    dependencies = FALSE, 
+#                                    type = "source",
+#                                    quiet = TRUE)))
+#   if(testpkg %in% installed.packages(lib.loc = tf)[, "Package"]) {
+#     TRUE
+#   } else {
+#     FALSE
+#   }
+# }
 
 mranUrlDefault <- function(){
   http = "http://mran.revolutionanalytics.com/"
   https = gsub("http://", replacement = "https://", http)
-  if(getRversion() >= "3.2.0") {
-    if(testHttps(https)) https else  http
-  } else {
-    http
-  }
+  if(getRversion() >= "3.2.2") https else http
 }
 
 getDownloadOption <- function(){
@@ -48,26 +44,26 @@ isHttpsUrl <- function(url){
   grepl("^https://", url)
 }
 
-setDownloadOption <- function(mranUrl){
-  
-  download.method <- switch(
-    .Platform$OS.type,
-    windows = "wininet",
-    unix    = if(capabilities("libcurl")) "libcurl" else "curl"
-  )
-  url.method <- switch(
-    .Platform$OS.type,
-    windows = "wininet",
-    unix    = if(capabilities("libcurl")) "libcurl" else "internal"
-  )
-  
-  options(download.file.method = download.method, 
-          url.method = url.method)
-}
-
-resetDownloadOption <- function(opts){
-  options(opts)
-}
+# setDownloadOption <- function(mranUrl){
+#   
+#   download.method <- switch(
+#     .Platform$OS.type,
+#     windows = "wininet",
+#     unix    = if(capabilities("libcurl")) "libcurl" else "curl"
+#   )
+#   url.method <- switch(
+#     .Platform$OS.type,
+#     windows = "wininet",
+#     unix    = if(capabilities("libcurl")) "libcurl" else "internal"
+#   )
+#   
+#   options(download.file.method = download.method, 
+#           url.method = url.method)
+# }
+# 
+# resetDownloadOption <- function(opts){
+#   options(opts)
+# }
 
 
 #  ------------------------------------------------------------------------
@@ -98,8 +94,6 @@ setCheckpointUrl <- function(url){
 #' 
 #' @export
 getValidSnapshots <- function(mranRootUrl = mranUrl()){
-  opts <- setDownloadOption(mranRootUrl)
-  on.exit(resetDownloadOption(opts))
   text <- tryCatch(readLines(mranRootUrl, warn = TRUE), error=function(e)e)
   if(inherits(text, "error")) {
     stop(sprintf("Unable to download from MRAN: %s", text$message))
@@ -112,19 +106,52 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
 
 #  ------------------------------------------------------------------------
 
-is.404 <- function(mran, method = "libcurl"){
-  con <- url(mran, method = method)
+libcurl <- function() isTRUE(unname(capabilities("libcurl")))
+
+url <- function(url){
+  if(getRversion() >= "3.2.0"){
+    method <- switch(.Platform$OS.type, 
+           "unix" = if(libcurl()) method <- "libcurl",
+           "windows" = method <- "wininet",
+           "default"
+    )
+    base::url(url, method = method)
+  } else {
+    base::url(url)
+  }
+}
+
+httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
+  con <- url(mran)
   on.exit(close(con))
-  x <- tryCatch(readLines(con, warn = FALSE), 
+  x <- suppressWarnings(
+    tryCatch(readLines(con, warn = FALSE), 
+             error = function(e)e)
+  )
+  if(!inherits(x, "error")) return(TRUE)
+  if(x$message == "cannot open the connection") return(FALSE)
+  warning(x$message)
+  FALSE
+}
+
+
+is.404 <- function(mran){
+  if(isHttpsUrl(mran) && !httpsSupported(mran)) {
+    warning("It seems that https URLs are not supported on this platform")
+    return(TRUE)
+  }
+  con <- url(mran)
+  on.exit(close(con))
+  x <- suppressWarnings(
+    tryCatch(readLines(con, warn = FALSE), 
                 error = function(e)e)
+  )
   if(inherits(x, "error")) return(TRUE)
   ptn <- "404.*Not Found"
-  any(grepl(ptn, x))}
+  any(grepl(ptn, x))
+}
 
 getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl()){
-  
-  #   opts <- setDownloadOption(mranRootUrl)
-  #   on.exit(resetDownloadOption(opts))
   
   if(is.404(mranRootUrl)){
     warning("Unable to reach MRAN root at ", mranRootUrl, call. = FALSE)
