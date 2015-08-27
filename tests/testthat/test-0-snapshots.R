@@ -31,8 +31,8 @@ describe("Validate snapshotDate argument",{
   })
 })
 
-describe("snapshot functions return correct results", {
-  it("snapshot functions return correct results", {
+describe("set http/https correctly", {
+  it("resolves to http/https based on R version number", {
     skip_on_cran()
     if(getRversion() >= "3.2.2"){
       expect_warning(
@@ -63,17 +63,33 @@ describe("snapshot functions return correct results", {
 
 
 context("is.404")
-describe("Check if helper functions catch 404 errors", {
+describe("is.404 works with http", {
   it("works on http", {
     expect_true(is.404("http://mran.revolutionanalytics.com/snapshot/1972-01-01"))
     expect_false(is.404("http://mran.revolutionanalytics.com/snapshot"))
     expect_false(is.404("http://mran.revolutionanalytics.com/snapshot/2015-05-01"))
   })
-  
-  it("works on https", {
-    expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
-    expect_false(is.404("https://mran.revolutionanalytics.com/snapshot"))
-    expect_false(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
-    
-  })
 })
+
+if(httpsSupported()){
+  describe("is.404 works with https", {
+    
+    it("works on https", {
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+      expect_false(is.404("https://mran.revolutionanalytics.com/snapshot"))
+      expect_false(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+      
+    })
+  })
+} else {
+  describe("is.404 gracefully deals with https URLs when https not supported", {
+    
+    it("works on https", {
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot"))
+      expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/2015-05-01"))
+      
+    })
+  })
+}
+  

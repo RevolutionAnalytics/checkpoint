@@ -9,8 +9,7 @@ setSnapshot <- function(snapshotDate){
   if (missing(snapshotDate) || is.null(snapshotDate)) return(getOption("repos"))
   mran <- mranUrl()
   repoDate <- paste0(mran, snapshotDate)
-  # setDownloadOption(mran)
-  
+
   if(is.404(repoDate)) stop(paste0("Invalid snapshot date."))
   options(repos = c(CRAN = repoDate))
   message(paste("Using CRAN mirror at", repoDate))
