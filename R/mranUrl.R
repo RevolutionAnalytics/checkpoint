@@ -117,7 +117,7 @@ libcurl <- function() isTRUE(unname(capabilities("libcurl")))
 url <- function(url){
   if(getRversion() >= "3.2.0"){
     method <- switch(.Platform$OS.type, 
-           "unix" = if(libcurl()) method <- "libcurl",
+           "unix" = if(libcurl()) "libcurl" else "default",
            "windows" = method <- "wininet",
            "default"
     )
