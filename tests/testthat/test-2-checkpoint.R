@@ -33,28 +33,34 @@ test_checkpoint <- function(https = FALSE, snap.dates){
     # url_prefix <- "http://"
     # snap_date <- MRAN.default ### <<< use only for interactive testing
     
-    context(paste("checkpoint -", url_prefix, "@", snap_date))
-    
-    
-    packages.to.test = if(require("knitr")) 
-      c(packages.to.test.base, packages.to.test.knitr) else 
-        packages.to.test.base
-    
-    project_root <- file.path(tempfile(), "checkpointtemp")
-    dir.create(project_root, recursive = TRUE)
-    
-    test_that(paste("snapshot functions work correctly with snapshot", snap_date), {
+    describe(paste("checkpoint -", url_prefix, "@", snap_date), {
+      
+      
+      
+      packages.to.test = if(require("knitr")) 
+        c(packages.to.test.base, packages.to.test.knitr) else 
+          packages.to.test.base
+      
+      project_root <- file.path(tempfile(), "checkpointtemp")
+      dir.create(project_root, recursive = TRUE)
+      
       if(!interactive()) skip_on_cran()
       
-      checkpoint:::cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
+      cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
       
-      expect_equal(
-        checkpoint:::getSnapshotUrl(snap_date),
-        paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date))
+      it("finds correct MRAN URL", {
+        expect_equal(
+          getSnapshotUrl(snap_date),
+          paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date))
+        
+      })
       
-      expect_message(
-        checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
-        "No packages found to install")
+      it("prints message if no packages found", {
+        expect_message(
+          checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
+          "No packages found to install")
+        
+      })
       
       # Write dummy code file to project
       code = paste("library('", packages.to.test.base, "')", sep ="", collapse ="\n")
@@ -65,18 +71,22 @@ test_checkpoint <- function(https = FALSE, snap.dates){
                      paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
       cat(code, file = file.path(project_root, "code.Rmd"))
       
-      expect_message(
-        checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
-        "Installing packages used in this project")
       
-      # Does not display message whan scanForPackages=FALSE
-      expect_false(
-        isTRUE(
-          shows_message("Scanning for packages used in this project")(
-            checkpoint(snap_date, checkpointLocation = checkpointLocation, 
-                       project = project_root, scanForPackages=FALSE)
-          )
-        ))
+      it("prints progress message", {
+        expect_message(
+          checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
+          "Installing packages used in this project")
+      })
+      
+      it("does not display message whan scanForPackages=FALSE", {
+        expect_false(
+          isTRUE(
+            shows_message("Scanning for packages used in this project")(
+              checkpoint(snap_date, checkpointLocation = checkpointLocation, 
+                         project = project_root, scanForPackages=FALSE)
+            )
+          ))
+      })
       
       pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
       pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
@@ -104,9 +114,12 @@ test_checkpoint <- function(https = FALSE, snap.dates){
       
       
       expected.packages <- setdiff(packages.to.test, c("checkpoint", base.packages))
-      expect_true(
-all(expected.packages %in% pkgNames(pdbLocal))
-      )
+      
+      it("installs all packages correctly in local lib", {
+        expect_true(
+          all(expected.packages %in% pkgNames(pdbLocal))
+        )
+      })
       
       messageMissingPackages <- function(exp, avail){
         if(!all(exp %in% avail)) {
@@ -122,47 +135,47 @@ all(expected.packages %in% pkgNames(pdbLocal))
       }
       messageMissingPackages(expected.packages, pkgNames(pdbLocal))
       
-      expected.packages <- setdiff(packages.expected, c("checkpoint", base.packages))
-      expect_true(
-        all(expected.packages %in% pkgNames(pdbLocal))
-      )
+      it("all packages have publication dates prior to checkpoint data", {      
+        expect_true(
+          all(
+            na.omit(
+              pdbLocal[, "Date/Publication"]) <=
+              as.POSIXct(snap_date, tz="UTC"))
+        )
+      })
       
-      expect_true(
-        all(
-          na.omit(
-            pdbLocal[, "Date/Publication"]) <=
-            as.POSIXct(snap_date, tz="UTC"))
-      )
+      #       expect_true(
+      #         all(
+      #           sapply(setdiff(packages.to.test, "checkpoint"), function(x){
+      #             if(!base::requireNamespace(x, quietly = TRUE)) {
+      #               message(paste("Unable to load package:", x))
+      #               FALSE
+      #           } else {
+      #             unloadNamespace(x)
+      #             TRUE
+      #           }
+      #           })
+      #         )
+      #       )
       
-#       expect_true(
-#         all(
-#           sapply(setdiff(packages.to.test, "checkpoint"), function(x){
-#             if(!base::requireNamespace(x, quietly = TRUE)) {
-#               message(paste("Unable to load package:", x))
-#               FALSE
-#           } else {
-#             unloadNamespace(x)
-#             TRUE
-#           }
-#           })
-#         )
-#       )
+      it("uses correct MRAN url", {
+        expect_equal(
+          getOption("repos"),
+          paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date)
+        )
+      })
       
-      expect_equal(
-        getOption("repos"),
-        paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date)
-      )
-      
-      expect_equal(
-        checkpoint:::checkpointPath(snap_date, checkpointLocation, type = "lib"),
-        normalizePath(.libPaths()[1], winslash = "/")
-      )
-      
+      it("uses correct library location", {
+        expect_equal(
+          checkpointPath(snap_date, checkpointLocation, type = "lib"),
+          normalizePath(.libPaths()[1], winslash = "/")
+        )
+      })
     })
+
     # cleanup
-    checkpoint:::cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
+    cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
   }
-  
 }
 
 
@@ -173,12 +186,22 @@ all(expected.packages %in% pkgNames(pdbLocal))
 MRAN.dates <- getValidSnapshots()
 MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
 
+initialUrl <- getOption("checkpoint.mranUrl")
 
-setCheckpointUrl("https://mran.revolutionanalytics.com/")
-test_checkpoint(http = TRUE, snap.dates = MRAN.default)
-setCheckpointUrl(NULL)
+if(getRversion() >= "3.2.0" && httpsSupported()){
+  context("https")
+  
+  options(checkpoint.mranUrl = "https://mran.revolutionanalytics.com/")
+  test_checkpoint(http = TRUE, snap.dates = MRAN.default)
+  
+  options(checkpoint.mranUrl = NULL)
+}
+
+context("http")
+options(checkpoint.mranUrl = "http://mran.revolutionanalytics.com/")
 test_checkpoint(http = FALSE, snap.dates = MRAN.default)
-setCheckpointUrl(NULL)
+options(checkpoint.mranUrl = initialUrl)
 
 
-# test_checkpoint(snap.dates = unique(c(MRAN.default, MRAN.sample)))
+
+
