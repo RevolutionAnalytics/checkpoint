@@ -188,7 +188,7 @@ MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
 
 initialUrl <- getOption("checkpoint.mranUrl")
 
-if(getRversion() >= "3.2.2"){
+if(getRversion() >= "3.2.0" && httpsSupported()){
   context("https")
   
   options(checkpoint.mranUrl = "https://mran.revolutionanalytics.com/")
