@@ -128,8 +128,12 @@ url <- function(url){
 }
 
 httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
-  con <- url(mran)
   on.exit(close(con))
+  con <- suppressWarnings({
+    tryCatch(url(mran), 
+             error = function(e)e)
+  }) 
+  if(inherits(con, "error")) return(FALSE)
   x <- suppressWarnings(
     tryCatch(readLines(con, warn = FALSE), 
              error = function(e)e)
