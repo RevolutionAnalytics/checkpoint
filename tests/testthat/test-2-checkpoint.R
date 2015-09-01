@@ -88,62 +88,60 @@ test_checkpoint <- function(https = FALSE, snap.dates){
           ))
       })
       
-      pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
-      pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
-      
-      pkgNames <- function(pdb)unname(pdb[, "Package"])
-      
-      base.packages <- pkgNames(utils::installed.packages(priority = "base", 
-                                                          lib.loc = .Library,
-                                                          noCache = TRUE))
-      
-      pkgDepends <- function (pkg) {
-        depMtrx <- tools:::getDepMtrx(pkg, instPkgs = pdbMRAN, local = FALSE)
-        if (is.null(depMtrx)){
-          stop(gettextf("package '%s' was not found", pkg), domain = NA)
-        }
-        tools::getDepList(depMtrx, pdbMRAN)
-      }
-      
-      packages.expected <- sort(unique(unlist(
-        sapply(setdiff(packages.to.test, c("checkpoint", base.packages)), function(p){
-          z <- pkgDepends(p)
-          c(z$Depends, z$Imports)
-        }, USE.NAMES = FALSE)
-      )))
-      
-      
-      expected.packages <- setdiff(packages.to.test, c("checkpoint", base.packages))
-      
       it("installs all packages correctly in local lib", {
+        pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
+        pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
+        
+        pkgNames <- function(pdb)unname(pdb[, "Package"])
+        
+        base.packages <- pkgNames(utils::installed.packages(priority = "base", 
+                                                            lib.loc = .Library,
+                                                            noCache = TRUE))
+        
+        pkgDepends <- function (pkg) {
+          depMtrx <- tools:::getDepMtrx(pkg, instPkgs = pdbMRAN, local = FALSE)
+          if (is.null(depMtrx)){
+            stop(gettextf("package '%s' was not found", pkg), domain = NA)
+          }
+          tools::getDepList(depMtrx, pdbMRAN)
+        }
+        
+        packages.expected <- sort(unique(unlist(
+          sapply(setdiff(packages.to.test, c("checkpoint", base.packages)), function(p){
+            z <- pkgDepends(p)
+            c(z$Depends, z$Imports)
+          }, USE.NAMES = FALSE)
+        )))
+        
+        
+        expected.packages <- setdiff(packages.to.test, c("checkpoint", base.packages))
+        
         expect_true(
           all(expected.packages %in% pkgNames(pdbLocal))
         )
-      })
-      
-      messageMissingPackages <- function(exp, avail){
-        if(!all(exp %in% avail)) {
-          msg <- paste(
-            "\n",
-            paste0("Expected:", paste(exp, collapse = ", ")),
-            paste0("Actual  :", paste(avail, collapse = ", ")),
-            paste0("Missing :", paste(setdiff(exp, avail), collapse = ", ")),
-            "\n",
-            sep = "\n")
-          cat(msg)
+        
+        messageMissingPackages <- function(exp, avail){
+          if(!all(exp %in% avail)) {
+            msg <- paste(
+              "\n",
+              paste0("Expected:", paste(exp, collapse = ", ")),
+              paste0("Actual  :", paste(avail, collapse = ", ")),
+              paste0("Missing :", paste(setdiff(exp, avail), collapse = ", ")),
+              "\n",
+              sep = "\n")
+            cat(msg)
+          }
         }
-      }
-      messageMissingPackages(expected.packages, pkgNames(pdbLocal))
-      
-      it("all packages have publication dates prior to checkpoint data", {      
+        messageMissingPackages(expected.packages, pkgNames(pdbLocal))
+        
         expect_true(
           all(
             na.omit(
               pdbLocal[, "Date/Publication"]) <=
               as.POSIXct(snap_date, tz="UTC"))
         )
+        
       })
-      
       #       expect_true(
       #         all(
       #           sapply(setdiff(packages.to.test, "checkpoint"), function(x){
@@ -172,7 +170,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         )
       })
     })
-
+    
     # cleanup
     cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
   }
