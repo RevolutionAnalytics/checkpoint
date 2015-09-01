@@ -118,7 +118,7 @@ url <- function(url){
   if(getRversion() >= "3.2.0"){
     method <- switch(.Platform$OS.type, 
            "unix" = if(libcurl()) "libcurl" else "default",
-           "windows" = method <- "wininet",
+           "windows" = "wininet",
            "default"
     )
     base::url(url, method = method)
@@ -128,6 +128,14 @@ url <- function(url){
 }
 
 httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
+  tf <- tempfile()
+  on.exit(unlink(tf))
+  pdb <- suppressWarnings({
+    tryCatch(download.file(url = paste0(mran, "PACKAGES"), destfile = tf, 
+                         cacheOK = FALSE, quiet = TRUE, 
+                         mode = "wb"), error = function(e)e)
+  })
+  if(inherits(pdb, "error")) return(FALSE)
   con <- suppressWarnings({
     tryCatch(url(mran), 
              error = function(e)e)
