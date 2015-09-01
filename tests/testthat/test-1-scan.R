@@ -6,7 +6,6 @@ describe("scanRepoPackages finds dependencies", {
   
   collapse <- function(...) paste(..., sep="\n", collapse="\n")
   
-  require("knitr", quietly = TRUE)
   
   foo <- function(token, insert){
     collapse(sprintf(token, insert))
@@ -37,7 +36,11 @@ describe("scanRepoPackages finds dependencies", {
   })
   
   it("finds packages in Rmarkdown", {
-    
+    if(!suppressWarnings(require("knitr", quietly = TRUE))){
+      skip("knitr not available")
+    }
+    require("knitr", quietly = TRUE)
+
     # Write dummy knitr code file to project
     knit <- sprintf("```{r}\n%s\n```", code)
     knitfile <- file.path(project_root, "knit.Rmd")
