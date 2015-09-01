@@ -35,7 +35,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
     
     describe(paste("checkpoint -", url_prefix, "@", snap_date), {
       
-      packages.to.test = if(require("knitr", quietly = TRUE))
+      packages.to.test = if(suppressWarnings(require("knitr", quietly = TRUE)))
         c(packages.to.test.base, packages.to.test.knitr) else 
           packages.to.test.base
       

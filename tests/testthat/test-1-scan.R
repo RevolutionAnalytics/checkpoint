@@ -36,7 +36,7 @@ describe("scanRepoPackages finds dependencies", {
   })
   
   it("finds packages in Rmarkdown", {
-    if(!require("knitr", quietly = TRUE)){
+    if(!suppressWarnings(require("knitr", quietly = TRUE))){
       skip("knitr not available")
     }
     require("knitr", quietly = TRUE)

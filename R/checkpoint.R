@@ -170,7 +170,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
 #  ------------------------------------------------------------------------
 
 
-setMranMirror <- function(snapshotDate, snapshotUrl = getSnapShotUrl(snapshotDate)){
+setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapShotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
 
 setLibPaths <- function(checkpointLocation, libPath){
