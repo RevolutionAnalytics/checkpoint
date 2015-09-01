@@ -3,17 +3,9 @@ sudo: required
 
 env: NOT_CRAN="true"
 
-script: ./travis-tool.sh run_tests
-
 r_binary_packages:
   - testthat
   - knitr
-
-on_failure:
-  - ./travis-tool.sh dump_logs
-
-after_script:
-  - ./travis-tool.sh dump_logs
 
 branches:
   only:
