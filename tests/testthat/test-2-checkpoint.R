@@ -37,7 +37,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
       
       
       
-      packages.to.test = if(require("knitr")) 
+      packages.to.test = if("knitr" %in% unname(installed.packages()[, "Package"]))
         c(packages.to.test.base, packages.to.test.knitr) else 
           packages.to.test.base
       
