@@ -85,7 +85,7 @@ describe("is.404 works with https", {
 describe("is.404 gracefully deals with https URLs when https not supported", {
   
   it("works even when https is not supported", {
-    with_mock(httpsSupported = function(mran) FALSE, {
+    with_mock(`checkpoint:::httpsSupported` = function(mran) FALSE, {
       # if(!httpsSupported()) skip("https not supported")
       expect_true(is.404("https://mran.revolutionanalytics.com/snapshot/1972-01-01"))
       expect_true(is.404("https://mran.revolutionanalytics.com/snapshot"))
