@@ -30,6 +30,8 @@
 #' @param checkpointLocation File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).
 #'
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.
+#' 
+#' @param auto.install.knitr If TRUE and the project contains rmarkdown files, then include \code{knitr} and \code{rmarkdown} in packages to install.
 #'
 #' @param verbose If TRUE, displays progress messages.
 #'
@@ -45,7 +47,7 @@
 checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
                        checkpointLocation = "~/",
                        verbose=TRUE,
-                       use.knitr = system.file(package="knitr") != "") {
+                       use.knitr = system.file(package="knitr") != "", auto.install.knitr = TRUE) {
   
   stopIfInvalidDate(snapshotDate)
   

@@ -1,5 +1,5 @@
 
-projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = FALSE){
+projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = FALSE, auto.install.knitr = FALSE){
   # detect all package dependencies for a project
   dir <- normalizePath(project, winslash='/', mustWork=FALSE)
   pattern <- if(!use.knitr) "\\.[rR]$|\\.[rR]nw$" else
@@ -37,6 +37,7 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
     }
     
     pkgs <- sort(unique(do.call(c, lapply(z, "[[", "pkgs"))))
+    if(length(files_k) > 0 && auto.install.knitr) pkgs <- c(pkgs, "knitr", "rmarkdown")
     error <- sort(unique(do.call(c, lapply(z, "[[", "error"))))
     error <- gsub(sprintf("%s[//|\\]*", dir), "", error)
     list(pkgs = pkgs, error = error)

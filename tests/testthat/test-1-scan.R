@@ -40,18 +40,35 @@ describe("scanRepoPackages finds dependencies", {
       skip("knitr not available")
     }
     require("knitr", quietly = TRUE)
-
+    
     # Write dummy knitr code file to project
     knit <- sprintf("```{r}\n%s\n```", code)
     knitfile <- file.path(project_root, "knit.Rmd")
     cat(knit, file = knitfile)
     
-   found <- projectScanPackages(project = project_root, use.knitr = TRUE)
-    expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
+    found <- projectScanPackages(project = project_root, use.knitr = TRUE)
+    expect_equal(found$pkgs, c(letters[1:8], "methods"))
     file.remove(knitfile)
     
     unlink(project_root)
   })
   
+  it("auto-installs knitr and rmardown", {
+    if(!suppressWarnings(require("knitr", quietly = TRUE))){
+      skip("knitr not available")
+    }
+    require("knitr", quietly = TRUE)
+    
+    # Write dummy knitr code file to project
+    knit <- sprintf("```{r}\n%s\n```", code)
+    knitfile <- file.path(project_root, "knit.Rmd")
+    cat(knit, file = knitfile)
+    
+    found <- projectScanPackages(project = project_root, use.knitr = TRUE, auto.install.knitr = TRUE)
+    expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr", "rmarkdown"))
+    file.remove(knitfile)
+    
+    unlink(project_root)
+  })
   
 })
