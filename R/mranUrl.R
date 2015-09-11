@@ -8,6 +8,12 @@ stopIfInvalidDate <- function(snapshotDate){
     stop("Snapshots are only available after 2014-09-17", call. = FALSE)
   if(as.Date(snapshotDate) > Sys.Date())
     stop("snapshotDate can not be in the future!", call. = FALSE)
+  validSnapshots <- as.Date(getValidSnapshots())
+  if(!as.Date(snapshotDate) %in% validSnapshots) {
+    i <- findInterval(as.Date(snapshotDate), validSnapshots)
+    suggestions <- validSnapshots[c(i, i+1)]
+    stop(sprintf("Snapshot does not exist on MRAN. Try %s or %s.", validSnapshots[i], validSnapshots[i+1]))
+  }
   
 }
 
