@@ -16,7 +16,14 @@ describe("getValidSnapshots finds valid dates", {
       stopIfInvalidDate("2015-06-05"),
       "Snapshot does not exist on MRAN. Try 2015-06-03 or 2015-06-09."
       )
+    
+    expect_error(
+      checkpoint("2015-06-05"),
+      "Snapshot does not exist on MRAN. Try 2015-06-03 or 2015-06-09."
+    )
+    
   })
-  
+
+    
 
 })
