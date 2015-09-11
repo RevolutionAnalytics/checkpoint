@@ -28,6 +28,12 @@ dir.create(file.path(checkpointLocation, ".checkpoint"), showWarnings = FALSE)
 
 test_checkpoint <- function(https = FALSE, snap.dates){
   
+  originalLibPaths <- .libPaths()
+  resetLibPaths <- function(old){
+    assign(".lib.loc", old, envir = environment(.libPaths))
+  }
+  on.exit(resetLibPaths(originalLibPaths))
+  
   url_prefix <- if(https) "https://" else "http://"
   for(snap_date in snap.dates) {
     # url_prefix <- "http://"
@@ -171,6 +177,8 @@ test_checkpoint <- function(https = FALSE, snap.dates){
     
     # cleanup
     cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
+    resetLibPaths(originalLibPaths)
+    expect_identical(originalLibPaths, .libPaths())
   }
 }
 
