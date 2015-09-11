@@ -127,13 +127,17 @@ url <- function(url){
   }
 }
 
-httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot/"){
+httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot"){
   tf <- tempfile()
   on.exit(unlink(tf))
   pdb <- suppressWarnings({
-    tryCatch(download.file(url = paste0(mran, "PACKAGES"), destfile = tf, 
+    testfile <- paste0(mran, if(grepl("snapshot$", mran)) 
+      "/2015-09-01/src/contrib/checkTimings.html" else
+        "/src/contrib/checkTimings.html"
+    )
+    tryCatch(download.file(url = testfile, destfile = tf, 
                          cacheOK = FALSE, quiet = TRUE, 
-                         mode = "wb"), error = function(e)e)
+                         mode = "w"), error = function(e)e)
   })
   if(inherits(pdb, "error")) return(FALSE)
   con <- suppressWarnings({
