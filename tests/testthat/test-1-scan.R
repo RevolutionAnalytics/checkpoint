@@ -1,19 +1,17 @@
 library("testthat")
 context("scan for library, require, :: and :::")
 
+
+collapse <- function(...) paste(..., sep="\n", collapse="\n")
+foo <- function(token, insert){
+  collapse(sprintf(token, insert))
+}
+
+project_root <- file.path(tempdir(), "checkpoint-test-temp")
+dir.create(project_root, showWarnings = FALSE)
+
+
 describe("scanRepoPackages finds dependencies", {
-  
-  
-  collapse <- function(...) paste(..., sep="\n", collapse="\n")
-  
-  
-  foo <- function(token, insert){
-    collapse(sprintf(token, insert))
-  }
-  
-  project_root <- file.path(tempdir(), "checkpoint-test-temp")
-  dir.create(project_root, showWarnings = FALSE)
-  
   code <- collapse(
     foo("library(%s)", letters[1:2]),
     foo("require(%s)", letters[3:4]),
@@ -71,4 +69,40 @@ describe("scanRepoPackages finds dependencies", {
     unlink(project_root)
   })
   
+  
 })
+
+describe("scanRepoPackages allows switching between knitr and Sweave", {
+  code <- collapse(
+    "\\documentclass{article}",
+    "\\begin{document}",
+    "\\SweaveOpts{concordance=TRUE}",
+    "Some text",
+    "<<foo, cache = FALSE>>=",
+    "  library(abc)",
+    "  x <- FALSE",
+    "@",
+    "",
+    "<<bar, eval = x>>=",
+    "  1+1",
+    "@",
+    "Nothing interesting here",
+    "\\end{document}"
+  )
+  codefile <- file.path(project_root, "code.Rnw")
+  cat(code, file = codefile)
+  on.exit(unlink(codefile))
+
+  it("Sweave scans Rnw files with eval=FALSE chunks", {
+    found <- projectScanPackages(project = project_root, use.knitr = FALSE, scan.rnw.with.knitr = FALSE)
+    expect_equal(found$pkgs, "abc")
+    expect_equal(found$error, character(0))
+  })
+  it("knitr scans Rnw files with eval=FALSE chunks", {
+    found <- projectScanPackages(project = project_root, use.knitr = TRUE, scan.rnw.with.knitr = TRUE)
+    expect_equal(found$pkgs, "abc")
+    expect_equal(found$error, character(0))
+  })
+  
+})
+  

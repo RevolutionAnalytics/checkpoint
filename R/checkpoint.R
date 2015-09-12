@@ -13,11 +13,19 @@
 #' \itemize{
 #' \item{Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint}} but you can modify the path using the \code{checkpointLocation} argument.
 #' \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{\link[base]{options}(repos)}}
-#' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
+#' \item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}()}}
 #' }
 #'
 #' @section Resetting the checkpoint:
 #' To reset the checkpoint, simply restart your R session.
+#' 
+#' @section Changing the default MRAN url:
+#' 
+#' \code{checkpoint} uses https by default to download packages (see \link{https://www.r-consortium.org/news/blogs/2015/08/best-practices-using-r-securely}).
+#' \code{checkpoint} Defaults to \link{https://mran.revolutionanalytics.com/snapshot} by default in R versions 3.2.0 and later, if https support is enabled.
+#' 
+#' You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}
+#' 
 #'
 #' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.
 #'
@@ -29,14 +37,22 @@
 #'
 #' @param checkpointLocation File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).
 #'
-#' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.
+#' @param use.knitr If TRUE,  parses all \code{Rmarkdown} files using the \code{knitr} package.
 #' 
-#' @param auto.install.knitr If TRUE and the project contains rmarkdown files, then include \code{knitr} and \code{rmarkdown} in packages to install.
+#' @param auto.install.knitr If TRUE and the project contains rmarkdown files, then automatically included the packages \code{knitr} and \code{rmarkdown} in packages to install.
+#' 
+#' @param scan.rnw.with.knitr If TRUE, uses \code{\link[knitr]{knit}} to parse \code{.Rnw} files, otherwise use \code{\link[utils]{Sweave}}
 #'
 #' @param verbose If TRUE, displays progress messages.
 #'
 #'
-#' @return NULL.  See the \code{Details} section for side effects.
+#' @return Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
+#' \itemize{
+#' \item{files_not_scanned}
+#' \item{pkgs_found}
+#' \item{pkgs_not_on_mran}
+#' \item{pkgs_installed}
+#' }
 #'
 #' @export
 #'
@@ -47,7 +63,9 @@
 checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
                        checkpointLocation = "~/",
                        verbose=TRUE,
-                       use.knitr = system.file(package="knitr") != "", auto.install.knitr = TRUE) {
+                       use.knitr = system.file(package="knitr") != "", 
+                       auto.install.knitr = TRUE,
+                       scan.rnw.with.knitr = FALSE) {
   
   stopIfInvalidDate(snapshotDate)
   
@@ -65,7 +83,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   checkpointLocation = authorizeFileSystemUse(checkpointLocation)
   
   fixRstudioBug()
-  
+
   if(!createFolders(snapshotDate = snapshotDate, checkpointLocation = checkpointLocation))
     stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
   
@@ -91,7 +109,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
-    pkgs <- projectScanPackages(project, use.knitr = use.knitr)
+    pkgs <- projectScanPackages(project, use.knitr = use.knitr, scan.rnw.with.knitr = scan.rnw.with.knitr)
     packages.detected <- pkgs[["pkgs"]]
     mssg(verbose, "- Discovered ", length(packages.detected), " packages")
     

@@ -148,9 +148,10 @@ httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot
       "/2015-09-01/src/contrib/checkTimings.html" else
         "/src/contrib/checkTimings.html"
     )
-    tryCatch(download.file(url = testfile, destfile = tf, 
-                           cacheOK = FALSE, quiet = TRUE, 
-                           mode = "w"), error = function(e)e)
+    try(download.file(url = testfile, destfile = tf, mode = "w",
+                      cacheOK = FALSE, quiet = TRUE),
+        silent = TRUE
+    )
   })
   if(inherits(pdb, "error")) return(FALSE)
   con <- suppressWarnings({
