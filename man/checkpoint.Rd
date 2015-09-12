@@ -7,7 +7,7 @@
 checkpoint(snapshotDate, project = getwd(), R.version,
   scanForPackages = TRUE, checkpointLocation = "~/", verbose = TRUE,
   use.knitr = system.file(package = "knitr") != "",
-  auto.install.knitr = TRUE)
+  auto.install.knitr = TRUE, scan.rnw.with.knitr = FALSE)
 }
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
@@ -25,6 +25,8 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 \item{use.knitr}{If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.}
 
 \item{auto.install.knitr}{If TRUE and the project contains rmarkdown files, then include \code{knitr} and \code{rmarkdown} in packages to install.}
+
+\item{scan.rnw.with.knitr}{If TRUE, uses \code{knitr} to parse \code{.Rnw} files, otherwise use \code{Sweave}}
 }
 \value{
 NULL.  See the \code{Details} section for side effects.

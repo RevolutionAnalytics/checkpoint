@@ -32,6 +32,8 @@
 #' @param use.knitr If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.
 #' 
 #' @param auto.install.knitr If TRUE and the project contains rmarkdown files, then include \code{knitr} and \code{rmarkdown} in packages to install.
+#' 
+#' @param scan.rnw.with.knitr If TRUE, uses \code{knitr} to parse \code{.Rnw} files, otherwise use \code{Sweave}
 #'
 #' @param verbose If TRUE, displays progress messages.
 #'
@@ -47,7 +49,9 @@
 checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackages = TRUE,
                        checkpointLocation = "~/",
                        verbose=TRUE,
-                       use.knitr = system.file(package="knitr") != "", auto.install.knitr = TRUE) {
+                       use.knitr = system.file(package="knitr") != "", 
+                       auto.install.knitr = TRUE,
+                       scan.rnw.with.knitr = FALSE) {
   
   stopIfInvalidDate(snapshotDate)
   
@@ -65,7 +69,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   checkpointLocation = authorizeFileSystemUse(checkpointLocation)
   
   fixRstudioBug()
-  
+
   if(!createFolders(snapshotDate = snapshotDate, checkpointLocation = checkpointLocation))
     stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
   
@@ -91,7 +95,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
-    pkgs <- projectScanPackages(project, use.knitr = use.knitr)
+    pkgs <- projectScanPackages(project, use.knitr = use.knitr, scan.rnw.with.knitr = scan.rnw.with.knitr)
     packages.detected <- pkgs[["pkgs"]]
     mssg(verbose, "- Discovered ", length(packages.detected), " packages")
     
