@@ -22,14 +22,20 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 
 \item{verbose}{If TRUE, displays progress messages.}
 
-\item{use.knitr}{If TRUE, uses parses all \code{Rmarkdown} files using the \code{knitr} package.}
+\item{use.knitr}{If TRUE,  parses all \code{Rmarkdown} files using the \code{knitr} package.}
 
-\item{auto.install.knitr}{If TRUE and the project contains rmarkdown files, then include \code{knitr} and \code{rmarkdown} in packages to install.}
+\item{auto.install.knitr}{If TRUE and the project contains rmarkdown files, then automatically included the packages \code{knitr} and \code{rmarkdown} in packages to install.}
 
-\item{scan.rnw.with.knitr}{If TRUE, uses \code{knitr} to parse \code{.Rnw} files, otherwise use \code{Sweave}}
+\item{scan.rnw.with.knitr}{If TRUE, uses \code{\link[knitr]{knit}} to parse \code{.Rnw} files, otherwise use \code{\link[utils]{Sweave}}}
 }
 \value{
-NULL.  See the \code{Details} section for side effects.
+Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
+\itemize{
+\item{files_not_scanned}
+\item{pkgs_found}
+\item{pkgs_not_on_mran}
+\item{pkgs_installed}
+}
 }
 \description{
 Together, the checkpoint package and the checkpoint server act as a CRAN time machine.  The \code{checkpoint()} function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the checkpoint \code{checkpoint()} function can ensure the reproducibility of your scripts or projects at any time.
@@ -46,13 +52,22 @@ Specifically, the function will:
 \itemize{
 \item{Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint}} but you can modify the path using the \code{checkpointLocation} argument.
 \item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{\link[base]{options}(repos)}}
-\item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}}}
+\item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}()}}
 }
 }
 
 \section{Resetting the checkpoint}{
 
 To reset the checkpoint, simply restart your R session.
+}
+
+\section{Changing the default MRAN url}{
+
+
+\code{checkpoint} uses https by default to download packages (see \link{https://www.r-consortium.org/news/blogs/2015/08/best-practices-using-r-securely}).
+\code{checkpoint} Defaults to \link{https://mran.revolutionanalytics.com/snapshot} by default in R versions 3.2.0 and later, if https support is enabled.
+
+You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}
 }
 \examples{
 \dontrun{
