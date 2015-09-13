@@ -1,12 +1,18 @@
 
-projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = FALSE){
+projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = FALSE, 
+                                auto.install.knitr = FALSE, scan.rnw.with.knitr = FALSE){
   # detect all package dependencies for a project
   dir <- normalizePath(project, winslash='/', mustWork=FALSE)
   pattern <- if(!use.knitr) "\\.[rR]$|\\.[rR]nw$" else
     "\\.[rR]$|\\.[rR]nw$|\\.[rR]md$|\\.[rR]pres$"
   
-  ext_r <- c("R", "Rnw")
-  ext_k <- c("Rmd", "Rpres", "Rhmtl") # knitr / rmarkdown extensions
+  if(scan.rnw.with.knitr){
+    ext_r <- c("R")
+    ext_k <- c("Rmd", "Rpres", "Rhmtl", "Rnw") # knitr / rmarkdown extensions
+  } else {
+    ext_r <- c("R", "Rnw")
+    ext_k <- c("Rmd", "Rpres", "Rhmtl") # knitr / rmarkdown extensions
+  }
   
   makePtn <- function(x)sprintf("\\.(%s)$", paste(c(x, tolower(x)), collapse="|"))
   
@@ -31,12 +37,13 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
     list(pkgs = character(), error = character())
   } else {
     if(interactive()){
-      z <- lapplyProgressBar(R_files, deps_by_ext, dir=dir, verbose=verbose)
+      z <- lapplyProgressBar(R_files, deps_by_ext, dir=dir, verbose=verbose, scan.rnw.with.knitr = scan.rnw.with.knitr)
     } else {
-      z <- lapply(R_files, deps_by_ext, dir=dir, verbose=verbose)
+      z <- lapply(R_files, deps_by_ext, dir=dir, verbose=verbose, scan.rnw.with.knitr = scan.rnw.with.knitr)
     }
     
     pkgs <- sort(unique(do.call(c, lapply(z, "[[", "pkgs"))))
+    if(length(files_k) > 0 && auto.install.knitr) pkgs <- unique(c(pkgs, "knitr", "rmarkdown"))
     error <- sort(unique(do.call(c, lapply(z, "[[", "error"))))
     error <- gsub(sprintf("%s[//|\\]*", dir), "", error)
     list(pkgs = pkgs, error = error)
@@ -65,13 +72,17 @@ getFileExtension <- function(filename)tolower(gsub(".*\\.", "", filename))
 
 
 # ad-hoc dispatch based on the file extension
-deps_by_ext <- function(file, dir, verbose = TRUE) {
+deps_by_ext <- function(file, dir, verbose = TRUE, scan.rnw.with.knitr = FALSE) {
   file <- file.path(dir, file)
   fileext <- getFileExtension(file)
   switch(fileext,
          r = deps.R(file, verbose = verbose),
+         rnw = if(scan.rnw.with.knitr){
+           deps.Rmd(file, verbose = verbose)
+         } else {
+           deps.Rnw(file, verbose = verbose)
+         },
          rmd = deps.Rmd(file, verbose = verbose),
-         rnw = deps.Rnw(file, verbose = verbose),
          rpres = deps.Rpres(file, verbose = verbose),
          txt = deps.txt(file, verbose = verbose),
          stop("Unrecognized file type '", file, "'")
@@ -80,13 +91,13 @@ deps_by_ext <- function(file, dir, verbose = TRUE) {
 
 deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
   tempfile <- tempfile(fileext = ".Rmd")
-  on.exit(unlink(tempfile))
+  showErrors <- getOption("show.error.messages")
+  options("show.error.messages" = FALSE)
+  on.exit({unlink(tempfile); options("show.error.messages" = showErrors)})
   stopifnot(requireNamespace("knitr"))
-  p <- tryCatch(
-    suppressWarnings(suppressMessages(
-      knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE)
-    )), 
-    error = function(e) e
+  p <- try(
+    knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE),
+    silent = TRUE
   )
   
   if(inherits(p, "error")) {
@@ -102,12 +113,12 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
 
 deps.Rnw <- function(file, verbose=TRUE) {
   tempfile <- tempfile(fileext = ".Rnw")
-  on.exit(unlink(tempfile))
-  p <- tryCatch(
-    suppressWarnings(suppressMessages(
-      Stangle(file, output = tempfile, quiet = TRUE)
-    )), 
-    error = function(e) e
+  showErrors <- getOption("show.error.messages")
+  options("show.error.messages" = FALSE)
+  on.exit({unlink(tempfile); options("show.error.messages" = showErrors)})
+  p <- try(
+    Stangle(file, output = tempfile, quiet = TRUE),
+    silent = TRUE
   )
   if(inherits(p, "error")) {
     return(list(pkgs=character(), error=file))
@@ -121,7 +132,6 @@ deps.Rnw <- function(file, verbose=TRUE) {
 }
 
 deps.R <- deps.txt <- function(file, verbose=TRUE) {
-  
   if (!file.exists(file)) {
     warning("No file at path '", file, "'.")
     return(list(pkgs=character(), error=file))

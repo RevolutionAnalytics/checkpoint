@@ -16,8 +16,8 @@ Description: The goal of checkpoint is to solve the problem of package
     Immediately after completion of the rsync mirror process, the process takes a
     snapshot, thus creating the archive. Snapshot archives exist starting from
     2014-09-17.
-Version: 0.3.13
-Date: 2015-09-01
+Version: 0.3.14
+Date: 2015-09-12
 Author: Revolution Analytics
 Maintainer: Andrie de Vries <andrie@revolutionanalytics.com>
 Copyright: Revolution Analytics
@@ -27,7 +27,7 @@ BugReports: http://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
     utils
 Depends:
-    R(>= 3.1.1)
+    R(>= 3.0.0)
 Suggests:
     knitr,
     testthat(>= 0.9),
