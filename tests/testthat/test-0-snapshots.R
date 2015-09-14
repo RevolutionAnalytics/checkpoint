@@ -32,33 +32,35 @@ describe("Validate snapshotDate argument",{
 })
 
 describe("set http/https correctly", {
-  it("resolves to http/https based on R version number", {
-    skip_on_cran()
-    if(getRversion() >= "3.2.0"  && httpsSupported()){
-      expect_warning(
-        getSnapshotUrl("1972-01-01"), 
-        "Unable to find snapshot on MRAN at https://mran.revolutionanalytics.com/snapshot/1972-01-01"
-      )
-    } else {
-      expect_warning(
-        getSnapshotUrl("1972-01-01"), 
-        "Unable to find snapshot on MRAN at http://mran.revolutionanalytics.com/snapshot/1972-01-01"
-      )
-    }
-    
-    dd <- "2014-09-08"
-    mm <- getSnapshotUrl(dd)
-    expect_equal(paste0(mranUrl(), dd), mm)
-    
-    url <- mranUrl()
-    if(getRversion() >= "3.2.0"  && httpsSupported()){
-      expect_equal(url, "https://mran.revolutionanalytics.com/snapshot/")
-    } else {
-      expect_equal(url, "http://mran.revolutionanalytics.com/snapshot/")
-    }
-    
+  test_that("set http/https correctly", {
+    it("resolves to http/https based on R version number", {
+      skip_on_cran()
+      if(getRversion() >= "3.2.0"  && httpsSupported()){
+        expect_warning(
+          getSnapshotUrl("1972-01-01"), 
+          "Unable to find snapshot on MRAN at https://mran.revolutionanalytics.com/snapshot/1972-01-01"
+        )
+      } else {
+        expect_warning(
+          getSnapshotUrl("1972-01-01"), 
+          "Unable to find snapshot on MRAN at http://mran.revolutionanalytics.com/snapshot/1972-01-01"
+        )
+      }
+      
+      dd <- "2014-09-08"
+      mm <- getSnapshotUrl(dd)
+      expect_equal(paste0(mranUrl(), dd), mm)
+      
+      url <- mranUrl()
+      if(getRversion() >= "3.2.0"  && httpsSupported()){
+        expect_equal(url, "https://mran.revolutionanalytics.com/snapshot/")
+      } else {
+        expect_equal(url, "http://mran.revolutionanalytics.com/snapshot/")
+      }
+      
+    })
   })
-})
+})  
 
 
 

@@ -40,138 +40,140 @@ test_checkpoint <- function(https = FALSE, snap.dates){
     # snap_date <- MRAN.default ### <<< use only for interactive testing
     
     describe(paste("checkpoint -", url_prefix, "@", snap_date), {
-      
-      packages.to.test = if(suppressWarnings(require("knitr", quietly = TRUE)))
-        c(packages.to.test.base, packages.to.test.knitr) else 
-          packages.to.test.base
-      
-      project_root <- file.path(tempfile(), "checkpointtemp")
-      dir.create(project_root, recursive = TRUE)
-      
-      if(!interactive()) skip_on_cran()
-      
-      cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
-      
-      it("finds correct MRAN URL", {
-        expect_equal(
-          getSnapshotUrl(snap_date),
-          paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date))
+      test_that(paste("checkpoint -", url_prefix, "@", snap_date), {
         
-      })
-      
-      it("prints message if no packages found", {
-        expect_message(
-          checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
-          "No packages found to install")
+        packages.to.test = if(suppressWarnings(require("knitr", quietly = TRUE)))
+          c(packages.to.test.base, packages.to.test.knitr) else 
+            packages.to.test.base
         
-      })
-      
-      # Write dummy code file to project
-      code = paste("library('", packages.to.test.base, "')", sep ="", collapse ="\n")
-      cat(code, file = file.path(project_root, "code.R"))
-      
-      # Write dummy knitr code file to project
-      code = sprintf("```{r}\n%s\n```", 
-                     paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
-      cat(code, file = file.path(project_root, "code.Rmd"))
-      
-      
-      it("prints progress message", {
-        expect_message(
-          checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
-          "Installing packages used in this project")
-      })
-      
-      it("does not display message whan scanForPackages=FALSE", {
-        expect_false(
-          isTRUE(
-            shows_message("Scanning for packages used in this project")(
-              checkpoint(snap_date, checkpointLocation = checkpointLocation, 
-                         project = project_root, scanForPackages=FALSE)
-            )
-          ))
-      })
-      
-      it("installs all packages correctly in local lib", {
-        pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
-        pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
+        project_root <- file.path(tempfile(), "checkpointtemp")
+        dir.create(project_root, recursive = TRUE)
         
-        pkgNames <- function(pdb)unname(pdb[, "Package"])
+        if(!interactive()) skip_on_cran()
         
-        base.packages <- pkgNames(utils::installed.packages(priority = "base", 
-                                                            lib.loc = .Library,
-                                                            noCache = TRUE))
+        cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
         
-        pkgDepends <- function (pkg) {
-          depMtrx <- tools:::getDepMtrx(pkg, instPkgs = pdbMRAN, local = FALSE)
-          if (is.null(depMtrx)){
-            stop(gettextf("package '%s' was not found", pkg), domain = NA)
+        it("finds correct MRAN URL", {
+          expect_equal(
+            getSnapshotUrl(snap_date),
+            paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date))
+          
+        })
+        
+        it("prints message if no packages found", {
+          expect_message(
+            checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
+            "No packages found to install")
+          
+        })
+        
+        # Write dummy code file to project
+        code = paste("library('", packages.to.test.base, "')", sep ="", collapse ="\n")
+        cat(code, file = file.path(project_root, "code.R"))
+        
+        # Write dummy knitr code file to project
+        code = sprintf("```{r}\n%s\n```", 
+                       paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
+        cat(code, file = file.path(project_root, "code.Rmd"))
+        
+        
+        it("prints progress message", {
+          expect_message(
+            checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
+            "Installing packages used in this project")
+        })
+        
+        it("does not display message whan scanForPackages=FALSE", {
+          expect_false(
+            isTRUE(
+              shows_message("Scanning for packages used in this project")(
+                checkpoint(snap_date, checkpointLocation = checkpointLocation, 
+                           project = project_root, scanForPackages=FALSE)
+              )
+            ))
+        })
+        
+        it("installs all packages correctly in local lib", {
+          pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
+          pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
+          
+          pkgNames <- function(pdb)unname(pdb[, "Package"])
+          
+          base.packages <- pkgNames(utils::installed.packages(priority = "base", 
+                                                              lib.loc = .Library,
+                                                              noCache = TRUE))
+          
+          pkgDepends <- function (pkg) {
+            depMtrx <- tools:::getDepMtrx(pkg, instPkgs = pdbMRAN, local = FALSE)
+            if (is.null(depMtrx)){
+              stop(gettextf("package '%s' was not found", pkg), domain = NA)
+            }
+            tools::getDepList(depMtrx, pdbMRAN)
           }
-          tools::getDepList(depMtrx, pdbMRAN)
-        }
-        
-        packages.expected <- sort(unique(unlist(
-          sapply(setdiff(packages.to.test, c("checkpoint", base.packages)), function(p){
-            z <- pkgDepends(p)
-            c(z$Depends, z$Imports)
-          }, USE.NAMES = FALSE)
-        )))
-        
-        
-        expected.packages <- setdiff(packages.to.test, c("checkpoint", base.packages))
-        
-        expect_true(
-          all(expected.packages %in% pkgNames(pdbLocal))
-        )
-        
-        messageMissingPackages <- function(exp, avail){
-          if(!all(exp %in% avail)) {
-            msg <- paste(
-              "\n",
-              paste0("Expected:", paste(exp, collapse = ", ")),
-              paste0("Actual  :", paste(avail, collapse = ", ")),
-              paste0("Missing :", paste(setdiff(exp, avail), collapse = ", ")),
-              "\n",
-              sep = "\n")
-            cat(msg)
+          
+          packages.expected <- sort(unique(unlist(
+            sapply(setdiff(packages.to.test, c("checkpoint", base.packages)), function(p){
+              z <- pkgDepends(p)
+              c(z$Depends, z$Imports)
+            }, USE.NAMES = FALSE)
+          )))
+          
+          
+          expected.packages <- setdiff(packages.to.test, c("checkpoint", base.packages))
+          
+          expect_true(
+            all(expected.packages %in% pkgNames(pdbLocal))
+          )
+          
+          messageMissingPackages <- function(exp, avail){
+            if(!all(exp %in% avail)) {
+              msg <- paste(
+                "\n",
+                paste0("Expected:", paste(exp, collapse = ", ")),
+                paste0("Actual  :", paste(avail, collapse = ", ")),
+                paste0("Missing :", paste(setdiff(exp, avail), collapse = ", ")),
+                "\n",
+                sep = "\n")
+              cat(msg)
+            }
           }
-        }
-        messageMissingPackages(expected.packages, pkgNames(pdbLocal))
+          messageMissingPackages(expected.packages, pkgNames(pdbLocal))
+          
+          expect_true(
+            all(
+              na.omit(
+                pdbLocal[, "Date/Publication"]) <=
+                as.POSIXct(snap_date, tz="UTC"))
+          )
+          
+        })
+        #       expect_true(
+        #         all(
+        #           sapply(setdiff(packages.to.test, "checkpoint"), function(x){
+        #             if(!base::requireNamespace(x, quietly = TRUE)) {
+        #               message(paste("Unable to load package:", x))
+        #               FALSE
+        #           } else {
+        #             unloadNamespace(x)
+        #             TRUE
+        #           }
+        #           })
+        #         )
+        #       )
         
-        expect_true(
-          all(
-            na.omit(
-              pdbLocal[, "Date/Publication"]) <=
-              as.POSIXct(snap_date, tz="UTC"))
-        )
+        it("uses correct MRAN url", {
+          expect_equal(
+            getOption("repos"),
+            paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date)
+          )
+        })
         
-      })
-      #       expect_true(
-      #         all(
-      #           sapply(setdiff(packages.to.test, "checkpoint"), function(x){
-      #             if(!base::requireNamespace(x, quietly = TRUE)) {
-      #               message(paste("Unable to load package:", x))
-      #               FALSE
-      #           } else {
-      #             unloadNamespace(x)
-      #             TRUE
-      #           }
-      #           })
-      #         )
-      #       )
-      
-      it("uses correct MRAN url", {
-        expect_equal(
-          getOption("repos"),
-          paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date)
-        )
-      })
-      
-      it("uses correct library location", {
-        expect_equal(
-          checkpointPath(snap_date, checkpointLocation, type = "lib"),
-          normalizePath(.libPaths()[1], winslash = "/")
-        )
+        it("uses correct library location", {
+          expect_equal(
+            checkpointPath(snap_date, checkpointLocation, type = "lib"),
+            normalizePath(.libPaths()[1], winslash = "/")
+          )
+        })
       })
     })
     
