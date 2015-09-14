@@ -21,8 +21,8 @@
 #' 
 #' @section Changing the default MRAN url:
 #' 
-#' \code{checkpoint} uses https by default to download packages (see \link{https://www.r-consortium.org/news/blogs/2015/08/best-practices-using-r-securely}).
-#' \code{checkpoint} Defaults to \link{https://mran.revolutionanalytics.com/snapshot} by default in R versions 3.2.0 and later, if https support is enabled.
+#' \code{checkpoint} uses https by default to download packages (see \url{https://www.r-consortium.org/news/blogs/2015/08/best-practices-using-r-securely}).
+#' \code{checkpoint} Defaults to \url{https://mran.revolutionanalytics.com/snapshot} by default in R versions 3.2.0 and later, if https support is enabled.
 #' 
 #' You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}
 #' 
