@@ -15,4 +15,12 @@
 #' @name checkpoint-package
 #' @docType package
 #' @keywords package
+#' 
+#' @importFrom utils Stangle
+#' @importFrom utils available.packages
+#' @importFrom utils compareVersion
+#' @importFrom utils download.file
+#' @importFrom utils installed.packages
+#' @importFrom utils setTxtProgressBar
+#' @importFrom utils txtProgressBar
 NULL
