@@ -31,10 +31,10 @@ describe("Validate snapshotDate argument",{
   })
 })
 
-describe("set http/https correctly", {
-  test_that("set http/https correctly", {
+test_that("set http/https correctly", {
+  skip_on_cran()
+  describe("set http/https correctly", {
     it("resolves to http/https based on R version number", {
-      skip_on_cran()
       if(getRversion() >= "3.2.0"  && httpsSupported()){
         expect_warning(
           getSnapshotUrl("1972-01-01"), 

@@ -8,9 +8,10 @@ Sys.setenv("R_TESTS" = "") # Configure Travis for tests https://github.com/Revol
 current.R <- local({ x = getRversion(); paste(x$major, x$minor, sep=".")})
 
 test.start <- switch(current.R,
-                     "3.1" =  "2014-10-01",
-                     "3.2" =  "2015-05-01",
-                     "2015-05-01"
+                     "3.1" = "2014-10-01",
+                     "3.2" = "2015-05-01",
+                     "3.3" = "2015-09-01",
+                     "2015-09-01"
 )
 
 MRAN.default = test.start[1]
@@ -39,8 +40,9 @@ test_checkpoint <- function(https = FALSE, snap.dates){
     # url_prefix <- "http://"
     # snap_date <- MRAN.default ### <<< use only for interactive testing
     
-    describe(paste("checkpoint -", url_prefix, "@", snap_date), {
-      test_that(paste("checkpoint -", url_prefix, "@", snap_date), {
+    test_that(paste("checkpoint -", url_prefix, "@", snap_date), {
+      if(!interactive()) skip_on_cran()
+      describe(paste("checkpoint -", url_prefix, "@", snap_date), {
         
         packages.to.test = if(suppressWarnings(require("knitr", quietly = TRUE)))
           c(packages.to.test.base, packages.to.test.knitr) else 
@@ -49,7 +51,6 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         project_root <- file.path(tempfile(), "checkpointtemp")
         dir.create(project_root, recursive = TRUE)
         
-        if(!interactive()) skip_on_cran()
         
         cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
         
