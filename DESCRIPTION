@@ -16,10 +16,10 @@ Description: The goal of checkpoint is to solve the problem of package
     Immediately after completion of the rsync mirror process, the process takes a
     snapshot, thus creating the archive. Snapshot archives exist starting from
     2014-09-17.
-Version: 0.3.14
-Date: 2015-09-12
+Version: 0.3.15
+Date: 2015-09-14
 Author: Revolution Analytics
-Maintainer: Andrie de Vries <andrie@revolutionanalytics.com>
+Maintainer: Andrie de Vries <adevries@microsoft.com>
 Copyright: Revolution Analytics
 License: GPL-2
 URL: http://projects.revolutionanalytics.com/documents/rrt/rrtpkgs/

@@ -4,7 +4,10 @@ oldRepos <- getOption("repos")
 setSnapshot()
 
 # Valid snapshot date
+# Connects to MRAN to check for valid URL, so skip on CRAN
+\dontrun{
 setSnapshot("2014-11-16")
+}
 
 # Invalid snapshot date (in future), returns error
 \dontrun{
