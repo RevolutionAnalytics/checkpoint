@@ -162,14 +162,14 @@ rmarkdown::render("example.Rmd")
 
 ## More information
 
+### Project website
+
+https://github.com/RevolutionAnalytics/checkpoint/wiki
+
 ### Issues
 
 Post an issue on the Issue tracker at https://github.com/RevolutionAnalytics/checkpoint/issues
 
-
-### Project website
-
-http://projects.revolutionanalytics.com/rrt/
 
 ### Checkpoint server
 
@@ -177,4 +177,4 @@ https://github.com/RevolutionAnalytics/checkpoint-server
 
 ### Made by
 
-[Revolution Analytics](http://www.revolutionanalytics.com/)
+[Microsoft](https://mran.microsoft.com/)

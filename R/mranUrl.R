@@ -43,7 +43,7 @@ stopIfInvalidDate <- function(snapshotDate, verbose = TRUE){
 # }
 
 mranUrlDefault <- function(){
-  http = "http://mran.revolutionanalytics.com/"
+  http = "http://mran.microsoft.com/"
   https = gsub("http://", replacement = "https://", http)
   if(getRversion() >= "3.2.0" && httpsSupported()) {
     https 
@@ -109,7 +109,7 @@ setCheckpointUrl <- function(url){
 
 #' Read list of available snapshot dates from MRAN url.
 #' 
-#' @param mranRootUrl URL of MRAN root, e.g. \code{"http://mran.revolutionanalytics.com/snapshot/"}
+#' @param mranRootUrl URL of MRAN root, e.g. \code{"http://mran.microsoft.com/snapshot/"}
 #' 
 #' @export
 getValidSnapshots <- function(mranRootUrl = mranUrl()){
@@ -140,7 +140,7 @@ url <- function(url){
   }
 }
 
-httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot"){
+httpsSupported <- function(mran = "https://mran.microsoft.com/snapshot"){
   tf <- tempfile()
   on.exit(unlink(tf))
   pdb <- suppressWarnings({
@@ -171,9 +171,9 @@ httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot
 }
 
 
-is.404 <- function(mran){
+is.404 <- function(mran, warn = TRUE){
   if(isHttpsUrl(mran) && !httpsSupported(mran)) {
-    warning("It seems that https URLs are not supported on this platform")
+    if(warn) warning("It seems that https URLs are not supported on this platform")
     return(TRUE)
   }
   con <- url(mran)
