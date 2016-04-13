@@ -39,12 +39,12 @@ test_that("set http/https correctly", {
       if(getRversion() >= "3.2.0"  && httpsSupported()){
         expect_warning(
           getSnapshotUrl("1972-01-01"), 
-          "Unable to find snapshot on MRAN at https://mran.revolutionanalytics.com/snapshot/1972-01-01"
+          "Unable to find snapshot on MRAN at https://mran.microsoft.com/snapshot/1972-01-01"
         )
       } else {
         expect_warning(
           getSnapshotUrl("1972-01-01"), 
-          "Unable to find snapshot on MRAN at http://mran.revolutionanalytics.com/snapshot/1972-01-01"
+          "Unable to find snapshot on MRAN at http://mran.microsoft.com/snapshot/1972-01-01"
         )
       }
       
@@ -54,9 +54,9 @@ test_that("set http/https correctly", {
       
       url <- mranUrl()
       if(getRversion() >= "3.2.0"  && httpsSupported()){
-        expect_equal(url, "https://mran.revolutionanalytics.com/snapshot/")
+        expect_equal(url, "https://mran.microsoft.com/snapshot/")
       } else {
-        expect_equal(url, "http://mran.revolutionanalytics.com/snapshot/")
+        expect_equal(url, "http://mran.microsoft.com/snapshot/")
       }
       
     })

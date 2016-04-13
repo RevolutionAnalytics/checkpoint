@@ -57,7 +57,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         it("finds correct MRAN URL", {
           expect_equal(
             getSnapshotUrl(snap_date),
-            paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date))
+            paste0(url_prefix, "mran.microsoft.com/snapshot/", snap_date))
           
         })
         
@@ -136,7 +136,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         it("uses correct MRAN url", {
           expect_equal(
             getOption("repos"),
-            paste0(url_prefix, "mran.revolutionanalytics.com/snapshot/", snap_date)
+            paste0(url_prefix, "mran.microsoft.com/snapshot/", snap_date)
           )
         })
         
@@ -169,14 +169,14 @@ initialUrl <- getOption("checkpoint.mranUrl")
 if(getRversion() >= "3.2.0" && httpsSupported()){
   context("https")
   
-  options(checkpoint.mranUrl = "https://mran.revolutionanalytics.com/")
+  options(checkpoint.mranUrl = "https://mran.microsoft.com/")
   test_checkpoint(http = TRUE, snap.dates = MRAN.default)
   
   options(checkpoint.mranUrl = NULL)
 }
 
 context("http")
-options(checkpoint.mranUrl = "http://mran.revolutionanalytics.com/")
+options(checkpoint.mranUrl = "http://mran.microsoft.com/")
 test_checkpoint(http = FALSE, snap.dates = MRAN.default)
 options(checkpoint.mranUrl = initialUrl)
 

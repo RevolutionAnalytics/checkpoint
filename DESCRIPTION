@@ -12,17 +12,17 @@ Description: The goal of checkpoint is to solve the problem of package
     checkpoint() can ensure the reproducibility of your scripts or projects at any
     time. To create the snapshot archives, once a day (at midnight UTC) Revolution
     Analytics refreshes the Austria CRAN mirror, on the "Managed R Archived Network"
-    server (http://mran.revolutionanalytics.com/). Immediately after completion
+    server (http://mran.microsoft.com/). Immediately after completion
     of the rsync mirror process, the process takes a snapshot, thus creating the
     archive. Snapshot archives exist starting from 2014-09-17.
-Version: 0.3.15
-Date: 2015-09-14
-Author: Revolution Analytics
+Version: 0.3.16
+Date: 2016-04-13
+Author: Microsoft Corporation
 Maintainer: Andrie de Vries <adevries@microsoft.com>
-Copyright: Revolution Analytics
+Copyright: Microsoft
 License: GPL-2
-URL: http://projects.revolutionanalytics.com/documents/rrt/rrtpkgs/
-BugReports: http://www.github.com/RevolutionAnalytics/checkpoint/issues
+URL: https://github.com/RevolutionAnalytics/checkpoint
+BugReports: https://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
     utils
 Depends:
