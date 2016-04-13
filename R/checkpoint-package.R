@@ -23,4 +23,6 @@
 #' @importFrom utils installed.packages
 #' @importFrom utils setTxtProgressBar
 #' @importFrom utils txtProgressBar
+#' @importFrom utils capture.output
+#' @importFrom utils write.table
 NULL
