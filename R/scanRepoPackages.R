@@ -96,7 +96,9 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
   on.exit({unlink(tempfile); options("show.error.messages" = showErrors)})
   stopifnot(requireNamespace("knitr"))
   p <- try(
-    knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE),
+    suppressWarnings(
+      knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE)
+    ),
     silent = TRUE
   )
   
