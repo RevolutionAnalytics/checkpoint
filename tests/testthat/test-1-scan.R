@@ -1,4 +1,5 @@
-library("testthat")
+if(interactive()) library(testthat)
+
 context("scan for library, require, :: and :::")
 
 
@@ -26,7 +27,7 @@ describe("scanRepoPackages finds dependencies", {
     codefile <- file.path(project_root, "code.R")
     cat(code, file = codefile)
     
-    found <- projectScanPackages(project = project_root)
+    found <- checkpoint:::projectScanPackages(project = project_root)
     expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
     
     file.remove(codefile)

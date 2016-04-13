@@ -171,9 +171,9 @@ httpsSupported <- function(mran = "https://mran.revolutionanalytics.com/snapshot
 }
 
 
-is.404 <- function(mran){
+is.404 <- function(mran, warn = TRUE){
   if(isHttpsUrl(mran) && !httpsSupported(mran)) {
-    warning("It seems that https URLs are not supported on this platform")
+    if(warn) warning("It seems that https URLs are not supported on this platform")
     return(TRUE)
   }
   con <- url(mran)
