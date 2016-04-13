@@ -104,22 +104,6 @@ test_checkpoint <- function(https = FALSE, snap.dates){
                                                               lib.loc = .Library,
                                                               noCache = TRUE))
           
-          pkgDepends <- function (pkg) {
-            depMtrx <- tools:::getDepMtrx(pkg, instPkgs = pdbMRAN, local = FALSE)
-            if (is.null(depMtrx)){
-              stop(gettextf("package '%s' was not found", pkg), domain = NA)
-            }
-            tools::getDepList(depMtrx, pdbMRAN)
-          }
-          
-          packages.expected <- sort(unique(unlist(
-            sapply(setdiff(packages.to.test, c("checkpoint", base.packages)), function(p){
-              z <- pkgDepends(p)
-              c(z$Depends, z$Imports)
-            }, USE.NAMES = FALSE)
-          )))
-          
-          
           expected.packages <- setdiff(packages.to.test, c("checkpoint", base.packages))
           
           expect_true(
@@ -148,20 +132,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
           )
           
         })
-        #       expect_true(
-        #         all(
-        #           sapply(setdiff(packages.to.test, "checkpoint"), function(x){
-        #             if(!base::requireNamespace(x, quietly = TRUE)) {
-        #               message(paste("Unable to load package:", x))
-        #               FALSE
-        #           } else {
-        #             unloadNamespace(x)
-        #             TRUE
-        #           }
-        #           })
-        #         )
-        #       )
-        
+
         it("uses correct MRAN url", {
           expect_equal(
             getOption("repos"),
