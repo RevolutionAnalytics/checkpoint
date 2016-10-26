@@ -106,29 +106,39 @@ setCheckpointUrl <- function(url){
 #  ------------------------------------------------------------------------
 
 
+tryUrl <- function(url){
+  con <- tryCatch(url(url), error = function(e)e)
+  msg <- paste0(
+    "Invalid value for mranRootUrl.\n", 
+    "Ensure you use the correct http://,  https:// or file:/// prefix."
+  )
+  if(inherits(con, "error")) {
+    stop(msg, call. = FALSE)
+  }
+  con
+}
 
 #' Read list of available snapshot dates from MRAN url.
 #' 
-#' @param mranRootUrl URL of MRAN root, e.g. \code{"http://mran.microsoft.com/snapshot/"}
+#' @param mranRootUrl URL of MRAN root, e.g. \code{"http://mran.microsoft.com/snapshot/"} or \code{"file:///local/path"}
 #' 
 #' @export
 getValidSnapshots <- function(mranRootUrl = mranUrl()){
-  con <- url(mranRootUrl)
+  con <- tryUrl(mranRootUrl)
   on.exit(close(con))
-  if (inherits(con, "file")) {
-    return(dir(summary(con)$description))
+  text <- if (inherits(con, "file")) {
+    dir(summary(con)$description)
+  } else {
+    tryCatch(readLines(con, warn = TRUE), error = function(e) e)
   }
-  else {
-    text <- tryCatch(readLines(con, warn = TRUE), error = function(e) e)
-    if (inherits(text, "error")) {
-      stop(sprintf("Unable to download from MRAN: %s", 
-        text$message))
-    }
-    ptn <- "\\d{4}-\\d{2}-\\d{2}"
-    idx <- grep(ptn, text)
-    return(gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", ptn), 
-      "\\1", text[idx]))
+  if (inherits(text, "error")) {
+    stop(sprintf("Unable to download from MRAN: %s", 
+                 text$message))
   }
+  ptn <- "\\d{4}-\\d{2}-\\d{2}"
+  idx <- grep(ptn, text)
+  gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", ptn), 
+       "\\1", text[idx])
 }
 
 
@@ -185,14 +195,14 @@ is.404 <- function(mran, warn = TRUE){
     if(warn) warning("It seems that https URLs are not supported on this platform")
     return(TRUE)
   }
-  con <- url(mran)
+  con <- tryUrl(mran)
   on.exit(close(con))
   if(inherits(con, "file")) {
     dirPath <- summary(con)$description
-    return(!dir.exists(dirPath))
+    !dir.exists(dirPath)
   } else {
     x <- suppressWarnings(tryCatch(readLines(con, warn = FALSE), 
-                                     error = function(e) e))
+                                   error = function(e) e))
     if (inherits(x, "error")) 
       return(TRUE)
     ptn <- "404.*Not Found"

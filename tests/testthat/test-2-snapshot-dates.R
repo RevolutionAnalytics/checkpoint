@@ -35,4 +35,14 @@ describe("getValidSnapshots finds valid dates", {
       })
     })
   })
+  
+  it("works on local file", {
+    msg <- "Ensure you use the correct http://,  https:// or file:/// prefix."
+    
+    localMRAN <- system.file("tests/localMRAN", package = "checkpoint")
+    expect_error(getValidSnapshots(localMRAN), msg)
+    getValidSnapshots(paste0("file:///", localMRAN))
+    
+  })
+  
 })
