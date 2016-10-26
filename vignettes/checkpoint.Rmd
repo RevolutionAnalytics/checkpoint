@@ -46,7 +46,7 @@ Using `checkpoint` is simple:
 When you create a checkpoint, the `checkpoint()` function performs the following:
 
 - Creates a snapshot folder to install packages. This library folder is located at `~/.checkpoint`
-- Scans your project folder for all packages used. Specifically, it searches for all instances of `library()` and `requires()` in your code.
+- Scans your project folder for all packages used. Specifically, it searches for all instances of `library()` and `require()` in your code.
 - Installs these packages from the MRAN snapshot into your snapshot folder using `install.packages()`
 - Sets options for your CRAN mirror to point to a MRAN snapshot, i.e. modify `options(repos)`
 
