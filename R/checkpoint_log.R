@@ -7,8 +7,10 @@ checkpoint_log <- function(log, snapshotDate, pkg, file = NULL){
   extract_pkgs <- function(log){
     ptn <- "(also installing the dependencies )(.*).*"
     z <- gsub(ptn, "\\2", log[grep(ptn, log)])
+    z <- iconv(z, to = "ASCII", sub = "") # strip quotin
     if(length(z) == 0) return(z)
-    z <- gsub("[‘’'\"]*", "", z, useBytes = TRUE)
+    # z <- gsub("[‘’'`‘\"]*", "", z, useBytes = FALSE)
+    # z <- gsub("[‘’'`‘\"]*", "", z, useBytes = TRUE)
     strsplit(z, ", ")[[1]]
   }
   
@@ -17,7 +19,8 @@ checkpoint_log <- function(log, snapshotDate, pkg, file = NULL){
     snapshotDate = snapshotDate,
     pkg = c(extract_pkgs(log), pkg),
     bytes = extract_bytes(log),
-    stringsAsFactors = FALSE
+    stringsAsFactors = FALSE,
+    check.names = FALSE
   )
   if(is.null(file)){
     z
