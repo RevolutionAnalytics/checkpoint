@@ -113,13 +113,22 @@ setCheckpointUrl <- function(url){
 #' 
 #' @export
 getValidSnapshots <- function(mranRootUrl = mranUrl()){
-  text <- tryCatch(readLines(mranRootUrl, warn = TRUE), error=function(e)e)
-  if(inherits(text, "error")) {
-    stop(sprintf("Unable to download from MRAN: %s", text$message))
+  con <- url(mranRootUrl)
+  on.exit(close(con))
+  if (inherits(con, "file")) {
+    return(dir(summary(con)$description))
   }
-  ptn <- "\\d{4}-\\d{2}-\\d{2}"
-  idx <- grep(ptn, text)
-  gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", ptn), "\\1", text[idx])
+  else {
+    text <- tryCatch(readLines(con, warn = TRUE), error = function(e) e)
+    if (inherits(text, "error")) {
+      stop(sprintf("Unable to download from MRAN: %s", 
+        text$message))
+    }
+    ptn <- "\\d{4}-\\d{2}-\\d{2}"
+    idx <- grep(ptn, text)
+    return(gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", ptn), 
+      "\\1", text[idx]))
+  }
 }
 
 
@@ -178,13 +187,17 @@ is.404 <- function(mran, warn = TRUE){
   }
   con <- url(mran)
   on.exit(close(con))
-  x <- suppressWarnings(
-    tryCatch(readLines(con, warn = FALSE), 
-             error = function(e)e)
-  )
-  if(inherits(x, "error")) return(TRUE)
-  ptn <- "404.*Not Found"
-  any(grepl(ptn, x))
+  if(inherits(con, "file")) {
+    dirPath <- summary(con)$description
+    return(!dir.exists(dirPath))
+  } else {
+    x <- suppressWarnings(tryCatch(readLines(con, warn = FALSE), 
+                                     error = function(e) e))
+    if (inherits(x, "error")) 
+      return(TRUE)
+    ptn <- "404.*Not Found"
+    any(grepl(ptn, x))
+  }
 }
 
 getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl()){

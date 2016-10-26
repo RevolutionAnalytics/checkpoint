@@ -60,7 +60,7 @@ Then send this script to your collaborators.  When they run this script on their
 When you create a checkpoint, the `checkpoint()` function performs the following:
 
 - Creates a snapshot folder to install packages. This library folder is located at `~/.checkpoint`
-- Scans your project folder for all packages used. Specifically, it searches for all instances of `library()` and `requires()` in your code.
+- Scans your project folder for all packages used. Specifically, it searches for all instances of `library()` and `require()` in your code.
 - Installs these packages from the MRAN snapshot into your snapshot folder using `install.packages()`
 - Sets options for your CRAN mirror to point to a MRAN snapshot, i.e. modify `options(repos)`
 
@@ -178,3 +178,8 @@ https://github.com/RevolutionAnalytics/checkpoint-server
 ### Made by
 
 [Microsoft](https://mran.microsoft.com/)
+
+## Code of conduct
+
+This project has adopted the [Microsoft Open Source Code of Conduct](http://microsoft.github.io/codeofconduct). For more information see the [Code of Conduct FAQ](http://microsoft.github.io/codeofconduct/faq.md) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+

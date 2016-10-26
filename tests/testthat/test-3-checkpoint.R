@@ -3,8 +3,6 @@ if(interactive()) library(testthat)
 
 Sys.setenv("R_TESTS" = "") # Configure Travis for tests https://github.com/RevolutionAnalytics/checkpoint/issues/139
 
-# MRAN.start = as.Date("2014-09-17")
-
 current.R <- local({ x = getRversion(); paste(x$major, x$minor, sep=".")})
 
 test.start <- switch(current.R,
@@ -16,10 +14,10 @@ test.start <- switch(current.R,
 
 MRAN.default = test.start[1]
 
-packages.to.test.base = c("MASS", "plyr", "httr", "XML", "checkpoint", "stats", "stats4", "compiler")
-packages.to.test.base = c("MASS", "chron", "checkpoint", "stats", "stats4", "compiler")
-packages.to.test.knitr = c("foreach")
-checkpointLocation = dirname(tempdir())
+packages.to.test.base <- c("MASS", "plyr", "httr", "XML", "checkpoint", "stats", "stats4", "compiler")
+packages.to.test.base <- c("MASS", "chron", "checkpoint", "stats", "stats4", "compiler")
+packages.to.test.knitr <- c("foreach")
+checkpointLocation <- tempdir()
 dir.create(file.path(checkpointLocation, ".checkpoint"), showWarnings = FALSE)
 
 
@@ -87,13 +85,13 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         it("does not display message whan scanForPackages=FALSE", {
           expect_false(
             isTRUE(
-              shows_message("Scanning for packages used in this project")(
-                checkpoint(snap_date, checkpointLocation = checkpointLocation, 
+              shows_message("Scanning for packages used in this project",
+                checkpoint(snap_date, checkpointLocation = checkpointLocation,
                            project = project_root, scanForPackages=FALSE)
               )
             ))
         })
-        
+
         it("installs all packages correctly in local lib", {
           pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
           pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
