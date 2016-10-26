@@ -26,6 +26,15 @@
 #' 
 #' You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}
 #' 
+#' @section Log file:
+#' 
+#' As a side effect, the \code{checkpoint} function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the \code{checkpointLocation}. For example, if \code{checkpointLocation} is the user home folder (the default) then the log file is at \code{~/.checkpoint/checkpoint_log.csv}. This file contains columns for:
+#' \itemize{
+#' \item{\code{timestamp}}
+#' \item{\code{snapshotDate}}
+#' \item{\code{pkg}}
+#' \item{\code{bytes}}
+#' }
 #'
 #' @param snapshotDate Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.
 #'
@@ -53,6 +62,7 @@
 #' \item{pkgs_not_on_mran}
 #' \item{pkgs_installed}
 #' }
+#' 
 #'
 #' @export
 #'
@@ -83,7 +93,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   checkpointLocation = authorizeFileSystemUse(checkpointLocation)
   
   fixRstudioBug()
-
+  
   if(!createFolders(snapshotDate = snapshotDate, checkpointLocation = checkpointLocation))
     stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
   
@@ -158,11 +168,22 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
         mssg(verbose, " - Previously installed ", sQuote(pkg))
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
-        suppressWarnings(
-          utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = TRUE,
-                                  INSTALL_opts = "--no-lock")
-        )
+        download_messages <- capture.output({ 
+          suppressWarnings(
+            utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = FALSE,
+                                    INSTALL_opts = "--no-lock")
+          )
+        }, type = "message")
       }
+      checkpoint_log(
+        download_messages,
+        snapshotDate = snapshotDate,
+        pkg,
+        file = file.path(
+          checkpointPath(snapshotDate, checkpointLocation, type = "root"),
+          "checkpoint_log.csv")
+        )
+
     }
   } else if(length(packages.detected > 0)){
     mssg(verbose, "All detected packages already installed")

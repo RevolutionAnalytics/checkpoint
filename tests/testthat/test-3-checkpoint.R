@@ -147,6 +147,14 @@ test_checkpoint <- function(https = FALSE, snap.dates){
       })
     })
     
+    test_that("checkpoint writes log file", {
+      logfile <- file.path(checkpointLocation, ".checkpoint/checkpoint_log.csv")
+      expect_true(file.exists(logfile))
+      logdata <- read.csv(logfile, nrows = 5)
+      expect_is(logdata, "data.frame")
+      expect_length(names(logdata), 4)
+    })
+    
     # cleanup
     cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
     resetLibPaths(originalLibPaths)

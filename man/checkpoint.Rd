@@ -69,6 +69,18 @@ To reset the checkpoint, simply restart your R session.
 
 You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}
 }
+
+\section{Log file}{
+
+
+As a side effect, the \code{checkpoint} function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the \code{checkpointLocation}. For example, if \code{checkpointLocation} is the user home folder (the default) then the log file is at \code{~/.checkpoint/checkpoint_log.csv}. This file contains columns for:
+\itemize{
+\item{\code{timestamp}}
+\item{\code{snapshotDate}}
+\item{\code{pkg}}
+\item{\code{bytes}}
+}
+}
 \examples{
 \dontrun{
 
