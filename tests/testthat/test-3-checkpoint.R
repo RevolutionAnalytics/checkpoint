@@ -87,13 +87,13 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         it("does not display message whan scanForPackages=FALSE", {
           expect_false(
             isTRUE(
-              shows_message("Scanning for packages used in this project")(
-                checkpoint(snap_date, checkpointLocation = checkpointLocation, 
+              shows_message("Scanning for packages used in this project",
+                checkpoint(snap_date, checkpointLocation = checkpointLocation,
                            project = project_root, scanForPackages=FALSE)
               )
             ))
         })
-        
+
         it("installs all packages correctly in local lib", {
           pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
           pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
