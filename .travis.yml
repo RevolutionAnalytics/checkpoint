@@ -1,4 +1,8 @@
 language: r
+r:
+  - release
+  - devel
+
 sudo: required
 
 env: NOT_CRAN="true"
