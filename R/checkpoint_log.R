@@ -9,8 +9,6 @@ checkpoint_log <- function(log, snapshotDate, pkg, file = NULL){
     z <- gsub(ptn, "\\2", log[grep(ptn, log)])
     z <- iconv(z, to = "ASCII", sub = "") # strip quotin
     if(length(z) == 0) return(z)
-    # z <- gsub("[‘’'`‘\"]*", "", z, useBytes = FALSE)
-    # z <- gsub("[‘’'`‘\"]*", "", z, useBytes = TRUE)
     strsplit(z, ", ")[[1]]
   }
   
