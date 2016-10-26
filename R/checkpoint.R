@@ -83,7 +83,7 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
   checkpointLocation = authorizeFileSystemUse(checkpointLocation)
   
   fixRstudioBug()
-
+  
   if(!createFolders(snapshotDate = snapshotDate, checkpointLocation = checkpointLocation))
     stop("Unable to create checkpoint folders at checkpointLocation = \"", checkpointLocation, "\"")
   
@@ -158,11 +158,22 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
         mssg(verbose, " - Previously installed ", sQuote(pkg))
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
-        suppressWarnings(
-          utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = TRUE,
-                                  INSTALL_opts = "--no-lock")
-        )
+        download_messages <- capture.output({ 
+          suppressWarnings(
+            utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = FALSE,
+                                    INSTALL_opts = "--no-lock")
+          )
+        }, type = "message")
       }
+      checkpoint_log(
+        download_messages,
+        snapshotDate = snapshotDate,
+        pkg,
+        file = file.path(
+          checkpointPath(snapshotDate, checkpointLocation, type = "root"),
+          ".checkpoint_log.csv")
+        )
+
     }
   } else if(length(packages.detected > 0)){
     mssg(verbose, "All detected packages already installed")
