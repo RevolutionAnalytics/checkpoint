@@ -53,6 +53,8 @@
 #' @param scan.rnw.with.knitr If TRUE, uses \code{\link[knitr]{knit}} to parse \code{.Rnw} files, otherwise use \code{\link[utils]{Sweave}}
 #'
 #' @param verbose If TRUE, displays progress messages.
+#' 
+#' @param forceInstall If TRUE. forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.
 #'
 #'
 #' @return Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
@@ -75,7 +77,8 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
                        verbose=TRUE,
                        use.knitr = system.file(package="knitr") != "", 
                        auto.install.knitr = TRUE,
-                       scan.rnw.with.knitr = FALSE) {
+                       scan.rnw.with.knitr = FALSE,
+                       forceInstall = FALSE) {
   
   stopIfInvalidDate(snapshotDate)
   
@@ -135,8 +138,20 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
     files.not.parsed <- character(0)
   }
   
-  
-  packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
+  if(forceInstall && packages.detected > 0){
+    to_remove <- as.vector(unlist(tools::package_dependencies(packages.detected)))
+    to_remove <- c(packages.detected, to_remove)
+    tryCatch(
+      suppressMessages(suppressWarnings(
+        utils::remove.packages(to_remove)
+      )),
+      error = function(e)e
+    )
+    packages.to.install <- packages.detected
+    packages.installed <- character(0)
+  } else {
+    packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
+  }
   
   # detach checkpointed pkgs already loaded
   
@@ -174,16 +189,16 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
                                     INSTALL_opts = "--no-lock")
           )
         }, type = "message")
-      }
-      checkpoint_log(
-        download_messages,
-        snapshotDate = snapshotDate,
-        pkg,
-        file = file.path(
-          checkpointPath(snapshotDate, checkpointLocation, type = "root"),
-          "checkpoint_log.csv")
+        checkpoint_log(
+          download_messages,
+          snapshotDate = snapshotDate,
+          pkg,
+          file = file.path(
+            checkpointPath(snapshotDate, checkpointLocation, type = "root"),
+            "checkpoint_log.csv")
         )
-
+      }
+      
     }
   } else if(length(packages.detected > 0)){
     mssg(verbose, "All detected packages already installed")

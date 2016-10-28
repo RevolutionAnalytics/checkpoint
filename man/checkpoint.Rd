@@ -7,7 +7,8 @@
 checkpoint(snapshotDate, project = getwd(), R.version,
   scanForPackages = TRUE, checkpointLocation = "~/", verbose = TRUE,
   use.knitr = system.file(package = "knitr") != "",
-  auto.install.knitr = TRUE, scan.rnw.with.knitr = FALSE)
+  auto.install.knitr = TRUE, scan.rnw.with.knitr = FALSE,
+  forceInstall = FALSE)
 }
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
@@ -27,6 +28,8 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 \item{auto.install.knitr}{If TRUE and the project contains rmarkdown files, then automatically included the packages \code{knitr} and \code{rmarkdown} in packages to install.}
 
 \item{scan.rnw.with.knitr}{If TRUE, uses \code{\link[knitr]{knit}} to parse \code{.Rnw} files, otherwise use \code{\link[utils]{Sweave}}}
+
+\item{forceInstall}{If TRUE. forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.}
 }
 \value{
 Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
