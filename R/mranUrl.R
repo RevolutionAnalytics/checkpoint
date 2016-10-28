@@ -120,7 +120,7 @@ tryUrl <- function(url){
 
 #' Read list of available snapshot dates from MRAN url.
 #' 
-#' @param mranRootUrl URL of MRAN root, e.g. \code{"http://mran.microsoft.com/snapshot/"} or \code{"file:///local/path"}
+#' @param mranRootUrl URL of MRAN root, e.g. \code{"https://mran.microsoft.com/snapshot/"} or \code{"file:///local/path"}
 #' 
 #' @export
 getValidSnapshots <- function(mranRootUrl = mranUrl()){

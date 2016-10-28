@@ -7,7 +7,7 @@
 getValidSnapshots(mranRootUrl = mranUrl())
 }
 \arguments{
-\item{mranRootUrl}{URL of MRAN root, e.g. \code{"http://mran.microsoft.com/snapshot/"} or \code{"file:///local/path"}}
+\item{mranRootUrl}{URL of MRAN root, e.g. \code{"https://mran.microsoft.com/snapshot/"} or \code{"file:///local/path"}}
 }
 \description{
 Read list of available snapshot dates from MRAN url.
