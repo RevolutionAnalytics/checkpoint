@@ -5,7 +5,9 @@ r:
 
 sudo: required
 
-env: NOT_CRAN="true"
+env: 
+  - NOT_CRAN="true"
+  - NOT_CRAN="false"
 
 r_binary_packages:
   - testthat

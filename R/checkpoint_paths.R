@@ -44,7 +44,8 @@ authorizeFileSystemUse =
         stop("Can't use a non-directory as checkpoint root")}
     else {
       if(interactive()) {
-        answer = readline(paste("Can I create directory", checkpointRoot, "for internal checkpoint use?(y/n)\n"))
+        message(paste("Can I create directory", checkpointRoot, "for internal checkpoint use?\n"))
+        answer = readline("Continue (y/n)? ")
         if(tolower(answer) != "y")
           stop("Cannot proceed without access to checkpoint directory")}
       else {

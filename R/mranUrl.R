@@ -107,7 +107,7 @@ setCheckpointUrl <- function(url){
 
 
 tryUrl <- function(url){
-  con <- tryCatch(url(url), error = function(e)e)
+  con <- suppressWarnings(tryCatch(url(url), error = function(e)e))
   msg <- paste0(
     "Invalid value for mranRootUrl.\n", 
     "Ensure you use the correct http://,  https:// or file:/// prefix."
@@ -129,7 +129,7 @@ getValidSnapshots <- function(mranRootUrl = mranUrl()){
   text <- if (inherits(con, "file")) {
     dir(summary(con)$description)
   } else {
-    tryCatch(readLines(con, warn = TRUE), error = function(e) e)
+    suppressWarnings(tryCatch(readLines(con, warn = TRUE), error = function(e) e))
   }
   if (inherits(text, "error")) {
     stop(sprintf("Unable to download from MRAN: %s", 

@@ -86,12 +86,12 @@ test_checkpoint <- function(https = FALSE, snap.dates){
           expect_false(
             isTRUE(
               shows_message("Scanning for packages used in this project",
-                checkpoint(snap_date, checkpointLocation = checkpointLocation,
-                           project = project_root, scanForPackages=FALSE)
+                            checkpoint(snap_date, checkpointLocation = checkpointLocation,
+                                       project = project_root, scanForPackages=FALSE)
               )
             ))
         })
-
+        
         it("installs all packages correctly in local lib", {
           pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
           pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
@@ -130,7 +130,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
           )
           
         })
-
+        
         it("uses correct MRAN url", {
           expect_equal(
             getOption("repos"),
@@ -144,16 +144,19 @@ test_checkpoint <- function(https = FALSE, snap.dates){
             normalizePath(.libPaths()[1], winslash = "/")
           )
         })
+        
+        it("writes log file in csv format", {
+          logfile <- file.path(checkpointLocation, ".checkpoint/checkpoint_log.csv")
+          expect_true(file.exists(logfile))
+          logdata <- read.csv(logfile, nrows = 5)
+          expect_is(logdata, "data.frame")
+          expect_length(names(logdata), 4)
+        })
+        
       })
+      
     })
     
-    test_that("checkpoint writes log file", {
-      logfile <- file.path(checkpointLocation, ".checkpoint/checkpoint_log.csv")
-      expect_true(file.exists(logfile))
-      logdata <- read.csv(logfile, nrows = 5)
-      expect_is(logdata, "data.frame")
-      expect_length(names(logdata), 4)
-    })
     
     # cleanup
     cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
