@@ -23,7 +23,7 @@ RRT is a collection of R packages and the checkpoint server that together make y
 
 ### The checkpoint server
 
-To achieve reproducibility, daily snapshots of CRAN are stored on our checkpoint server. At midnight UTC each day, our [mirror](http://mran.microsoft.com/) of Austria CRAN is refreshed. When the rsync process is complete, the checkpoint server takes and stores a snapshot of the CRAN mirror as it was at that very moment. These daily snapshots can then be accessed on the [MRAN website](http://mran.microsoft.com/snapshot) or using the `checkpoint` package, which installs and consistently use these packages just as they existed at midnight UTC on a specified snapshot date. Daily snapshots are available as far back as `2014-09-17`. For more information, visit the [checkpoint server GitHub site](https://github.com/RevolutionAnalytics/checkpoint-server).
+To achieve reproducibility, daily snapshots of CRAN are stored on our checkpoint server. At midnight UTC each day, we refresh our mirror of [CRAN](https://cran.r-project.org/) is refreshed. When the rsync process is complete, the checkpoint server takes and stores a snapshot of the CRAN mirror as it was at that very moment. These daily snapshots can then be accessed on the [MRAN website](https://mran.microsoft.com/snapshot) or using the `checkpoint` package, which installs and consistently use these packages just as they existed at midnight UTC on a specified snapshot date. Daily snapshots are available as far back as `2014-09-17`. For more information, visit the [checkpoint server GitHub site](https://github.com/RevolutionAnalytics/checkpoint-server).
 
 ![checkpoint server](checkpoint-server.png)
 
