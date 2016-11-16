@@ -188,20 +188,23 @@ checkpoint <- function(snapshotDate, project = getwd(), R.version, scanForPackag
         mssg(verbose, " - Previously installed ", sQuote(pkg))
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
-        download_messages <- capture.output({ 
-          suppressWarnings(
-            utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = FALSE,
-                                    INSTALL_opts = "--no-lock")
+        message(pkg)
+        tryCatch({
+          download_messages <- capture.output({ 
+            suppressWarnings(
+              utils::install.packages(pkgs = pkg, verbose = FALSE, quiet = FALSE,
+                                      INSTALL_opts = "--no-lock")
+            )
+          }, type = "message")
+          checkpoint_log(
+            download_messages,
+            snapshotDate = snapshotDate,
+            pkg,
+            file = file.path(
+              checkpointPath(snapshotDate, checkpointLocation, type = "root"),
+              "checkpoint_log.csv")
           )
-        }, type = "message")
-        checkpoint_log(
-          download_messages,
-          snapshotDate = snapshotDate,
-          pkg,
-          file = file.path(
-            checkpointPath(snapshotDate, checkpointLocation, type = "root"),
-            "checkpoint_log.csv")
-        )
+        }, error = function(e)e)
       }
       
     }
@@ -262,7 +265,7 @@ anyRfiles <- function(path = "."){
 validateProjectFolder <- function(project) {
   if(normalizePath(project) == normalizePath("~/") && !anyRfiles(project)){
     message("This doesn't look like an R project directory.\n", 
-                 "Use forceProject = TRUE to force scanning"
+            "Use forceProject = TRUE to force scanning"
     )
     answer = readline("Continue (y/n)? ")
     if(tolower(answer) != "y"){
