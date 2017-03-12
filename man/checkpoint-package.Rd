@@ -19,4 +19,3 @@ checkpoint exposes only a single function:
 }
 }
 \keyword{package}
-

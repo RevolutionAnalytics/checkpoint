@@ -31,4 +31,3 @@ setSnapshot("2100-01-01")
 
 options(repos = oldRepos)
 }
-

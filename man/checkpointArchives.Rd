@@ -22,4 +22,3 @@ checkpointRemove("2016-10-01")
 \seealso{
 checkpointRemove
 }
-

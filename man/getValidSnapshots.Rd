@@ -12,4 +12,3 @@ getValidSnapshots(mranRootUrl = mranUrl())
 \description{
 Read list of available snapshot dates from MRAN url.
 }
-

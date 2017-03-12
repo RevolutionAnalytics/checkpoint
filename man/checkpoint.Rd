@@ -13,9 +13,9 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
 
-\item{project}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}()}.}
+\item{project}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{[getwd()]}.}
 
-\item{R.version}{Optional character string, e.g. "3.1.2".  If specified, compares the current \code{\link[base]{R.version}} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
+\item{R.version}{Optional character string, e.g. "3.1.2".  If specified, compares the current \code{[base::R.version]} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
 
 \item{scanForPackages}{If TRUE, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.}
 
@@ -27,7 +27,7 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 
 \item{auto.install.knitr}{If TRUE and the project contains rmarkdown files, then automatically included the packages \code{knitr} and \code{rmarkdown} in packages to install.}
 
-\item{scan.rnw.with.knitr}{If TRUE, uses \code{\link[knitr]{knit}} to parse \code{.Rnw} files, otherwise use \code{\link[utils]{Sweave}}}
+\item{scan.rnw.with.knitr}{If TRUE, uses \code{[knitr::knit()]} to parse \code{.Rnw} files, otherwise use \code{[utils::Sweave()]}}
 
 \item{forceInstall}{If TRUE, forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.}
 
@@ -36,10 +36,10 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 \value{
 Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
 \itemize{
-\item{files_not_scanned}
-\item{pkgs_found}
-\item{pkgs_not_on_mran}
-\item{pkgs_installed}
+\item files_not_scanned
+\item pkgs_found
+\item pkgs_not_on_mran
+\item pkgs_installed
 }
 }
 \description{
@@ -50,15 +50,19 @@ Together, the checkpoint package and the checkpoint server act as a CRAN time ma
 
 \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 
-To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link{library}()} and \code{\link{require}()} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \code{package}\code{\link[base]{::}}\code{foo()} and \code{package}\code{\link[base]{:::}}\code{foo()}. Finally, any occurrences of the functions \code{\link[methods]{setClass}}, \code{\link[methods]{setRefClass}}, \code{\link[methods]{setMethod}} or \code{\link[methods]{setGeneric}} will also identify the \code{methods} package as a dependency.
+To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{[library()] and}\code{\link[=require]{require()}}\code{statements. In addition, scans for occurrences of code that accesses functions in namespaces using}package\link[:]{::}foo()\code{and}package\link[:::]{::::}foo()\code{. Finally, any occurrences of the functions}\link[methods:setClass]{methods::setClass}\code{,}\link[methods:setRefClass]{methods::setRefClass}\code{,}[methods::setMethod\code{or}[methods::setGeneric]\code{will also identify the}[methods]` package as a dependency.
 
 Specifically, the function will:
-
 \itemize{
-\item{Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint}} but you can modify the path using the \code{checkpointLocation} argument.
-\item{Update the options for your CRAN mirror and point to an MRAN snapshot using \code{\link[base]{options}(repos)}}
-\item{Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils]{install.packages}()}}
+\item Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint} but you can modify the path using the \code{checkpointLocation} argument.
+\item Update the options for your CRAN mirror and point to an MRAN snapshot using \code{[base::options](repos)}
+\item Scan your project folder for all required packages and install them from the snapshot using \code{[utils::install.packages()]}
 }
+
+[methods::setMethod\code{or}[methods::setGeneric]: R:methods::setMethod%60%20or%20%60[methods::setGeneric
+[methods]: R:methods
+[base::options]: R:base::options
+[utils::install.packages()]: R:utils::install.packages()
 }
 
 \section{Resetting the checkpoint}{
@@ -80,12 +84,13 @@ You can modify the default URL. To change the URL, use \code{options(checkpoint.
 
 As a side effect, the \code{checkpoint} function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the \code{checkpointLocation}. For example, if \code{checkpointLocation} is the user home folder (the default) then the log file is at \code{~/.checkpoint/checkpoint_log.csv}. This file contains columns for:
 \itemize{
-\item{\code{timestamp}}
-\item{\code{snapshotDate}}
-\item{\code{pkg}}
-\item{\code{bytes}}
+\item \code{timestamp}
+\item \code{snapshotDate}
+\item \code{pkg}
+\item \code{bytes}
 }
 }
+
 \examples{
 \dontrun{
 
@@ -125,4 +130,3 @@ setwd(oldwd)
 }
 
 }
-
