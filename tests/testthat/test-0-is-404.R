@@ -3,6 +3,7 @@ if(interactive()) library(testthat)
 context("is.404")
 
 test_that("is.404", {
+  skip_if_offline()
   describe("is.404 works with http", {
     it("works on http", {
       expect_true(is.404("http://mran.microsoft.com/snapshot/1972-01-01", warn = FALSE))
