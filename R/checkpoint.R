@@ -6,13 +6,13 @@
 #'
 #' `checkpoint()` creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 #'
-#' To automatically determine all packages used in your project, the function scans all R code (`.R`, `.Rmd`, and `.Rpres` files) for `[library()] and `[require()]` statements. In addition, scans for occurrences of code that accesses functions in namespaces using `package[::]foo()` and `package[:::]foo()`. Finally, any occurrences of the functions `[methods::setClass]`, `[methods::setRefClass]`, `[methods::setMethod` or `[methods::setGeneric]` will also identify the `[methods]` package as a dependency.
+#' To automatically determine all packages used in your project, the function scans all R code (`.R`, `.Rmd`, and `.Rpres` files) for [library()] and [require()] statements. In addition, scans for occurrences of code that accesses functions in namespaces using `package[::]foo()` and `package[:::]foo()`. Finally, any occurrences of the functions [methods::setClass], [methods::setRefClass], [methods::setMethod] or [methods::setGeneric] will also identify the `methods` package as a dependency.
 #'
 #' Specifically, the function will:
 #'
 #' * Create a new local snapshot library to install packages.  By default this library folder is at `~/.checkpoint` but you can modify the path using the `checkpointLocation` argument.
-#' * Update the options for your CRAN mirror and point to an MRAN snapshot using `[base::options](repos)`
-#' * Scan your project folder for all required packages and install them from the snapshot using `[utils::install.packages()]`
+#' * Update the options for your CRAN mirror and point to an MRAN snapshot using [options]`(repos)`
+#' * Scan your project folder for all required packages and install them from the snapshot using [utils::install.packages()]
 #'
 #' @section Resetting the checkpoint:
 #' To reset the checkpoint, simply restart your R session.
@@ -35,35 +35,37 @@
 #'
 #' @param snapshotDate Date of snapshot to use in `YYYY-MM-DD` format,e.g. `"2014-09-17"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day.
 #'
-#' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`.  Defaults to current working directory using `[getwd()]`.
+#' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`.  Defaults to current working directory using [getwd()].
 #'
-#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current `[base::R.version]` to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
+#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current [R.version] to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
-#' @param scanForPackages If TRUE, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for `scanForPackages = FALSE` is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set `scanForPackages = FALSE` if you are certain that all package dependencies are already in the checkpoint folder.
+#' @param scanForPackages If `TRUE`, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for `scanForPackages = FALSE` is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set `scanForPackages = FALSE` if you are certain that all package dependencies are already in the checkpoint folder.
 #'
 #' @param checkpointLocation File path where the checkpoint library is stored.  Default is `"~/"`, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).
 #'
-#' @param use.knitr If TRUE,  parses all `Rmarkdown` files using the `knitr` package.
+#' @param use.knitr If `TRUE`,  parses all `Rmarkdown` files using the `knitr` package.
 #' 
-#' @param auto.install.knitr If TRUE and the project contains rmarkdown files, then automatically included the packages `knitr` and `rmarkdown` in packages to install.
+#' @param auto.install.knitr If `TRUE` and the project contains rmarkdown files, then automatically included the packages `knitr` and `rmarkdown` in packages to install.
 #' 
-#' @param scan.rnw.with.knitr If TRUE, uses `[knitr::knit()]` to parse `.Rnw` files, otherwise use `[utils::Sweave()]`
+#' @param scan.rnw.with.knitr If `TRUE`, uses [knitr::knit()] to parse `.Rnw` files, otherwise use [utils::Sweave()]
 #'
-#' @param verbose If TRUE, displays progress messages.
+#' @param verbose If `TRUE`, displays progress messages.
 #' 
-#' @param forceInstall If TRUE, forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.
+#' @param forceInstall If `TRUE`, forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.
 #'
-#' @param forceProject If TRUE, forces the checkpoint process, even if the provided project folder doesn't look like an R project. A commonly reported user problem is that they accidentally trigger the checkpoint process from their home folder, resulting in scanning many R files and downloading many packages. To prevent this, we use a heuristic to determine if the project folder looks like an R project. If the project folder is the home folder, and also contains no R files, then `checkpoint()` asks for confirmation to continue.
+#' @param forceProject If `TRUE`, forces the checkpoint process, even if the provided project folder doesn't look like an R project. A commonly reported user problem is that they accidentally trigger the checkpoint process from their home folder, resulting in scanning many R files and downloading many packages. To prevent this, we use a heuristic to determine if the project folder looks like an R project. If the project folder is the home folder, and also contains no R files, then `checkpoint()` asks for confirmation to continue.
 
 #'
 #' @return Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
-#' * files_not_scanned
-#' * pkgs_found
-#' * pkgs_not_on_mran
-#' * pkgs_installed
+#' * `files_not_scanned`
+#' * `pkgs_found`
+#' * `pkgs_not_on_mran`
+#' * `pkgs_installed`
 #' 
 #'
 #' @export
+#' 
+#' @family checkpoint functions
 #'
 #' @example /inst/examples/example_checkpoint.R
 #'
