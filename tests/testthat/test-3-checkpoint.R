@@ -171,25 +171,31 @@ test_checkpoint <- function(https = FALSE, snap.dates){
 
 #  ------------------------------------------------------------------------
 
-
-MRAN.dates <- getValidSnapshots()
-MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
-
-initialUrl <- getOption("checkpoint.mranUrl")
-
-if(getRversion() >= "3.2.0" && httpsSupported()){
+if(is_online()){
+  MRAN.dates <- getValidSnapshots()
+  MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
+  
+  initialUrl <- getOption("checkpoint.mranUrl")
+  
+  if(getRversion() >= "3.2.0" && httpsSupported()){
+    context("https")
+    
+    options(checkpoint.mranUrl = "https://mran.microsoft.com/")
+    test_checkpoint(http = TRUE, snap.dates = MRAN.default)
+    
+    options(checkpoint.mranUrl = NULL)
+  }
+  
+  context("http")
+  options(checkpoint.mranUrl = "http://mran.microsoft.com/")
+  test_checkpoint(http = FALSE, snap.dates = MRAN.default)
+  options(checkpoint.mranUrl = initialUrl)
+} else {
   context("https")
-  
-  options(checkpoint.mranUrl = "https://mran.microsoft.com/")
-  test_checkpoint(http = TRUE, snap.dates = MRAN.default)
-  
-  options(checkpoint.mranUrl = NULL)
+  test_that("No test run in offline", {
+    skip_if_offline()
+  })
 }
-
-context("http")
-options(checkpoint.mranUrl = "http://mran.microsoft.com/")
-test_checkpoint(http = FALSE, snap.dates = MRAN.default)
-options(checkpoint.mranUrl = initialUrl)
 
 
 

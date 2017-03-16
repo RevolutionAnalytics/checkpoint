@@ -10,7 +10,6 @@ stopIfInvalidDate <- function(snapshotDate, verbose = TRUE){
   if(as.Date(snapshotDate) > Sys.Date())
     stop("snapshotDate can not be in the future!", call. = FALSE)
   
-  
   validSnapshots <- tryCatch(as.Date(getValidSnapshots()), error=function(e)e)
   if(inherits(validSnapshots, "error")){
     mssg(verbose, "Unable to connect to MRAN. Skipping some date validations.") 
@@ -76,6 +75,9 @@ setCheckpointUrl <- function(url){
 
 
 tryUrl <- function(url){
+  timeout <- getOption("timeout")
+  on.exit(options(timeout = timeout))
+  options(timeout = 5)
   con <- suppressWarnings(tryCatch(url(url), error = function(e)e))
   msg <- paste0(
     "Invalid value for mranRootUrl.\n", 
