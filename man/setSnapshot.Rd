@@ -31,3 +31,8 @@ setSnapshot("2100-01-01")
 
 options(repos = oldRepos)
 }
+\seealso{
+Other checkpoint functions: \code{\link{checkpointArchives}},
+  \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
+  \code{\link{getValidSnapshots}}, \code{\link{mranUrl}}
+}
