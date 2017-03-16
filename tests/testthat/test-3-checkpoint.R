@@ -1,7 +1,9 @@
 # tests for initialize
 if(interactive()) library(testthat)
 
-Sys.setenv("R_TESTS" = "") # Configure Travis for tests https://github.com/RevolutionAnalytics/checkpoint/issues/139
+# Configure Travis for tests 
+# https://github.com/RevolutionAnalytics/checkpoint/issues/139
+Sys.setenv("R_TESTS" = "") 
 
 current.R <- local({ x = getRversion(); paste(x$major, x$minor, sep=".")})
 
