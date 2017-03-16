@@ -6,6 +6,9 @@
 \usage{
 getAccessDate(checkpointLocation = "~/")
 }
+\arguments{
+\item{checkpointLocation}{File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).}
+}
 \value{
 Named character with last access date
 }

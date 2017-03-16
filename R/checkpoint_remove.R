@@ -29,8 +29,7 @@ checkpointArchives <- function(checkpointLocation = "~/"){
 checkpointRemove <- function(snapshotDate, checkpointLocation = "~/", 
                              allSinceSnapshot = FALSE, 
                              allUntilSnapshot = FALSE, 
-                             notUsedSince = FALSE,
-                             days){
+                             notUsedSince = FALSE){
   if(!missing(snapshotDate) && !is.null(snapshotDate)){
     to_delete <- checkpointPath(snapshotDate, checkpointLocation, 
                                 type = "snapshot")

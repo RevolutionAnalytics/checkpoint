@@ -7,7 +7,7 @@
 setSnapshot(snapshotDate)
 }
 \arguments{
-\item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
+\item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use \code{\link[=getValidSnapshots]{getValidSnapshots()}}}
 }
 \description{
 Set default CRAN repository to MRAN snapshot date.

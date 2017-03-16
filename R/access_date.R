@@ -16,6 +16,7 @@ writeAccessDate <- function(snapshotDate, checkpointLocation = "~/"){
 #' 
 #' The [checkpoint()] function stores a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.
 #' 
+#' @inheritParams checkpoint
 #' @return Named character with last access date
 #' @export
 #' @family checkpoint functions

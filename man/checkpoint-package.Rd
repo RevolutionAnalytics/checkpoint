@@ -12,13 +12,20 @@ To achieve reproducibility, the \code{\link[=checkpoint]{checkpoint()}} function
 
 To create the snapshot archives, once a day (at midnight UTC) we refresh the Austria CRAN mirror, on the checkpoint server (https://mran.microsoft.com/).  Immediately after completion of the `rsync`` mirror process, we take a snapshot, thus creating the archive.  Snapshot archives exist starting from 2014-09-17.
 
-checkpoint exposes functions for:
+\code{checkpoint} exposes functions for:
+\itemize{
+\item Creating and using snapshots:
 \itemize{
 \item \code{\link[=checkpoint]{checkpoint()}}: Configures R session to use packages as they existed on CRAN at time of snapshot.
-\item \code{\link[=checkpointArchives]{checkpointArchives()}}: List checkpoint archives on disk.
-\item \code{\link[=checkpointRemove]{checkpointRemove()}}: Remove checkpoint archive from disk.
 \item \code{\link[=setSnapshot]{setSnapshot()}}: Set default CRAN repository to MRAN snapshot date.
 \item \code{\link[=getValidSnapshots]{getValidSnapshots()}}: Read list of available snapshot dates from MRAN.
+}
+\item Managing local archives:
+\itemize{
+\item \code{\link[=checkpointArchives]{checkpointArchives()}}: List checkpoint archives on disk.
+\item \code{\link[=checkpointRemove]{checkpointRemove()}}: Remove checkpoint archive from disk.
+\item \code{\link[=getAccessDate]{getAccessDate()}}: Returns the date the snapshot was last accessed.
+}
 }
 }
 \keyword{package}

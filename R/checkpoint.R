@@ -37,11 +37,11 @@
 #' 
 #' The [checkpoint()] function stores a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.  See also [getAccessDate()]. To remove snapshots that have not been used since a given date, use [checkpointRemove()]
 #'
-#' @param snapshotDate Date of snapshot to use in `YYYY-MM-DD` format,e.g. `"2014-09-17"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day.
+#' @param snapshotDate Date of snapshot to use in `YYYY-MM-DD` format, e.g. `"2014-09-17"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use [getValidSnapshots()]
 #'
 #' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`.  Defaults to current working directory using [getwd()].
 #'
-#' @param R.version Optional character string, e.g. "3.1.2".  If specified, compares the current [R.version] to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
+#' @param R.version Optional character string, e.g. `"3.1.2"`.  If specified, compares the current [R.version] to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
 #'
 #' @param scanForPackages If `TRUE`, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for `scanForPackages = FALSE` is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set `scanForPackages = FALSE` if you are certain that all package dependencies are already in the checkpoint folder.
 #'
