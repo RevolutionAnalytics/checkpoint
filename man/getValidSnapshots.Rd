@@ -18,5 +18,6 @@ Returns vector of available dates from MRAN or local MRAN repository.
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
-  \code{\link{mranUrl}}, \code{\link{setSnapshot}}
+  \code{\link{getAccessDate}}, \code{\link{mranUrl}},
+  \code{\link{setSnapshot}}
 }

@@ -32,6 +32,10 @@
 #' * `snapshotDate`
 #' * `pkg`
 #' * `bytes`
+#' 
+#' @section Last accessed date:
+#' 
+#' The [checkpoint()] function stores a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.  See also [getAccessDate()]. To remove snapshots that have not been used since a given date, use [checkpointRemove()]
 #'
 #' @param snapshotDate Date of snapshot to use in `YYYY-MM-DD` format,e.g. `"2014-09-17"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day.
 #'

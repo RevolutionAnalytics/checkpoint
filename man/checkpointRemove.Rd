@@ -4,15 +4,23 @@
 \alias{checkpointRemove}
 \title{Remove checkpoint archive from disk.}
 \usage{
-checkpointRemove(snapshotDate, checkpointLocation = "~/")
+checkpointRemove(snapshotDate, checkpointLocation = "~/",
+  allSinceSnapshot = FALSE, allUntilSnapshot = FALSE,
+  notUsedSince = FALSE, days)
 }
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
 
 \item{checkpointLocation}{File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).}
+
+\item{allSinceSnapshot}{If \code{TRUE}, removes all snapshot archives since the \code{snapshotDate}}
+
+\item{allUntilSnapshot}{If \code{TRUE}, removes all snapshot archives before the \code{snapshotDate}}
+
+\item{notUsedSince}{If \code{TRUE}, removes all snapshot archives that have not been accessed since the \code{snapshotDate}. See \code{\link[=getAccessDate]{getAccessDate()}}}
 }
 \description{
-Remove checkpoint archive from disk.
+This function enables you to delete a snapshot archive folder from disk, thus releasing storage space.
 }
 \examples{
 checkpointArchives()
@@ -22,8 +30,10 @@ checkpointRemove("2016-10-01")
 
 }
 \seealso{
+\code{\link[=getAccessDate]{getAccessDate()}}
+
 Other checkpoint functions: \code{\link{checkpointArchives}},
-  \code{\link{checkpoint}},
+  \code{\link{checkpoint}}, \code{\link{getAccessDate}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
   \code{\link{setSnapshot}}
 }

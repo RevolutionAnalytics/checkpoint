@@ -86,6 +86,12 @@ As a side effect, the \code{checkpoint} function writes a log file with informat
 }
 }
 
+\section{Last accessed date}{
+
+
+The \code{\link[=checkpoint]{checkpoint()}} function stores a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.  See also \code{\link[=getAccessDate]{getAccessDate()}}. To remove snapshots that have not been used since a given date, use \code{\link[=checkpointRemove]{checkpointRemove()}}
+}
+
 \examples{
 \dontrun{
 
@@ -128,6 +134,7 @@ setwd(oldwd)
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}},
+  \code{\link{getAccessDate}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
   \code{\link{setSnapshot}}
 }

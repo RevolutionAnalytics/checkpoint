@@ -34,5 +34,6 @@ options(repos = oldRepos)
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
+  \code{\link{getAccessDate}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}}
 }

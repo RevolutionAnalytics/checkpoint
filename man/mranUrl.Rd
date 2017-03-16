@@ -15,6 +15,7 @@ The default MRAN URL is \code{http(s)://mran.microsoft.com/}, but you can overri
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
+  \code{\link{getAccessDate}},
   \code{\link{getValidSnapshots}},
   \code{\link{setSnapshot}}
 }
