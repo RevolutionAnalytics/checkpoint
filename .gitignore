@@ -4,3 +4,4 @@
 checkpoint.Rproj
 .RData
 inst/doc
+tests/testthat/framed.sty

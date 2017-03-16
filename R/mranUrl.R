@@ -3,12 +3,12 @@ stopIfInvalidDate <- function(snapshotDate, verbose = TRUE){
   if(missing(snapshotDate) || is.null(snapshotDate))
     stop("You have to specify a snapshotDate", call. = FALSE)
   if(!grepl("^\\d{4}-\\d{2}-\\d{2}$", snapshotDate))
-    stop("snapshotDate must be a valid date using format YYYY-MM-DD", call. = FALSE)
+    stop("snapshotDate must be a valid date using format YYYY-MM-DD", 
+         call. = FALSE)
   if(as.Date(snapshotDate) < as.Date("2014-09-17"))
     stop("Snapshots are only available after 2014-09-17", call. = FALSE)
   if(as.Date(snapshotDate) > Sys.Date())
     stop("snapshotDate can not be in the future!", call. = FALSE)
-  
   
   validSnapshots <- tryCatch(as.Date(getValidSnapshots()), error=function(e)e)
   if(inherits(validSnapshots, "error")){
@@ -17,30 +17,13 @@ stopIfInvalidDate <- function(snapshotDate, verbose = TRUE){
     if(!as.Date(snapshotDate) %in% validSnapshots) {
       i <- findInterval(as.Date(snapshotDate), validSnapshots)
       suggestions <- validSnapshots[c(i, i+1)]
-      stop(sprintf("Snapshot does not exist on MRAN. Try %s or %s.", validSnapshots[i], validSnapshots[i+1]))
+      stop(sprintf("Snapshot does not exist on MRAN. Try %s or %s.", 
+                   validSnapshots[i], 
+                   validSnapshots[i+1]))
     }
   }
-  
-  
 }
 
-# testHttps <- function(https){
-#   tf = tempfile()
-#   dir.create(tf)
-#   on.exit(unlink(tf))
-#   testpkg = "memoise"
-#   repos <- paste0(https, "snapshot/2014-09-12/")
-#   tryCatch(suppressWarnings(utils::install.packages(testpkg, lib = tf, 
-#                                    repos = repos ,
-#                                    dependencies = FALSE, 
-#                                    type = "source",
-#                                    quiet = TRUE)))
-#   if(testpkg %in% installed.packages(lib.loc = tf)[, "Package"]) {
-#     TRUE
-#   } else {
-#     FALSE
-#   }
-# }
 
 mranUrlDefault <- function(){
   http = "http://mran.microsoft.com/"
@@ -63,30 +46,15 @@ isHttpsUrl <- function(url){
   grepl("^https://", url)
 }
 
-# setDownloadOption <- function(mranUrl){
-#   
-#   download.method <- switch(
-#     .Platform$OS.type,
-#     windows = "wininet",
-#     unix    = if(capabilities("libcurl")) "libcurl" else "curl"
-#   )
-#   url.method <- switch(
-#     .Platform$OS.type,
-#     windows = "wininet",
-#     unix    = if(capabilities("libcurl")) "libcurl" else "internal"
-#   )
-#   
-#   options(download.file.method = download.method, 
-#           url.method = url.method)
-# }
-# 
-# resetDownloadOption <- function(opts){
-#   options(opts)
-# }
 
-
-#  ------------------------------------------------------------------------
-
+#' Returns MRAN URL by querying options and defaults.
+#' 
+#' The default MRAN URL is `http(s)://mran.microsoft.com/`, but you can override this by setting the `checkpoint.mranUrl` option.
+#' 
+#' 
+#' @export
+#' @return Character string with URL
+#' @family checkpoint functions
 mranUrl <- function(){
   url <- getOption("checkpoint.mranUrl")
   url <- if(is.null(url)) mranUrlDefault() else url
@@ -107,6 +75,9 @@ setCheckpointUrl <- function(url){
 
 
 tryUrl <- function(url){
+  timeout <- getOption("timeout")
+  on.exit(options(timeout = timeout))
+  options(timeout = 5)
   con <- suppressWarnings(tryCatch(url(url), error = function(e)e))
   msg <- paste0(
     "Invalid value for mranRootUrl.\n", 
@@ -116,29 +87,6 @@ tryUrl <- function(url){
     stop(msg, call. = FALSE)
   }
   con
-}
-
-#' Read list of available snapshot dates from MRAN url.
-#' 
-#' @param mranRootUrl URL of MRAN root, e.g. \code{"https://mran.microsoft.com/snapshot/"} or \code{"file:///local/path"}
-#' 
-#' @export
-getValidSnapshots <- function(mranRootUrl = mranUrl()){
-  con <- tryUrl(mranRootUrl)
-  on.exit(close(con))
-  text <- if (inherits(con, "file")) {
-    dir(summary(con)$description)
-  } else {
-    suppressWarnings(tryCatch(readLines(con, warn = TRUE), error = function(e) e))
-  }
-  if (inherits(text, "error")) {
-    stop(sprintf("Unable to download from MRAN: %s", 
-                 text$message))
-  }
-  ptn <- "\\d{4}-\\d{2}-\\d{2}"
-  idx <- grep(ptn, text)
-  gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", ptn), 
-       "\\1", text[idx])
 }
 
 

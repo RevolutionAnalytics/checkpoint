@@ -4,7 +4,7 @@
 #' 
 #' @inheritParams checkpoint
 #' @export
-#' @seealso checkpointRemove
+#' @family checkpoint functions
 #' @example inst/examples/example_remove.R
 checkpointArchives <- function(checkpointLocation = "~/"){
   z <- list.files(path = paste0(normalizePath(checkpointLocation), ".checkpoint"), 
@@ -13,11 +13,12 @@ checkpointArchives <- function(checkpointLocation = "~/"){
   normalizePath(z, winslash = "/")
 }
 
+
 #' Remove checkpoint archive from disk.
 #' 
 #' @inheritParams checkpoint
 #' @export
-#' @seealso checkpointArchives
+#' @family checkpoint functions
 #' @example inst/examples/example_remove.R
 checkpointRemove <- function(snapshotDate, checkpointLocation = "~/"){
   z <- list.files(path = paste0(normalizePath(checkpointLocation), ".checkpoint"), 
