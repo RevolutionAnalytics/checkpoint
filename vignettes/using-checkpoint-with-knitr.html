@@ -83,12 +83,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1>A dirty hack</h1>
 <p>The only way I’ve found to get <code>checkpoint()</code> to work inside an RMardown document, is really a bit of a hack. The workaround is to create a manifest of required packages, and write this to an R file in the working directory.</p>
 <p>For example, imagine your R script uses the <code>MASS</code> package, then create a manifest file like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">manifest &lt;-<span class="st"> '</span>
-<span class="st">library(MASS)</span>
-<span class="st">'</span>
-<span class="kw">cat</span>(manifest, <span class="dt">file =</span> <span class="st">&quot;manifest.R&quot;</span>)
-
-td &lt;-<span class="st"> </span><span class="kw">dirname</span>(<span class="kw">tempdir</span>())
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">td &lt;-<span class="st"> </span><span class="kw">dirname</span>(<span class="kw">tempdir</span>())
 td &lt;-<span class="st"> </span><span class="kw">getwd</span>()
 <span class="kw">dir.create</span>(<span class="kw">file.path</span>(td, <span class="st">&quot;.checkpoint&quot;</span>), <span class="dt">showWarnings =</span> <span class="ot">FALSE</span>)</code></pre></div>
 </div>
@@ -103,7 +98,7 @@ td &lt;-<span class="st"> </span><span class="kw">getwd</span>()
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> td)</code></pre></div>
 <pre><code>## Scanning for packages used in this project</code></pre>
 <pre><code>## Warning in deps.R(tempfile): No file at path 'C:\Users\adevries\AppData
-## \Local\Temp\RtmpauLtGA\file6944b1d59f2.Rmd'.</code></pre>
+## \Local\Temp\Rtmp4Ygdx8\file2ac4111d574f.Rmd'.</code></pre>
 <pre><code>## - Discovered 2 packages</code></pre>
 <pre><code>## Unable to parse 1 files:</code></pre>
 <pre><code>## - using-checkpoint-with-knitr.Rmd</code></pre>
@@ -115,10 +110,9 @@ td &lt;-<span class="st"> </span><span class="kw">getwd</span>()
 <pre><code>## package 'MASS' successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\adevries\AppData\Local\Temp\RtmpauLtGA\downloaded_packages</code></pre>
+##  C:\Users\adevries\AppData\Local\Temp\Rtmp4Ygdx8\downloaded_packages</code></pre>
 <pre><code>## checkpoint process complete</code></pre>
 <pre><code>## ---</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlink</span>(<span class="st">&quot;manifest.R&quot;</span>) <span class="co"># clean up</span></code></pre></div>
 </div>
 <div id="confirm-this-actually-worked" class="section level1">
 <h1>Confirm this actually worked:</h1>
