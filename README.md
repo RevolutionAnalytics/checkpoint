@@ -9,6 +9,7 @@ dev: [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?b
 **Version on CRAN**
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/checkpoint)](http://cran.r-project.org/package=checkpoint)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/secret)](http://www.r-pkg.org/pkg/secret)
 
 ## Overview
 
