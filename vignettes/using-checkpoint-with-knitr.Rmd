@@ -27,7 +27,8 @@ library(MASS)
 '
 cat(manifest, file = "manifest.R")
 
-dir.create(file.path(tempdir(), ".checkpoint"), showWarnings = FALSE)
+td <- dirname(tempdir())
+dir.create(file.path(td, ".checkpoint"), showWarnings = FALSE)
 ```
 
 
@@ -39,7 +40,7 @@ In this example I use a temporary folder as the checkpoint location. This is onl
 
 ```{r}
 library(checkpoint)
-checkpoint("2017-03-28", checkpointLocation = tempdir())
+checkpoint("2017-03-28", checkpointLocation = td)
 unlink("manifest.R") # clean up
 ```
 
@@ -71,5 +72,5 @@ Now all you need to do is to circulate the file `foo.R` along with any supportin
 
 ```{r, include=FALSE}
 # clean up
-unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
+unlink(file.path(td, ".checkpoint"), recursive = TRUE)
 ```

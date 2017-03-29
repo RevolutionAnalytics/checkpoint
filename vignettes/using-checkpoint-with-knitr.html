@@ -88,7 +88,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">'</span>
 <span class="kw">cat</span>(manifest, <span class="dt">file =</span> <span class="st">&quot;manifest.R&quot;</span>)
 
-<span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;.checkpoint&quot;</span>), <span class="dt">showWarnings =</span> <span class="ot">FALSE</span>)</code></pre></div>
+td &lt;-<span class="st"> </span><span class="kw">dirname</span>(<span class="kw">tempdir</span>())
+<span class="kw">dir.create</span>(<span class="kw">file.path</span>(td, <span class="st">&quot;.checkpoint&quot;</span>), <span class="dt">showWarnings =</span> <span class="ot">FALSE</span>)</code></pre></div>
 </div>
 <div id="running-checkpoint" class="section level1">
 <h1>Running checkpoint</h1>
@@ -98,22 +99,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## 
 ## checkpoint: Part of the Reproducible R Toolkit from Microsoft
 ## https://mran.microsoft.com/documents/rro/reproducibility/</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> <span class="kw">tempdir</span>())</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> td)</code></pre></div>
 <pre><code>## Scanning for packages used in this project</code></pre>
 <pre><code>## Warning in deps.R(tempfile): No file at path 'C:\Users\adevries\AppData
-## \Local\Temp\RtmpApfXdP\file1158648f6391.Rmd'.</code></pre>
+## \Local\Temp\Rtmpq4upvu\file370857de12d4.Rmd'.</code></pre>
 <pre><code>## - Discovered 2 packages</code></pre>
 <pre><code>## Unable to parse 1 files:</code></pre>
 <pre><code>## - using-checkpoint-with-knitr.Rmd</code></pre>
 <pre><code>## Installing packages used in this project</code></pre>
 <pre><code>##  - Installing 'MASS'</code></pre>
 <pre><code>## MASS</code></pre>
-<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/RtmpApfXdP/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.3'
+<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.3'
 ## (as 'lib' is unspecified)</code></pre>
 <pre><code>## package 'MASS' successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\adevries\AppData\Local\Temp\RtmpApfXdP\downloaded_packages</code></pre>
+##  C:\Users\adevries\AppData\Local\Temp\Rtmpq4upvu\downloaded_packages</code></pre>
 <pre><code>## checkpoint process complete</code></pre>
 <pre><code>## ---</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unlink</span>(<span class="st">&quot;manifest.R&quot;</span>) <span class="co"># clean up</span></code></pre></div>
@@ -122,8 +123,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1>Confirm this actually worked:</h1>
 <p>If this worked, you should see that the library path now points to <code>tempdir()</code> and that MASS should be one of only a few package installed:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">.libPaths</span>()</code></pre></div>
-<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpApfXdP/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.3&quot;
-## [2] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpApfXdP/.checkpoint/R-3.3.3&quot;</code></pre>
+<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.3&quot;
+## [2] &quot;C:/Users/adevries/AppData/Local/Temp/.checkpoint/R-3.3.3&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">installed.packages</span>(<span class="dt">noCache =</span> <span class="ot">TRUE</span>)[, <span class="st">&quot;Package&quot;</span>]</code></pre></div>
 <pre><code>##       MASS   compiler 
 ##     &quot;MASS&quot; &quot;compiler&quot;</code></pre>
