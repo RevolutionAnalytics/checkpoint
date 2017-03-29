@@ -21,5 +21,5 @@ The \code{\link[=checkpoint]{checkpoint()}} function stores a marker in the snap
 Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
-  \code{\link{setSnapshot}}
+  \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
 }

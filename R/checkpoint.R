@@ -17,6 +17,8 @@
 #' @section Resetting the checkpoint:
 #' To reset the checkpoint, simply restart your R session.
 #' 
+#' You can also use the experimental function [unCheckpoint()]
+#' 
 #' @section Changing the default MRAN url:
 #' 
 #' By default, `checkpoint()` uses https to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}). The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
@@ -255,7 +257,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
 
 setMranMirror <- function(
   snapshotDate, 
-  snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate, online = scanForPackages)){
+  snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate)){
   options(repos = snapshotUrl)}
 
 setLibPaths <- function(checkpointLocation, libPath){
@@ -264,6 +266,18 @@ setLibPaths <- function(checkpointLocation, libPath){
          envir = environment(.libPaths))
 }
 
+#' Undo the effect of checkpoint by resetting .libPath to user library location.
+#' 
+#' This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets [.libPaths] to the environment variable `R_Libs_User`.
+#' 
+#' @param new The new user library location. Defaults to `Sys.getenv("R_Libs_User")`
+#' 
+#' @export
+#' @family checkpoint functions
+unCheckpoint <- function(new = Sys.getenv("R_Libs_User")){
+  assign(".lib.loc", new, 
+         envir = environment(.libPaths))
+}
 
 
 

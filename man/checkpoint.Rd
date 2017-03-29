@@ -63,15 +63,16 @@ Specifically, the function will:
 \section{Resetting the checkpoint}{
 
 To reset the checkpoint, simply restart your R session.
+
+You can also use the experimental function \code{\link[=unCheckpoint]{unCheckpoint()}}
 }
 
 \section{Changing the default MRAN url}{
 
 
-\code{checkpoint} uses https by default to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}).
-\code{checkpoint} Defaults to \url{https://mran.microsoft.com/snapshot} by default in R versions 3.2.0 and later, if https support is enabled.
+By default, \code{checkpoint()} uses https to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}). The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
 
-You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}
+You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}.
 }
 
 \section{Log file}{
@@ -136,5 +137,5 @@ Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}},
   \code{\link{getAccessDate}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
-  \code{\link{setSnapshot}}
+  \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
 }
