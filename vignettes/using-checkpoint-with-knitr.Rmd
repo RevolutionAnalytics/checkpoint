@@ -68,3 +68,8 @@ This is a bit of a dirty hack, but points in a direction for getting your RMarkd
 Now your R Markdown script is checkpointed, and furthermore if you execute the R command `knitr::purl("foo.Rmd")` in a separate R session where `foo.Rmd` is the name of your R Markdown script, this will strip off only the R code associated with your project, but with the checkpoint facility intact, and write just the R code to a file named `foo.R`.
 
 Now all you need to do is to circulate the file `foo.R` along with any supporting data files.
+
+```{r, include=FALSE}
+# clean up
+unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
+```

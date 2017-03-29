@@ -62,6 +62,7 @@ Specifically, the function will:
 
 \section{Resetting the checkpoint}{
 
+
 To reset the checkpoint, simply restart your R session.
 
 You can also use the experimental function \code{\link[=unCheckpoint]{unCheckpoint()}}
