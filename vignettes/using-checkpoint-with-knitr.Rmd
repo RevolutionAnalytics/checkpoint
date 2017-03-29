@@ -28,6 +28,7 @@ library(MASS)
 cat(manifest, file = "manifest.R")
 
 td <- dirname(tempdir())
+td <- getwd()
 dir.create(file.path(td, ".checkpoint"), showWarnings = FALSE)
 ```
 
@@ -72,5 +73,7 @@ Now all you need to do is to circulate the file `foo.R` along with any supportin
 
 ```{r, include=FALSE}
 # clean up
+
+detach("package:MASS", unload = TRUE)
 unlink(file.path(td, ".checkpoint"), recursive = TRUE)
 ```
