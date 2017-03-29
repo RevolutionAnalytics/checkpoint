@@ -10,7 +10,33 @@ mranUrl()
 Character string with URL
 }
 \description{
-The default MRAN URL is \code{http(s)://mran.microsoft.com/}, but you can override this by setting the \code{checkpoint.mranUrl} option.
+This function returns the current MRAN URL. The default for this is \code{http(s)://mran.microsoft.com/}, and is defined by setting the \code{checkpoint.mranUrl} option.
+}
+\section{Defining a new MRAN URL}{
+
+
+To force \code{\link[=checkpoint]{checkpoint()}} to point to a differt URL, you can set the \code{checkpoint.mranUrl} option.
+
+\code{options(checkpoint.mranUrl = "new_url")}
+}
+
+\examples{
+mranUrl()  
+
+\dontrun{
+  
+# Store the existing options
+old_opts <- getOption("checkpoint.mranUrl")
+
+# Set MRAN URL to different http address
+options(checkpoint.mranUrl = "https://foobah")
+
+# Set MRAN URL to local file address
+options(checkpoint.mranUrl = "file:///~")
+
+# Reset the original options
+options(checkpoint.mranUrl = old_opts)
+}
 }
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},

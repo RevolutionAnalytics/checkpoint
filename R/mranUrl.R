@@ -49,12 +49,19 @@ isHttpsUrl <- function(url){
 
 #' Returns MRAN URL by querying options and defaults.
 #' 
-#' The default MRAN URL is `http(s)://mran.microsoft.com/`, but you can override this by setting the `checkpoint.mranUrl` option.
+#' This function returns the current MRAN URL. The default for this is `http(s)://mran.microsoft.com/`, and is defined by setting the `checkpoint.mranUrl` option.
+#' 
+#' @section Defining a new MRAN URL:
+#' 
+#' To force [checkpoint()] to point to a differt URL, you can set the `checkpoint.mranUrl` option.
+#' 
+#' `options(checkpoint.mranUrl = "new_url")`
 #' 
 #' 
 #' @export
 #' @return Character string with URL
 #' @family checkpoint functions
+#' @example inst/examples/example_mranurl.R
 mranUrl <- function(){
   url <- getOption("checkpoint.mranUrl")
   url <- if(is.null(url)) mranUrlDefault() else url
