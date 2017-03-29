@@ -1,3 +1,8 @@
+localSnapshots <- function(checkpointLocation = "~/"){
+  cp <- checkpointPath(snapshotDate = "", checkpointLocation = checkpointLocation, type = "snapshot")
+  ptn <- "\\d{4}-\\d{2}-\\d{2}"
+  dir(cp, pattern = ptn)
+}
 
 checkpointPath <- function(snapshotDate, checkpointLocation,
                            type = c("lib", "src", "snapshot", "root", "base")){

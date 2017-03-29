@@ -1,5 +1,5 @@
 
-stopIfInvalidDate <- function(snapshotDate, verbose = TRUE){
+stopIfInvalidDate <- function(snapshotDate, verbose = TRUE, online = TRUE){
   if(missing(snapshotDate) || is.null(snapshotDate))
     stop("You have to specify a snapshotDate", call. = FALSE)
   if(!grepl("^\\d{4}-\\d{2}-\\d{2}$", snapshotDate))
@@ -10,6 +10,7 @@ stopIfInvalidDate <- function(snapshotDate, verbose = TRUE){
   if(as.Date(snapshotDate) > Sys.Date())
     stop("snapshotDate can not be in the future!", call. = FALSE)
   
+  if(!online) return()
   validSnapshots <- tryCatch(as.Date(getValidSnapshots()), error=function(e)e)
   if(inherits(validSnapshots, "error")){
     mssg(verbose, "Unable to connect to MRAN. Skipping some date validations.") 
@@ -165,13 +166,15 @@ is.404 <- function(mran, warn = TRUE){
   }
 }
 
-getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl()){
-  
-  if(is.404(mranRootUrl)){
-    warning("Unable to reach MRAN root at ", mranRootUrl, call. = FALSE)
-  }
+getSnapshotUrl <- function(snapshotDate, mranRootUrl = mranUrl(), online = TRUE){
   
   snapshot.url = paste(gsub("/$", "", mranRootUrl), snapshotDate, sep = "/")
+  if(!online) return(snapshot.url)
+  if(is.404(mranRootUrl)){
+    warning("Unable to reach MRAN root at ", mranRootUrl, call. = FALSE)
+    return(snapshot.url)
+  }
+  
   if(is.404(snapshot.url)){
     warning("Unable to find snapshot on MRAN at ", snapshot.url, call. = FALSE)
   }

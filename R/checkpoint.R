@@ -19,11 +19,11 @@
 #' 
 #' @section Changing the default MRAN url:
 #' 
-#' `checkpoint` uses https by default to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}).
-#' `checkpoint` Defaults to \url{https://mran.microsoft.com/snapshot} by default in R versions 3.2.0 and later, if https support is enabled.
+#' By default, `checkpoint()` uses https to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}). The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
 #' 
-#' You can modify the default URL. To change the URL, use `options(checkpoint.mranUrl = ...)`
+#' You can modify the default URL. To change the URL, use `options(checkpoint.mranUrl = ...)`.
 #' 
+
 #' @section Log file:
 #' 
 #' As a side effect, the `checkpoint` function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the `checkpointLocation`. For example, if `checkpointLocation` is the user home folder (the default) then the log file is at `~/.checkpoint/checkpoint_log.csv`. This file contains columns for:
@@ -58,7 +58,6 @@
 #' @param forceInstall If `TRUE`, forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.
 #'
 #' @param forceProject If `TRUE`, forces the checkpoint process, even if the provided project folder doesn't look like an R project. A commonly reported user problem is that they accidentally trigger the checkpoint process from their home folder, resulting in scanning many R files and downloading many packages. To prevent this, we use a heuristic to determine if the project folder looks like an R project. If the project folder is the home folder, and also contains no R files, then `checkpoint()` asks for confirmation to continue.
-
 #'
 #' @return Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
 #' * `files_not_scanned`
@@ -88,7 +87,12 @@ checkpoint <- function(snapshotDate, project = getwd(),
   
   if(interactive()) validateProjectFolder(project)
   
-  stopIfInvalidDate(snapshotDate)
+  stopIfInvalidDate(snapshotDate, online = scanForPackages)
+  if(!scanForPackages){
+    mssg(verbose, "Skipping package scanning")
+    if(!snapshotDate %in% localSnapshots(checkpointLocation = checkpointLocation))
+      stop("Local snapshot location does not exist")
+  }
   
   if(!missing("R.version") && !is.null(R.version)){
     if(!correctR(as.character(R.version))){
@@ -113,9 +117,8 @@ checkpoint <- function(snapshotDate, project = getwd(),
   
   
   mran <- mranUrl()
-  snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate)
-  
-  
+  snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate, online = scanForPackages)
+
   compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
   
   libPath <- checkpointPath(snapshotDate, type = "lib", 
@@ -252,7 +255,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
 
 setMranMirror <- function(
   snapshotDate, 
-  snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate)){
+  snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate, online = scanForPackages)){
   options(repos = snapshotUrl)}
 
 setLibPaths <- function(checkpointLocation, libPath){
