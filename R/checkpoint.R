@@ -15,6 +15,7 @@
 #' * Scan your project folder for all required packages and install them from the snapshot using [utils::install.packages()]
 #'
 #' @section Resetting the checkpoint:
+#' 
 #' To reset the checkpoint, simply restart your R session.
 #' 
 #' You can also use the experimental function [unCheckpoint()]
@@ -25,7 +26,6 @@
 #' 
 #' You can modify the default URL. To change the URL, use `options(checkpoint.mranUrl = ...)`.
 #' 
-
 #' @section Log file:
 #' 
 #' As a side effect, the `checkpoint` function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the `checkpointLocation`. For example, if `checkpointLocation` is the user home folder (the default) then the log file is at `~/.checkpoint/checkpoint_log.csv`. This file contains columns for:
