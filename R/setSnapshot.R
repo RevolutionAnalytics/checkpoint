@@ -1,6 +1,7 @@
 #' Set default CRAN repository to MRAN snapshot date.
 #'
 #' @inheritParams checkpoint
+#' @param online If TRUE, performs online validation checks. This can be set to FALSE for programming purposes. Internally, [checkpoint()] sets this value to FALSE when not scanning for packages.
 #'
 #' @export
 #' @example /inst/examples/example_setSnapshot.R
