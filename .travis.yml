@@ -1,18 +1,14 @@
 language: r
+cache: packages
+sudo: false
+
 r:
   - release
   - devel
 
-sudo: required
-
 env: 
   - NOT_CRAN="true"
   - NOT_CRAN="false"
-
-r_binary_packages:
-  - testthat
-  - knitr
-  - rmarkdown
 
 branches:
   only:
