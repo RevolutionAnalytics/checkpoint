@@ -110,7 +110,6 @@ Next you want to run the script.  Here is what `checkpoint` does:
 example_project <- tempdir()
 
 dir.create(example_project, recursive = TRUE)
-unlink("~/.checkpoint/2015-04-26", recursive=TRUE)
 oldRepos <- getOption("repos")
 oldLibPaths <- .libPaths()
 
@@ -142,7 +141,7 @@ checkpoint("2015-04-26", project = example_project, checkpointLocation = tempdir
 
 Now inspect the results:
 
-Check that CRAN mirror is set to MRAN snapshot:
+First, check that your CRAN mirror is set to MRAN snapshot:
 
 
 ```{r inspect-1}
@@ -150,13 +149,13 @@ getOption("repos")
 ```
 
 
-Check that library path is set to `~/.checkpoint`:
+Next, check that the library path is set to `~/.checkpoint`:
 
 ```{r inspect-2}
 normalizePath(.libPaths(), winslash = "/")
 ```
 
-Check which packages are installed in checkpoint library:
+Finally, check which packages are installed in checkpoint library:
 
 ```{r inspect-3}
 installed.packages()[, "Package"]

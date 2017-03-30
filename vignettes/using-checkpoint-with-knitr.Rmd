@@ -23,7 +23,7 @@ For example, imagine your R script uses the `MASS` package, then create a manife
 
 ```{r, warning=FALSE}
 td <- tempdir()
-dir.create(file.path(td, ".checkpoint"))
+dir.create(file.path(td, ".checkpoint"), recursive = TRUE)
 ```
 
 

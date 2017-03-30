@@ -12,7 +12,7 @@
 
 <meta name="author" content="Andrie de Vries" />
 
-<meta name="date" content="2017-03-29" />
+<meta name="date" content="2017-03-30" />
 
 <title>Using checkpoint for reproducible research</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using checkpoint for reproducible research</h1>
 <h4 class="author"><em>Andrie de Vries</em></h4>
-<h4 class="date"><em>2017-03-29</em></h4>
+<h4 class="date"><em>2017-03-30</em></h4>
 
 
 
@@ -162,34 +162,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## https://mran.microsoft.com/documents/rro/reproducibility/</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;.checkpoint&quot;</span>))
 <span class="kw">checkpoint</span>(<span class="st">&quot;2015-04-26&quot;</span>, <span class="dt">project =</span> example_project, <span class="dt">checkpointLocation =</span> <span class="kw">tempdir</span>())</code></pre></div>
+<pre><code>## Unable to connect to MRAN. Skipping some date validations.</code></pre>
+<pre><code>## Warning: Unable to reach MRAN root at http://mran.microsoft.com/snapshot/</code></pre>
+<pre><code>## Warning: Unable to find snapshot on MRAN at http://mran.microsoft.com/
+## snapshot/2015-04-26</code></pre>
 <pre><code>## Scanning for packages used in this project</code></pre>
 <pre><code>## - Discovered 2 packages</code></pre>
-<pre><code>## Installing packages used in this project</code></pre>
-<pre><code>##  - Installing 'MASS'</code></pre>
-<pre><code>## MASS</code></pre>
-<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/RtmpsH1Gy5/.checkpoint/2015-04-26/lib/x86_64-w64-mingw32/3.3.3'
-## (as 'lib' is unspecified)</code></pre>
-<pre><code>## package 'MASS' successfully unpacked and MD5 sums checked
-## 
-## The downloaded binary packages are in
-##  C:\Users\adevries\AppData\Local\Temp\RtmpsH1Gy5\downloaded_packages</code></pre>
+<pre><code>## Warning: unable to access index for repository http://mran.microsoft.com/snapshot/2015-04-26/src/contrib:
+##   cannot open URL 'http://mran.microsoft.com/snapshot/2015-04-26/src/contrib/PACKAGES'</code></pre>
+<pre><code>## Packages not available in repository and won't be installed:</code></pre>
+<pre><code>##  - MASS</code></pre>
+<pre><code>## All detected packages already installed</code></pre>
 <pre><code>## checkpoint process complete</code></pre>
 <pre><code>## ---</code></pre>
 </div>
 <div id="inspecting-the-results" class="section level3">
 <h3>Inspecting the results</h3>
 <p>Now inspect the results:</p>
-<p>Check that CRAN mirror is set to MRAN snapshot:</p>
+<p>First, check that your CRAN mirror is set to MRAN snapshot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getOption</span>(<span class="st">&quot;repos&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;https://mran.microsoft.com/snapshot/2015-04-26&quot;</code></pre>
-<p>Check that library path is set to <code>~/.checkpoint</code>:</p>
+<pre><code>## [1] &quot;http://mran.microsoft.com/snapshot/2015-04-26&quot;</code></pre>
+<p>Next, check that the library path is set to <code>~/.checkpoint</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">normalizePath</span>(<span class="kw">.libPaths</span>(), <span class="dt">winslash =</span> <span class="st">&quot;/&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpsH1Gy5/.checkpoint/2015-04-26/lib/x86_64-w64-mingw32/3.3.3&quot;
-## [2] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpsH1Gy5/.checkpoint/R-3.3.3&quot;</code></pre>
-<p>Check which packages are installed in checkpoint library:</p>
+<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpasAtF9/.checkpoint/2015-04-26/lib/x86_64-w64-mingw32/3.3.3&quot;
+## [2] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpasAtF9/.checkpoint/R-3.3.3&quot;</code></pre>
+<p>Finally, check which packages are installed in checkpoint library:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">installed.packages</span>()[, <span class="st">&quot;Package&quot;</span>]</code></pre></div>
-<pre><code>##       MASS   compiler 
-##     &quot;MASS&quot; &quot;compiler&quot;</code></pre>
+<pre><code>## [1] &quot;compiler&quot;</code></pre>
 </div>
 </div>
 </div>
