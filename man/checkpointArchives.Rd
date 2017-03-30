@@ -21,7 +21,7 @@ checkpointRemove("2016-10-01")
 }
 \seealso{
 Other checkpoint functions: \code{\link{checkpointRemove}},
-  \code{\link{checkpoint}},
+  \code{\link{checkpoint}}, \code{\link{getAccessDate}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
-  \code{\link{setSnapshot}}
+  \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
 }

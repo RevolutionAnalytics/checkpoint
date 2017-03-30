@@ -4,10 +4,12 @@
 \alias{setSnapshot}
 \title{Set default CRAN repository to MRAN snapshot date.}
 \usage{
-setSnapshot(snapshotDate)
+setSnapshot(snapshotDate, online = TRUE)
 }
 \arguments{
-\item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
+\item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use \code{\link[=getValidSnapshots]{getValidSnapshots()}}}
+
+\item{online}{If TRUE, performs online validation checks. This can be set to FALSE for programming purposes. Internally, \code{\link[=checkpoint]{checkpoint()}} sets this value to FALSE when not scanning for packages.}
 }
 \description{
 Set default CRAN repository to MRAN snapshot date.
@@ -34,5 +36,7 @@ options(repos = oldRepos)
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
-  \code{\link{getValidSnapshots}}, \code{\link{mranUrl}}
+  \code{\link{getAccessDate}},
+  \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
+  \code{\link{unCheckpoint}}
 }

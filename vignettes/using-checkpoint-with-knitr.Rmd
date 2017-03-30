@@ -1,0 +1,72 @@
+---
+title: "Using checkpoint in a markdown document"
+author: "Andrie de Vries"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using checkpoint in a markdown document}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+# Introduction
+
+Sometimes you want to use create a report using `markdown`, and you want to `checkpoint` the code in this document.
+
+However, running this as part of a `RMarkdown` process is problematic, since the knitting process runs inside a temporary folder that is different from the current working directory.
+
+# A dirty hack
+
+The only way I've found to get `checkpoint()` to work inside an RMardown document, is really a bit of a hack. The workaround is to create a manifest of required packages, and write this to an R file in the working directory.
+
+For example, imagine your R script uses the `MASS` package, then create a manifest file like this:
+
+```{r, warning=FALSE}
+td <- tempdir()
+dir.create(file.path(td, ".checkpoint"), recursive = TRUE)
+```
+
+
+# Running checkpoint
+
+Then you can use `checkpoint()` in the normal way.
+
+In this example you use a temporary folder as the checkpoint location. This is only necessary because CRAN policy forbids writing anything to local disk, and a temporary folder is the only acceptable location.
+
+```{r}
+library(checkpoint)
+checkpoint("2017-03-28", checkpointLocation = td)
+```
+
+# Confirm this actually worked:
+
+If this worked, you should see that the library path now points to `tempdir()` and that MASS should be one of only a few package installed:
+
+```{r}
+.libPaths()
+installed.packages(noCache = TRUE)[, "Package"]
+```
+
+# Your real R code:
+
+Now your real R code follows
+
+```{r}
+library(MASS)
+hist(islands)
+```
+
+# Conclusion
+
+This is a bit of a dirty hack, but points in a direction for getting your RMarkdown script to be checkpointed.
+
+Now your R Markdown script is checkpointed, and furthermore if you execute the R command `knitr::purl("foo.Rmd")` in a separate R session where `foo.Rmd` is the name of your R Markdown script, this will strip off only the R code associated with your project, but with the checkpoint facility intact, and write just the R code to a file named `foo.R`.
+
+Now all you need to do is to circulate the file `foo.R` along with any supporting data files.
+
+```{r, include=FALSE}
+# clean up
+
+detach("package:MASS", unload = TRUE)
+unlink(file.path(td, ".checkpoint"), recursive = TRUE)
+```

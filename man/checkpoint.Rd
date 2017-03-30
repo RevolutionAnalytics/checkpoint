@@ -11,11 +11,11 @@ checkpoint(snapshotDate, project = getwd(), R.version,
   forceInstall = FALSE, forceProject = FALSE)
 }
 \arguments{
-\item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format,e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day.}
+\item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use \code{\link[=getValidSnapshots]{getValidSnapshots()}}}
 
 \item{project}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link[=getwd]{getwd()}}.}
 
-\item{R.version}{Optional character string, e.g. "3.1.2".  If specified, compares the current \link{R.version} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
+\item{R.version}{Optional character string, e.g. \code{"3.1.2"}.  If specified, compares the current \link{R.version} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
 
 \item{scanForPackages}{If \code{TRUE}, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for \code{scanForPackages = FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scanForPackages = FALSE} if you are certain that all package dependencies are already in the checkpoint folder.}
 
@@ -62,16 +62,18 @@ Specifically, the function will:
 
 \section{Resetting the checkpoint}{
 
+
 To reset the checkpoint, simply restart your R session.
+
+You can also use the experimental function \code{\link[=unCheckpoint]{unCheckpoint()}}
 }
 
 \section{Changing the default MRAN url}{
 
 
-\code{checkpoint} uses https by default to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}).
-\code{checkpoint} Defaults to \url{https://mran.microsoft.com/snapshot} by default in R versions 3.2.0 and later, if https support is enabled.
+By default, \code{checkpoint()} uses https to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}). The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
 
-You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}
+You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}.
 }
 
 \section{Log file}{
@@ -84,6 +86,12 @@ As a side effect, the \code{checkpoint} function writes a log file with informat
 \item \code{pkg}
 \item \code{bytes}
 }
+}
+
+\section{Last accessed date}{
+
+
+The \code{\link[=checkpoint]{checkpoint()}} function stores a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.  See also \code{\link[=getAccessDate]{getAccessDate()}}. To remove snapshots that have not been used since a given date, use \code{\link[=checkpointRemove]{checkpointRemove()}}
 }
 
 \examples{
@@ -128,6 +136,7 @@ setwd(oldwd)
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{checkpointRemove}},
+  \code{\link{getAccessDate}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
-  \code{\link{setSnapshot}}
+  \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
 }
