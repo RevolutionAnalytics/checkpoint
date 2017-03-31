@@ -45,7 +45,6 @@ example_code <- '
 library(MASS)
 library(chron)
 '
-dir.create(tempdir(), recursive=TRUE, showWarnings = TRUE)
 cat(example_code, file = file.path(tempdir(), "managing_checkpoint_example_code.R"))
 ```
 
