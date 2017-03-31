@@ -1,15 +1,9 @@
 # checkpoint - Simple reproducibility for R scripts that depend on packages
 
-**Build status**
-
-master: 
 [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=master)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
-dev: [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
-
-**Version on CRAN**
-
+[![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/checkpoint)](http://cran.r-project.org/package=checkpoint)
-[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/secret)](http://www.r-pkg.org/pkg/secret)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/checkpoint)](http://www.r-pkg.org/pkg/checkpoint)
 
 ## Overview
 
