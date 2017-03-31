@@ -20,7 +20,7 @@ checkpointRemove(snapshotDate, checkpointLocation = "~/",
 \item{notUsedSince}{If \code{TRUE}, removes all snapshot archives that have not been accessed since the \code{snapshotDate}. See \code{\link[=getAccessDate]{getAccessDate()}}}
 }
 \description{
-This function enables you to delete a snapshot archive folder from disk, thus releasing storage space.
+This function enables you to delete a snapshot archive folder from disk, thus releasing storage space. If you supply a single \code{snapshotDate}, then only this archive will be removed. You also have the option to remove a series of snapshots, including all snapshots before a given date, or all snapshots that have not been accessed since a given date.
 }
 \examples{
 checkpointArchives()

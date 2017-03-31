@@ -26,6 +26,10 @@ To create the snapshot archives, once a day (at midnight UTC) we refresh the Aus
 \item \code{\link[=checkpointRemove]{checkpointRemove()}}: Remove checkpoint archive from disk.
 \item \code{\link[=getAccessDate]{getAccessDate()}}: Returns the date the snapshot was last accessed.
 }
+\item Other:
+\itemize{
+\item \code{\link[=unCheckpoint]{unCheckpoint()}}: (Experimental) Reset the \code{.libPath} to the user library
+}
 }
 }
 \keyword{package}
