@@ -109,7 +109,7 @@ Next you want to run the script.  Here is what `checkpoint` does:
 
 example_project <- tempdir()
 
-dir.create(example_project, recursive = TRUE)
+dir.create(example_project, recursive = TRUE, showWarnings = FALSE)
 oldRepos <- getOption("repos")
 oldLibPaths <- .libPaths()
 
