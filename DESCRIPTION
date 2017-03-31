@@ -11,12 +11,12 @@ Description: The goal of checkpoint is to solve the problem of package
     later and may have altered your results. In this way, anyone using checkpoint's
     checkpoint() can ensure the reproducibility of your scripts or projects at any
     time. To create the snapshot archives, once a day (at midnight UTC) Microsoft
-    refreshes the Austria CRAN mirror, on the "Microsoft R Archived Network"
+    refreshes the Austria CRAN mirror on the "Microsoft R Archived Network"
     server (<https://mran.microsoft.com/>). Immediately after completion
     of the rsync mirror process, the process takes a snapshot, thus creating the
     archive. Snapshot archives exist starting from 2014-09-17.
-Version: 0.3.18
-Date: 2016-10-31
+Version: 0.3.20
+Date: 2017-03-30
 Author: Microsoft Corporation
 Maintainer: Andrie de Vries <adevries@microsoft.com>
 Copyright: Microsoft

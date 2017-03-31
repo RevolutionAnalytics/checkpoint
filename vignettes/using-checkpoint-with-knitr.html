@@ -78,64 +78,88 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1>Introduction</h1>
 <p>Sometimes you want to use create a report using <code>markdown</code>, and you want to <code>checkpoint</code> the code in this document.</p>
 <p>However, running this as part of a <code>RMarkdown</code> process is problematic, since the knitting process runs inside a temporary folder that is different from the current working directory.</p>
+<p>To resolve this, I propose a hacky solution: create a “manifest” file in the same folder that contains all of the <code>library()</code> calls.</p>
 </div>
-<div id="a-dirty-hack" class="section level1">
-<h1>A dirty hack</h1>
+<div id="example" class="section level1">
+<h1>Example</h1>
+<p>Imagine you have a small script that you want to put in an Rmarkdown document with a checkpoint.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># demo script</span>
+<span class="kw">library</span>(MASS)
+<span class="kw">hist</span>(islands)</code></pre></div>
+</div>
+<div id="the-checkpoint-solution" class="section level1">
+<h1>The checkpoint solution</h1>
 <p>The only way I’ve found to get <code>checkpoint()</code> to work inside an RMardown document, is really a bit of a hack. The workaround is to create a manifest of required packages, and write this to an R file in the working directory.</p>
 <p>For example, imagine your R script uses the <code>MASS</code> package, then create a manifest file like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">td &lt;-<span class="st"> </span><span class="kw">tempdir</span>()
-<span class="kw">dir.create</span>(<span class="kw">file.path</span>(td, <span class="st">&quot;.checkpoint&quot;</span>))</code></pre></div>
+<pre><code>```{r, include=FALSE}
+# write a manifest to local folder
+cat(&quot;
+library(MASS)
+&quot;,
+file = &quot;manifest.R&quot;)
+```</code></pre>
+<p>This is hacky, since it requires you to construct the list of <code>library()</code> calls by hand and put these into the manifest file.</p>
+<p>(Note that you can use <code>include=FALSE</code> in the code block, so that this code doesn’t show up in your rendered document.)</p>
+<p>Once this is done, the checkpoint process from here is straight-forward</p>
+<pre><code>```{r, include=FALSE}
+# Create .checkpoint folder (in tempdir for this example)
+td &lt;- tempdir()
+dir.create(file.path(td, &quot;.checkpoint&quot;), recursive = TRUE)
+
+# Create the checkpoint
+library(checkpoint)
+checkpoint(&quot;2017-03-28&quot;, checkpointLocation = td)
+```</code></pre>
 </div>
-<div id="running-checkpoint" class="section level1">
-<h1>Running checkpoint</h1>
-<p>Then you can use <code>checkpoint()</code> in the normal way.</p>
-<p>In this example you use a temporary folder as the checkpoint location. This is only necessary because CRAN policy forbids writing anything to local disk, and a temporary folder is the only acceptable location.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(checkpoint)</code></pre></div>
-<pre><code>## 
-## checkpoint: Part of the Reproducible R Toolkit from Microsoft
-## https://mran.microsoft.com/documents/rro/reproducibility/</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> td)</code></pre></div>
+<div id="check-that-this-works" class="section level1">
+<h1>Check that this works</h1>
+<p>Now you are ready to put these instructions in an actual code block to see what happens.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># write a manifest to local folder</span>
+<span class="kw">cat</span>(<span class="st">'</span>
+<span class="st">library(MASS)</span>
+<span class="st">'</span>,
+<span class="dt">file =</span> <span class="st">&quot;manifest.R&quot;</span>)
+
+<span class="co"># Create .checkpoint folder (in tempdir for this example)</span>
+<span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;.checkpoint&quot;</span>), <span class="dt">recursive =</span> <span class="ot">TRUE</span>)
+
+<span class="co"># Create the checkpoint</span>
+<span class="kw">library</span>(checkpoint)
+<span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> <span class="kw">tempdir</span>())</code></pre></div>
 <pre><code>## Scanning for packages used in this project</code></pre>
-<pre><code>## Warning in deps.R(tempfile): No file at path 'C:\Users\adevries\AppData
-## \Local\Temp\Rtmp4yKK5p\file53a850b97286.Rmd'.</code></pre>
-<pre><code>## - Discovered 2 packages</code></pre>
-<pre><code>## Unable to parse 1 files:</code></pre>
+<pre><code>## - Discovered 1 packages</code></pre>
+<pre><code>## Unable to parse 2 files:</code></pre>
+<pre><code>## - checkpoint.Rmd</code></pre>
 <pre><code>## - using-checkpoint-with-knitr.Rmd</code></pre>
 <pre><code>## Installing packages used in this project</code></pre>
 <pre><code>##  - Installing 'MASS'</code></pre>
 <pre><code>## MASS</code></pre>
-<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/Rtmp4yKK5p/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2'
+<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/Rtmpuc8HHO/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2'
 ## (as 'lib' is unspecified)</code></pre>
 <pre><code>## package 'MASS' successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\adevries\AppData\Local\Temp\Rtmp4yKK5p\downloaded_packages</code></pre>
+##  C:\Users\adevries\AppData\Local\Temp\Rtmpuc8HHO\downloaded_packages</code></pre>
 <pre><code>## checkpoint process complete</code></pre>
 <pre><code>## ---</code></pre>
-</div>
-<div id="confirm-this-actually-worked" class="section level1">
-<h1>Confirm this actually worked:</h1>
 <p>If this worked, you should see that the library path now points to <code>tempdir()</code> and that MASS should be one of only a few package installed:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">.libPaths</span>()</code></pre></div>
-<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/Rtmp4yKK5p/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2&quot;
-## [2] &quot;C:/Users/adevries/AppData/Local/Temp/Rtmp4yKK5p/.checkpoint/R-3.3.2&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">installed.packages</span>(<span class="dt">noCache =</span> <span class="ot">TRUE</span>)[, <span class="st">&quot;Package&quot;</span>]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">.libPaths</span>()
+## [1] &quot;.../Temp/RtmpIVB6bI/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2&quot;
+## [2] &quot;.../Temp/RtmpIVB6bI/.checkpoint/R-3.3.2&quot;</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">installed.packages</span>()[, <span class="st">&quot;Package&quot;</span>]</code></pre></div>
 <pre><code>##       MASS   compiler 
 ##     &quot;MASS&quot; &quot;compiler&quot;</code></pre>
 </div>
 <div id="your-real-r-code" class="section level1">
 <h1>Your real R code:</h1>
-<p>Now your real R code follows</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MASS)</code></pre></div>
-<pre><code>## Warning: package 'MASS' was built under R version 3.3.3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(islands)</code></pre></div>
+<p>Now your real R code follows, and it creates the plot, as expected:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MASS)
+<span class="kw">hist</span>(islands)</code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>This is a bit of a dirty hack, but points in a direction for getting your RMarkdown script to be checkpointed.</p>
-<p>Now your R Markdown script is checkpointed, and furthermore if you execute the R command <code>knitr::purl(&quot;foo.Rmd&quot;)</code> in a separate R session where <code>foo.Rmd</code> is the name of your R Markdown script, this will strip off only the R code associated with your project, but with the checkpoint facility intact, and write just the R code to a file named <code>foo.R</code>.</p>
-<p>Now all you need to do is to circulate the file <code>foo.R</code> along with any supporting data files.</p>
+<p>This is a bit of a hack, but points in a direction for getting your RMarkdown script to be checkpointed.</p>
 </div>
 
 

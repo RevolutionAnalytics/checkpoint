@@ -133,7 +133,7 @@ cat(example_code, file = file.path(example_project, "checkpoint_example_code.R")
 ## Create a checkpoint by specifying a snapshot date
 
 library(checkpoint)
-dir.create(file.path(tempdir(), ".checkpoint"))
+dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 checkpoint("2015-04-26", project = example_project, checkpointLocation = tempdir())
 ```
 
@@ -167,6 +167,7 @@ installed.packages()[, "Package"]
 ## cleanup
 
 unlink(example_project, recursive = TRUE)
+unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 options(repos = oldRepos)
 .libPaths(oldLibPaths)
 ```

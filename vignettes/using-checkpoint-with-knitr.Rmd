@@ -15,58 +15,103 @@ Sometimes you want to use create a report using `markdown`, and you want to `che
 
 However, running this as part of a `RMarkdown` process is problematic, since the knitting process runs inside a temporary folder that is different from the current working directory.
 
-# A dirty hack
+To resolve this, I propose a hacky solution: create a "manifest" file in the same folder that contains all of the `library()` calls.
+
+# Example
+
+Imagine you have a small script that you want to put in an Rmarkdown document with a checkpoint.
+
+```{r, eval = FALSE}
+# demo script
+library(MASS)
+hist(islands)
+```
+
+# The checkpoint solution
 
 The only way I've found to get `checkpoint()` to work inside an RMardown document, is really a bit of a hack. The workaround is to create a manifest of required packages, and write this to an R file in the working directory.
 
 For example, imagine your R script uses the `MASS` package, then create a manifest file like this:
 
-```{r, warning=FALSE}
+```{r, echo=FALSE, comment=""}
+cat("```{r, include=FALSE}", '
+# write a manifest to local folder
+cat("
+library(MASS)
+",
+file = "manifest.R")
+', "```", sep = "")
+```
+
+This is hacky, since it requires you to construct the list of `library()` calls by hand and put these into the manifest file.
+
+(Note that you can use `include=FALSE` in the code block, so that this code doesn't show up in your rendered document.)
+
+Once this is done, the checkpoint process from here is straight-forward
+
+
+```{r, echo=FALSE, comment=""}
+cat("```{r, include=FALSE}", '
+# Create .checkpoint folder (in tempdir for this example)
 td <- tempdir()
 dir.create(file.path(td, ".checkpoint"), recursive = TRUE)
-```
 
-
-# Running checkpoint
-
-Then you can use `checkpoint()` in the normal way.
-
-In this example you use a temporary folder as the checkpoint location. This is only necessary because CRAN policy forbids writing anything to local disk, and a temporary folder is the only acceptable location.
-
-```{r}
+# Create the checkpoint
 library(checkpoint)
 checkpoint("2017-03-28", checkpointLocation = td)
+', "```", sep = "")
 ```
 
-# Confirm this actually worked:
+# Check that this works
+
+Now you are ready to put these instructions in an actual code block to see what happens.
+
+```{r checkpoint, warning=FALSE}
+# write a manifest to local folder
+cat('
+library(MASS)
+',
+file = "manifest.R")
+
+# Create .checkpoint folder (in tempdir for this example)
+dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
+
+# Create the checkpoint
+library(checkpoint)
+checkpoint("2017-03-28", checkpointLocation = tempdir())
+
+```
+
 
 If this worked, you should see that the library path now points to `tempdir()` and that MASS should be one of only a few package installed:
 
-```{r}
+```{r, eval=FALSE}
 .libPaths()
-installed.packages(noCache = TRUE)[, "Package"]
+## [1] ".../Temp/RtmpIVB6bI/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2"
+## [2] ".../Temp/RtmpIVB6bI/.checkpoint/R-3.3.2"
+```
+
+```{r}
+installed.packages()[, "Package"]
 ```
 
 # Your real R code:
 
-Now your real R code follows
+Now your real R code follows, and it creates the plot, as expected:
 
-```{r}
+```{r, warning=FALSE}
 library(MASS)
 hist(islands)
 ```
 
 # Conclusion
 
-This is a bit of a dirty hack, but points in a direction for getting your RMarkdown script to be checkpointed.
+This is a bit of a hack, but points in a direction for getting your RMarkdown script to be checkpointed.
 
-Now your R Markdown script is checkpointed, and furthermore if you execute the R command `knitr::purl("foo.Rmd")` in a separate R session where `foo.Rmd` is the name of your R Markdown script, this will strip off only the R code associated with your project, but with the checkpoint facility intact, and write just the R code to a file named `foo.R`.
-
-Now all you need to do is to circulate the file `foo.R` along with any supporting data files.
 
 ```{r, include=FALSE}
 # clean up
 
 detach("package:MASS", unload = TRUE)
-unlink(file.path(td, ".checkpoint"), recursive = TRUE)
+unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 ```
