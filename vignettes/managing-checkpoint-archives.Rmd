@@ -161,5 +161,6 @@ unCheckpoint()
 ```{r cleanup, include=FALSE}
 ## cleanup
 unlink("manifest.R")
+unlink(file.path(tempdir(), "checkpoint_example_code.R"))
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 ```

@@ -167,6 +167,7 @@ installed.packages()[, "Package"]
 ## cleanup
 
 unlink(example_project, recursive = TRUE)
+unlink(file.path(tempdir(), "checkpoint_example_code.R"))
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 options(repos = oldRepos)
 .libPaths(oldLibPaths)
