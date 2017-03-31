@@ -4,7 +4,7 @@ author: "Andrie de Vries"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{manage}
+  %\VignetteIndexEntry{Managing checkpoint snapshot archives}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
@@ -45,13 +45,14 @@ example_code <- '
 library(MASS)
 library(chron)
 '
+dir.create(tempdir(), recursive = TRUE)
 cat(example_code, file = file.path(tempdir(), "managing_checkpoint_example_code.R"))
 ```
 
 ```{r checkpoint, results="hide", message=FALSE, warning=FALSE}
 ## Create a checkpoint by specifying a snapshot date
 library(checkpoint)
-dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
+dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
 checkpoint("2015-04-26", project = tempdir(), checkpointLocation = tempdir())
 
 ```

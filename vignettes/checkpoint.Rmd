@@ -4,7 +4,7 @@ author: "Andrie de Vries"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{vignette}
+  %\VignetteIndexEntry{Using checkpoint for reproducible research}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
@@ -109,7 +109,7 @@ Next you want to run the script.  Here is what `checkpoint` does:
 
 example_project <- tempdir()
 
-dir.create(example_project, recursive = TRUE)
+dir.create(example_project, recursive = TRUE, showWarnings = FALSE)
 oldRepos <- getOption("repos")
 oldLibPaths <- .libPaths()
 
@@ -170,5 +170,5 @@ unlink(example_project, recursive = TRUE)
 unlink(file.path(tempdir(), "checkpoint_example_code.R"))
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 options(repos = oldRepos)
-.libPaths(oldLibPaths)
+unCheckpoint(oldLibPaths)
 ```
