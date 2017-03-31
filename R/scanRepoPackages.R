@@ -135,7 +135,7 @@ deps.Rnw <- function(file, verbose=TRUE) {
 
 deps.R <- deps.txt <- function(file, verbose=TRUE) {
   if (!file.exists(file)) {
-    warning("No file at path '", file, "'.")
+    mssg(verbose, "No file at path '", file, "'.")
     return(list(pkgs=character(), error=file))
   }
   
