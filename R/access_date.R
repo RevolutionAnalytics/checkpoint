@@ -1,5 +1,5 @@
 # Write a small file into the snapshot that contains the last date this snapshot was accessed by checkpoint()
-writeAccessDate <- function(snapshotDate, checkpointLocation = "~/"){
+setAccessDate <- function(snapshotDate, checkpointLocation = "~/"){
   today <- strftime(Sys.Date(), "%Y-%m-%d", tz = FALSE)
   if(missing(snapshotDate) || is.null(snapshotDate)){
     snapshotDate <- today
