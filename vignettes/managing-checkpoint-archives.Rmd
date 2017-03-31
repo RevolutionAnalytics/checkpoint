@@ -45,10 +45,7 @@ example_code <- '
 library(MASS)
 library(chron)
 '
-```
-```{r setup-2, include=FALSE}
-cat(example_code, file = file.path(tempdir(), "checkpoint_example_code.R"))
-
+cat(example_code, file = file.path(tempdir(), "managing_checkpoint_example_code.R"))
 ```
 
 ```{r checkpoint, results="hide", message=FALSE, warning=FALSE}
@@ -159,6 +156,6 @@ unCheckpoint()
 ```{r cleanup, include=FALSE}
 ## cleanup
 unlink("manifest.R")
-unlink(file.path(tempdir(), "checkpoint_example_code.R"))
+unlink(file.path(tempdir(), "managing_checkpoint_example_code.R"))
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 ```
