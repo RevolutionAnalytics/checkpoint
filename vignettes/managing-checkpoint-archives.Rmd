@@ -39,22 +39,20 @@ truehist(islands)
 Next, create the checkpoint:
 
 
-```{r setup, include=FALSE}
-
+```{r setup-1, include=FALSE}
 ## Write dummy code file to project
-
 example_code <- '
 library(MASS)
 library(chron)
 '
-
+```
+```{r setup-2, include=FALSE}
 cat(example_code, file = file.path(tempdir(), "checkpoint_example_code.R"))
 
 ```
 
 ```{r checkpoint, results="hide", message=FALSE, warning=FALSE}
 ## Create a checkpoint by specifying a snapshot date
-
 library(checkpoint)
 dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 checkpoint("2015-04-26", project = tempdir(), checkpointLocation = tempdir())
