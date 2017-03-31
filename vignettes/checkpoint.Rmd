@@ -4,7 +4,7 @@ author: "Andrie de Vries"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using checkpoint for reproducible research}
+  %\VignetteIndexEntry{vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
@@ -88,7 +88,7 @@ To create a checkpoint project, you do:
 
 For example, your script may look like this:
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, warning=FALSE}
 library(checkpoint)
 checkpoint("2015-04-26", checkpointLocation = tempdir())
 
@@ -129,7 +129,7 @@ cat(example_code, file = file.path(example_project, "checkpoint_example_code.R")
 
 ```
 
-```{r checkpoint}
+```{r checkpoint, warning=FALSE}
 ## Create a checkpoint by specifying a snapshot date
 
 library(checkpoint)

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Andrie de Vries" />
 
-<meta name="date" content="2017-03-30" />
+<meta name="date" content="2017-03-31" />
 
 <title>Using checkpoint in a markdown document</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using checkpoint in a markdown document</h1>
 <h4 class="author"><em>Andrie de Vries</em></h4>
-<h4 class="date"><em>2017-03-30</em></h4>
+<h4 class="date"><em>2017-03-31</em></h4>
 
 
 
@@ -124,22 +124,26 @@ checkpoint(&quot;2017-03-28&quot;, checkpointLocation = td)
 <span class="kw">dir.create</span>(<span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;.checkpoint&quot;</span>), <span class="dt">recursive =</span> <span class="ot">TRUE</span>)
 
 <span class="co"># Create the checkpoint</span>
-<span class="kw">library</span>(checkpoint)
-<span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> <span class="kw">tempdir</span>())</code></pre></div>
+<span class="kw">library</span>(checkpoint)</code></pre></div>
+<pre><code>## 
+## checkpoint: Part of the Reproducible R Toolkit from Microsoft
+## https://mran.microsoft.com/documents/rro/reproducibility/</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> <span class="kw">tempdir</span>())</code></pre></div>
 <pre><code>## Scanning for packages used in this project</code></pre>
-<pre><code>## - Discovered 1 packages</code></pre>
-<pre><code>## Unable to parse 2 files:</code></pre>
+<pre><code>## - Discovered 2 packages</code></pre>
+<pre><code>## Unable to parse 3 files:</code></pre>
 <pre><code>## - checkpoint.Rmd</code></pre>
+<pre><code>## - other-checkpoint-functions.Rmd</code></pre>
 <pre><code>## - using-checkpoint-with-knitr.Rmd</code></pre>
 <pre><code>## Installing packages used in this project</code></pre>
 <pre><code>##  - Installing 'MASS'</code></pre>
 <pre><code>## MASS</code></pre>
-<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/Rtmpuc8HHO/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2'
+<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/RtmpIRkAhg/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.3'
 ## (as 'lib' is unspecified)</code></pre>
 <pre><code>## package 'MASS' successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\adevries\AppData\Local\Temp\Rtmpuc8HHO\downloaded_packages</code></pre>
+##  C:\Users\adevries\AppData\Local\Temp\RtmpIRkAhg\downloaded_packages</code></pre>
 <pre><code>## checkpoint process complete</code></pre>
 <pre><code>## ---</code></pre>
 <p>If this worked, you should see that the library path now points to <code>tempdir()</code> and that MASS should be one of only a few package installed:</p>

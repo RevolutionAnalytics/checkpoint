@@ -54,5 +54,6 @@ hist(islands)
 # clean up
 
 detach("package:MASS", unload = TRUE)
+unlink("manifest.R")
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 

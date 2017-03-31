@@ -113,5 +113,6 @@ This is a bit of a hack, but points in a direction for getting your RMarkdown sc
 # clean up
 
 detach("package:MASS", unload = TRUE)
+unlink("manifest.R")
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 ```
