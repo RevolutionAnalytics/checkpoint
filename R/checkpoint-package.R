@@ -12,11 +12,14 @@
 #'   * [checkpoint()]: Configures R session to use packages as they existed on CRAN at time of snapshot.
 #'   * [setSnapshot()]: Set default CRAN repository to MRAN snapshot date.
 #'   * [getValidSnapshots()]: Read list of available snapshot dates from MRAN.
+#'   
 #' * Managing local archives:
 #'   * [checkpointArchives()]: List checkpoint archives on disk.
 #'   * [checkpointRemove()]: Remove checkpoint archive from disk.
 #'   * [getAccessDate()]: Returns the date the snapshot was last accessed.
 #' 
+#' * Other:
+#'   * [unCheckpoint()]: (Experimental) Reset the `.libPath` to the user library
 #' 
 #'
 #' @name checkpoint-package

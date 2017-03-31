@@ -88,7 +88,7 @@ To create a checkpoint project, you do:
 
 For example, your script may look like this:
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, warning=FALSE}
 library(checkpoint)
 checkpoint("2015-04-26", checkpointLocation = tempdir())
 
@@ -109,7 +109,7 @@ Next you want to run the script.  Here is what `checkpoint` does:
 
 example_project <- tempdir()
 
-dir.create(example_project, recursive = TRUE)
+dir.create(example_project, recursive = TRUE, showWarnings = FALSE)
 oldRepos <- getOption("repos")
 oldLibPaths <- .libPaths()
 
@@ -129,7 +129,7 @@ cat(example_code, file = file.path(example_project, "checkpoint_example_code.R")
 
 ```
 
-```{r checkpoint}
+```{r checkpoint, warning=FALSE}
 ## Create a checkpoint by specifying a snapshot date
 
 library(checkpoint)
@@ -167,7 +167,8 @@ installed.packages()[, "Package"]
 ## cleanup
 
 unlink(example_project, recursive = TRUE)
+unlink(file.path(tempdir(), "checkpoint_example_code.R"))
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 options(repos = oldRepos)
-.libPaths(oldLibPaths)
+unCheckpoint(oldLibPaths)
 ```

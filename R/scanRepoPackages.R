@@ -24,12 +24,12 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE, use.knitr = F
   if(length(files_k) > 0) {
     if(use.knitr) {
       if(!requireNamespace("knitr")) {
-        warning("The knitr package is not available and Rmarkdown files will not be parsed")
+        mssg(verbose, "The knitr package is not available and Rmarkdown files will not be parsed")
       } else {
         R_files <- c(files_r, files_k)
       }
     } else {
-      warning("rmarkdown files found and will not be parsed. Set use.knitr = TRUE")
+      mssg(verbose, "rmarkdown files found and will not be parsed. Set use.knitr = TRUE")
     }
   }
   
@@ -135,7 +135,7 @@ deps.Rnw <- function(file, verbose=TRUE) {
 
 deps.R <- deps.txt <- function(file, verbose=TRUE) {
   if (!file.exists(file)) {
-    warning("No file at path '", file, "'.")
+    mssg(verbose, "No file at path '", file, "'.")
     return(list(pkgs=character(), error=file))
   }
   

@@ -89,6 +89,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
   
   if(interactive()) validateProjectFolder(project)
   
+  # Perform validation on dates
   stopIfInvalidDate(snapshotDate, online = scanForPackages)
   if(!scanForPackages){
     mssg(verbose, "Skipping package scanning")
@@ -96,6 +97,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
       stop("Local snapshot location does not exist")
   }
   
+  # Enforce R version, if not missing
   if(!missing("R.version") && !is.null(R.version)){
     if(!correctR(as.character(R.version))){
       message <- sprintf(
@@ -112,15 +114,17 @@ checkpoint <- function(snapshotDate, project = getwd(),
   
   fixRstudioBug()
   
+  # Create checkpoint folders
   if(!createFolders(snapshotDate = snapshotDate, 
                     checkpointLocation = checkpointLocation))
     stop("Unable to create checkpoint folders at checkpointLocation = \"",
          checkpointLocation, "\"")
   
-  
+  # Set URLs
   mran <- mranUrl()
   snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate, online = scanForPackages)
 
+  # Set library paths
   compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
   
   libPath <- checkpointPath(snapshotDate, type = "lib", 
@@ -177,13 +181,11 @@ checkpoint <- function(snapshotDate, project = getwd(),
     packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
   }
   
-  # detach checkpointed pkgs already loaded
-  
+  # Detach checkpointed pkgs already loaded
   packages.in.search <- findInSearchPath(packages.to.install)
   detachFromSearchPath(packages.in.search)
   
-  # check if packages are available in snapshot
-  
+  # Check if packages are available in snapshot
   if(length(packages.to.install) > 0) {
     # set repos
     setMranMirror(snapshotUrl = snapshoturl)
@@ -198,9 +200,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
     not.available <- character(0)
   }
   
-  # install missing packages
-  
-  
+  # Install missing packages
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
     for(pkg in packages.to.install){
@@ -240,6 +240,11 @@ checkpoint <- function(snapshotDate, project = getwd(),
     lapply(packages.in.search, library, character.only = TRUE, quietly = TRUE)
   }
   
+  # Set last accessed date
+  setAccessDate(snapshotDate = snapshotDate, 
+                checkpointLocation = checkpointLocation)
+  
+  # All done
   mssg(verbose, "checkpoint process complete")
   mssg(verbose, "---")
   

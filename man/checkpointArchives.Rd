@@ -4,10 +4,12 @@
 \alias{checkpointArchives}
 \title{List checkpoint archives on disk.}
 \usage{
-checkpointArchives(checkpointLocation = "~/")
+checkpointArchives(checkpointLocation = "~/", full.names = FALSE)
 }
 \arguments{
 \item{checkpointLocation}{File path where the checkpoint library is stored.  Default is \code{"~/"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).}
+
+\item{full.names}{passed to \code{\link[=list.files]{list.files()}}}
 }
 \description{
 List checkpoint archives on disk.

@@ -3,20 +3,26 @@
 #' List checkpoint archives on disk.
 #' 
 #' @inheritParams checkpoint
+#' 
+#' @param full.names passed to [list.files()]
 #' @export
 #' @family checkpoint functions
 #' @example inst/examples/example_remove.R
-checkpointArchives <- function(checkpointLocation = "~/"){
-  z <- list.files(path = paste0(normalizePath(checkpointLocation), ".checkpoint"), 
+checkpointArchives <- function(checkpointLocation = "~/", full.names=FALSE){
+  cpd <- checkpointPath("", checkpointLocation, type = "root")
+  z <- list.files(path = cpd, 
                   pattern = "\\d{4}-\\d{2}-\\d{2}", 
-                  full.names = TRUE)
-  normalizePath(z, winslash = "/")
+                 recursive = FALSE,
+                 include.dirs = TRUE,
+                  full.names = full.names)
+  if(full.names) z <- normalizePath(z, winslash = "/")
+  z
 }
 
 
 #' Remove checkpoint archive from disk.
 #' 
-#' This function enables you to delete a snapshot archive folder from disk, thus releasing storage space.
+#' This function enables you to delete a snapshot archive folder from disk, thus releasing storage space. If you supply a single `snapshotDate`, then only this archive will be removed. You also have the option to remove a series of snapshots, including all snapshots before a given date, or all snapshots that have not been accessed since a given date.
 #' 
 #' @inheritParams checkpoint
 #' @param allSinceSnapshot If `TRUE`, removes all snapshot archives since the `snapshotDate`
