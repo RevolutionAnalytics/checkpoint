@@ -30,7 +30,8 @@ Depends:
 Suggests:
     knitr,
     testthat(>= 0.9),
-    MASS
+    MASS,
+    covr
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
