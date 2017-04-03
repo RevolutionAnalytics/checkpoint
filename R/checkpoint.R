@@ -123,7 +123,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
   # Set URLs
   mran <- mranUrl()
   snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate, online = scanForPackages)
-
+  
   # Set library paths
   compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
   
@@ -254,65 +254,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
     pkgs_not_on_mran = names(not.available)[not.available],
     pkgs_installed = packages.to.install
   )
-  invisible(z)}
-
-
-#  ------------------------------------------------------------------------
-
-
-setMranMirror <- function(
-  snapshotDate, 
-  snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate)){
-  options(repos = snapshotUrl)}
-
-setLibPaths <- function(checkpointLocation, libPath){
-  assign(".lib.loc", c(libPath, 
-                       checkpointBasePkgs(checkpointLocation)), 
-         envir = environment(.libPaths))
-}
-
-#' Undo the effect of checkpoint by resetting .libPath to user library location.
-#' 
-#' This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets [.libPaths] to the environment variable `R_Libs_User`.
-#' 
-#' @param new The new user library location. Defaults to `Sys.getenv("R_Libs_User")`
-#' 
-#' @export
-#' @family checkpoint functions
-unCheckpoint <- function(new = Sys.getenv("R_Libs_User")){
-  assign(".lib.loc", new, 
-         envir = environment(.libPaths))
+  invisible(z)
 }
 
 
-
-
-mssg <- function(x, ...) if(x) message(...)
-
-correctR <- function(x) compareVersion(as.character(utils::packageVersion("base")), x) == 0
-
-
-# Scans for R files in a folder and the first level subfolders.
-#
-anyRfiles <- function(path = "."){
-  findRfiles <- function(path = "."){
-    pattern <- "\\.[rR]$|\\.[rR]nw$|\\.[rR]md$|\\.[rR]pres$|\\.[rR]proj$"
-    z <- list.files(path = path, pattern = pattern, full.names = TRUE)
-    normalizePath(z, winslash = "/")
-  }
-  dirs <- list.dirs(path = path, recursive = FALSE)
-  rfiles <- as.vector(unlist(sapply(dirs, findRfiles)))
-  length(rfiles) > 0
-}
-
-validateProjectFolder <- function(project) {
-  if(normalizePath(project) == normalizePath("~/") && !anyRfiles(project)){
-    message("This doesn't look like an R project directory.\n", 
-            "Use forceProject = TRUE to force scanning"
-    )
-    answer = readline("Continue (y/n)? ")
-    if(tolower(answer) != "y"){
-      stop("Scanning stopped.", call. = FALSE)
-    }
-  }
-}
