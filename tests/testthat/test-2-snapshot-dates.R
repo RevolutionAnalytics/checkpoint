@@ -48,3 +48,6 @@ describe("getValidSnapshots finds valid dates", {
   })
   
 })
+
+unCheckpoint()
+

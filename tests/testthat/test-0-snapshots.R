@@ -64,5 +64,5 @@ test_that("set http/https correctly", {
   })
 })  
 
-
+unCheckpoint()
 
