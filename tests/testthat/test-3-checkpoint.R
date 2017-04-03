@@ -84,16 +84,8 @@ test_checkpoint <- function(https = FALSE, snap.dates){
             "Installing packages used in this project")
         })
         
-        it("does not display message whan scanForPackages=FALSE", {
-          expect_false(
-            isTRUE(
-              shows_message("Scanning for packages used in this project",
-                            checkpoint(snap_date, checkpointLocation = checkpointLocation,
-                                       project = project_root, scanForPackages=FALSE)
-              )
-            ))
-        })
         
+                
         it("installs all packages correctly in local lib", {
           pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
           pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
@@ -124,6 +116,48 @@ test_checkpoint <- function(https = FALSE, snap.dates){
           }
           messageMissingPackages(expected.packages, pkgNames(pdbLocal))
           
+          expect_true(
+            all(
+              na.omit(
+                pdbLocal[, "Date/Publication"]) <=
+                as.POSIXct(snap_date, tz="UTC"))
+          )
+          
+        })
+        
+        it("does not display message whan scanForPackages=FALSE", {
+          expect_false(
+            isTRUE(
+              shows_message("Scanning for packages used in this project",
+                            checkpoint(snap_date, checkpointLocation = checkpointLocation,
+                                       project = project_root, scanForPackages=FALSE)
+              )
+            ))
+        })
+        
+        it("throws error when scanForPackages=FALSE and snapshotDate doesn't exist", {
+          expect_error(
+            checkpoint("1900-01-01", checkpointLocation = checkpointLocation,
+                       project = project_root, scanForPackages=FALSE),
+            "Local snapshot location does not exist"
+          )
+        })
+        
+        it("stops when R.version doesn't match current version", {
+          expect_error(
+            checkpoint(snap_date, R.version = "2.15.0",
+                       checkpointLocation = checkpointLocation,
+                       project = project_root, scanForPackages=FALSE),
+            "Specified R.version 2.15.0 does not match current R"
+          )
+        })
+        
+        it("re-installs packages when forceInstall=TRUE", {
+          checkpoint("1900-01-01", R.version = "2.15.0",
+                     checkpointLocation = checkpointLocation,
+                     project = project_root, scanForPackages=FALSE)
+          
+          pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
           expect_true(
             all(
               na.omit(
