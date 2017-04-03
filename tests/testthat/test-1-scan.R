@@ -9,8 +9,7 @@ foo <- function(token, insert){
 }
 
 project_root <- file.path(tempdir(), "checkpoint-test-temp")
-dir.create(project_root, showWarnings = FALSE)
-
+dir.create(project_root, recursive = TRUE, showWarnings = FALSE)
 
 describe("scanRepoPackages finds dependencies", {
   code <- collapse(

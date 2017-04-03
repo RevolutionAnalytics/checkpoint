@@ -20,7 +20,7 @@ packages.to.test.base <- c("MASS", "plyr", "httr", "XML", "checkpoint", "stats",
 packages.to.test.base <- c("MASS", "chron", "checkpoint", "stats", "stats4", "compiler")
 packages.to.test.knitr <- c("foreach")
 checkpointLocation <- tempdir()
-dir.create(file.path(checkpointLocation, ".checkpoint"), showWarnings = FALSE)
+dir.create(file.path(checkpointLocation, ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
 
 
 
