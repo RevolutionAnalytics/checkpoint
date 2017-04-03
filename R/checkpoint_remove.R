@@ -55,20 +55,23 @@ checkpointRemove <- function(snapshotDate, checkpointLocation = "~/",
     
   }
   if(notUsedSince){
-    archiveDates <- getAccessDate(checkpointLocation = checkpointLocation)
-    archiveDates <- archiveDates[!is.na(archiveDates)]
-    archiveDates <- archiveDates[archiveDates >= snapshotDate]
-    to_delete <- checkpointPath(basename(archiveDates), 
+    accessDates <- getAccessDate(checkpointLocation = checkpointLocation)
+    archiveDates <- checkpointArchives(checkpointLocation = checkpointLocation)
+    archiveDates <- basename(archiveDates)
+    archiveDates <- archiveDates[accessDates < snapshotDate]
+    to_delete <- checkpointPath(archiveDates, 
                                 checkpointLocation, type = "snapshot")
     
   }
-  if(length(to_delete) ==0 || !dir.exists(to_delete)) {
+  existing <- dir.exists(to_delete)
+  to_delete <- to_delete[existing]
+  if(length(to_delete) == 0) {
     message("no archives removed")
-    invisible(NULL)
+    invisible(character(0))
   } else {
     res <- unlink(to_delete, recursive = TRUE)
     if(res == 0) message("successfully removed archive")
-    invisible(res)
+    (to_delete)
   }
 }
 
