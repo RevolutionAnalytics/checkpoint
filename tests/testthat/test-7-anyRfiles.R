@@ -3,17 +3,22 @@ if(interactive()) library(testthat)
 
 context("any R files")
 test_that("it detects R files in project", {
-  cpd <- system.file("R", package = "checkpoint")
-  
+
   describe("finds R files in folder", {
+    td <- make_fake_archive()
     
     it("finds R files in checkpoint", {
+      expect_false(
+        anyRfiles(td)
+      )
+      writeLines("# Hello World", con = file.path(td, "hw.R"))
       expect_true(
-        anyRfiles(cpd)
+        anyRfiles(td)
       )
     })
+
+    unlink(file.path(td, "hw.R"))
     
-    td <- make_fake_archive()
     it("finds no R files in fake checkpoint archive", {
       expect_false(
         anyRfiles(td)

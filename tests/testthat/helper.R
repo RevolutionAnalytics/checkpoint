@@ -17,6 +17,7 @@ skip_if_offline <- function(){
 
 make_fake_archive <- function(){
   td <- file.path(tempdir(), ".fakecheckpoint", ".checkpoint")
+  unlink(td, recursive = TRUE)
   dir.create(td, recursive = TRUE, showWarnings = FALSE)
   dir.create(file.path(td, "2099-01-01"), recursive = TRUE, showWarnings = FALSE)
   dir.create(file.path(td, "2099-01-02"), recursive = TRUE, showWarnings = FALSE)
