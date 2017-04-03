@@ -137,7 +137,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         
         it("throws error when scanForPackages=FALSE and snapshotDate doesn't exist", {
           expect_error(
-            checkpoint("1900-01-01", checkpointLocation = checkpointLocation,
+            checkpoint("2015-01-01", checkpointLocation = checkpointLocation,
                        project = project_root, scanForPackages=FALSE),
             "Local snapshot location does not exist"
           )
@@ -153,7 +153,7 @@ test_checkpoint <- function(https = FALSE, snap.dates){
         })
         
         it("re-installs packages when forceInstall=TRUE", {
-          checkpoint("1900-01-01", R.version = "2.15.0",
+          checkpoint(snap_date,
                      checkpointLocation = checkpointLocation,
                      project = project_root, scanForPackages=FALSE)
           

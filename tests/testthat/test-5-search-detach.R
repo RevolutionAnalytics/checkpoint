@@ -6,11 +6,11 @@ test_that("it detaches selected packages", {
   
   describe("detaches a list of required packages", {
     old_search <- search()
-    library(MASS)
+    library(grid)
     library(splines)
     library(stats4)
     
-    to_find <- c("stats4", "splines", "MASS")
+    to_find <- c("stats4", "splines", "grid")
     
     it("finds loaded packages", {
       expect_equal(
