@@ -195,7 +195,10 @@ if(is_online()){
   test_that("No test run in offline", {
     skip_if_offline()
   })
+  
+  unCheckpoint()
 }
+
 
 
 
