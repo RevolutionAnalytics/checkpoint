@@ -47,8 +47,6 @@ describe("scanRepoPackages finds dependencies", {
     found <- projectScanPackages(project = project_root, use.knitr = TRUE)
     expect_equal(found$pkgs, c(letters[1:8], "methods"))
     file.remove(knitfile)
-    
-    unlink(project_root)
   })
   
   it("auto-installs knitr and rmardown", {
@@ -65,8 +63,6 @@ describe("scanRepoPackages finds dependencies", {
     found <- projectScanPackages(project = project_root, use.knitr = TRUE, auto.install.knitr = TRUE)
     expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr", "rmarkdown"))
     file.remove(knitfile)
-    
-    unlink(project_root)
   })
   
   
@@ -105,4 +101,6 @@ describe("scanRepoPackages allows switching between knitr and Sweave", {
   })
   
 })
-  
+
+unlink(project_root)
+

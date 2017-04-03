@@ -7,6 +7,12 @@
 
 # This is the original RStudio code
 original.listInstalledPackages <- function (){
+  
+  .rs.uniqueLibraryPaths <- .rs.pathPackage <- .rs.packageVersion <- 
+    .rs.createAliasedPath <- .rs.addFunction <- NULL
+  rm(.rs.uniqueLibraryPaths,  .rs.pathPackage,  .rs.packageVersion,  
+     .rs.createAliasedPath,  .rs.addFunction)
+  
   uniqueLibPaths <- .rs.uniqueLibraryPaths()
   x <- suppressWarnings(library(lib.loc = uniqueLibPaths))
   x <- x$results[x$results[, 1] != "base", ]
@@ -31,8 +37,14 @@ original.listInstalledPackages <- function (){
   packages[order(packages$name), ]
 }
 
+
 # This is the replacement code
 replacement.listInstalledPackages <- function(){
+  .rs.uniqueLibraryPaths <- .rs.pathPackage <- .rs.packageVersion <- 
+    .rs.createAliasedPath <- .rs.addFunction <- NULL
+  rm(.rs.uniqueLibraryPaths,  .rs.pathPackage,  .rs.packageVersion,  
+     .rs.createAliasedPath,  .rs.addFunction)
+  
   # calculate unique libpaths
   uniqueLibPaths <- .rs.uniqueLibraryPaths()
   
