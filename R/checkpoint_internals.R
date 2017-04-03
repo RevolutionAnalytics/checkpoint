@@ -35,18 +35,20 @@ correctR <- function(x) compareVersion(as.character(utils::packageVersion("base"
 anyRfiles <- function(path = "."){
   findRfiles <- function(path = "."){
     pattern <- "\\.[rR]$|\\.[rR]nw$|\\.[rR]md$|\\.[rR]pres$|\\.[rR]proj$"
-    z <- list.files(path = path, pattern = pattern, full.names = TRUE)
-    normalizePath(z, winslash = "/")
+    list.files(path = path, pattern = pattern, full.names = TRUE)
   }
   dirs <- list.dirs(path = path, recursive = FALSE)
-  rfiles <- as.vector(unlist(sapply(dirs, findRfiles)))
-  length(rfiles) > 0
+  rfilesInDirs <- as.vector(unlist(sapply(dirs, findRfiles)))
+  rfiles <- findRfiles(path = path)
+  length(c(rfiles, rfilesInDirs)) > 0
 }
 
 
 # Use a simple heuristic to decide if the project looks like an R project.
 validateProjectFolder <- function(project) {
-  if(normalizePath(project) == normalizePath("~/") && !anyRfiles(project)){
+  c1 <- normalizePath(project) == normalizePath("~/")
+  c2 <- !anyRfiles(project)
+  if(c1 && c2){
     message("This doesn't look like an R project directory.\n", 
             "Use forceProject = TRUE to force scanning"
     )
