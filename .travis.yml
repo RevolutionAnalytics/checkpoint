@@ -14,6 +14,7 @@ env:
 r_binary_packages:
   - knitr
   - rmarkdown
+  - markdown
 
 branches:
   only:
