@@ -94,11 +94,21 @@ describe("scanRepoPackages allows switching between knitr and Sweave", {
     expect_equal(found$pkgs, "abc")
     expect_equal(found$error, character(0))
   })
-  # it("knitr scans Rnw files with eval=FALSE chunks", {
-  #   found <- projectScanPackages(project = project_root, use.knitr = TRUE, scan.rnw.with.knitr = TRUE)
-  #   expect_equal(found$pkgs, "abc")
-  #   expect_equal(found$error, character(0))
-  # })
+  it("knitr scans Rnw files with eval=FALSE chunks", {
+    found <- projectScanPackages(project = project_root, use.knitr = TRUE, scan.rnw.with.knitr = TRUE)
+    expect_equal(found$pkgs, "abc")
+    expect_equal(found$error, character(0))
+  })
+  
+})
+
+describe("lapplyProgressBar behaves like lapply()", {
+  it("displays a progress bar", {
+    expect_output(lapplyProgressBar(1:5, identity), "===")
+  })
+  it("returns the value of lapply", {
+    expect_equal(lapplyProgressBar(1:5, identity), lapply(1:5, identity))
+  })
   
 })
 
