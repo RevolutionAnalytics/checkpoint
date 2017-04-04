@@ -4,7 +4,8 @@
 [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/checkpoint)](http://cran.r-project.org/package=checkpoint)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/checkpoint)](http://www.r-pkg.org/pkg/checkpoint)
-[![Coverage Status](https://img.shields.io/codecov/c/github/RevolutionAnalytics/checkpoint/master.svg)](https://codecov.io/github/RevolutionAnalytics/checkpoint?branch=master)
+[![Coverage Status master](https://img.shields.io/codecov/c/github/RevolutionAnalytics/checkpoint/master.svg)](https://codecov.io/github/RevolutionAnalytics/checkpoint?branch=master)
+[![Coverage Status dev](https://img.shields.io/codecov/c/github/RevolutionAnalytics/checkpoint/dev.svg)](https://codecov.io/github/RevolutionAnalytics/checkpoint?branch=dev)
 
 ## Overview
 
