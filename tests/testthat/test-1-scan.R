@@ -10,6 +10,7 @@ foo <- function(token, insert){
 
 project_root <- file.path(tempdir(), "checkpoint-test-temp")
 dir.create(project_root, recursive = TRUE, showWarnings = FALSE)
+sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
 
 describe("scanRepoPackages finds dependencies", {
   code <- collapse(
@@ -34,11 +35,8 @@ describe("scanRepoPackages finds dependencies", {
   })
   
   it("finds packages in Rmarkdown", {
-    if(!suppressWarnings(require("knitr", quietly = TRUE))){
-      skip("knitr not available")
-    }
-    require("knitr", quietly = TRUE)
-    
+    if(!knitr.is.installed()) skip("knitr not available")
+
     # Write dummy knitr code file to project
     knit <- sprintf("```{r}\n%s\n```", code)
     knitfile <- file.path(project_root, "knit.Rmd")
@@ -50,10 +48,7 @@ describe("scanRepoPackages finds dependencies", {
   })
   
   it("auto-installs knitr and rmardown", {
-    if(!suppressWarnings(require("knitr", quietly = TRUE))){
-      skip("knitr not available")
-    }
-    require("knitr", quietly = TRUE)
+    if(!knitr.is.installed()) skip("knitr not available")
     
     # Write dummy knitr code file to project
     knit <- sprintf("```{r}\n%s\n```", code)
@@ -112,5 +107,8 @@ describe("lapplyProgressBar behaves like lapply()", {
   
 })
 
+
 unlink(project_root)
+# Ensure sink() gets reset
+for(i in seq_len(sink.number())) sink()
 

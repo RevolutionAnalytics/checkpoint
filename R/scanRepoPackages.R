@@ -1,3 +1,5 @@
+knitr.is.installed <- function()suppressWarnings(system.file(package="knitr", mustWork = FALSE) != "")
+
 
 projectScanPackages <- function(project = getwd(), verbose = TRUE, 
                                 use.knitr = FALSE, 
@@ -27,7 +29,7 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE,
   
   if(length(files_k) > 0) {
     if(use.knitr) {
-      if(!requireNamespace("knitr")) {
+      if(!knitr.is.installed()) {
         mssg(verbose, "The knitr package is not available and Rmarkdown files will not be parsed")
       } else {
         R_files <- c(files_r, files_k)
@@ -102,7 +104,7 @@ deps.Rmd <- deps.Rpres <- function(file, verbose=TRUE) {
   showErrors <- getOption("show.error.messages")
   options("show.error.messages" = FALSE)
   on.exit({unlink(tempfile); options("show.error.messages" = showErrors)})
-  stopifnot(requireNamespace("knitr"))
+  if(!knitr.is.installed()) stop("knitr is not installed")
   p <- try(
     suppressWarnings(
       knitr::knit(file, output = tempfile, tangle = TRUE, quiet = TRUE)

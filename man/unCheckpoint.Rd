@@ -4,10 +4,10 @@
 \alias{unCheckpoint}
 \title{Undo the effect of checkpoint by resetting .libPath to user library location.}
 \usage{
-unCheckpoint(new = Sys.getenv("R_Libs_User"))
+unCheckpoint(new = c(Sys.getenv("R_LIBS_USER"), .Library))
 }
 \arguments{
-\item{new}{The new user library location. Defaults to \code{Sys.getenv("R_Libs_User")}}
+\item{new}{The new user library location. Defaults to \code{c(Sys.getenv("R_Libs_User"), .Library)}. See also \code{\link[=.libPaths]{.libPaths()}}}
 }
 \description{
 This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets \link{.libPaths} to the environment variable \code{R_Libs_User}.

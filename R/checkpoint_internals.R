@@ -15,11 +15,11 @@ setLibPaths <- function(checkpointLocation, libPath){
 #' 
 #' This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets [.libPaths] to the environment variable `R_Libs_User`.
 #' 
-#' @param new The new user library location. Defaults to `Sys.getenv("R_Libs_User")`
+#' @param new The new user library location. Defaults to `c(Sys.getenv("R_Libs_User"), .Library)`. See also [.libPaths()]
 #' 
 #' @export
 #' @family checkpoint functions
-unCheckpoint <- function(new = Sys.getenv("R_Libs_User")){
+unCheckpoint <- function(new = c(Sys.getenv("R_LIBS_USER"), .Library)){
   assign(".lib.loc", new, 
          envir = environment(.libPaths))
 }

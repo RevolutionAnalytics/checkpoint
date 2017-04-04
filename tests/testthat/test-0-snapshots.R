@@ -1,6 +1,7 @@
 if(interactive()) library(testthat)
 
 context("snapshots")
+sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
 
 describe("Validate snapshotDate argument",{
   it("stops if missing snapshotDate", {
@@ -64,5 +65,6 @@ test_that("set http/https correctly", {
   })
 })  
 
+# Ensure sink() gets reset
+for(i in seq_len(sink.number())) sink()
 unCheckpoint()
-
