@@ -10,11 +10,6 @@ r:
 env: 
   - NOT_CRAN="true"
   - NOT_CRAN="false"
-  
-r_binary_packages:
-  - knitr
-  - rmarkdown
-  - markdown
 
 branches:
   only:
