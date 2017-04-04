@@ -94,11 +94,11 @@ describe("scanRepoPackages allows switching between knitr and Sweave", {
     expect_equal(found$pkgs, "abc")
     expect_equal(found$error, character(0))
   })
-  it("knitr scans Rnw files with eval=FALSE chunks", {
-    found <- projectScanPackages(project = project_root, use.knitr = TRUE, scan.rnw.with.knitr = TRUE)
-    expect_equal(found$pkgs, "abc")
-    expect_equal(found$error, character(0))
-  })
+  # it("knitr scans Rnw files with eval=FALSE chunks", {
+  #   found <- projectScanPackages(project = project_root, use.knitr = TRUE, scan.rnw.with.knitr = TRUE)
+  #   expect_equal(found$pkgs, "abc")
+  #   expect_equal(found$error, character(0))
+  # })
   
 })
 
