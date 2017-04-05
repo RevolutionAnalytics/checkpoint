@@ -62,10 +62,10 @@ test_checkpoint <- function(https = FALSE, snap_date){
     code = paste("library('", packages.to.test.base, "')", sep ="", collapse ="\n")
     cat(code, file = file.path(project_root, "code.R"))
     
-    # Write dummy knitr code file to project
-    code = sprintf("```{r}\n%s\n```", 
-                   paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
-    cat(code, file = file.path(project_root, "code.Rmd"))
+    # # Write dummy knitr code file to project
+    # code = sprintf("```{r}\n%s\n```", 
+    #                paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
+    # cat(code, file = file.path(project_root, "code.Rmd"))
     
     expect_true(
       all(packages.to.test %in% projectScanPackages(project_root, use.knitr = TRUE)$pkgs)
