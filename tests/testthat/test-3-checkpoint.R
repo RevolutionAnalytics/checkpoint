@@ -68,7 +68,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
     # cat(code, file = file.path(project_root, "code.Rmd"))
     
     expect_true(
-      all(packages.to.test %in% projectScanPackages(project_root, use.knitr = TRUE)$pkgs)
+      all(packages.to.test.base %in% projectScanPackages(project_root, use.knitr = TRUE)$pkgs)
     )
     
     # prints progress message"
@@ -89,7 +89,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
                                                         lib.loc = .Library,
                                                         noCache = TRUE))
     
-    expected.packages <- setdiff(packages.to.test, c("checkpoint", base.packages))
+    expected.packages <- setdiff(packages.to.test.base, c("checkpoint", base.packages))
     
     z <- expect_true(
       all(expected.packages %in% pkgNames(pdbLocal))
