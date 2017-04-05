@@ -1,43 +1,42 @@
 if(interactive()) library(testthat)
 
 context("snapshots")
-sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
 
-describe("Validate snapshotDate argument",{
-  it("stops if missing snapshotDate", {
-    expect_error(
-      checkpoint(), 
-      "You have to specify a snapshotDate"
-    )
-  })
-  it("stops if invalid snapshotDate format", {
-    expect_error(
-      checkpoint("2015/01/01"), 
-      "snapshotDate must be a valid date using format YYYY-MM-DD"
-    )
-    expect_error(
-      checkpoint("20150101"), 
-      "snapshotDate must be a valid date using format YYYY-MM-DD"
-    )
-  })
-  it("stops if snapshotDate doesn't exist on MRAN", {
-    
-    expect_error(
-      checkpoint("2014-09-16"), 
-      "Snapshots are only available after 2014-09-17"
-    )
-    expect_error(
-      checkpoint(Sys.Date() + 1), 
-      "snapshotDate can not be in the future!"
-    )
-  })
+test_that("stops if missing snapshotDate", {
+  expect_error(
+    checkpoint(), 
+    "You have to specify a snapshotDate"
+  )
+})
+
+test_that("stops if invalid snapshotDate format", {
+  expect_error(
+    checkpoint("2015/01/01"), 
+    "snapshotDate must be a valid date using format YYYY-MM-DD"
+  )
+  expect_error(
+    checkpoint("20150101"), 
+    "snapshotDate must be a valid date using format YYYY-MM-DD"
+  )
+})
+
+test_that("stops if snapshotDate doesn't exist on MRAN", {
+  
+  expect_error(
+    checkpoint("2014-09-16"), 
+    "Snapshots are only available after 2014-09-17"
+  )
+  expect_error(
+    checkpoint(Sys.Date() + 1), 
+    "snapshotDate can not be in the future!"
+  )
 })
 
 test_that("set http/https correctly", {
   skip_on_cran()
   skip_if_offline()
   describe("set http/https correctly", {
-    it("resolves to http/https based on R version number", {
+    test_that("resolves to http/https based on R version number", {
       if(getRversion() >= "3.2.0"  && httpsSupported()){
         expect_warning(
           getSnapshotUrl("1972-01-01"), 
@@ -65,6 +64,5 @@ test_that("set http/https correctly", {
   })
 })  
 
-# Ensure sink() gets reset
-for(i in seq_len(sink.number())) sink()
 unCheckpoint()
+
