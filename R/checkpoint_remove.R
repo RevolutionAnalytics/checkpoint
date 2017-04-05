@@ -1,3 +1,11 @@
+# Define dir.exists, since this isn't available in older versions of R
+# (Sometime pre R-3.3.3)
+dir.exists <- function(paths){
+  if(is.function(base::dir.exists))
+    base::dir.exists
+  else
+    file.info(paths)$isdir
+}
 
 
 #' List checkpoint archives on disk.
