@@ -27,7 +27,9 @@ checkpointPath <- function(snapshotDate, checkpointLocation,
       snapshot = snapshotPath
     ),
     winslash = "/",
-    mustWork = FALSE)}
+    mustWork = FALSE)
+}
+
 
 createFolders <- function(snapshotDate, checkpointLocation){
   paths <- sapply(c("root", "lib", "src"), checkpointPath,
@@ -37,28 +39,31 @@ createFolders <- function(snapshotDate, checkpointLocation){
   all(file.exists(paths))
 }
 
-file.path =
-  function(...)
-    gsub(pattern = "/+", replacement = "/", x = base::file.path(...))
 
-authorizeFileSystemUse =
-  function(checkpointLocation) {
-    checkpointRoot = file.path(checkpointLocation, ".checkpoint")
-    if(file.exists(checkpointRoot)) {
-      if(!file.info(checkpointRoot)$isdir)
-        stop("Can't use a non-directory as checkpoint root")}
+file.path <- function(...){
+  gsub(pattern = "/+", replacement = "/", x = base::file.path(...))
+}
+
+
+# If the folder doesn't exists, ask user permission to create it
+# The argument interactive is purely for testing purposes
+authorizeFileSystemUse <- function(checkpointLocation, interactive = interactive()) {
+  checkpointRoot = file.path(checkpointLocation, ".checkpoint")
+  if(file.exists(checkpointRoot)) {
+    if(!file.info(checkpointRoot)$isdir)
+      stop("Can't use a non-directory as checkpoint root")}
+  else {
+    if(interactive) {
+      message(paste("Can I create directory", checkpointRoot, "for internal checkpoint use?\n"))
+      answer = readline("Continue (y/n)? ")
+      if(tolower(answer) != "y")
+        stop("Cannot proceed without access to checkpoint directory")}
     else {
-      if(interactive()) {
-        message(paste("Can I create directory", checkpointRoot, "for internal checkpoint use?\n"))
-        answer = readline("Continue (y/n)? ")
-        if(tolower(answer) != "y")
-          stop("Cannot proceed without access to checkpoint directory")}
-      else {
-        stop(paste(
-          "The .checkpoint folder does not exist. Please try again after creating the folder at", 
-          normalizePath(checkpointRoot)
-        ))
-      }
+      stop(paste(
+        "The .checkpoint folder does not exist. Please try again after creating the folder at", 
+        normalizePath(checkpointRoot, mustWork = FALSE)
+      ))
     }
-    checkpointLocation
   }
+  checkpointLocation
+}

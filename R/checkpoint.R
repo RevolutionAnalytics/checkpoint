@@ -81,7 +81,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
                        scanForPackages = TRUE,
                        checkpointLocation = "~/",
                        verbose=TRUE,
-                       use.knitr = system.file(package="knitr") != "", 
+                       use.knitr, 
                        auto.install.knitr = TRUE,
                        scan.rnw.with.knitr = FALSE,
                        forceInstall = FALSE, 
@@ -95,6 +95,10 @@ checkpoint <- function(snapshotDate, project = getwd(),
     mssg(verbose, "Skipping package scanning")
     if(!snapshotDate %in% localSnapshots(checkpointLocation = checkpointLocation))
       stop("Local snapshot location does not exist")
+  }
+  
+  if(missing(use.knitr) || is.null(use.knitr)) {
+    use.knitr <- knitr.is.installed()
   }
   
   # Enforce R version, if not missing
@@ -148,7 +152,9 @@ checkpoint <- function(snapshotDate, project = getwd(),
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
     pkgs <- projectScanPackages(project, use.knitr = use.knitr, 
-                                scan.rnw.with.knitr = scan.rnw.with.knitr)
+                                scan.rnw.with.knitr = scan.rnw.with.knitr,
+                                auto.install.knitr = auto.install.knitr
+                                )
     packages.detected <- pkgs[["pkgs"]]
     mssg(verbose, "- Discovered ", length(packages.detected), " packages")
     

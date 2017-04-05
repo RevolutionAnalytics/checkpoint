@@ -23,6 +23,7 @@ describe("getValidSnapshots finds valid dates", {
       checkpoint("2015-06-05"),
       "Snapshot does not exist on MRAN. Try 2015-06-03 or 2015-06-09."
     )
+    unCheckpoint()
   })
   
   it("works with no network connection", {
@@ -49,5 +50,4 @@ describe("getValidSnapshots finds valid dates", {
   
 })
 
-unCheckpoint()
 
