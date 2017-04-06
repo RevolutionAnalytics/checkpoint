@@ -19,7 +19,7 @@ test_that("sets snapshot correctly", {
       )
       
       expect_true(
-        grep("http.*://mran.microsoft.com/snapshot/2017-04-01", getOption("repos"))
+        grepl("http.*://mran.microsoft.com/snapshot/2017-04-01", getOption("repos"))
       )
     })
   })
