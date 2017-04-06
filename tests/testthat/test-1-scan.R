@@ -10,7 +10,7 @@ foo <- function(token, insert){
 
 project_root <- file.path(tempdir(), "checkpoint-test-temp")
 dir.create(project_root, recursive = TRUE, showWarnings = FALSE)
-sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
+# sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
 
 code <- collapse(
   foo("library(%s)", letters[1:2]),
@@ -54,7 +54,8 @@ test_that("auto-installs knitr and rmardown", {
   knitfile <- file.path(project_root, "knit.Rmd")
   cat(knit, file = knitfile)
   
-  found <- projectScanPackages(project = project_root, use.knitr = TRUE, auto.install.knitr = TRUE)
+  found <- projectScanPackages(project = project_root, use.knitr = TRUE, 
+                               auto.install.knitr = TRUE)
   expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr", "rmarkdown"))
   file.remove(knitfile)
 })
@@ -82,24 +83,26 @@ codefile <- file.path(project_root, "code.Rnw")
 cat(code, file = codefile)
 
 test_that("Sweave scans Rnw files with eval=FALSE chunks", {
-  found <- projectScanPackages(project = project_root, use.knitr = FALSE, scan.rnw.with.knitr = FALSE)
+  found <- projectScanPackages(project = project_root, use.knitr = FALSE, 
+                               scan.rnw.with.knitr = FALSE)
   expect_equal(found$pkgs, "abc")
   expect_equal(found$error, character(0))
 })
 
-test_that("knitr scans Rnw files with eval=FALSE chunks", {
-  found <- projectScanPackages(project = project_root, use.knitr = TRUE, scan.rnw.with.knitr = TRUE)
-  expect_equal(found$pkgs, "abc")
-  expect_equal(found$error, character(0))
-})
+# test_that("knitr scans Rnw files with eval=FALSE chunks", {
+#   found <- projectScanPackages(project = project_root, use.knitr = TRUE, 
+#                                scan.rnw.with.knitr = TRUE)
+#   expect_equal(found$pkgs, "abc")
+#   expect_equal(found$error, character(0))
+# })
 
 
 test_that("lapplyProgressBar behaves like lapply()", {
-  #"displays a progress bar", {
+  if(!interactive()) skip("Not interactive()")
   expect_output(lapplyProgressBar(1:5, identity), "===")
 })
 
-test_that("returns the value of lapply", {
+test_that("lapplyProgressBar returns the value of lapply", {
   expect_equal(lapplyProgressBar(1:5, identity), lapply(1:5, identity))
 })
 

@@ -11,6 +11,7 @@ checkpoint_log <- function(log, snapshotDate, pkg, file = NULL){
     if(length(z) == 0) return(z)
     strsplit(z, ", ")[[1]]
   }
+  if(length(log) == 0) log <- "Mocking Content type 'application/zip' length 0 bytes (0 KB)"
   
   z <- data.frame(
     timestamp = Sys.time(),
