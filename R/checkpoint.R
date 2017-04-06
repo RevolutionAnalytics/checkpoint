@@ -173,7 +173,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
   if(forceInstall && packages.detected > 0){
     mssg(verbose, "Removing packages to force re-install")
     to_remove <- as.vector(unlist(
-      tools::package_dependencies(packages.detected)
+      tools::package_dependencies(packages.detected, db = available.packages())
     ))
     to_remove <- c(packages.detected, to_remove)
     to_remove <- setdiff(to_remove, "checkpoint")
