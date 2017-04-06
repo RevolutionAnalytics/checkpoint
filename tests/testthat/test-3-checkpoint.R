@@ -20,26 +20,27 @@ packages.to.test.base <- c("MASS", "chron", "checkpoint", "stats", "stats4", "co
 packages.to.test.knitr <- c("foreach")
 checkpointLocation <- tempdir()
 dir.create(file.path(checkpointLocation, ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
-sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
+# sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
 
 #  ------------------------------------------------------------------------
 
 test_checkpoint <- function(https = FALSE, snap_date){
+  # snap_date <- test.start
   
   originalLibPaths <- .libPaths()
-
+  
   url_prefix <- if(https) "https://" else "http://"
   # url_prefix <- "http://"
   # snap_date <- MRAN.default ### <<< use only for interactive testing
   
+  packages.to.test = c(packages.to.test.base, packages.to.test.knitr) 
+  project_root <- file.path(tempfile(), "checkpointtemp")
+  dir.create(project_root, recursive = TRUE)
+  
+  cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
+  
   test_that(paste("checkpoint -", url_prefix, "@", snap_date), {
     if(!interactive()) skip_on_cran()
-    
-    packages.to.test = c(packages.to.test.base, packages.to.test.knitr) 
-    project_root <- file.path(tempfile(), "checkpointtemp")
-    dir.create(project_root, recursive = TRUE)
-    
-    cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
     
     # finds correct MRAN URL"
     expect_equal(
@@ -53,25 +54,25 @@ test_checkpoint <- function(https = FALSE, snap_date){
       checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
       "No packages found to install"
     )
-    
+
     unCheckpoint(originalLibPaths)
     
-    expect_false(suppressWarnings(system.file(package="knitr", mustWork = FALSE)) == "")
-
+    # expect_true(length(find.package("knitr", quiet = TRUE)) > 0)
+    
     # Write dummy code file to project
     code = paste("library('", packages.to.test.base, "')", sep ="", collapse ="\n")
     cat(code, file = file.path(project_root, "code.R"))
     
-    # # Write dummy knitr code file to project
-    # code = sprintf("```{r}\n%s\n```", 
-    #                paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
-    # cat(code, file = file.path(project_root, "code.Rmd"))
+    # Write dummy knitr code file to project
+    code = sprintf("```{r}\n%s\n```",
+                   paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
+    cat(code, file = file.path(project_root, "code.Rmd"))
     
     expect_true(
       all(packages.to.test.base %in% projectScanPackages(project_root, use.knitr = TRUE)$pkgs)
     )
     
-    # prints progress message"
+    # prints progress message
     unCheckpoint(originalLibPaths)
     expect_message(
       checkpoint(snap_date, checkpointLocation = checkpointLocation, 
@@ -80,15 +81,14 @@ test_checkpoint <- function(https = FALSE, snap_date){
     )
     
     # installs all packages correctly in local lib"
-    pdbMRAN <- available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
-    pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
-    
-    pkgNames <- function(pdb)unname(pdb[, "Package"])
-    
+    pdbMRAN = available.packages(contriburl = contrib.url(repos = getSnapshotUrl(snap_date)))
+    # pdbLocal = installed.packages(fields = "Date/Publication", noCache = TRUE)
+    pdbLocal = installed.packages(noCache = TRUE)
+    pkgNames = function(pdb)unname(pdb[, "Package"])
     base.packages <- pkgNames(utils::installed.packages(priority = "base", 
                                                         lib.loc = .Library,
                                                         noCache = TRUE))
-    
+    # browser()
     expected.packages <- setdiff(packages.to.test.base, c("checkpoint", base.packages))
     
     z <- expect_true(
@@ -110,12 +110,12 @@ test_checkpoint <- function(https = FALSE, snap_date){
     }
     messageMissingPackages(expected.packages, pkgNames(pdbLocal))
     
-    expect_true(
-      all(
-        na.omit(
-          pdbLocal[, "Date/Publication"]) <=
-          as.POSIXct(snap_date, tz="UTC"))
-    )
+    # expect_true(
+    #   all(
+    #     na.omit(
+    #       pdbLocal[, "Date/Publication"]) <=
+    #       as.POSIXct(snap_date, tz="UTC"))
+    # )
     
     # does not display message whan scanForPackages=FALSE
     unCheckpoint(originalLibPaths)
@@ -146,18 +146,14 @@ test_checkpoint <- function(https = FALSE, snap_date){
     
     # re-installs packages when forceInstall=TRUE
     unCheckpoint(originalLibPaths)
-    checkpoint(snap_date,
-               checkpointLocation = checkpointLocation,
-               project = project_root, scanForPackages=FALSE)
-    
-    pdbLocal <- installed.packages(fields = "Date/Publication", noCache = TRUE)
-    expect_true(
-      all(
-        na.omit(
-          pdbLocal[, "Date/Publication"]) <=
-          as.POSIXct(snap_date, tz="UTC"))
+    expect_message(
+      checkpoint(snap_date,
+                 checkpointLocation = checkpointLocation,
+                 project = project_root, scanForPackages=TRUE, 
+                 forceInstall = TRUE),
+      "Removing packages to force re-install"
     )
-    
+
     # uses correct MRAN url
     expect_equal(
       getOption("repos"),
@@ -176,7 +172,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
     expect_is(
       logdata <- read.csv(logfile, nrows = 5), 
       "data.frame"
-      )
+    )
     expect_length(names(logdata), 4)
   })
   
@@ -184,14 +180,14 @@ test_checkpoint <- function(https = FALSE, snap_date){
   cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
   unCheckpoint(originalLibPaths)
   expect_identical(originalLibPaths, .libPaths())
-  
 }
 
 
 
 #  ------------------------------------------------------------------------
 
-if(is_online()){
+# if(is_online()){
+if(TRUE){
   MRAN.dates <- getValidSnapshots()
   MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
   
@@ -215,8 +211,6 @@ if(is_online()){
   })
   
 }
-# Ensure sink() gets reset
-for(i in seq_len(sink.number())) sink()
 
 
 
