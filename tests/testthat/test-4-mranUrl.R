@@ -18,9 +18,8 @@ test_that("sets snapshot correctly", {
         "Using CRAN mirror at"
       )
       
-      expect_equal(
-        getOption("repos"),
-        c(CRAN = "https://mran.microsoft.com/snapshot/2017-04-01")
+      expect_true(
+        grep("http.*://mran.microsoft.com/snapshot/2017-04-01", getOption("repos"))
       )
     })
   })
