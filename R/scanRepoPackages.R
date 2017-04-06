@@ -62,19 +62,23 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE,
 }
 
 lapplyProgressBar <- function(X, FUN, ...){
-  env <- environment()
-  N <- length(X)
-  counter <- 0
-  pb <- txtProgressBar(min = 0, max = N, style = 3)
-  on.exit(close(pb))
-  
-  wrapper <- function(...){
-    curVal <- get("counter", envir = env)
-    assign("counter", curVal + 1, envir = env)
-    setTxtProgressBar(get("pb", envir = env), curVal + 1)
-    FUN(...)
+  if(interactive()){
+    env <- environment()
+    N <- length(X)
+    counter <- 0
+    pb <- txtProgressBar(min = 0, max = N, style = 3)
+    on.exit(close(pb))
+    
+    wrapper <- function(...){
+      curVal <- get("counter", envir = env)
+      assign("counter", curVal + 1, envir = env)
+      setTxtProgressBar(get("pb", envir = env), curVal + 1)
+      FUN(...)
+    }
+    lapply(X, wrapper, ...)
+  } else {
+    lapply(X, FUN, ...)
   }
-  lapply(X, wrapper, ...)
 }
 
 getFileExtension <- function(filename)tolower(gsub(".*\\.", "", filename))
