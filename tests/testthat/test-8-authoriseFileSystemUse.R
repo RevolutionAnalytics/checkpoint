@@ -18,9 +18,8 @@ test_that("stops without authorization in interactive mode", {
 test_that("continues with authorization in interactive mode", {
   with_mock(
     `base::readline` = function(prompt)"y",
-    expect_equal(
-      authorizeFileSystemUse(td, interactive=TRUE),
-      td
+    expect_null(
+      authorizeFileSystemUse(td, interactive=TRUE)    
     )
   )
 })
