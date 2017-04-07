@@ -1,4 +1,4 @@
-# checkpoint - Simple reproducibility for R scripts that depend on packages
+# checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility
 
 ---
 
