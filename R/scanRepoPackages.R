@@ -1,4 +1,4 @@
-knitr.is.installed <- function()suppressWarnings(system.file(package="knitr", mustWork = FALSE) != "")
+knitr.is.installed <- function()length(find.package(package="knitr", quiet = TRUE)) > 0
 
 
 projectScanPackages <- function(project = getwd(), verbose = TRUE, 
@@ -52,7 +52,8 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE,
     
     pkgs <- sort(unique(do.call(c, lapply(z, "[[", "pkgs"))))
     if(length(files_k) > 0 && auto.install.knitr) {
-      pkgs <- unique(c(pkgs, "knitr", "rmarkdown"))
+      pkgs <- unique(c(pkgs, "knitr"))
+      # if(getRversion() >= "3.3.3") pkgs <- unique(c(pkgs, "rmarkdown"))
     }
     error <- sort(unique(do.call(c, lapply(z, "[[", "error"))))
     error <- gsub(sprintf("%s[//|\\]*", dir), "", error)
@@ -60,6 +61,7 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE,
   }
   
 }
+
 
 lapplyProgressBar <- function(X, FUN, ...){
   if(interactive()){

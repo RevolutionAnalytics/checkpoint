@@ -13,7 +13,10 @@ install.packages <- function(pkgs, lib = .libPaths()[1], repos = getOption("repo
   if(is_mock_environment() && lib_in_tempdir(lib)){
     mock.install.packages(pkgs = pkgs, lib = lib, repos = repos, ...)
   } else {
-    utils::install.packages(pkgs = pkgs, lib = lib, repos = repos, ...)
+    capture.output(
+      z <- utils::install.packages(pkgs = pkgs, lib = lib, repos = repos, ...)
+    )
+    invisible()
   }
   
 }

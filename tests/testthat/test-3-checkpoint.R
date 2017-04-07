@@ -3,7 +3,7 @@ if(interactive()) library(testthat)
 
 # Configure Travis for tests 
 # https://github.com/RevolutionAnalytics/checkpoint/issues/139
-Sys.setenv("R_TESTS" = "") 
+Sys.setenv("R_TESTS" = "")
 
 current.R <- local({ x = getRversion(); paste(x$major, x$minor, sep=".")})
 
@@ -17,10 +17,10 @@ test.start <- switch(current.R,
 MRAN.default = test.start[1] # ensure only a single value
 
 packages.to.test.base <- c("MASS", "chron", "checkpoint", "stats", "stats4", "compiler")
+packages.to.test.base <- c("MASS", "chron", "checkpoint")
 packages.to.test.knitr <- c("foreach")
 checkpointLocation <- tempdir()
 dir.create(file.path(checkpointLocation, ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
-# sink(file = file.path(tempdir(), "checkpoint_sink.txt"))
 
 #  ------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
   
   cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
   
-  test_that(paste("checkpoint -", url_prefix, "@", snap_date), {
+  test_that(paste("checkpoint -", sub("//", "", url_prefix), "@", snap_date), {
     if(!interactive()) skip_on_cran()
     
     # finds correct MRAN URL"
@@ -52,9 +52,9 @@ test_checkpoint <- function(https = FALSE, snap_date){
     # prints message if no packages found"
     expect_message(
       checkpoint(snap_date, checkpointLocation = checkpointLocation, project = project_root),
-      "No packages found to install"
+    "No packages found to install"
     )
-
+    
     unCheckpoint(originalLibPaths)
     
     # expect_true(length(find.package("knitr", quiet = TRUE)) > 0)
@@ -71,7 +71,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
     expect_true(
       all(packages.to.test.base %in% projectScanPackages(project_root, use.knitr = TRUE)$pkgs)
     )
-    
+    # browser()
     # prints progress message
     unCheckpoint(originalLibPaths)
     expect_message(
@@ -146,7 +146,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
                  forceInstall = TRUE),
       "Removing packages to force re-install"
     )
-
+    
     # uses correct MRAN url
     expect_equal(
       getOption("repos"),
@@ -179,30 +179,33 @@ test_checkpoint <- function(https = FALSE, snap_date){
 
 #  ------------------------------------------------------------------------
 
-# if(is_online()){
-if(TRUE){
-  MRAN.dates <- getValidSnapshots()
-  MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
-  
-  initialUrl <- getOption("checkpoint.mranUrl")
-  
-  context("http ")
-  options(checkpoint.mranUrl = "http://mran.microsoft.com/")
-  test_checkpoint(http = FALSE, snap_date = MRAN.default)
-  options(checkpoint.mranUrl = initialUrl)
-  if(getRversion() >= "3.2.0" && httpsSupported()){
+if(is_online()){
+  # if(interactive()) set_mock_environment()
+  if(TRUE){
+    MRAN.dates <- getValidSnapshots()
+    MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
+    
+    initialUrl <- getOption("checkpoint.mranUrl")
+    
+    context("http ")
+    options(checkpoint.mranUrl = "http://mran.microsoft.com/")
+    test_checkpoint(http = FALSE, snap_date = MRAN.default)
+    options(checkpoint.mranUrl = initialUrl)
+    if(getRversion() >= "3.2.0" && httpsSupported()){
+      context("https")
+      options(checkpoint.mranUrl = "https://mran.microsoft.com/")
+      test_checkpoint(http = TRUE, snap_date = MRAN.default)
+      options(checkpoint.mranUrl = NULL)
+    }
+    
+  } else {
     context("https")
-    options(checkpoint.mranUrl = "https://mran.microsoft.com/")
-    test_checkpoint(http = TRUE, snap_date = MRAN.default)
-    options(checkpoint.mranUrl = NULL)
+    test_that("No tests run in offline mode", {
+      skip("Offline - skipping all tests")
+    })
+    
   }
-  
-} else {
-  context("https")
-  test_that("No tests run in offline mode", {
-    skip("Offline - skipping all tests")
-  })
-  
+  # if(interactive()) reset_mock_environment()
 }
 
 

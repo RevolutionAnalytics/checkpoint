@@ -109,14 +109,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## [1] &quot;2015-04-26&quot;</code></pre>
 <p>You can get the full paths by including the argument <code>full.names=TRUE</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">checkpointArchives</span>(<span class="kw">tempdir</span>(), <span class="dt">full.names =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpkLyR69/.checkpoint/2015-04-26&quot;</code></pre>
+<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpsBY9MD/.checkpoint/2015-04-26&quot;</code></pre>
 </div>
 <div id="working-with-access-dates" class="section level2">
 <h2>Working with access dates</h2>
 <p>Every time you use <code>checkpoint()</code> the function places a small marker in the snapshot archive with the access date. In this way you can track when was the last time you actually used the snapshot archive.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Returns the date the snapshot was last accessed.</span>
 <span class="kw">getAccessDate</span>(<span class="kw">tempdir</span>())</code></pre></div>
-<pre><code>## C:/Users/adevries/AppData/Local/Temp/RtmpkLyR69/.checkpoint/2015-04-26 
+<pre><code>## C:/Users/adevries/AppData/Local/Temp/RtmpsBY9MD/.checkpoint/2015-04-26 
 ##                                                           &quot;2017-04-07&quot;</code></pre>
 </div>
 <div id="removing-a-snapshot-from-local-disk" class="section level2">
@@ -144,16 +144,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 log &lt;-<span class="st"> </span><span class="kw">read.csv</span>(log_file)
 <span class="kw">head</span>(log)</code></pre></div>
 <pre><code>##             timestamp snapshotDate   pkg   bytes
-## 1 2017-04-07 10:15:22   2015-04-26  MASS 1084392
-## 2 2017-04-07 10:15:23   2015-04-26 chron  107881</code></pre>
+## 1 2017-04-07 15:02:29   2015-04-26  MASS 1084392
+## 2 2017-04-07 15:02:30   2015-04-26 chron  107881</code></pre>
 </div>
 <div id="resetting-the-checkpoint" class="section level2">
 <h2>Resetting the checkpoint</h2>
 <p>In older versions of <code>checkpoint()</code> the only way to reset the effect of <code>checkpoint()</code> was to restart your R session.</p>
 <p>In v0.3.20 and above, you can use the function <code>unCheckpoint()</code>. This will reset you <code>.libPaths</code> to the user folder.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">.libPaths</span>()</code></pre></div>
-<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpkLyR69/.checkpoint/2015-04-26/lib/x86_64-w64-mingw32/3.3.3&quot;
-## [2] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpkLyR69/.checkpoint/R-3.3.3&quot;</code></pre>
+<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpsBY9MD/.checkpoint/2015-04-26/lib/x86_64-w64-mingw32/3.3.3&quot;
+## [2] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpsBY9MD/.checkpoint/R-3.3.3&quot;</code></pre>
 <p>Now use <code>unCheckpoint()</code> to reset your library paths</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Note this is still experimental</span>
 <span class="kw">unCheckpoint</span>()

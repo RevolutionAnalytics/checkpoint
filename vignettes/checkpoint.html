@@ -164,10 +164,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## Installing packages used in this project</code></pre>
 <pre><code>##  - Installing 'MASS'</code></pre>
 <pre><code>## MASS</code></pre>
-<pre><code>## package 'MASS' successfully unpacked and MD5 sums checked
-## 
-## The downloaded binary packages are in
-##  C:\Users\adevries\AppData\Local\Temp\RtmpkLyR69\downloaded_packages</code></pre>
 <pre><code>## checkpoint process complete</code></pre>
 <pre><code>## ---</code></pre>
 </div>
@@ -179,8 +175,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## [1] &quot;https://mran.microsoft.com/snapshot/2015-04-26&quot;</code></pre>
 <p>Next, check that the library path is set to <code>~/.checkpoint</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">normalizePath</span>(<span class="kw">.libPaths</span>(), <span class="dt">winslash =</span> <span class="st">&quot;/&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpkLyR69/.checkpoint/2015-04-26/lib/x86_64-w64-mingw32/3.3.3&quot;
-## [2] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpkLyR69/.checkpoint/R-3.3.3&quot;</code></pre>
+<pre><code>## [1] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpsBY9MD/.checkpoint/2015-04-26/lib/x86_64-w64-mingw32/3.3.3&quot;
+## [2] &quot;C:/Users/adevries/AppData/Local/Temp/RtmpsBY9MD/.checkpoint/R-3.3.3&quot;</code></pre>
 <p>Finally, check which packages are installed in checkpoint library:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">installed.packages</span>()[, <span class="st">&quot;Package&quot;</span>]</code></pre></div>
 <pre><code>## [1] &quot;MASS&quot;</code></pre>
