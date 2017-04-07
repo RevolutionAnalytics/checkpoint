@@ -29,6 +29,7 @@ Depends:
     R(>= 3.0.0)
 Suggests:
     knitr,
+    rmarkdown,
     testthat(>= 0.9),
     MASS,
     covr

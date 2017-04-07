@@ -6,8 +6,7 @@
 \usage{
 checkpoint(snapshotDate, project = getwd(), R.version,
   scanForPackages = TRUE, checkpointLocation = "~/", verbose = TRUE,
-  use.knitr = system.file(package = "knitr") != "",
-  auto.install.knitr = TRUE, scan.rnw.with.knitr = FALSE,
+  use.knitr, auto.install.knitr = TRUE, scan.rnw.with.knitr = FALSE,
   forceInstall = FALSE, forceProject = FALSE)
 }
 \arguments{

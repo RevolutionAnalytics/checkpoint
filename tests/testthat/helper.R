@@ -34,3 +34,4 @@ make_fake_archive <- function(){
   writeLines(con = file.path(td, "2099-01-06", ".lastaccessed"), "2099-02-01")
   dirname(td)
 }
+

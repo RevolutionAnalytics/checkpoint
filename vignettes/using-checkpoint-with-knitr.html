@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Andrie de Vries" />
 
-<meta name="date" content="2017-03-31" />
+<meta name="date" content="2017-04-07" />
 
 <title>Using checkpoint in a markdown document</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using checkpoint in a markdown document</h1>
 <h4 class="author"><em>Andrie de Vries</em></h4>
-<h4 class="date"><em>2017-03-31</em></h4>
+<h4 class="date"><em>2017-04-07</em></h4>
 
 
 
@@ -127,10 +127,10 @@ checkpoint(&quot;2017-03-28&quot;, checkpointLocation = td)
 <span class="kw">library</span>(checkpoint)
 <span class="kw">checkpoint</span>(<span class="st">&quot;2017-03-28&quot;</span>, <span class="dt">checkpointLocation =</span> <span class="kw">tempdir</span>())</code></pre></div>
 <pre><code>## Scanning for packages used in this project</code></pre>
-<pre><code>## No file at path 'C:\Users\adevries\AppData\Local\Temp\RtmpcjAflq\file82042881537.Rmd'.</code></pre>
-<pre><code>## No file at path 'C:\Users\adevries\AppData\Local\Temp\RtmpcjAflq\file820334d6918.Rmd'.</code></pre>
-<pre><code>## No file at path 'C:\Users\adevries\AppData\Local\Temp\RtmpcjAflq\file820337a7eae.Rmd'.</code></pre>
-<pre><code>## - Discovered 2 packages</code></pre>
+<pre><code>## No file at path 'C:\Users\adevries\AppData\Local\Temp\RtmpkLyR69\file1c0869994bfa.Rmd'.</code></pre>
+<pre><code>## No file at path 'C:\Users\adevries\AppData\Local\Temp\RtmpkLyR69\file1c089dc30aa.Rmd'.</code></pre>
+<pre><code>## No file at path 'C:\Users\adevries\AppData\Local\Temp\RtmpkLyR69\file1c086d86884.Rmd'.</code></pre>
+<pre><code>## - Discovered 4 packages</code></pre>
 <pre><code>## Unable to parse 3 files:</code></pre>
 <pre><code>## - checkpoint.Rmd</code></pre>
 <pre><code>## - managing-checkpoint-archives.Rmd</code></pre>
@@ -138,12 +138,12 @@ checkpoint(&quot;2017-03-28&quot;, checkpointLocation = td)
 <pre><code>## Installing packages used in this project</code></pre>
 <pre><code>##  - Installing 'MASS'</code></pre>
 <pre><code>## MASS</code></pre>
-<pre><code>## Installing package into 'C:/Users/adevries/AppData/Local/Temp/RtmpcjAflq/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.3'
-## (as 'lib' is unspecified)</code></pre>
 <pre><code>## package 'MASS' successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\adevries\AppData\Local\Temp\RtmpcjAflq\downloaded_packages</code></pre>
+##  C:\Users\adevries\AppData\Local\Temp\RtmpkLyR69\downloaded_packages</code></pre>
+<pre><code>##  - Previously installed 'knitr'</code></pre>
+<pre><code>##  - Previously installed 'rmarkdown'</code></pre>
 <pre><code>## checkpoint process complete</code></pre>
 <pre><code>## ---</code></pre>
 <p>If this worked, you should see that the library path now points to <code>tempdir()</code> and that MASS should be one of only a few package installed:</p>
@@ -151,8 +151,7 @@ checkpoint(&quot;2017-03-28&quot;, checkpointLocation = td)
 ## [1] &quot;.../Temp/RtmpIVB6bI/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2&quot;
 ## [2] &quot;.../Temp/RtmpIVB6bI/.checkpoint/R-3.3.2&quot;</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">installed.packages</span>()[, <span class="st">&quot;Package&quot;</span>]</code></pre></div>
-<pre><code>##       MASS   compiler 
-##     &quot;MASS&quot; &quot;compiler&quot;</code></pre>
+<pre><code>## [1] &quot;MASS&quot;</code></pre>
 </div>
 <div id="your-real-r-code" class="section level1">
 <h1>Your real R code:</h1>

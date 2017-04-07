@@ -81,7 +81,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
                        scanForPackages = TRUE,
                        checkpointLocation = "~/",
                        verbose=TRUE,
-                       use.knitr = system.file(package="knitr") != "", 
+                       use.knitr, 
                        auto.install.knitr = TRUE,
                        scan.rnw.with.knitr = FALSE,
                        forceInstall = FALSE, 
@@ -95,6 +95,10 @@ checkpoint <- function(snapshotDate, project = getwd(),
     mssg(verbose, "Skipping package scanning")
     if(!snapshotDate %in% localSnapshots(checkpointLocation = checkpointLocation))
       stop("Local snapshot location does not exist")
+  }
+  
+  if(missing(use.knitr) || is.null(use.knitr)) {
+    use.knitr <- knitr.is.installed()
   }
   
   # Enforce R version, if not missing
@@ -143,12 +147,14 @@ checkpoint <- function(snapshotDate, project = getwd(),
       "methods", "parallel", "splines", "stats", "stats4", "tcltk",
       "tools", "utils")
   )  
-  packages.installed <- unname(installed.packages()[, "Package"])
+  packages.installed <- unname(utils::installed.packages()[, "Package"])
   
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
     pkgs <- projectScanPackages(project, use.knitr = use.knitr, 
-                                scan.rnw.with.knitr = scan.rnw.with.knitr)
+                                scan.rnw.with.knitr = scan.rnw.with.knitr,
+                                auto.install.knitr = auto.install.knitr
+                                )
     packages.detected <- pkgs[["pkgs"]]
     mssg(verbose, "- Discovered ", length(packages.detected), " packages")
     
@@ -165,17 +171,19 @@ checkpoint <- function(snapshotDate, project = getwd(),
   }
   
   if(forceInstall && packages.detected > 0){
+    mssg(verbose, "Removing packages to force re-install")
     to_remove <- as.vector(unlist(
-      tools::package_dependencies(packages.detected)
+      tools::package_dependencies(packages.detected, db = available.packages())
     ))
     to_remove <- c(packages.detected, to_remove)
+    to_remove <- setdiff(to_remove, "checkpoint")
     tryCatch(
       suppressMessages(suppressWarnings(
         utils::remove.packages(to_remove)
       )),
       error = function(e)e
     )
-    packages.to.install <- packages.detected
+    packages.to.install <- setdiff(packages.detected, "checkpoint")
     packages.installed <- character(0)
   } else {
     packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
@@ -204,18 +212,18 @@ checkpoint <- function(snapshotDate, project = getwd(),
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
     for(pkg in packages.to.install){
-      if(pkg %in% unname(installed.packages()[, "Package"])) {
+      if(length(find.package(pkg, quiet = TRUE)) > 0) {
         mssg(verbose, " - Previously installed ", sQuote(pkg))
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
-        message(pkg)
+        mssg(verbose, pkg)
         tryCatch({
           download_messages <- capture.output({ 
-            suppressWarnings(
-              utils::install.packages(pkgs = pkg, verbose = FALSE, 
+            #suppressWarnings(
+              install.packages(pkgs = pkg, verbose = FALSE, 
                                       quiet = FALSE,
                                       INSTALL_opts = "--no-lock")
-            )
+            #)
           }, type = "message")
           checkpoint_log(
             download_messages,
