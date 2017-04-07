@@ -10,7 +10,9 @@ unCheckpoint(new = c(Sys.getenv("R_LIBS_USER"), .Library))
 \item{new}{The new user library location. Defaults to \code{c(Sys.getenv("R_Libs_User"), .Library)}. See also \code{\link[=.libPaths]{.libPaths()}}}
 }
 \description{
-This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets \link{.libPaths} to the environment variable \code{R_Libs_User}.
+This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets \link{.libPaths} to point two libraries defined by the environment variable \code{R_Libs_User} and the R variable \code{.Library}.
+
+Note that this does not undo any of the other side-effects of \code{\link[=checkpoint]{checkpoint()}}. Specifically, all loaded packages remain loaded, and the value of \code{getOption("repos")} remains unchanged.
 }
 \seealso{
 Other checkpoint functions: \code{\link{checkpointArchives}},
