@@ -110,13 +110,6 @@ test_checkpoint <- function(https = FALSE, snap_date){
     }
     messageMissingPackages(expected.packages, pkgNames(pdbLocal))
     
-    # expect_true(
-    #   all(
-    #     na.omit(
-    #       pdbLocal[, "Date/Publication"]) <=
-    #       as.POSIXct(snap_date, tz="UTC"))
-    # )
-    
     # does not display message whan scanForPackages=FALSE
     unCheckpoint(originalLibPaths)
     expect_false(
