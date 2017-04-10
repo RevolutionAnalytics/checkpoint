@@ -21,7 +21,7 @@ To resolve this, I propose a hacky solution: create a "manifest" file in the sam
 
 Imagine you have a small script that you want to put in an Rmarkdown document with a checkpoint.
 
-```{r, eval = FALSE}
+```r
 # demo script
 library(MASS)
 hist(islands)
