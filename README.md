@@ -1,11 +1,19 @@
-# checkpoint - Simple reproducibility for R scripts that depend on packages
+# checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility
 
-[![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=master)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
-[![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
+---
+
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/checkpoint)](http://cran.r-project.org/package=checkpoint)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/checkpoint)](http://www.r-pkg.org/pkg/checkpoint)
+
+---
+
+master: [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=master)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
 [![Coverage Status master](https://img.shields.io/codecov/c/github/RevolutionAnalytics/checkpoint/master.svg)](https://codecov.io/github/RevolutionAnalytics/checkpoint?branch=master)
+dev: [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
 [![Coverage Status dev](https://img.shields.io/codecov/c/github/RevolutionAnalytics/checkpoint/dev.svg)](https://codecov.io/github/RevolutionAnalytics/checkpoint?branch=dev)
+
+---
 
 ## Overview
 
@@ -73,13 +81,13 @@ Together, the `checkpoint` package and the MRAN server act as a CRAN time machin
 
 ## Resetting the checkpoint
 
-To revert to your default CRAN mirror and access globally-installed packages, simply restart your R session.
+To revert to your default CRAN mirror and access globally-installed packages, simply restart your R session. You can also use the experimental function `unCheckpoint()` - this resets your `.libPaths()`.
 
 
 
 ## Worked example
 
-```
+```r
 
 # Create temporary project and set working directory
 
@@ -121,14 +129,14 @@ setwd(oldwd)
 
 To install `checkpoint` directly from CRAN, use:
 
-```
+```r
 install.packages("checkpoint")
 library("checkpoint")
 ```
 
 To install `checkpoint` directly from github, use the `devtools` package.  In your R session, try:
 
-```
+```r
 install.packages("devtools")
 devtools::install_github("RevolutionAnalytics/checkpoint")
 library("checkpoint")
@@ -143,7 +151,7 @@ To build your `.Rmd` files, you will have to add a script in your project that e
 
 A line like the following may be sufficient:
 
-```{r}
+```r
 library(rmarkdown)
 ```
 
@@ -151,7 +159,7 @@ This should automatically resolve dependencies on the packages `knitr`, `yaml` a
 
 To build your `rmarkdown` file, use a call to `rmarkdown::render()`.  For example, to build a file called `example.Rmd`, use:
 
-```{r}
+```r
 rmarkdown::render("example.Rmd")
 ```
 

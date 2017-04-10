@@ -13,7 +13,11 @@ setLibPaths <- function(checkpointLocation, libPath){
 
 #' Undo the effect of checkpoint by resetting .libPath to user library location.
 #' 
-#' This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets [.libPaths] to the environment variable `R_Libs_User`.
+#' @description 
+#' 
+#' This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets [.libPaths] to point two libraries defined by the environment variable `R_Libs_User` and the R variable `.Library`.
+#' 
+#' Note that this does not undo any of the other side-effects of [checkpoint()]. Specifically, all loaded packages remain loaded, and the value of `getOption("repos")` remains unchanged.
 #' 
 #' @param new The new user library location. Defaults to `c(Sys.getenv("R_Libs_User"), .Library)`. See also [.libPaths()]
 #' 
@@ -32,7 +36,7 @@ correctR <- function(x) compareVersion(as.character(utils::packageVersion("base"
 
 
 # Scans for R files in a folder and the first level subfolders.
-anyRfiles <- function(path = "."){
+anyRfiles <- function(path = ".", filenames = FALSE){
   findRfiles <- function(path = "."){
     pattern <- "\\.[rR]$|\\.[rR]nw$|\\.[rR]md$|\\.[rR]pres$|\\.[rR]proj$"
     list.files(path = path, pattern = pattern, full.names = TRUE)
@@ -40,13 +44,14 @@ anyRfiles <- function(path = "."){
   dirs <- list.dirs(path = path, recursive = FALSE)
   rfilesInDirs <- as.vector(unlist(sapply(dirs, findRfiles)))
   rfiles <- findRfiles(path = path)
-  length(c(rfiles, rfilesInDirs)) > 0
+  allFiles <- c(rfiles, rfilesInDirs)
+  if(filenames) allFiles else length(allFiles) > 0
 }
 
 
 # Use a simple heuristic to decide if the project looks like an R project.
 validateProjectFolder <- function(project) {
-  c1 <- normalizePath(project) == normalizePath("~/")
+  c1 <- normalizePath(project, winslash = "/") == normalizePath("~/", winslash = "/")
   c2 <- !anyRfiles(project)
   if(c1 && c2){
     message("This doesn't look like an R project directory.\n", 

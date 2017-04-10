@@ -32,10 +32,6 @@ test_that("is.404 gracefully deals with https URLs when https not supported", {
 test_that("is.404() deals with local file references", {
   localMRAN <- system.file("tests/localMRAN", package = "checkpoint")
   msg <- "Ensure you use the correct http://,  https:// or file:/// prefix."
-  describe("is.404 works on local files", {
-    it("works on local files", {
-      expect_error(is.404(localMRAN), msg)
-      expect_false(is.404(paste0("file:///", localMRAN)))
-    })
-  })
+  expect_error(is.404(localMRAN), msg)
+  expect_false(is.404(paste0("file:///", localMRAN)))
 })

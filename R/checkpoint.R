@@ -114,7 +114,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
     }
   }
   
-  checkpointLocation = authorizeFileSystemUse(checkpointLocation)
+  authorizeFileSystemUse(checkpointLocation)
   
   fixRstudioBug()
   
