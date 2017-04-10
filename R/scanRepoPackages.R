@@ -1,7 +1,11 @@
 knitr.is.installed <- function()length(find.package(package="knitr", quiet = TRUE)) > 0
 
+projectScanPackages <- function(...){
+  warning("Use checkpoint:::scanForPackages() instead")
+  scanForPackages(...)
+}
 
-projectScanPackages <- function(project = getwd(), verbose = TRUE, 
+scanForPackages <- function(project = getwd(), verbose = TRUE, 
                                 use.knitr = FALSE, 
                                 auto.install.knitr = FALSE, 
                                 scan.rnw.with.knitr = FALSE){

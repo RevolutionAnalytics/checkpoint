@@ -51,7 +51,7 @@
 #'
 #' @param use.knitr If `TRUE`,  parses all `Rmarkdown` files using the `knitr` package.
 #' 
-#' @param auto.install.knitr If `TRUE` and the project contains rmarkdown files, then automatically included the packages `knitr` and `rmarkdown` in packages to install.
+#' @param auto.install.knitr If `TRUE` and the project contains rmarkdown files, then automatically included the packages `knitr` in packages to install.
 #' 
 #' @param scan.rnw.with.knitr If `TRUE`, uses [knitr::knit()] to parse `.Rnw` files, otherwise use [utils::Sweave()]
 #'
@@ -147,11 +147,11 @@ checkpoint <- function(snapshotDate, project = getwd(),
       "methods", "parallel", "splines", "stats", "stats4", "tcltk",
       "tools", "utils")
   )  
-  packages.installed <- unname(utils::installed.packages(.libPaths()[1:2])[, "Package"])
+  packages.installed <- unname(utils::installed.packages(.libPaths()[1:2], noCache = TRUE)[, "Package"])
   
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
-    pkgs <- projectScanPackages(project, use.knitr = use.knitr, 
+    pkgs <- scanForPackages(project, use.knitr = use.knitr, 
                                 scan.rnw.with.knitr = scan.rnw.with.knitr,
                                 auto.install.knitr = auto.install.knitr
                                 )
@@ -217,25 +217,20 @@ checkpoint <- function(snapshotDate, project = getwd(),
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
         mssg(verbose, pkg)
-        tryCatch({
-          download_messages <- capture.output({ 
-            #suppressWarnings(
-              install.packages(pkgs = pkg, verbose = FALSE, 
-                                      quiet = FALSE,
-                                      INSTALL_opts = "--no-lock")
-            #)
-          }, type = "message")
-          checkpoint_log(
-            download_messages,
-            snapshotDate = snapshotDate,
-            pkg,
-            file = file.path(
-              checkpointPath(snapshotDate, checkpointLocation, type = "root"),
-              "checkpoint_log.csv")
-          )
-        }, error = function(e)e)
+        download_messages <- capture.output({ 
+          install.packages(pkgs = pkg, verbose = FALSE, 
+                           quiet = FALSE,
+                           INSTALL_opts = "--no-lock")
+        }, type = "message")
+        checkpoint_log(
+          download_messages,
+          snapshotDate = snapshotDate,
+          pkg,
+          file = file.path(
+            checkpointPath(snapshotDate, checkpointLocation, type = "root"),
+            "checkpoint_log.csv")
+        )
       }
-      
     }
   } else if(length(packages.detected > 0)){
     mssg(verbose, "All detected packages already installed")
