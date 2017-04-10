@@ -5,9 +5,11 @@ setMranMirror <- function(
   options(repos = snapshotUrl)}
 
 setLibPaths <- function(checkpointLocation, libPath){
-  assign(".lib.loc", c(libPath, 
-                       checkpointBasePkgs(checkpointLocation)), 
-         envir = environment(.libPaths))
+  newLoc <- c(libPath, 
+              checkpointBasePkgs(checkpointLocation),
+              .Library
+              )
+  assign(".lib.loc", newLoc, envir = environment(.libPaths))
 }
 
 
@@ -36,7 +38,7 @@ correctR <- function(x) compareVersion(as.character(utils::packageVersion("base"
 
 
 # Scans for R files in a folder and the first level subfolders.
-anyRfiles <- function(path = "."){
+anyRfiles <- function(path = ".", filenames = FALSE){
   findRfiles <- function(path = "."){
     pattern <- "\\.[rR]$|\\.[rR]nw$|\\.[rR]md$|\\.[rR]pres$|\\.[rR]proj$"
     list.files(path = path, pattern = pattern, full.names = TRUE)
@@ -44,13 +46,14 @@ anyRfiles <- function(path = "."){
   dirs <- list.dirs(path = path, recursive = FALSE)
   rfilesInDirs <- as.vector(unlist(sapply(dirs, findRfiles)))
   rfiles <- findRfiles(path = path)
-  length(c(rfiles, rfilesInDirs)) > 0
+  allFiles <- c(rfiles, rfilesInDirs)
+  if(filenames) allFiles else length(allFiles) > 0
 }
 
 
 # Use a simple heuristic to decide if the project looks like an R project.
 validateProjectFolder <- function(project) {
-  c1 <- normalizePath(project) == normalizePath("~/")
+  c1 <- normalizePath(project, winslash = "/") == normalizePath("~/", winslash = "/")
   c2 <- !anyRfiles(project)
   if(c1 && c2){
     message("This doesn't look like an R project directory.\n", 
