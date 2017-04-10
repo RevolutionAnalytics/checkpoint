@@ -147,7 +147,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
       "methods", "parallel", "splines", "stats", "stats4", "tcltk",
       "tools", "utils")
   )  
-  packages.installed <- unname(utils::installed.packages()[, "Package"])
+  packages.installed <- unname(utils::installed.packages(.libPaths()[1:2])[, "Package"])
   
   if(isTRUE(scanForPackages)){
     mssg(verbose, "Scanning for packages used in this project")
@@ -212,7 +212,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
   if(length(packages.to.install) > 0) {
     mssg(verbose, "Installing packages used in this project ")
     for(pkg in packages.to.install){
-      if(length(find.package(pkg, quiet = TRUE)) > 0) {
+      if(length(find.package(pkg, lib.loc = .libPaths()[1:2], quiet = TRUE)) > 0) {
         mssg(verbose, " - Previously installed ", sQuote(pkg))
       } else {
         mssg(verbose, " - Installing ", sQuote(pkg))
