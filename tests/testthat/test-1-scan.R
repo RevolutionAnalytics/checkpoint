@@ -56,11 +56,7 @@ test_that("auto-installs knitr and rmarkdown", {
   
   found <- projectScanPackages(project = project_root, use.knitr = TRUE, 
                                auto.install.knitr = TRUE)
-  # if(getRversion() >= "3.3.3"){
-  #   expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr", "rmarkdown"))
-  # } else {
-    expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr"))
-  # }
+  expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr"))
   file.remove(knitfile)
 })
 
