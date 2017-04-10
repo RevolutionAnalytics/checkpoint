@@ -81,6 +81,8 @@ codefile <- file.path(project_root, "code.Rnw")
 cat(code, file = codefile)
 
 test_that("Sweave scans Rnw files with eval=FALSE chunks", {
+  if(!knitr.is.installed()) skip("knitr not available")
+
   found <- scanForPackages(project = project_root, use.knitr = FALSE, 
                                scan.rnw.with.knitr = FALSE)
   expect_equal(found$pkgs, "abc")
