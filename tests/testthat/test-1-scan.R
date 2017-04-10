@@ -27,7 +27,7 @@ test_that("scanRepoPackages finds dependencies", {
   codefile <- file.path(project_root, "code.R")
   cat(code, file = codefile)
   
-  found <- projectScanPackages(project = project_root)
+  found <- scanForPackages(project = project_root)
   expect_equal(found$pkgs, sort(c(letters[1:8], "methods")))
   
   file.remove(codefile)
@@ -41,7 +41,7 @@ test_that("finds packages in Rmd files", {
   knitfile <- file.path(project_root, "knit.Rmd")
   cat(knit, file = knitfile)
   
-  found <- projectScanPackages(project = project_root, use.knitr = TRUE)
+  found <- scanForPackages(project = project_root, use.knitr = TRUE)
   expect_equal(found$pkgs, c(letters[1:8], "methods"))
   file.remove(knitfile)
 })
@@ -54,13 +54,9 @@ test_that("auto-installs knitr and rmarkdown", {
   knitfile <- file.path(project_root, "knit.Rmd")
   cat(knit, file = knitfile)
   
-  found <- projectScanPackages(project = project_root, use.knitr = TRUE, 
+  found <- scanForPackages(project = project_root, use.knitr = TRUE, 
                                auto.install.knitr = TRUE)
-  # if(getRversion() >= "3.3.3"){
-  #   expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr", "rmarkdown"))
-  # } else {
-    expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr"))
-  # }
+  expect_equal(found$pkgs, c(letters[1:8], "methods", "knitr"))
   file.remove(knitfile)
 })
 
@@ -85,14 +81,14 @@ codefile <- file.path(project_root, "code.Rnw")
 cat(code, file = codefile)
 
 test_that("Sweave scans Rnw files with eval=FALSE chunks", {
-  found <- projectScanPackages(project = project_root, use.knitr = FALSE, 
+  found <- scanForPackages(project = project_root, use.knitr = FALSE, 
                                scan.rnw.with.knitr = FALSE)
   expect_equal(found$pkgs, "abc")
   expect_equal(found$error, character(0))
 })
 
 # test_that("knitr scans Rnw files with eval=FALSE chunks", {
-#   found <- projectScanPackages(project = project_root, use.knitr = TRUE,
+#   found <- scanForPackages(project = project_root, use.knitr = TRUE,
 #                                scan.rnw.with.knitr = TRUE)
 #   expect_equal(found$pkgs, "abc")
 #   expect_equal(found$error, character(0))

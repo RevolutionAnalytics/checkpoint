@@ -34,15 +34,18 @@ installed.packages <- function(lib.loc = .libPaths()[1], ...){
 # mocks install.packages()
 # writes a description file with three lines
 mock.install.packages <- function(pkgs, lib = .libPaths()[1], repos = getOption("repos"), ...){
-  np <- function(x)normalizePath(x, winslash = "/")
-  stopifnot(grepl(np(tempdir()), np(lib)))
-  p <- available.packages()[pkgs, ]  
-  msg <- paste0("Package: ", pkgs, "\n", "Version: ", p["Version"], "\n", "Description: ", pkgs)
-  fp <- file.path(lib, pkgs)
-  # unlink(fp, recursive = TRUE)
-  dir.create(fp, recursive = TRUE, showWarnings = FALSE)
-  message("Mocking Content type 'application/zip' length 0 bytes (0 KB)")
-  cat(msg, file = file.path(fp, "DESCRIPTION"))
+  do_one <- function(pkg){
+    np <- function(x)normalizePath(x, winslash = "/")
+    stopifnot(grepl(np(tempdir()), np(lib)))
+    p <- available.packages()[pkg, ]  
+    msg <- paste0("Package: ", pkg, "\n", "Version: ", p["Version"], "\n", "Description: ", pkg)
+    fp <- file.path(lib, pkg)
+    # unlink(fp, recursive = TRUE)
+    dir.create(fp, recursive = TRUE, showWarnings = FALSE)
+    message("Mocking Content type 'application/zip' length 0 bytes (0 KB)")
+    cat(msg, file = file.path(fp, "DESCRIPTION"))
+  }
+  for(pkg in pkgs)do_one(pkg)
   invisible()
 }
 

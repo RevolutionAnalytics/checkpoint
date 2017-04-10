@@ -63,20 +63,27 @@ test_checkpoint <- function(https = FALSE, snap_date){
     code = paste("library('", packages.to.test.base, "')", sep ="", collapse ="\n")
     cat(code, file = file.path(project_root, "code.R"))
     
+    expect_true(
+      all(packages.to.test.base %in% scanForPackages(project_root, use.knitr = FALSE)$pkgs)
+    )
+
     # Write dummy knitr code file to project
     code = sprintf("```{r}\n%s\n```",
                    paste("library('", packages.to.test.knitr, "')", sep ="", collapse ="\n"))
     cat(code, file = file.path(project_root, "code.Rmd"))
     
     expect_true(
-      all(packages.to.test.base %in% projectScanPackages(project_root, use.knitr = TRUE)$pkgs)
+      all(packages.to.test.knitr %in% scanForPackages(project_root, use.knitr = TRUE)$pkgs)
     )
-    # browser()
+    expect_true(
+      all(packages.to.test %in% scanForPackages(project_root, use.knitr = TRUE)$pkgs)
+    )
+
     # prints progress message
     unCheckpoint(originalLibPaths)
     expect_message(
-      checkpoint(snap_date, checkpointLocation = checkpointLocation, 
-                 project = project_root, use.knitr = TRUE),
+      checkpoint(snap_date, project = project_root,
+                 checkpointLocation = checkpointLocation, use.knitr = TRUE),
       "Installing packages used in this project"
     )
     
@@ -88,7 +95,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
     base.packages <- pkgNames(utils::installed.packages(priority = "base", 
                                                         lib.loc = .Library,
                                                         noCache = TRUE))
-    # browser()
+
     expected.packages <- setdiff(packages.to.test.base, c("checkpoint", base.packages))
     
     z <- expect_true(

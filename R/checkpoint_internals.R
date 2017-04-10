@@ -5,9 +5,11 @@ setMranMirror <- function(
   options(repos = snapshotUrl)}
 
 setLibPaths <- function(checkpointLocation, libPath){
-  assign(".lib.loc", c(libPath, 
-                       checkpointBasePkgs(checkpointLocation)), 
-         envir = environment(.libPaths))
+  newLoc <- c(libPath, 
+              checkpointBasePkgs(checkpointLocation),
+              .Library
+              )
+  assign(".lib.loc", newLoc, envir = environment(.libPaths))
 }
 
 
