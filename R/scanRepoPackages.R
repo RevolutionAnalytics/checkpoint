@@ -53,7 +53,6 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE,
     pkgs <- sort(unique(do.call(c, lapply(z, "[[", "pkgs"))))
     if(length(files_k) > 0 && auto.install.knitr) {
       pkgs <- unique(c(pkgs, "knitr"))
-      # if(getRversion() >= "3.3.3") pkgs <- unique(c(pkgs, "rmarkdown"))
     }
     error <- sort(unique(do.call(c, lapply(z, "[[", "error"))))
     error <- gsub(sprintf("%s[//|\\]*", dir), "", error)
@@ -63,8 +62,9 @@ projectScanPackages <- function(project = getwd(), verbose = TRUE,
 }
 
 
+# Wraps lapply() in a progress bar, if the session is interactive and the list contains more than 10 elements
 lapplyProgressBar <- function(X, FUN, ...){
-  if(interactive()){
+  if(interactive() && length(X) >= 10){
     env <- environment()
     N <- length(X)
     counter <- 0
