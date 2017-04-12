@@ -2,11 +2,15 @@
 title: "Using checkpoint for reproducible research"
 author: "Andrie de Vries"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+    keep_md: yes
 vignette: >
   %\VignetteIndexEntry{Using checkpoint for reproducible research}
   %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # The Reproducible R Toolkit (RRT)
@@ -159,10 +163,9 @@ normalizePath(.libPaths(), winslash = "/")
 
 Finally, check which packages are installed in checkpoint library:
 
-```{r inspect-3}
-installed.packages()[, "Package"]
+```{r inspect-3, eval=FALSE}
+installed.packages(.libPaths()[1])[, "Package"]
 ```
-
 
 
 ```{r cleanup, include=FALSE}
@@ -172,5 +175,5 @@ unlink(example_project, recursive = TRUE)
 unlink(file.path(tempdir(), "checkpoint_example_code.R"))
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 options(repos = oldRepos)
-unCheckpoint(oldLibPaths)
+unCheckpoint()
 ```

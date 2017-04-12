@@ -2,11 +2,15 @@
 title: "Using checkpoint in a markdown document"
 author: "Andrie de Vries"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+    keep_md: yes
 vignette: >
   %\VignetteIndexEntry{Using checkpoint in a markdown document}
   %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # Introduction

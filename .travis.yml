@@ -3,6 +3,8 @@ dist: trusty
 cache: packages
 sudo: false
 
+r_binary_packages: covr
+
 r:
   - release
   - devel
@@ -24,4 +26,3 @@ notifications:
     
 after_success:
   - Rscript -e 'covr::codecov()'
-    

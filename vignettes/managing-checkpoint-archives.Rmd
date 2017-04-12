@@ -2,11 +2,15 @@
 title: "Managing checkpoint snapshot archives"
 author: "Andrie de Vries"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+    keep_md: yes
 vignette: >
-  %\VignetteIndexEntry{Managing checkpoint snapshot archives}
+  %\VignetteIndexEntry{Using checkpoint for reproducible research}
   %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 The `checkpoint()` function enables reproducible research by managing your R package versions. These pacakges are downloaded into a local `.checkpoint` folder.
