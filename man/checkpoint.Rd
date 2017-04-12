@@ -24,7 +24,7 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 
 \item{use.knitr}{If \code{TRUE},  parses all \code{Rmarkdown} files using the \code{knitr} package.}
 
-\item{auto.install.knitr}{If \code{TRUE} and the project contains rmarkdown files, then automatically included the packages \code{knitr} and \code{rmarkdown} in packages to install.}
+\item{auto.install.knitr}{If \code{TRUE} and the project contains rmarkdown files, then automatically included the packages \code{knitr} in packages to install.}
 
 \item{scan.rnw.with.knitr}{If \code{TRUE}, uses \code{\link[knitr:knit]{knitr::knit()}} to parse \code{.Rnw} files, otherwise use \code{\link[utils:Sweave]{utils::Sweave()}}}
 
@@ -70,7 +70,7 @@ You can also use the experimental function \code{\link[=unCheckpoint]{unCheckpoi
 \section{Changing the default MRAN url}{
 
 
-By default, \code{checkpoint()} uses https to download packages (see \url{https://www.r-consortium.org/blog/2015/08/17/best-practices-for-using-r-securely}). The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
+By default, \code{checkpoint()} uses https to download packages. The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
 
 You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}.
 }
