@@ -8,16 +8,16 @@ output:
     number_sections: true
     keep_md: yes
 vignette: >
-  %\VignetteIndexEntry{Using checkpoint for reproducible research}
+  %\VignetteIndexEntry{Managing checkpoint snapshot archives}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-The `checkpoint()` function enables reproducible research by managing your R package versions. These pacakges are downloaded into a local `.checkpoint` folder.
+The `checkpoint()` function enables reproducible research by managing your R package versions. These packages are downloaded into a local `.checkpoint` folder.
 
 If you use `checkpoint()` for many projects, these local packages can consume some storage space, so the package also exposes functions to manage your snapshots.
 
-In summary:
+In this vignette:
 
 * Managing local archives:
 
@@ -29,7 +29,7 @@ In summary:
      * `unCheckpoint()`: reset `.libPaths` to the user library to undo the effect of `checkpoint()` (experimental).
 
 
-## Setting up an example project:
+# Setting up an example project:
 
 For illustration, set up a script referencing a single package:
 
@@ -60,7 +60,9 @@ checkpoint("2015-04-26", project = tempdir(), checkpointLocation = tempdir())
 
 ```
 
-## Working with checkpoint archive snapshots
+
+
+# Working with checkpoint archive snapshots
 
 You can query the available snapshots on disk using the `checkpointArchives()` function. This returns a vector of snapshot folders. 
 
@@ -118,7 +120,7 @@ checkpointRemove("2015-04-26", notUsedSince = TRUE)
 ```
 
 
-## Reading the checkpoint log file
+# Reading the checkpoint log file
 
 One of the side effects of `checkpoint()` is to create a log file that contains information about packages that get downloaded, as well as the download size.
 
@@ -138,7 +140,7 @@ head(log)
 ```
 
 
-## Resetting the checkpoint
+# Resetting the checkpoint
 
 In older versions of `checkpoint()` the only way to reset the effect of `checkpoint()` was to restart your R session.
 
