@@ -33,7 +33,7 @@ hist(islands)
 
 # The checkpoint solution
 
-The only way I've found to get `checkpoint()` to work inside an RMardown document, is really a bit of a hack. The workaround is to create a manifest of required packages, and write this to an R file in the working directory.
+The only way I've found to get `checkpoint()` to work inside an RMarkdown document, is really a bit of a hack. The workaround is to create a manifest of required packages, and write this to an R file in the working directory.
 
 For example, imagine your R script uses the `MASS` package, then create a manifest file like this:
 
