@@ -8,7 +8,7 @@ output:
     number_sections: true
     keep_md: yes
 vignette: >
-  %\VignetteIndexEntry{Using checkpoint for reproducible research}
+  %\VignetteIndexEntry{Managing checkpoint snapshot archives}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
