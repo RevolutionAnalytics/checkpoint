@@ -1,0 +1,149 @@
+---
+title: "Using checkpoint in a markdown document"
+author: "Andrie de Vries"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+    keep_md: yes
+vignette: >
+  %\VignetteIndexEntry{Using checkpoint in a markdown document}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+Sometimes you want to use create a report using `markdown`, and you want to `checkpoint` the code in this document.
+
+However, running this as part of a `R Markdown` process is problematic, since the knitting process runs inside a temporary folder that is different from the current working directory.
+
+To resolve this, I propose a hacky solution: create a "manifest" file in the same folder that contains all of the `library()` calls.
+
+# Example
+
+Imagine you have a small script that you want to put in an R Markdown document with a checkpoint.
+
+```r
+# demo script
+# Example from ?darts
+library(darts)
+x = c(12,16,19,3,17,1,25,19,17,50,18,1,3,17,2,2,13,18,16,2,25,5,5,
+      1,5,4,17,25,25,50,3,7,17,17,3,3,3,7,11,10,25,1,19,15,4,1,5,12,17,16,
+      50,20,20,20,25,50,2,17,3,20,20,20,5,1,18,15,2,3,25,12,9,3,3,19,16,20,
+      5,5,1,4,15,16,5,20,16,2,25,6,12,25,11,25,7,2,5,19,17,17,2,12)
+mod = simpleEM(x, niter=100)
+e = simpleExpScores(mod$s.final)
+oldpar <- par(mfrow=c(1, 2))
+drawHeatmap(e)
+drawBoard(new=TRUE)
+drawAimSpot(e, cex = 5)
+par(oldpar)
+```
+
+# The checkpoint solution
+
+The only way I've found to get `checkpoint()` to work inside an R Markdown document, is really a bit of a hack. The workaround is to create a manifest of required packages, and write this to an R file in the working directory.
+
+For example, imagine your R script uses the `darts` package, then create a manifest file like this:
+
+```{r, echo=FALSE, comment=""}
+cat("```{r, include=FALSE}", '
+# write a manifest to local folder
+cat("
+library(darts)
+",
+file = "manifest.R")
+', "```", sep = "")
+```
+
+This is hacky, since it requires you to construct the list of `library()` calls by hand and put these into the manifest file.
+
+(Note that you can use `include=FALSE` in the code block, so that this code doesn't show up in your rendered document.)
+
+Once this is done, the checkpoint process from here is straight-forward
+
+
+```{r, echo=FALSE, comment=""}
+oldLibPaths <- .libPaths()
+
+cat("```{r, include=FALSE}", '
+# Create .checkpoint folder (in tempdir for this example)
+td <- tempdir()
+dir.create(file.path(td, ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
+
+# Create the checkpoint
+library(checkpoint)
+checkpoint("2017-03-28", checkpointLocation = td)
+', "```", sep = "")
+```
+
+# Check that this works
+
+Now you are ready to put these instructions in an actual code block to see what happens.
+
+```{r checkpoint, warning=FALSE}
+# write a manifest to local folder
+cat('
+library(darts)
+',
+file = "manifest.R")
+
+# Create .checkpoint folder (in tempdir for this example)
+dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
+options(install.packages.compile.from.source = "no")
+
+# Create the checkpoint
+library(checkpoint)
+checkpoint("2017-03-28", checkpointLocation = tempdir())
+
+```
+
+
+If this worked, you should see that the library path now points to `tempdir()` and that `darts` is one of only a few package installed:
+
+```{r, eval=FALSE}
+.libPaths()
+## [1] ".../Temp/RtmpIVB6bI/.checkpoint/2017-03-28/lib/x86_64-w64-mingw32/3.3.2"
+## [2] ".../Temp/RtmpIVB6bI/.checkpoint/R-3.3.2"
+```
+
+```{r}
+installed.packages()[, "Package"]
+```
+
+# Your real R code:
+
+Now your real R code follows, and it creates the plot, as expected:
+
+```{r, warning=FALSE, fig.asp=4/3}
+# Example from ?darts
+library(darts)
+x = c(12,16,19,3,17,1,25,19,17,50,18,1,3,17,2,2,13,18,16,2,25,5,5,
+      1,5,4,17,25,25,50,3,7,17,17,3,3,3,7,11,10,25,1,19,15,4,1,5,12,17,16,
+      50,20,20,20,25,50,2,17,3,20,20,20,5,1,18,15,2,3,25,12,9,3,3,19,16,20,
+      5,5,1,4,15,16,5,20,16,2,25,6,12,25,11,25,7,2,5,19,17,17,2,12)
+mod = simpleEM(x, niter=100)
+e = simpleExpScores(mod$s.final)
+oldpar <- par(mfrow=c(1, 2))
+drawHeatmap(e)
+drawBoard(new=TRUE)
+drawAimSpot(e, cex = 5)
+par(oldpar)
+```
+
+# Conclusion
+
+This is a bit of a hack, but points in a direction for getting your R Markdown script to be checkpointed.
+
+
+```{r, include=TRUE}
+# clean up
+
+detach("package:darts", unload = TRUE)
+unlink("manifest.R")
+unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
+unCheckpoint(oldLibPaths)
+.libPaths()
+```
