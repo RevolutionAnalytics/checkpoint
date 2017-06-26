@@ -15,8 +15,8 @@ Description: The goal of checkpoint is to solve the problem of package
     server (<https://mran.microsoft.com/>). Immediately after completion
     of the rsync mirror process, the process takes a snapshot, thus creating the
     archive. Snapshot archives exist starting from 2014-09-17.
-Version: 0.4.0
-Date: 2017-04-10
+Version: 0.4.1
+Date: 2017-06-26
 Author: Microsoft Corporation
 Maintainer: Andrie de Vries <adevries@microsoft.com>
 Copyright: Microsoft
@@ -31,7 +31,8 @@ Suggests:
     knitr,
     rmarkdown,
     testthat(>= 0.9),
-    MASS
+    MASS,
+    darts
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
