@@ -48,7 +48,11 @@ file.path <- function(...){
 # If the folder doesn't exists, ask user permission to create it
 # The argument interactive is purely for testing purposes
 authorizeFileSystemUse <- function(checkpointLocation = "~/", 
-                                   interactive = base::interactive()) {
+                                   interactive) {
+  if (missing(interactive)){
+	isInteractive <- base::interactive()
+	interactive <- isInteractive
+  }
   checkpointRoot = file.path(checkpointLocation, ".checkpoint")
   if(file.exists(checkpointRoot)) {
     if(!file.info(checkpointRoot)$isdir)
