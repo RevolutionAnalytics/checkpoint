@@ -5,6 +5,7 @@ context("is.404")
 
 test_that("is.404", {
   skip_if_offline()
+  skip_on_cran()
   expect_true(
     is.404("http://mran.microsoft.com/snapshot/1972-01-01", warn = FALSE)
   )
