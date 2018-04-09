@@ -59,7 +59,7 @@ authorizeFileSystemUse <- function(checkpointLocation = "~/",
       stop("Can't use a non-directory as checkpoint root")}
   else {
     if(interactive) {
-      message("Can I create directory", checkpointRoot, "for internal checkpoint use?\n")
+      message("Can I create directory ", checkpointRoot, " for internal checkpoint use?\n")
       answer = readline("Continue (y/n)? ")
       if(tolower(answer) != "y")
         stop("Cannot proceed without access to checkpoint directory")}
