@@ -15,10 +15,10 @@ Description: The goal of checkpoint is to solve the problem of package
     server (<https://mran.microsoft.com/>). Immediately after completion
     of the rsync mirror process, the process takes a snapshot, thus creating the
     archive. Snapshot archives exist starting from 2014-09-17.
-Version: 0.4.4
-Date: 2018-03-23
+Version: 0.4.5
+Date: 2019-07-15
 Author: Microsoft Corporation
-Maintainer: Rich Calaway <richcala@microsoft.com>
+Maintainer: Hong Ooi <hongooi@microsoft.com>
 Copyright: Microsoft
 License: GPL-2
 URL: https://github.com/RevolutionAnalytics/checkpoint
