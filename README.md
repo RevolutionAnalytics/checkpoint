@@ -1,14 +1,8 @@
----
-title: "checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility"
-output: 
-  html_document: 
-    keep_md: yes
-    self_contained: yes
-    smart: no
----
+# checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility
+
 [![Licence](https://img.shields.io/badge/licence-GPL--2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/checkpoint)](https://cran.r-project.org/package=checkpoint)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/checkpoint)](https://cran.r-project.org/package=checkpoint)
  
 
 ## Overview
