@@ -21,3 +21,4 @@ Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
   \code{\link{setSnapshot}}
 }
+\concept{checkpoint functions}

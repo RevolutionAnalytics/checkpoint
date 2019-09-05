@@ -21,10 +21,10 @@ To force \code{\link[=checkpoint]{checkpoint()}} to point to a differt URL, you 
 }
 
 \examples{
+\dontrun{
+
 mranUrl()  
 
-\dontrun{
-  
 # Store the existing options
 old_opts <- getOption("checkpoint.mranUrl")
 
@@ -45,3 +45,4 @@ Other checkpoint functions: \code{\link{checkpointArchives}},
   \code{\link{getValidSnapshots}},
   \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
 }
+\concept{checkpoint functions}

@@ -1,7 +1,7 @@
+\dontrun{
+
 mranUrl()  
 
-\dontrun{
-  
 # Store the existing options
 old_opts <- getOption("checkpoint.mranUrl")
 

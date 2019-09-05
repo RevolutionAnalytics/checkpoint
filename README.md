@@ -1,20 +1,15 @@
-# checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility
-[![Project Status: Active ? The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+---
+title: "checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility"
+output: 
+  html_document: 
+    keep_md: yes
+    self_contained: yes
+    smart: no
+---
 [![Licence](https://img.shields.io/badge/licence-GPL--2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
-[![codecov](https://codecov.io/gh/RevolutionAnalytics/checkpoint/branch/dev/graph/badge.svg)](https://codecov.io/gh/RevolutionAnalytics/checkpoint)
- 
----
- 
-
-[![minimal R version](https://img.shields.io/badge/R%3E%3D-3.0.0-6666ff.svg)](https://cran.r-project.org/)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/checkpoint)](https://cran.r-project.org/package=checkpoint)
-
-[![packageversion](https://img.shields.io/badge/Package%20version-0.4.0-orange.svg?style=flat-square)](commits/master)
  
----
- 
-[![Last-changedate](https://img.shields.io/badge/last%20change-2017--04--11-yellowgreen.svg)](/commits/master)
 
 ## Overview
 
