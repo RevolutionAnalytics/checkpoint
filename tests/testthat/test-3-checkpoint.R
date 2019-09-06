@@ -1,6 +1,7 @@
 # tests for initialize
 if(interactive()) library(testthat)
 
+
 # Configure Travis for tests 
 # https://github.com/RevolutionAnalytics/checkpoint/issues/139
 Sys.setenv("R_TESTS" = "")
@@ -12,6 +13,8 @@ test.start <- switch(current.R,
                      "3.2" = "2015-05-01",
                      "3.3" = "2016-04-01",
                      "3.4" = "2017-04-24",
+                     "3.5" = "2018-06-01",
+                     "3.6" = "2019-05-01",
                      "2017-04-24"
 )
 
@@ -197,29 +200,29 @@ test_checkpoint <- function(https = FALSE, snap_date){
 
 #  ------------------------------------------------------------------------
 
+context("checkpoint")
+skip_on_cran()
+
 if(is_online()){
   if(TRUE){
     MRAN.dates <- getValidSnapshots()
     MRAN.sample <- sample(MRAN.dates, 2, replace = FALSE)
     
     initialUrl <- getOption("checkpoint.mranUrl")
-    
-    context("http ")
+
     options(checkpoint.mranUrl = "http://mran.microsoft.com/")
-    test_checkpoint(http = FALSE, snap_date = MRAN.default)
+    test_checkpoint(https = FALSE, snap_date = MRAN.default)
     options(checkpoint.mranUrl = initialUrl)
     if(getRversion() >= "3.2.0" && httpsSupported()){
-      context("https")
       options(checkpoint.mranUrl = "https://mran.microsoft.com/")
-      test_checkpoint(http = TRUE, snap_date = MRAN.default)
+      test_checkpoint(https = TRUE, snap_date = MRAN.default)
       options(checkpoint.mranUrl = NULL)
     }
     
-  } else {
-    context("https")
-    test_that("No tests run in offline mode", {
-      skip("Offline - skipping all tests")
-    })
-    
   }
+}  else {
+  test_that("No tests run in offline mode", {
+    skip("Offline - skipping all tests")
+  })
+  
 }
