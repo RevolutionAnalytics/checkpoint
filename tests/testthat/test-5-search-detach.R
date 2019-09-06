@@ -2,7 +2,7 @@
 if(interactive()) library(testthat)
 
 context("detach packages")
-
+skip_on_cran()
 
 old_search <- search()
 library(grid)

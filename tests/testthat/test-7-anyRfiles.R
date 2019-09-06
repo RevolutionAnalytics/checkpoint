@@ -2,6 +2,7 @@
 if(interactive()) library(testthat)
 
 context("any R files")
+skip_on_cran()
 
 td <- make_fake_archive()
 

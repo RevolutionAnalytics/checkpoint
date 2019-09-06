@@ -2,6 +2,8 @@
 if(interactive()) library(testthat)
 
 context("mranURL")
+skip_on_cran()
+
 test_that("sets snapshot correctly", {
   skip_on_cran()
   oldRepo <- getOption("repos")

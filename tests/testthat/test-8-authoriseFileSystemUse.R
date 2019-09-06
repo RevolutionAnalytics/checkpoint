@@ -3,6 +3,8 @@ if(interactive()) library(testthat)
 library(mockery)
 
 context("file system authorization")
+skip_on_cran()
+
 td <- file.path(tempdir(), "checkpoint_not_auth")
 unlink(td, recursive = TRUE)
 

@@ -2,6 +2,8 @@ if(interactive()) library(testthat)
 
 context("scan for library, require, :: and :::")
 
+skip_on_cran()
+
 unCheckpoint()
 
 collapse <- function(...) paste(..., sep="\n", collapse="\n")

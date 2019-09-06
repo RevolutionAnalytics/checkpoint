@@ -3,6 +3,8 @@ library(mockery)
 
 context("is.404")
 
+skip_on_cran()
+
 test_that("is.404", {
   skip_if_offline()
   skip_on_cran()

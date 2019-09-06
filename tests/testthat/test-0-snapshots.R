@@ -2,6 +2,8 @@ if(interactive()) library(testthat)
 
 context("snapshots")
 
+skip_on_cran()
+
 test_that("stops if missing snapshotDate", {
   expect_error(
     checkpoint(), 

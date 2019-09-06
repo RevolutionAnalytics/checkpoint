@@ -2,6 +2,8 @@
 if(interactive()) library(testthat)
 
 context("accessdate")
+skip_on_cran()
+
 test_that("it detaches selected packages", {
   td <- make_fake_archive()
   x <- list.dirs(file.path(td, ".checkpoint"), full.names = FALSE, recursive = FALSE)

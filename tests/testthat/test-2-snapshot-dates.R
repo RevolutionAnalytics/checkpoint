@@ -2,6 +2,8 @@ if(interactive()) library("testthat")
 library(mockery)
 context("getValidSnapshots finds valid dates")
 
+skip_on_cran()
+
 
 test_that("returns a list of dates", {
   skip_if_offline()
