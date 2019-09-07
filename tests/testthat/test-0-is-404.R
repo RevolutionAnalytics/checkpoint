@@ -3,8 +3,6 @@ library(mockery)
 
 context("is.404")
 
-skip_on_cran()
-
 test_that("is.404", {
   skip_if_offline()
   skip_on_cran()
@@ -21,7 +19,7 @@ test_that("is.404", {
 })
 
 test_that("is.404 works with https", {
-  
+  skip_on_cran()
   if(!httpsSupported()) skip("https not supported")
   expect_true(
     suppressWarnings(is.404("https://mran.microsoft.com/snapshot/1972-01-01"))
@@ -36,7 +34,7 @@ test_that("is.404 works with https", {
 })
 
 test_that("is.404 gracefully deals with https URLs when https not supported", {
-  
+  skip_on_cran()
   stub(is.404, "httpsSupported", function(mran) FALSE)
   expect_true(
     is.404("https://mran.microsoft.com/snapshot/1972-01-01", warn = FALSE)
@@ -55,6 +53,7 @@ test_that("is.404 gracefully deals with https URLs when https not supported", {
 })
 
 test_that("is.404() deals with local file references", {
+  skip_on_cran()
   localMRAN <- system.file("tests/localMRAN", package = "checkpoint")
   msg <- "Ensure you use the correct http://,  https:// or file:/// prefix."
   expect_error(is.404(localMRAN), msg)
