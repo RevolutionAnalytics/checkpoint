@@ -233,14 +233,14 @@ checkpoint <- function(snapshotDate, project = getwd(),
         )
       }
     }
-  } else if(length(packages.detected > 0)){
+  } else if(length(packages.detected) > 0){
     mssg(verbose, "All detected packages already installed")
   } else {
     if(isTRUE(scanForPackages)) mssg(verbose, "No packages found to install")
   }
   
   # Reload detached packages
-  if(length(packages.in.search > 0)){
+  if(length(packages.in.search) > 0){
     lapply(packages.in.search, library, character.only = TRUE, quietly = TRUE)
   }
   
