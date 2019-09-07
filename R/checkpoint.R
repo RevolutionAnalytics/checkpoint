@@ -171,7 +171,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
     files.not.parsed <- character(0)
   }
   
-  if(forceInstall && packages.detected > 0){
+  if(forceInstall && length(packages.detected) > 0){
     mssg(verbose, "Removing packages to force re-install")
     to_remove <- as.vector(unlist(
       tools::package_dependencies(packages.detected, db = available.packages())
@@ -199,7 +199,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
     # set repos
     setMranMirror(snapshotUrl = snapshoturl)
     not.available <- !packages.to.install %in% available.packages()[, "Package"]
-    if(sum(not.available > 0)){
+    if(sum(not.available) > 0){
       mssg(verbose, 
            "Packages not available in repository and won't be installed:")
       for(pkg in packages.to.install[not.available]) mssg(verbose, " - ", pkg)
