@@ -1,13 +1,15 @@
 
-setMranMirror <- function(
-  snapshotDate, 
-  snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate)){
+setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapshotUrl(snapshotDate))
+{
   options(repos = snapshotUrl)
 }
 
 
+internal <- new.env()
+
 setLibPaths <- function(checkpointLocation, libPath){
-  newLoc <- c(libPath, 
+  internal$oldLibPaths <- .libPaths()
+  newLoc <- c(libPath,
               checkpointBasePkgs(checkpointLocation),
               .Library
               )
@@ -16,20 +18,26 @@ setLibPaths <- function(checkpointLocation, libPath){
 
 
 #' Undo the effect of checkpoint by resetting .libPath to user library location.
-#' 
-#' @description 
-#' 
-#' This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets [.libPaths] to point two libraries defined by the environment variable `R_Libs_User` and the R variable `.Library`.
+#'
+#' @description
+#'
+#' This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets [.libPaths] to its pre-checkpoint value.
 #' 
 #' Note that this does not undo any of the other side-effects of [checkpoint()]. Specifically, all loaded packages remain loaded, and the value of `getOption("repos")` remains unchanged.
-#' 
+#'
 #' @param new The new user library location. Defaults to `c(Sys.getenv("R_Libs_User"), .Library)`. See also [.libPaths()]
-#' 
+#'
 #' @export
 #' @family checkpoint functions
-unCheckpoint <- function(new = c(Sys.getenv("R_LIBS_USER"), .Library)){
-  assign(".lib.loc", new, 
-         envir = environment(.libPaths))
+unCheckpoint <- function(new){
+  if(!missing(new)) {
+    warning("'new' argument is no longer used; unCheckpoint will automatically revert to pre-checkpoint library paths")
+  }
+  if(!is.null(internal$oldLibPaths)) {
+    .libPaths(internal$oldLibPaths)
+    rm(oldLibPaths, envir=internal)
+  }
+  invisible(NULL)
 }
 
 
