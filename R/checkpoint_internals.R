@@ -35,7 +35,7 @@ unCheckpoint <- function(new){
   }
   if(!is.null(internal$oldLibPaths)) {
     .libPaths(internal$oldLibPaths)
-    rm(oldLibPaths, envir=internal)
+    rm(list="oldLibPaths", envir=internal)
   }
   invisible(NULL)
 }
