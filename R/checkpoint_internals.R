@@ -8,7 +8,9 @@ setMranMirror <- function(snapshotDate, snapshotUrl = checkpoint:::getSnapshotUr
 internal <- new.env()
 
 setLibPaths <- function(checkpointLocation, libPath){
-  internal$oldLibPaths <- .libPaths()
+  if(is.null(internal$oldLibPaths)) {
+    internal$oldLibPaths <- .libPaths()
+  }
   newLoc <- c(libPath,
               checkpointBasePkgs(checkpointLocation),
               .Library
