@@ -56,10 +56,11 @@ test_that("fails on empty or missing local MRAN", {
   localMRAN <- system.file("tests/emptyLocalMRAN", package = "checkpoint")
   localMRANUrl <- paste0("file:///", localMRAN)
 
-  options(checkpoint.mranUrl = localMRANUrl)
+  opts <- options(checkpoint.mranUrl = localMRANUrl)
 
   expect_error(
     stopIfInvalidDate("2015-06-05"),
     "No snapshots exist on MRAN."
   )
+  options(opts) # reset options (a bit fragile)
 })
