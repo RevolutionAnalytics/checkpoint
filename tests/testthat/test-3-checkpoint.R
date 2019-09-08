@@ -7,6 +7,7 @@ if(interactive()) library(testthat)
 Sys.setenv("R_TESTS" = "")
 
 current.R <- local({ x = getRversion(); paste(x$major, x$minor, sep=".")})
+originalLibPaths <- .libPaths()
 
 test.start <- switch(current.R,
                      "3.1" = "2014-10-01",
@@ -30,8 +31,6 @@ dir.create(file.path(checkpointLocation, ".checkpoint"), recursive = TRUE, showW
 
 test_checkpoint <- function(https = FALSE, snap_date){
   # snap_date <- test.start
-  
-  originalLibPaths <- .libPaths()
   
   url_prefix <- if(https) "https://" else "http://"
   # url_prefix <- "http://"
@@ -58,7 +57,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
       "No packages found to install"
     )
     
-    unCheckpoint(originalLibPaths)
+    unCheckpoint()
   })
   
   # expect_true(length(find.package("knitr", quiet = TRUE)) > 0)
@@ -89,7 +88,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
     )
     
     # prints progress message
-    unCheckpoint(originalLibPaths)
+    unCheckpoint()
     expect_message(
       checkpoint(snap_date, project = project_root,
                  checkpointLocation = checkpointLocation, use.knitr = TRUE),
@@ -127,7 +126,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
     messageMissingPackages(expected.packages, pkgNames(pdbLocal))
     
     # re-installs packages when forceInstall=TRUE
-    unCheckpoint(originalLibPaths)
+    unCheckpoint()
     expect_message(
       checkpoint(snap_date,
                  checkpointLocation = checkpointLocation,
@@ -162,7 +161,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
   test_that(paste("checkpoint -", sub("//", "", url_prefix), "@", snap_date, "other tests"), {
     
     # does not display message whan scanForPackages=FALSE
-    unCheckpoint(originalLibPaths)
+    unCheckpoint()
     expect_false(
       isTRUE(
         shows_message("Scanning for packages used in this project",
@@ -172,7 +171,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
       ))
     
     # throws error when scanForPackages=FALSE and snapshotDate doesn't exist"
-    unCheckpoint(originalLibPaths)
+    unCheckpoint()
     expect_error(
       checkpoint("2015-01-01", checkpointLocation = checkpointLocation,
                  project = project_root, scanForPackages=FALSE),
@@ -180,7 +179,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
     )
     
     # stops when R.version doesn't match current version
-    unCheckpoint(originalLibPaths)
+    unCheckpoint()
     expect_error(
       checkpoint(snap_date, R.version = "2.15.0",
                  checkpointLocation = checkpointLocation,
@@ -192,7 +191,7 @@ test_checkpoint <- function(https = FALSE, snap_date){
   test_that(paste("checkpoint -", sub("//", "", url_prefix), "@", snap_date, "cleanup"), {
     # cleanup
     cleanCheckpointFolder(snap_date, checkpointLocation = checkpointLocation)
-    unCheckpoint(originalLibPaths)
+    unCheckpoint()
     expect_identical(originalLibPaths, .libPaths())
   })
 }

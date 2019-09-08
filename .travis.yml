@@ -13,12 +13,6 @@ env:
   - NOT_CRAN="true"
   - NOT_CRAN="false"
 
-branches:
-  only:
-    - master
-    - release
-    - dev
-    
 notifications:
   email:
     on_success: change
