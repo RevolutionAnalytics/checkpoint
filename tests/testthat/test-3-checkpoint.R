@@ -16,7 +16,7 @@ test.start <- switch(current.R,
                      "3.4" = "2017-04-24",
                      "3.5" = "2018-06-01",
                      "3.6" = "2019-05-01",
-                     "2017-04-24"
+                     as.character(Sys.Date() - 7) # current, less 1 week for MRAN latency
 )
 
 MRAN.default = test.start[1] # ensure only a single value
