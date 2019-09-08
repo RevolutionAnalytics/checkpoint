@@ -1,11 +1,9 @@
 ---
-title: "checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility"
-output: 
-  html_document: 
-    keep_md: yes
-    self_contained: yes
-    smart: no
+output: github_document
 ---
+
+# checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility
+
 [![Licence](https://img.shields.io/badge/licence-GPL--2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 [![Build Status](https://travis-ci.org/RevolutionAnalytics/checkpoint.svg?branch=dev)](https://travis-ci.org/RevolutionAnalytics/checkpoint)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/checkpoint)](https://cran.r-project.org/package=checkpoint)
@@ -182,5 +180,5 @@ https://github.com/RevolutionAnalytics/checkpoint-server
 
 ## Code of conduct
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://microsoft.github.io/codeofconduct). For more information see the [Code of Conduct FAQ](https://microsoft.github.io/codeofconduct/faq.md) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
