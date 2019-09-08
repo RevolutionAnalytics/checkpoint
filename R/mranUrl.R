@@ -15,6 +15,9 @@ stopIfInvalidDate <- function(snapshotDate, verbose = TRUE, online = TRUE){
   if(inherits(validSnapshots, "error")){
     mssg(verbose, "Unable to connect to MRAN. Skipping some date validations.") 
   } else {
+    if (length(validSnapshots) == 0) {
+      stop("No snapshots exist on MRAN.")
+    }
     if(!as.Date(snapshotDate) %in% validSnapshots) {
       i <- findInterval(as.Date(snapshotDate), validSnapshots)
       suggestions <- validSnapshots[c(i, i+1)]

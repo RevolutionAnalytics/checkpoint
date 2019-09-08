@@ -50,3 +50,16 @@ test_that("works on local file", {
   getValidSnapshots(paste0("file:///", localMRAN))
   
 })
+
+test_that("fails on empty or missing local MRAN", {
+  skip_if_offline()
+  localMRAN <- system.file("tests/emptyLocalMRAN", package = "checkpoint")
+  localMRANUrl <- paste0("file:///", localMRAN)
+
+  options(checkpoint.mranUrl = localMRANUrl)
+
+  expect_error(
+    stopIfInvalidDate("2015-06-05"),
+    "No snapshots exist on MRAN."
+  )
+})
