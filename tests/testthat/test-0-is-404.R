@@ -17,7 +17,6 @@ test_that("is.404", {
   expect_false(
     is.404("http://mran.microsoft.com/snapshot/2015-05-01")
   )
-  stop("this is an error!")
 })
 
 test_that("is.404 works with https", {
