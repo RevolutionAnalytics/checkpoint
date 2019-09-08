@@ -25,7 +25,7 @@ setLibPaths <- function(checkpointLocation, libPath){
 #' 
 #' Note that this does not undo any of the other side-effects of [checkpoint()]. Specifically, all loaded packages remain loaded, and the value of `getOption("repos")` remains unchanged.
 #'
-#' @param new The new user library location. Defaults to `c(Sys.getenv("R_Libs_User"), .Library)`. See also [.libPaths()]
+#' @param new Not used; for back-compatibility only.
 #'
 #' @export
 #' @family checkpoint functions

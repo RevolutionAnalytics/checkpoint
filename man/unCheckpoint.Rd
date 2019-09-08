@@ -7,7 +7,7 @@
 unCheckpoint(new)
 }
 \arguments{
-\item{new}{The new user library location. Defaults to \code{c(Sys.getenv("R_Libs_User"), .Library)}. See also \code{\link[=.libPaths]{.libPaths()}}}
+\item{new}{Not used; for back-compatibility only.}
 }
 \description{
 This is an experimental solution to the situation where a user no longer wants to work in the checkpointed environment. The function resets \link{.libPaths} to its pre-checkpoint value.
