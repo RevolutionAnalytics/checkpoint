@@ -15,10 +15,11 @@ Description: The goal of checkpoint is to solve the problem of package
     server (<https://mran.microsoft.com/>). Immediately after completion
     of the rsync mirror process, the process takes a snapshot, thus creating the
     archive. Snapshot archives exist starting from 2014-09-17.
-Version: 0.4.7
+Version: 0.4.7.9000
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role=c("aut", "cre")),
-    person("Microsoft", role="cph")
+    person("Andrie", "de Vries", role="aut"),
+    person("Microsoft", role=c("aut", "cph"))
     )
 License: GPL-2
 URL: https://github.com/RevolutionAnalytics/checkpoint
