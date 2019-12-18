@@ -7,7 +7,7 @@
 checkpoint(snapshotDate, project = getwd(), R.version,
   scanForPackages = TRUE, checkpointLocation = "~/", verbose = TRUE,
   use.knitr, auto.install.knitr = TRUE, scan.rnw.with.knitr = FALSE,
-  forceInstall = FALSE, forceProject = FALSE)
+  forceInstall = FALSE, forceProject = FALSE, use.lock = TRUE)
 }
 \arguments{
 \item{snapshotDate}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use \code{\link[=getValidSnapshots]{getValidSnapshots()}}}
@@ -31,6 +31,8 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 \item{forceInstall}{If \code{TRUE}, forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.}
 
 \item{forceProject}{If \code{TRUE}, forces the checkpoint process, even if the provided project folder doesn't look like an R project. A commonly reported user problem is that they accidentally trigger the checkpoint process from their home folder, resulting in scanning many R files and downloading many packages. To prevent this, we use a heuristic to determine if the project folder looks like an R project. If the project folder is the home folder, and also contains no R files, then \code{checkpoint()} asks for confirmation to continue.}
+
+\item{use.lock}{if \code{FALSE}, sets the \code{--no-lock} argument to \code{R CMD INSTALL}.}
 }
 \value{
 Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:

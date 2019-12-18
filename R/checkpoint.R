@@ -61,6 +61,8 @@
 #'
 #' @param forceProject If `TRUE`, forces the checkpoint process, even if the provided project folder doesn't look like an R project. A commonly reported user problem is that they accidentally trigger the checkpoint process from their home folder, resulting in scanning many R files and downloading many packages. To prevent this, we use a heuristic to determine if the project folder looks like an R project. If the project folder is the home folder, and also contains no R files, then `checkpoint()` asks for confirmation to continue.
 #'
+#' @param use.lock if `FALSE`, sets the `--no-lock` argument to `R CMD INSTALL`.
+#'
 #' @return Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
 #' * `files_not_scanned`
 #' * `pkgs_found`
@@ -85,7 +87,8 @@ checkpoint <- function(snapshotDate, project = getwd(),
                        auto.install.knitr = TRUE,
                        scan.rnw.with.knitr = FALSE,
                        forceInstall = FALSE, 
-                       forceProject = FALSE) {
+                       forceProject = FALSE,
+                       use.lock = TRUE) {
   
   if(interactive()) validateProjectFolder(project)
   
@@ -221,7 +224,7 @@ checkpoint <- function(snapshotDate, project = getwd(),
         download_messages <- capture.output({ 
           install.packages(pkgs = pkg, verbose = FALSE, 
                            quiet = FALSE,
-                           INSTALL_opts = "--no-lock")
+                           INSTALL_opts = if(use.lock) "" else "--no-lock")  # --no-lock fails on R-devel
         }, type = "message")
         checkpoint_log(
           download_messages,
