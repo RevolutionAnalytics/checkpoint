@@ -1,6 +1,7 @@
 # checkpoint 0.4.8
 
 * Added a `use.lock` argument to `checkpoint`. When this is `FALSE`, packages are installed without the use of locks (via the `--no-lock` argument to `R CMD INSTALL`). The default is `TRUE`, which is needed to pass checks on R-devel; set this to `FALSE` to replicate the previous behaviour of `checkpoint`.
+* Fix build failures with the main checkpoint vignette on R-devel.
 * Restored Andrie de Vries and Microsoft to Authors@R in the `DESCRIPTION` file.
 
 # checkpoint 0.4.7
