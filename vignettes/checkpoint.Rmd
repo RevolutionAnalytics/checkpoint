@@ -122,7 +122,7 @@ Next you want to run the script.  Here is what `checkpoint` does:
 ## Create temporary project and set working directory
 
 
-example_project <- tempdir()
+example_project <- tempfile(pattern="proj")
 
 dir.create(example_project, recursive = TRUE, showWarnings = FALSE)
 oldRepos <- getOption("repos")
@@ -194,7 +194,7 @@ installed.packages(.libPaths()[1])[, "Package"]
 ## cleanup
 
 unlink(example_project, recursive = TRUE)
-unlink(file.path(tempdir(), "checkpoint_example_code.R"))
+unlink(file.path(example_project, "checkpoint_example_code.R"))
 unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
 options(repos = oldRepos)
 unCheckpoint(oldLibPaths)
