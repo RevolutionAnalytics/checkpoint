@@ -1,3 +1,7 @@
+# checkpoint 0.4.9
+
+* Make vignettes static to avoid CRAN check issues.
+
 # checkpoint 0.4.8
 
 * Added a `use.lock` argument to `checkpoint`. When this is `FALSE`, packages are installed without the use of locks (via the `--no-lock` argument to `R CMD INSTALL`). The default is `TRUE`, which is needed to pass checks on R-devel; set this to `FALSE` to replicate the previous behaviour of `checkpoint`.
