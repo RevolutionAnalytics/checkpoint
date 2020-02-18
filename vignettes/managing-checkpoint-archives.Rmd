@@ -1,7 +1,6 @@
 ---
 title: "Managing checkpoint snapshot archives"
 author: "Andrie de Vries"
-date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
@@ -53,26 +52,16 @@ par(oldpar)
 Next, create the checkpoint:
 
 
-```{r setup-1, include=FALSE}
-
-## Write dummy code file to project
-example_code <- '
-library(darts)
-'
-dir.create(tempdir(), recursive = TRUE)
-cat(example_code, file = file.path(tempdir(), "managing_checkpoint_example_code.R"))
-```
-
-```{r checkpoint, results="hide", message=FALSE, warning=FALSE}
+```r
 dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
 options(install.packages.compile.from.source = "no")
 oldLibPaths <- .libPaths()
 
 ## Create a checkpoint by specifying a snapshot date
 library(checkpoint)
-checkpoint("2015-04-26", project = tempdir(), checkpointLocation = tempdir())
-
+checkpoint("2017-04-01", project = tempdir(), checkpointLocation = tempdir())
 ```
+
 
 
 
@@ -81,26 +70,34 @@ checkpoint("2015-04-26", project = tempdir(), checkpointLocation = tempdir())
 You can query the available snapshots on disk using the `checkpointArchives()` function. This returns a vector of snapshot folders. 
 
 
-```{r archives-1}
+```r
 # List checkpoint archives on disk.
 checkpointArchives(tempdir())
+```
+```
+## [1] "2017-04-01"
 ```
 
 You can get the full paths by including the argument `full.names=TRUE`:
 
-```{r archives-2}
+```r
 checkpointArchives(tempdir(), full.names = TRUE)
 ```
-
+```
+## [1] "C:/Users/hongo/AppData/Local/Temp/RtmpEPckx0/.checkpoint/2017-04-01"
+```
 
 ## Working with access dates
 
 Every time you use `checkpoint()` the function places a small marker in the snapshot archive with the access date. In this way you can track when was the last time you actually used the snapshot archive.
 
-```{r access}
+```r
 # Returns the date the snapshot was last accessed.
 getAccessDate(tempdir())
-
+```
+```
+## C:/Users/hongo/AppData/Local/Temp/RtmpEPckx0/.checkpoint/2017-04-01 
+##                                                        "2020-01-13"
 ```
 
 
@@ -110,27 +107,25 @@ Since the date of last access is tracked, you can use this to manage your checkp
 
 The function `checkpointRemove()` will delete archives from disk. You can use this function in multiple ways. For example, specify a specific archive to remove:
 
-```{r remove-1, eval=FALSE}
-# Remove singe checkpoint archive from disk.
-checkpointRemove("2015-04-26")
+```r
+# Remove single checkpoint archive from disk.
+checkpointRemove("2017-04-01")
 ```
 
 You can also remove a range of snapshot archives older (or more recent) than a snapshot date
 
 
-```{r remove-2, eval=FALSE}
+```r
 # Remove range of checkpoint archives from disk.
-checkpointRemove("2015-04-26", allSinceSnapshot = TRUE)
-checkpointRemove("2015-04-26", allUntilSnapshot =  = TRUE)
-
+checkpointRemove("2017-04-01", allSinceSnapshot = TRUE)
+checkpointRemove("2017-04-01", allUntilSnapshot = TRUE)
 ```
 
 Finally, you can remove all snapshot archives that have not been accessed since a given date:
 
-```{r remove-3, eval=FALSE}
+```r
 # Remove snapshot archives that have not been used recently
-checkpointRemove("2015-04-26", notUsedSince = TRUE)
-
+checkpointRemove("2017-04-01", notUsedSince = TRUE)
 ```
 
 
@@ -140,42 +135,49 @@ One of the side effects of `checkpoint()` is to create a log file that contains 
 
 This file is stored in the checkpoint root folder, and is a csv file with column names, so you can read this with your favourite R function or other tools.
 
-```{r logfile-1}
+```r
 dir(file.path(tempdir(), ".checkpoint"))
 ```
+```
+## [1] "2017-04-01"         "R-3.6.1"            "checkpoint_log.csv"
+```
+
 
 Inspect the log file:
 
-```{r logfile-2}
-
+```r
 log_file <- file.path(tempdir(), ".checkpoint", "checkpoint_log.csv")
 log <- read.csv(log_file)
 head(log)
+```
+```
+##             timestamp snapshotDate   pkg bytes
+## 1 2020-01-13 18:22:37   2017-04-01 darts  7011
 ```
 
 
 # Resetting the checkpoint
 
-In older versions of `checkpoint()` the only way to reset the effect of `checkpoint()` was to restart your R session.
+Use the function `unCheckpoint()` to reset your `.libPaths` to the user folder.
 
-In v0.3.20 and above, you can use the function `unCheckpoint()`. This will reset you `.libPaths` to the user folder.
-
-```{r uncheckpoint-1}
+```r
 .libPaths()
+```
+```
+## [1] "C:/Users/hongo/AppData/Local/Temp/RtmpEPckx0/.checkpoint/2017-04-01/lib/x86_64-w64-mingw32/3.6.1"
+## [2] "C:/Users/hongo/AppData/Local/Temp/RtmpEPckx0/.checkpoint/R-3.6.1"                                
+## [3] "C:/PROGRA~1/R/R-36~1.1/library"
 ```
 
 Now use `unCheckpoint()` to reset your library paths
 
-```{r uncheckpoint-2}
-# Note this is still experimental
-unCheckpoint(oldLibPaths)
+```r
+unCheckpoint()
 .libPaths()
 ```
-
-
-```{r cleanup, include=TRUE}
-## cleanup
-unlink("manifest.R")
-unlink(file.path(tempdir(), "managing_checkpoint_example_code.R"))
-unlink(file.path(tempdir(), ".checkpoint"), recursive = TRUE)
+```
+## [1] "C:/Users/hongo/AppData/Local/Temp/RtmpaamF46/Rinsta6383cf163d9"       
+## [2] "C:/Users/hongo/AppData/Local/Temp/RtmpEhrViz/temp_libpath9fbc66654fd6"
+## [3] "c:/Rlib"                                                              
+## [4] "C:/Program Files/R/R-3.6.1/library"
 ```

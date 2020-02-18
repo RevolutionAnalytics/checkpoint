@@ -1,7 +1,6 @@
 ---
 title: "Using checkpoint for reproducible research"
 author: "Andrie de Vries"
-date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
@@ -83,7 +82,7 @@ To create a checkpoint project, you do:
 
     ```r
     library(checkpoint)
-    checkpoint("<checkpoint date>", checkpointLocation = tempdir())
+    checkpoint("<checkpoint date>")
     ```
 
 4. Run the script.
