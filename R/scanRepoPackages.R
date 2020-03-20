@@ -207,17 +207,16 @@ expressionDependencies <- function(e)
     {
         # base case: call to library/require
         if(fname %in% c("library", "require")) {
-          mc <- match.call(get(fname, baseenv()), e)
-          if(is.null(mc$package)) return(NULL)
-          if(isTRUE(mc$character.only)) return(NULL)
+            mc <- match.call(get(fname, baseenv()), e)
+            if(is.null(mc$package)) return(NULL)
+            if(isTRUE(mc$character.only)) return(NULL)
 
-          return(as.character(mc$package))
+            return(as.character(mc$package))
         }
 
         # base case: methods functions
-        if(fname %in% c("setClass", "setRefClass", "setMethod", "setGeneric")) {
-          return("methods")
-        }
+        if(fname %in% c("setClass", "setRefClass", "setMethod", "setGeneric"))
+            return("methods")
     }
     else
     {

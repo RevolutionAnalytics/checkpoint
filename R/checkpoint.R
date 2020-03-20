@@ -90,7 +90,8 @@ checkpoint <- function(snapshotDate, project=getwd(),
                        forceProject=FALSE,
                        use.lock=TRUE)
 {
-    if(interactive()) validateProjectFolder(project)
+    if(interactive())
+        validateProjectFolder(project)
 
     # Perform validation on dates
     stopIfInvalidDate(snapshotDate, online=scanForPackages)
@@ -203,7 +204,8 @@ checkpoint <- function(snapshotDate, project=getwd(),
     detachFromSearchPath(packages.in.search)
 
     # Check if packages are available in snapshot
-    if(length(packages.to.install) > 0) {
+    if(length(packages.to.install) > 0)
+    {
         # set repos
         setMranMirror(snapshotUrl=snapshoturl)
         not.available <- !packages.to.install %in% available.packages()[, "Package"]

@@ -102,9 +102,7 @@ fixRstudioBug <- function(reset=FALSE)
         .rs.addFunction("listInstalledPackages", original.listInstalledPackages)
         return(NULL)
     }
-    if(isTRUE(
-        all.equal(original.listInstalledPackages, get(".rs.listInstalledPackages"))
-    ))
+    if(isTRUE(all.equal(original.listInstalledPackages, get(".rs.listInstalledPackages"))))
         .rs.addFunction("listInstalledPackages", replacement.listInstalledPackages)
 }
 

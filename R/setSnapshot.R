@@ -42,8 +42,7 @@ getValidSnapshots <- function(mranRootUrl=mranUrl())
     else suppressWarnings(tryCatch(readLines(con, warn=TRUE), error=function(e) e))
 
     if(inherits(text, "error"))
-        stop(sprintf("Unable to download from MRAN: %s",
-                    text$message))
+        stop(sprintf("Unable to download from MRAN: %s", text$message))
 
     ptn <- "\\d{4}-\\d{2}-\\d{2}"
     idx <- grep(ptn, text)

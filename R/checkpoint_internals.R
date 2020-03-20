@@ -59,7 +59,7 @@ correctR <- function(x)
 # Scans for R files in a folder and the first level subfolders.
 anyRfiles <- function(path=".", filenames=FALSE)
 {
-    findRfiles <- function(path = ".")
+    findRfiles <- function(path=".")
     {
         pattern <- "\\.[rR]$|\\.[rR]nw$|\\.[rR]md$|\\.[rR]pres$|\\.[rR]proj$"
         list.files(path=path, pattern=pattern, full.names=TRUE)

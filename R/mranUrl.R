@@ -19,7 +19,7 @@ stopIfInvalidDate <- function(snapshotDate, verbose=TRUE, online=TRUE)
         mssg(verbose, "Unable to connect to MRAN. Skipping some date validations.")
     else
     {
-        if (length(validSnapshots) == 0)
+        if(length(validSnapshots) == 0)
             stop("No snapshots exist on MRAN.")
 
         if(!as.Date(snapshotDate) %in% validSnapshots)
@@ -85,9 +85,6 @@ setCheckpointUrl <- function(url)
 }
 
 
-#  ------------------------------------------------------------------------
-
-
 tryUrl <- function(url)
 {
     timeout <- getOption("timeout")
@@ -104,8 +101,6 @@ tryUrl <- function(url)
     con
 }
 
-
-#  ------------------------------------------------------------------------
 
 libcurl <- function()
 {
@@ -177,7 +172,7 @@ is.404 <- function(mran, warn=TRUE)
     else
     {
         x <- suppressWarnings(tryCatch(readLines(con, warn=FALSE), error=function(e) e))
-        if (inherits(x, "error"))
+        if(inherits(x, "error"))
           return(TRUE)
         ptn <- "404.*Not Found"
         any(grepl(ptn, x))
