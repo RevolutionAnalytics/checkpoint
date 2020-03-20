@@ -1,6 +1,6 @@
 library(cli)
 library(testthat)
 old.env <- Sys.getenv("checkpoint.mock.install")
-Sys.setenv("checkpoint.mock.install" = TRUE)
+Sys.setenv("checkpoint.mock.install"=TRUE)
 test_check("checkpoint")
-Sys.setenv("checkpoint.mock.install" = old.env)
+Sys.setenv("checkpoint.mock.install"=old.env)
