@@ -50,3 +50,20 @@ getValidSnapshots <- function(mranRootUrl=mranUrl())
          "\\1", text[idx])
 }
 
+
+tryUrl <- function(url)
+{
+    timeout <- getOption("timeout")
+    on.exit(options(timeout=timeout))
+    options(timeout=5)
+    con <- suppressWarnings(tryCatch(url(url), error=function(e)e))
+    msg <- paste0(
+        "Invalid value for mranRootUrl.\n",
+        "Ensure you use the correct http://,  https:// or file:/// prefix."
+    )
+    if(inherits(con, "error"))
+        stop(msg, call.=FALSE)
+
+    con
+}
+

@@ -85,41 +85,24 @@ setCheckpointUrl <- function(url)
 }
 
 
-tryUrl <- function(url)
-{
-    timeout <- getOption("timeout")
-    on.exit(options(timeout=timeout))
-    options(timeout=5)
-    con <- suppressWarnings(tryCatch(url(url), error=function(e)e))
-    msg <- paste0(
-        "Invalid value for mranRootUrl.\n",
-        "Ensure you use the correct http://,  https:// or file:/// prefix."
-    )
-    if(inherits(con, "error"))
-        stop(msg, call.=FALSE)
-
-    con
-}
-
-
 libcurl <- function()
 {
     isTRUE(unname(capabilities("libcurl")))
 }
 
-url <- function(url)
-{
-    if(getRversion() >= "3.2.0")
-    {
-        method <- switch(.Platform$OS.type,
-                        "unix"=if(libcurl()) "libcurl" else "default",
-                        "windows"="wininet",
-                        "default"
-        )
-        base::url(url, method=method)
-    }
-    else base::url(url)
-}
+# url <- function(url)
+# {
+#     if(getRversion() >= "3.2.0")
+#     {
+#         method <- switch(.Platform$OS.type,
+#                         "unix"=if(libcurl()) "libcurl" else "default",
+#                         "windows"="wininet",
+#                         "default"
+#         )
+#         base::url(url, method=method)
+#     }
+#     else base::url(url)
+# }
 
 httpsSupported <- function(mran="https://mran.microsoft.com/snapshot")
 {
