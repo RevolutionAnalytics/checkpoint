@@ -39,7 +39,10 @@ scanForPackages <- function(project=getwd(), verbose=TRUE,
         ext_k <- c("Rmd", "Rpres", "Rhmtl") # knitr / rmarkdown extensions
     }
 
-    makePtn <- function(x)sprintf("\\.(%s)$", paste(c(x, tolower(x)), collapse="|"))
+    makePtn <- function(x)
+    {
+        sprintf("\\.(%s)$", paste(c(x, tolower(x)), collapse="|"))
+    }
 
     files_r <- list.files(dir, pattern=makePtn(ext_r),
                           ignore.case=TRUE, recursive=TRUE)
@@ -150,8 +153,12 @@ deps.Rnw <- function(file, verbose=TRUE)
 {
     tempfile <- tempfile(fileext=".Rnw")
     showErrors <- getOption("show.error.messages")
-    options("show.error.messages"=FALSE)
-    on.exit({unlink(tempfile); options("show.error.messages"=showErrors)})
+    options(show.error.messages=FALSE)
+    on.exit({
+        unlink(tempfile)
+        options(show.error.messages=showErrors)
+    })
+
     p <- try(
         Stangle(file, output=tempfile, quiet=TRUE),
         silent=TRUE
@@ -206,7 +213,8 @@ expressionDependencies <- function(e)
     if(length(fname) == 1)
     {
         # base case: call to library/require
-        if(fname %in% c("library", "require")) {
+        if(fname %in% c("library", "require"))
+        {
             mc <- match.call(get(fname, baseenv()), e)
             if(is.null(mc$package)) return(NULL)
             if(isTRUE(mc$character.only)) return(NULL)

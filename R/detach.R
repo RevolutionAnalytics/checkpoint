@@ -28,7 +28,7 @@ detachFromSearchPath <- function(p)
         for(to.detach in d)
         {
             try(suppressWarnings(
-                  detach(name=makeDetachString(to.detach), unload=TRUE, 
+                  detach(name=makeDetachString(to.detach), unload=TRUE,
                         force=TRUE, character.only=TRUE)
                 ), silent=TRUE)
         }
