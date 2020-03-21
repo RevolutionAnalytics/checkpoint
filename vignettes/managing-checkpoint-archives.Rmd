@@ -1,7 +1,7 @@
 ---
 title: "Managing checkpoint snapshot archives"
 author: "Andrie de Vries"
-output: 
+output:
   rmarkdown::html_vignette:
     toc: true
     number_sections: true

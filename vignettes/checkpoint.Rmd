@@ -1,7 +1,7 @@
 ---
 title: "Using checkpoint for reproducible research"
 author: "Andrie de Vries"
-output: 
+output:
   rmarkdown::html_vignette:
     toc: true
     number_sections: true
