@@ -106,34 +106,35 @@ libcurl <- function()
 
 httpsSupported <- function(mran="https://mran.microsoft.com/snapshot")
 {
-    tf <- tempfile()
-    on.exit(unlink(tf))
-    pdb <- suppressWarnings({
-        testfile <- paste0(mran,
-            if(grepl("snapshot$", mran))
-                "/2015-09-01/src/contrib/checkTimings.html"
-            else "/src/contrib/checkTimings.html"
-        )
-        try(download.file(url=testfile, destfile=tf, mode="w", cacheOK=FALSE, quiet=TRUE),
-            silent=TRUE)
-    })
-    if(inherits(pdb, "error"))
-        return(FALSE)
+    return(TRUE)
+    # tf <- tempfile()
+    # on.exit(unlink(tf))
+    # pdb <- suppressWarnings({
+    #     testfile <- paste0(mran,
+    #         if(grepl("snapshot$", mran))
+    #             "/2015-09-01/src/contrib/checkTimings.html"
+    #         else "/src/contrib/checkTimings.html"
+    #     )
+    #     try(download.file(url=testfile, destfile=tf, mode="w", cacheOK=FALSE, quiet=TRUE),
+    #         silent=TRUE)
+    # })
+    # if(inherits(pdb, "error"))
+    #     return(FALSE)
 
-    con <- suppressWarnings({
-        tryCatch(url(mran), error=function(e)e)
-    })
-    if(inherits(con, "error"))
-        return(FALSE)
-    on.exit(close(con))
+    # con <- suppressWarnings({
+    #     tryCatch(url(mran), error=function(e)e)
+    # })
+    # if(inherits(con, "error"))
+    #     return(FALSE)
+    # on.exit(close(con))
 
-    x <- suppressWarnings(tryCatch(readLines(con, warn=FALSE), error=function(e)e))
-    if(!inherits(x, "error"))
-        return(TRUE)
-    if(x$message == "cannot open the connection")
-        return(FALSE)
-    warning(x$message)
-    FALSE
+    # x <- suppressWarnings(tryCatch(readLines(con, warn=FALSE), error=function(e)e))
+    # if(!inherits(x, "error"))
+    #     return(TRUE)
+    # if(x$message == "cannot open the connection")
+    #     return(FALSE)
+    # warning(x$message)
+    # FALSE
 }
 
 
