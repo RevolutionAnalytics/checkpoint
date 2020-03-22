@@ -28,6 +28,7 @@ Imports:
     utils,
     tools,
     httr,
+    jsonlite,
     pkgdepends
 Depends:
     R(>= 3.0.0)
