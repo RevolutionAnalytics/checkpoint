@@ -31,12 +31,12 @@ scanForPackages <- function(project=getwd(), verbose=TRUE,
     if(scan.rnw.with.knitr)
     {
         ext_r <- c("R")
-        ext_k <- c("Rmd", "Rpres", "Rhmtl", "Rnw") # knitr / rmarkdown extensions
+        ext_k <- c("Rmd", "Rpres", "Rhtml", "Rnw") # knitr / rmarkdown extensions
     }
     else
     {
         ext_r <- c("R", "Rnw")
-        ext_k <- c("Rmd", "Rpres", "Rhmtl") # knitr / rmarkdown extensions
+        ext_k <- c("Rmd", "Rpres", "Rhtml") # knitr / rmarkdown extensions
     }
 
     makePtn <- function(x)
@@ -122,7 +122,6 @@ deps_by_ext <- function(file, dir, verbose=TRUE, scan.rnw.with.knitr=FALSE)
         else deps.Rnw(file, verbose=verbose),
         rmd=deps.Rmd(file, verbose=verbose),
         rpres=deps.Rpres(file, verbose=verbose),
-        txt=deps.txt(file, verbose=verbose),
         stop("Unrecognized file type '", file, "'")
     )
 }
@@ -209,7 +208,6 @@ expressionDependencies <- function(e)
     fname <- as.character(e[[1L]])
     # a refclass method call, so return
     # if(length(fname) > 1) return()
-
     if(length(fname) == 1)
     {
         # base case: call to library/require
