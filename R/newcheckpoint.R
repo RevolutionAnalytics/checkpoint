@@ -2,7 +2,7 @@
 create_checkpoint <- function(snapshot_date,
                               project_dir=getwd(),
                               checkpoint_location="~",
-                              mran_url="https://mran.microsoft.com",
+                              mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
                               r_version=NULL,
                               scan_r_only=FALSE,
                               scan_rnw_with_knitr=FALSE,
@@ -24,7 +24,7 @@ create_checkpoint <- function(snapshot_date,
     libdir <- create_checkpoint_dir(snapshot_date, checkpoint_location, r_version)
 
     # install packages
-    install_pkgs(dep_list$pkgs, snapshot_date, libdir, mran_url, r_version)
+    inst <- install_pkgs(dep_list$pkgs, snapshot_date, libdir, mran_url, r_version)
 
     # set .libPaths()
     if(use_now)
@@ -36,7 +36,11 @@ create_checkpoint <- function(snapshot_date,
 
 .checkpoint <- new.env()
 
-use_checkpoint <- function(snapshot_date, checkpoint_location="~", r_version=getRversion())
+use_checkpoint <- function(snapshot_date,
+                           checkpoint_location="~",
+                           mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
+                           r_version=getRversion()
+                          )
 {
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
     if(!dir.exists(libdir))
@@ -44,7 +48,9 @@ use_checkpoint <- function(snapshot_date, checkpoint_location="~", r_version=get
 
     old_libpath <- .libPaths()
     .checkpoint$old_libpath <- old_libpath
+    .checkpoint$old_repos <- getOption("repos")
     set_access_date(snapshot_date, checkpoint_location)
+    options(repos=c(CRAN=mran_url))
     invisible(.libPaths(c(libdir, old_libpath[length(old_libpath)])))
 }
 
@@ -70,6 +76,8 @@ reset_libpaths <- function()
 {
     if(is.null(.checkpoint$old_libpath))
         stop("Original library path not saved, cannot reset", call.=FALSE)
+    if(!is.null(.checkpoint$old_repos))
+        options(repos=c(CRAN=.checkpoint$old_repos))
     invisible(.libPaths(.checkpoint$old_libpath))
 }
 
