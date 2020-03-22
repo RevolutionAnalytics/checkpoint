@@ -50,6 +50,7 @@ use_checkpoint <- function(snapshot_date,
     .checkpoint$old_libpath <- old_libpath
     .checkpoint$old_repos <- getOption("repos")
     set_access_date(snapshot_date, checkpoint_location)
+    mran_url <- snapshot_url(snapshot_date, mran_url)
     options(repos=c(CRAN=mran_url))
     invisible(.libPaths(c(libdir, old_libpath[length(old_libpath)])))
 }
