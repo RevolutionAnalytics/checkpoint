@@ -54,7 +54,7 @@ scan_rnw <- function(filename)
 {
     tempfile <- tempfile(fileext=".R")
     on.exit(unlink(tempfile))
-    suppressWarnings(Stangle(filename, output=tempfile, quiet=TRUE))
+    suppressWarnings(utils::Stangle(filename, output=tempfile, quiet=TRUE))
     scan_r(tempfile)
 }
 
