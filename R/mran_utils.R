@@ -3,13 +3,17 @@ list_snapshot_dates <- function(mran_url=getOption("checkpoint.mranUrl", "https:
     snapshot_url <- httr::parse_url(mran_url)
     snapshot_url$path <- file.path(snapshot_url$path, "snapshot")
 
-    lines <- if(grepl("^http", snapshot_url$scheme))
-        readLines(httr::build_url(snapshot_url))
+    if(grepl("^http", snapshot_url$scheme))
+    {
+        lines <- try(readLines(httr::build_url(snapshot_url)), silent=TRUE)
+        if(inherits(lines, "try-error"))
+            stop("Unable to contact MRAN host", call.=FALSE)
+    }
     else if(snapshot_url$scheme == "file")
     {
         f <- file(httr::build_url(snapshot_url))
         on.exit(close(f))
-        dir(summary(f))
+        lines <- dir(summary(f))
     }
     else stop("Invalid URL scheme", call.=FALSE)
 

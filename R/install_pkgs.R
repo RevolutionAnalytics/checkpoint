@@ -34,7 +34,9 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
     inst$stop_for_download_error()
 
     write_checkpoint_log(inst$get_install_plan(), "install_plan", checkpoint_location, logtime, log)
-    write_checkpoint_log(inst$install(), "install", checkpoint_location, logtime, log)
+    inst_res <- inst$install()
+    warn_for_install_error(inst_res)
+    write_checkpoint_log(inst_res, "install", checkpoint_location, logtime, log)
 
     inst
 }
@@ -50,4 +52,16 @@ write_checkpoint_log <- function(object, name, checkpoint_location, logtime, do_
     pathname <- file.path(checkpoint_location, ".checkpoint", name)
     writeLines(jsonlite::toJSON(object, auto_unbox=TRUE, pretty=TRUE, null="null", force=TRUE), pathname)
     invisible(object)
+}
+
+
+warn_for_install_error <- function(install_result)
+{
+    is_empty <- function(x) length(x) == 0
+
+    success <- sapply(install_result$error, is_empty) & sapply(install_result$download_error, is_empty)
+
+    if(!all(success))
+        warning("Some packages failed to install:\n ", paste(install_result$package[!success], sep=" "), call.=FALSE)
+    NULL
 }

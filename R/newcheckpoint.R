@@ -1,9 +1,9 @@
 # idempotent: creating multiple times == creating once
 create_checkpoint <- function(snapshot_date,
+                              r_version=NULL,
                               project_dir=getwd(),
                               checkpoint_location="~",
                               mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
-                              r_version=NULL,
                               scan_now=TRUE,
                               use_now=TRUE,
                               scan_r_only=FALSE,
@@ -20,7 +20,7 @@ create_checkpoint <- function(snapshot_date,
         stop("R version does not match")
 
     # create checkpoint dir
-    snapshot_date <- verify_date(snapshot_date)
+    snapshot_date <- verify_date(snapshot_date, mran_url)
     create_checkpoint_dir(snapshot_date, checkpoint_location, r_version)
 
     if(!scan_now)
@@ -40,7 +40,7 @@ create_checkpoint <- function(snapshot_date,
 
     # set .libPaths/repos
     if(use_now)
-        use_checkpoint(snapshot_date, checkpoint_location)
+        use_checkpoint(snapshot_date, r_version, checkpoint_location)
     else set_access_date(snapshot_date, checkpoint_location)
 
     invisible(inst)
@@ -49,9 +49,9 @@ create_checkpoint <- function(snapshot_date,
 .checkpoint <- new.env()
 
 use_checkpoint <- function(snapshot_date,
+                           r_version=getRversion(),
                            checkpoint_location="~",
-                           mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
-                           r_version=getRversion()
+                           mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
                           )
 {
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
@@ -66,7 +66,7 @@ use_checkpoint <- function(snapshot_date,
     invisible(.libPaths(c(libdir, .Library)))
 }
 
-delete_checkpoint <- function(snapshot_date, checkpoint_location="~", r_version=getRversion())
+delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint_location="~")
 {
     # stop if checkpoint in use
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
@@ -93,7 +93,7 @@ uncheckpoint_session <- function()
 }
 
 
-verify_date <- function(date)
+verify_date <- function(date, mran_url)
 {
     realdate <- try(as.Date(date), silent=TRUE)
     if(inherits(realdate, "try-error"))
@@ -101,7 +101,13 @@ verify_date <- function(date)
     if(realdate < as.Date("2014-09-17"))
         stop("Snapshots are only available after 2014-09-17", call.=FALSE)
     if(realdate > Sys.Date())
-        stop("snapshotDate can not be in the future!", call.=FALSE)
+        stop("Snapshot date later than current date", call.=FALSE)
+
+    message("Checking available snapshot dates... ", appendLF=FALSE)
+    valid_dates <- list_snapshot_dates(mran_url)
+    if(!(realdate %in% as.Date(valid_dates)))
+        stop("Snapshot date ", date, " not found", call.=FALSE)
+    else message("OK")
     date
 }
 
