@@ -4,10 +4,12 @@ create_checkpoint <- function(snapshot_date,
                               checkpoint_location="~",
                               mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
                               r_version=NULL,
+                              scan_now=TRUE,
+                              use_now=TRUE,
                               scan_r_only=FALSE,
                               scan_rnw_with_knitr=FALSE,
-                              use_now=TRUE,
-                              log=c("csv", "json", "none"),
+                              log=TRUE,
+                              num_workers=NULL,
                               config=list(),
                               ...
                              )
@@ -17,6 +19,13 @@ create_checkpoint <- function(snapshot_date,
     else if(package_version(r_version) != getRversion())
         stop("R version does not match")
 
+    # create checkpoint dir
+    snapshot_date <- verify_date(snapshot_date)
+    create_checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+
+    if(!scan_now)
+        return(invisible(NULL))
+
     # scan files
     dep_list <- scan_project_files(project_dir, scan_r_only, scan_rnw_with_knitr)
     if(length(dep_list$pkgs) == 0)
@@ -25,18 +34,11 @@ create_checkpoint <- function(snapshot_date,
         return(invisible(NULL))
     }
 
-    # create checkpoint dir
-    snapshot_date <- verify_date(snapshot_date)
-    libdir <- create_checkpoint_dir(snapshot_date, checkpoint_location, r_version)
-
     # install packages
-    inst <- install_pkgs(dep_list$pkgs, snapshot_date, libdir, mran_url, r_version, config, ...)
+    inst <- install_pkgs(dep_list$pkgs, snapshot_date, checkpoint_location, mran_url, r_version, log, num_workers,
+                         config, ...)
 
-    # log, if required
-    log <- match.arg(log)
-    write_checkpoint_log(inst, checkpoint_location, log)
-
-    # set .libPaths()
+    # set .libPaths/repos
     if(use_now)
         use_checkpoint(snapshot_date, checkpoint_location)
     else set_access_date(snapshot_date, checkpoint_location)
@@ -58,10 +60,9 @@ use_checkpoint <- function(snapshot_date,
 
     .checkpoint$old_libpath <- .libPaths()
     .checkpoint$old_repos <- getOption("repos")
-    set_access_date(snapshot_date, checkpoint_location)
-    mran_url <- snapshot_url(snapshot_date, mran_url)
 
-    options(repos=c(CRAN=mran_url))
+    set_access_date(snapshot_date, checkpoint_location)
+    options(repos=c(CRAN=snapshot_url(snapshot_date, mran_url)))
     invisible(.libPaths(c(libdir, .Library)))
 }
 
@@ -83,12 +84,11 @@ delete_all_checkpoints <- function(checkpoint_location="~")
     unlink(checkpoint_root, recursive=TRUE)
 }
 
-reset_libpaths <- function()
+uncheckpoint_session <- function()
 {
     if(is.null(.checkpoint$old_libpath))
         stop("Original library path not saved, cannot reset", call.=FALSE)
-    if(!is.null(.checkpoint$old_repos))
-        options(repos=c(CRAN=.checkpoint$old_repos))
+    options(repos=c(CRAN=.checkpoint$old_repos))
     invisible(.libPaths(.checkpoint$old_libpath))
 }
 

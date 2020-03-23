@@ -29,6 +29,7 @@ Imports:
     tools,
     httr,
     jsonlite,
+    pkgcache,
     pkgdepends
 Depends:
     R(>= 3.0.0)
