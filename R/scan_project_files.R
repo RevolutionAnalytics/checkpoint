@@ -1,10 +1,10 @@
 #' Scan R files for package dependencies
 #'
-#' @param project_dir A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`.  Defaults to current working directory using [`getwd`].
+#' @param project_dir A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`. Defaults to the current working directory.
 #'
 #' @param scan_r_only If `TRUE`, limits the scanning of project files to R scripts only (those with the extension ".R").
 #'
-#' @param scan_rnw_with_knitr If `TRUE`, scans Sweave files (those with extension ".Rnw") with [`knitr::knitr`], otherwise with [`utils::Stangle`].
+#' @param scan_rnw_with_knitr If `TRUE`, scans Sweave files (those with extension ".Rnw") with [`knitr::knitr`], otherwise with [`utils::Stangle`]. Ignored if `scan_r_only=TRUE`.
 #'
 #' @return
 #' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned.
@@ -22,7 +22,7 @@ scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with
         "\\.r$"
     else "\\.(r|rnw|rmd|rpres|rhtml)$"
 
-    r_files <- dir(project_dir, pattern=r_pat, recursive=TRUE, ignore.case=TRUE)
+    r_files <- dir(project_dir, pattern=r_pat, recursive=TRUE, ignore.case=TRUE, full.names=TRUE)
     if(file.exists("~/.Rprofile"))
         r_files <- c(r_files, "~/.Rprofile")
     exclude <- c(
@@ -103,8 +103,6 @@ find_dependencies <- function(e)
                 mc <- match.call(get(fname, baseenv()), e)
                 return(as.character(mc$package))
             }
-            else if(fname %in% c("setClass", "setRefClass", "setMethod", "setGeneric"))
-                return("methods")
             else return(unique(unlist(lapply(as.list(e[-1]), find_dependencies))))
         }
         else if(fname[1] %in% c("::", ":::"))
