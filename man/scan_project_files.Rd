@@ -7,15 +7,18 @@
 scan_project_files(
   project_dir = ".",
   scan_r_only = FALSE,
-  scan_rnw_with_knitr = TRUE
+  scan_rnw_with_knitr = TRUE,
+  scan_rprofile = TRUE
 )
 }
 \arguments{
-\item{project_dir}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}}.}
+\item{project_dir}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}. Defaults to the current working directory.}
 
 \item{scan_r_only}{If \code{TRUE}, limits the scanning of project files to R scripts only (those with the extension ".R").}
 
-\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files (those with extension ".Rnw") with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}.}
+\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files (those with extension ".Rnw") with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}. Ignored if \code{scan_r_only=TRUE}.}
+
+\item{scan_rprofile}{if \code{TRUE}, includes the \verb{~/.Rprofile} startup file in the scan. See \code{\link{Startup}}.}
 }
 \value{
 A list with 2 components: \code{pkgs}, a vector of package names, and \code{errors}, a vector of files that could not be scanned.

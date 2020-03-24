@@ -10,15 +10,16 @@ The goal of checkpoint is to solve the problem of package reproducibility in R. 
 \details{
 To achieve reproducibility, the \code{\link{create_checkpoint}} function installs the packages required or called by your project and scripts to a local library exactly as they existed at the specified point in time. Only those packages are available tot your project, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using checkpoint can ensure the reproducibility of your scripts or projects at any time.
 
-To create the snapshot archives, once a day (at midnight UTC) we refresh the Austria CRAN mirror, on the checkpoint server (https://mran.microsoft.com/).  Immediately after completion of the `rsync`` mirror process, we take a snapshot, thus creating the archive.  Snapshot archives exist starting from 2014-09-17.
+To create the snapshot archives, once a day (at midnight UTC) we refresh the Austria CRAN mirror, on the checkpoint server (https://mran.microsoft.com/).  Immediately after completion of the \code{rsync} mirror process, we take a snapshot, thus creating the archive.  Snapshot archives exist starting from 2014-09-17.
 
 \code{checkpoint} exposes the following functions:
 \itemize{
 \item \code{\link{create_checkpoint}}: Creates a checkpoint by scanning a project folder and downloading and installing any packages required from MRAN.
-\item \code{\link{use_checkpoint}}: Uses a previously created checkpoint.
+\item \code{\link{use_checkpoint}}: Uses a previously created checkpoint, by setting the library search path to the checkpoint path, and the CRAN mirror to MRAN.
 \item \code{\link{delete_checkpoint}}: Deletes an existing checkpoint.
 \item \code{\link{delete_all_checkpoints}}: Deletes \emph{all} existing checkpoints.
-\item \code{\link{uncheckpoint_session}}: Stops using a checkpoint, restores the library search path and CRAN mirror to their original state.
+\item \code{\link{uncheckpoint_session}}: Stops using a checkpoint, restoring the library search path and CRAN mirror to their original state.
+\item \code{\link{scan_project_files}}: Scans a project for any required packages.
 \item \code{\link{list_mran_snapshots}}: Returns all valid snapshot dates found on MRAN.
 }
 }

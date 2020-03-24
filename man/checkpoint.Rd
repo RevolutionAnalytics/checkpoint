@@ -10,14 +10,15 @@
 \usage{
 create_checkpoint(
   snapshot_date,
-  r_version = NULL,
-  project_dir = getwd(),
+  r_version = getRversion(),
+  project_dir = ".",
   checkpoint_location = "~",
   mran_url = getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
   scan_now = TRUE,
   use_now = TRUE,
   scan_r_only = FALSE,
   scan_rnw_with_knitr = TRUE,
+  scan_rprofile = TRUE,
   log = TRUE,
   num_workers = NULL,
   config = list(),
@@ -46,21 +47,23 @@ uncheckpoint_session()
 \arguments{
 \item{snapshot_date}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use \code{\link{list_mran_snapshots}}.}
 
-\item{r_version}{Optional character string, e.g. \code{"3.1.2"}.  If specified, compares the current \link{R.version} to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
+\item{r_version}{Optional character string, e.g. \code{"3.6.2"}.  If specified, compares the current \code{\link{R.version}} to the specified version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
 
-\item{project_dir}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}.  Defaults to current working directory using \code{\link{getwd}}.}
+\item{project_dir}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}. Defaults to the current working directory.}
 
-\item{checkpoint_location}{File path where the checkpoint library is stored.  Default is \code{"~"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive), or to create per-project checkpoints.}
+\item{checkpoint_location}{File path where the checkpoint library is stored.  Default is \code{"~"}, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive), or to create per-project checkpoints. The actual checkpoints will be created under a \code{.checkpoint} directory at this location.}
 
-\item{mran_url}{The base MRAN URL. The default is taken from the system option \code{checkpoint.mranUrl}, or if this is unset, \verb{https://mran.microsoft.com}.}
+\item{mran_url}{The base MRAN URL. The default is taken from the system option \code{checkpoint.mranUrl}, or if this is unset, \verb{https://mran.microsoft.com}. Currently checkpoint 1.0 does not support local MRAN mirrors.}
 
-\item{scan_now}{If \code{TRUE}, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for \code{scan_now=FALSE} is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set \code{scan_now=FALSE} if you are certain that all package dependencies are already in the checkpoint folder.}
+\item{scan_now}{If \code{TRUE}, scans for packages in project folder (see details). If \code{FALSE}, skips the scanning process. Set this to \code{FALSE} if you only want to create the checkpoint subdirectory structure.}
 
-\item{use_now}{If \code{TRUE}, changes the library path to use the created checkpoint, and sets the CRAN repository to the MRAN snapshot URL. If \code{FALSE}, leaves these unchanged.}
+\item{use_now}{If \code{TRUE}, \code{create_checkpoint} calls \code{use_checkpoint} after the checkpoint has been created. Ignored if \code{scan_now=FALSE}.}
 
 \item{scan_r_only}{If \code{TRUE}, limits the scanning of project files to R scripts only (those with the extension ".R").}
 
-\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files (those with extension ".Rnw") with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}.}
+\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files (those with extension ".Rnw") with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}. Ignored if \code{scan_r_only=TRUE}.}
+
+\item{scan_rprofile}{if \code{TRUE}, includes the \verb{~/.Rprofile} startup file in the scan. See \code{\link{Startup}}.}
 
 \item{log}{If \code{TRUE}, writes logging information (mostly the output from the methods of \code{\link[pkgdepends:pkg_installation_proposal]{pkgdepends::pkg_installation_proposal}}) to the checkpoint directory.}
 
@@ -83,7 +86,7 @@ Together, the checkpoint package and the checkpoint server act as a CRAN time ma
 
 \code{create_checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 
-To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link[=library]{library()}} and \code{\link[=require]{require()}} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \verb{package[::]foo()} and \verb{package[:::]foo()}. Finally, any occurrences of the functions \link[methods:setClass]{methods::setClass}, \link[methods:setRefClass]{methods::setRefClass}, \link[methods:setMethod]{methods::setMethod} or \link[methods:setGeneric]{methods::setGeneric} will also identify the \code{methods} package as a dependency.
+To determine the packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, \code{.Rnw}, \code{.Rhtml} and \code{.Rpres} files) for \code{\link[=library]{library()}} and \code{\link[=require]{require()}} statements. In addition, it scans for occurrences of code that accesses functions in namespaces using \verb{package[::]foo()} and \verb{package[:::]foo()}.
 
 Specifically, the function will:
 \itemize{

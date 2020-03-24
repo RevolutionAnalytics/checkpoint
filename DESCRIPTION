@@ -30,18 +30,15 @@ Imports:
     httr,
     jsonlite,
     withr,
-    pkgcache,
     pkgdepends
 Depends:
     R(>= 3.0.0)
 Suggests:
+    pkgcache,
     knitr,
     rmarkdown,
     testthat(>= 0.9),
-    MASS,
-    darts,
-    mockery,
-    cli
+    darts
 Remotes:
     r-lib/pkgdepends
 VignetteBuilder: knitr

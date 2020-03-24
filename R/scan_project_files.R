@@ -6,10 +6,12 @@
 #'
 #' @param scan_rnw_with_knitr If `TRUE`, scans Sweave files (those with extension ".Rnw") with [`knitr::knitr`], otherwise with [`utils::Stangle`]. Ignored if `scan_r_only=TRUE`.
 #'
+#' @param scan_rprofile if `TRUE`, includes the `~/.Rprofile` startup file in the scan. See [`Startup`].
+#'
 #' @return
 #' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned.
 #' @export
-scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with_knitr=TRUE)
+scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with_knitr=TRUE, scan_rprofile=TRUE)
 {
     if(!scan_r_only)
     {
@@ -23,7 +25,7 @@ scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with
     else "\\.(r|rnw|rmd|rpres|rhtml)$"
 
     r_files <- dir(project_dir, pattern=r_pat, recursive=TRUE, ignore.case=TRUE, full.names=TRUE)
-    if(file.exists("~/.Rprofile"))
+    if(scan_rprofile && file.exists("~/.Rprofile"))
         r_files <- c(r_files, "~/.Rprofile")
     exclude <- c(
         # this package
