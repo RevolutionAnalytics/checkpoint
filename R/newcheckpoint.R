@@ -11,6 +11,7 @@ create_checkpoint <- function(snapshot_date,
                               log=TRUE,
                               num_workers=NULL,
                               config=list(),
+                              prepend=FALSE,
                               ...
                              )
 {
@@ -20,7 +21,7 @@ create_checkpoint <- function(snapshot_date,
         stop("R version does not match")
 
     # create checkpoint dir
-    snapshot_date <- verify_date(snapshot_date, mran_url)
+    snapshot_date <- verify_date(snapshot_date)
     create_checkpoint_dir(snapshot_date, checkpoint_location, r_version)
 
     if(!scan_now)
@@ -40,30 +41,41 @@ create_checkpoint <- function(snapshot_date,
 
     # set .libPaths/repos
     if(use_now)
-        use_checkpoint(snapshot_date, r_version, checkpoint_location)
+        use_checkpoint(snapshot_date, r_version, checkpoint_location, prepend=prepend)
     else set_access_date(snapshot_date, checkpoint_location)
 
     invisible(inst)
 }
 
-.checkpoint <- new.env()
-
 use_checkpoint <- function(snapshot_date,
                            r_version=getRversion(),
                            checkpoint_location="~",
-                           mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
+                           mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
+                           prepend=FALSE
                           )
 {
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
     if(!dir.exists(libdir))
         stop("Checkpoint directory not found", call.=FALSE)
 
-    .checkpoint$old_libpath <- .libPaths()
-    .checkpoint$old_repos <- getOption("repos")
-
     set_access_date(snapshot_date, checkpoint_location)
-    options(repos=c(CRAN=snapshot_url(snapshot_date, mran_url)))
-    invisible(.libPaths(c(libdir, .Library)))
+
+    # replace all unnamed repos and CRAN-repos
+    repos <- getOption("repos")
+    repo_names <- names(repos)
+    if(is.null(repo_names))
+        options(repos=c(CRAN=snapshot_url(snapshot_date, mran_url)))
+    else
+    {
+        unnamed_or_cran <- repo_names %in% c("", "CRAN")
+        repos <- c(CRAN=snapshot_url(snapshot_date, mran_url), repos[!unnamed_or_cran])
+        options(repos=repos)
+    }
+
+    if(prepend)
+        .libPaths(c(libdir, .libPaths()))
+    else .libPaths(c(libdir, .libPaths()[length(.libPaths())]))  # .Library/.libPaths()[n] may be a symlink
+    invisible(NULL)
 }
 
 delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint_location="~")
@@ -77,8 +89,7 @@ delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint
 
 delete_all_checkpoints <- function(checkpoint_location="~")
 {
-    checkpoint_root <- normalizePath(file.path(checkpoint_location, ".checkpoint"),
-        winslash="/", mustWork=FALSE)
+    checkpoint_root <- normalizePath(file.path(checkpoint_location, ".checkpoint"), winslash="/", mustWork=FALSE)
     if(any(grepl(checkpoint_root, .libPaths(), fixed=TRUE)))
         stop("Cannot delete checkpoint while in use, call reset_libpaths() first", call.=FALSE)
     unlink(checkpoint_root, recursive=TRUE)
@@ -86,14 +97,13 @@ delete_all_checkpoints <- function(checkpoint_location="~")
 
 uncheckpoint_session <- function()
 {
-    if(is.null(.checkpoint$old_libpath))
-        stop("Original library path not saved, cannot reset", call.=FALSE)
-    options(repos=c(CRAN=.checkpoint$old_repos))
-    invisible(.libPaths(.checkpoint$old_libpath))
+    options(repos=.checkpoint$old_repos)
+    .libPaths(.checkpoint$old_libpath)
+    invisible(NULL)
 }
 
 
-verify_date <- function(date, mran_url)
+verify_date <- function(date)
 {
     realdate <- try(as.Date(date), silent=TRUE)
     if(inherits(realdate, "try-error"))
@@ -103,11 +113,11 @@ verify_date <- function(date, mran_url)
     if(realdate > Sys.Date())
         stop("Snapshot date later than current date", call.=FALSE)
 
-    message("Checking available snapshot dates... ", appendLF=FALSE)
-    valid_dates <- list_snapshot_dates(mran_url)
-    if(!(realdate %in% as.Date(valid_dates)))
-        stop("Snapshot date ", date, " not found", call.=FALSE)
-    else message("OK")
+    # message("Checking available snapshot dates... ", appendLF=FALSE)
+    # valid_dates <- list_snapshot_dates(mran_url)
+    # if(!(realdate %in% as.Date(valid_dates)))
+    #     stop("Snapshot date ", date, " not found", call.=FALSE)
+    # else message("OK")
     date
 }
 

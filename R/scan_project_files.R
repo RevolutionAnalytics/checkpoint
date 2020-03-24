@@ -12,6 +12,8 @@ scan_project_files <- function(project_dir, scan_r_only, scan_rnw_with_knitr)
     else "\\.(r|rnw|rmd|rpres|rhtml)$"
 
     r_files <- dir(project_dir, pattern=r_pat, recursive=TRUE, ignore.case=TRUE)
+    if(file.exists("~/.Rprofile"))
+        r_files <- c(r_files, "~/.Rprofile")
     exclude <- c(
         # this package
         "checkpoint",

@@ -12,32 +12,29 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
     if(is.null(num_workers))
         num_workers <- min(parallel::detectCores(logical=FALSE), 3)
 
-    old_ncpus <- options(Ncpus=num_workers)
-    on.exit(if(!is.null(old_ncpus)) options(Ncpus=old_ncpus))
     logtime <- Sys.time()
 
-    # workaround caching confusion with multiple package versions
-    pkgcache::pkg_cache_delete_files()
+    withr::with_options(list(Ncpus=num_workers, repos=NULL),
+    {
+        inst <- pkgdepends::new_pkg_installation_proposal(pkgs, config=config, ...)
+        write_checkpoint_log(inst$get_config(), "config", checkpoint_location, logtime, log)
 
-    inst <- pkgdepends::new_pkg_installation_proposal(pkgs, config=config, ...)
-    write_checkpoint_log(inst$get_config(), "config", checkpoint_location, logtime, log)
+        inst$resolve()
+        write_checkpoint_log(inst$get_resolution(), "resolution", checkpoint_location, logtime, log)
 
-    inst$resolve()
-    write_checkpoint_log(inst$get_resolution(), "resolution", checkpoint_location, logtime, log)
+        inst$solve()
+        write_checkpoint_log(inst$get_solution(), "solution", checkpoint_location, logtime, log)
+        inst$stop_for_solution_error()
 
-    inst$solve()
-    write_checkpoint_log(inst$get_solution(), "solution", checkpoint_location, logtime, log)
-    inst$stop_for_solution_error()
+        inst$download()
+        write_checkpoint_log(inst$get_downloads(), "downloads", checkpoint_location, logtime, log)
+        inst$stop_for_download_error()
 
-    inst$download()
-    write_checkpoint_log(inst$get_downloads(), "downloads", checkpoint_location, logtime, log)
-    inst$stop_for_download_error()
-
-    write_checkpoint_log(inst$get_install_plan(), "install_plan", checkpoint_location, logtime, log)
-    inst_res <- inst$install()
-    warn_for_install_error(inst_res)
-    write_checkpoint_log(inst_res, "install", checkpoint_location, logtime, log)
-
+        write_checkpoint_log(inst$get_install_plan(), "install_plan", checkpoint_location, logtime, log)
+        inst_res <- inst$install()
+        warn_for_install_error(inst_res)
+        write_checkpoint_log(inst_res, "install", checkpoint_location, logtime, log)
+    })
     inst
 }
 
@@ -60,7 +57,6 @@ warn_for_install_error <- function(install_result)
     is_empty <- function(x) length(x) == 0
 
     success <- sapply(install_result$error, is_empty) & sapply(install_result$download_error, is_empty)
-
     if(!all(success))
         warning("Some packages failed to install:\n ", paste(install_result$package[!success], sep=" "), call.=FALSE)
     NULL

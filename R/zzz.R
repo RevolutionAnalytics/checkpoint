@@ -1,4 +1,12 @@
-.onAttach <- function(...)
+.checkpoint <- new.env()
+
+.onLoad <- function(libname, pkgname)
+{
+    .checkpoint$old_libpath <- .libPaths()
+    .checkpoint$old_repos <- getOption("repos")
+}
+
+.onAttach <- function(libname, pkgname)
 {
     msg <- paste(
         "",
