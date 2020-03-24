@@ -32,13 +32,16 @@ scan_project_files <- function(project_dir, scan_r_only, scan_rnw_with_knitr)
         scan_deps <- switch(tolower(tools::file_ext(f)),
             "r"=scan_r,
             "rmd"=, "rpres"=, "rhtml"=scan_rmd,
-            "rnw"=if(scan_rnw_with_knitr) scan_rmd else scan_rnw
+            "rnw"=if(scan_rnw_with_knitr) scan_rmd else scan_rnw,
+            scan_r
         )
         res <- try(scan_deps(f), silent=TRUE)
         if(inherits(res, "try-error"))
             errors <- c(errors, f)
         else pkgs <- c(pkgs, res)
     }
+    if(length(errors) > 0)
+        warning("Following files could not be scanned:\n", paste(errors, collapse="\n"), call.=FALSE)
 
     pkgs <- setdiff(unique(pkgs), exclude)
     list(pkgs=pkgs, errors=errors)
