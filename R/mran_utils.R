@@ -1,4 +1,10 @@
-list_snapshot_dates <- function(mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"))
+#' Lists the snapshot dates found on MRAN
+#'
+#' @param mran_url The base MRAN URL. The default is taken from the system option `checkpoint.mranUrl`, or if this is unset, `https://mran.microsoft.com`.
+#' @return
+#' A character vector of snapshot dates.
+#' @export
+list_mran_snapshots <- function(mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"))
 {
     snapshot_url <- httr::parse_url(mran_url)
     snapshot_url$path <- file.path(snapshot_url$path, "snapshot")

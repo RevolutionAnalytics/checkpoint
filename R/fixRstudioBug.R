@@ -7,7 +7,8 @@
 
 
 
-
+if(0)
+{
 fixRstudioBug <- function(reset=FALSE)
 {
     .rs.uniqueLibraryPaths <- .rs.pathPackage <- .rs.packageVersion <-
@@ -106,3 +107,4 @@ fixRstudioBug <- function(reset=FALSE)
         .rs.addFunction("listInstalledPackages", replacement.listInstalledPackages)
 }
 
+}

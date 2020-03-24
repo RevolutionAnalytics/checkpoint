@@ -1,4 +1,15 @@
-scan_project_files <- function(project_dir, scan_r_only, scan_rnw_with_knitr)
+#' Scan R files for package dependencies
+#'
+#' @param project_dir A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`.  Defaults to current working directory using [`getwd`].
+#'
+#' @param scan_r_only If `TRUE`, limits the scanning of project files to R scripts only (those with the extension ".R").
+#'
+#' @param scan_rnw_with_knitr If `TRUE`, scans Sweave files (those with extension ".Rnw") with [`knitr::knitr`], otherwise with [`utils::Stangle`].
+#'
+#' @return
+#' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned.
+#' @export
+scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with_knitr=TRUE)
 {
     if(!scan_r_only)
     {

@@ -8,28 +8,18 @@
 The goal of checkpoint is to solve the problem of package reproducibility in R. Specifically, checkpoint allows you to install packages as they existed on CRAN on a specific snapshot date as if you had a CRAN time machine.
 }
 \details{
-To achieve reproducibility, the \code{\link[=checkpoint]{checkpoint()}} function installs the packages required or called by your project and scripts to a local library exactly as they existed at the specified point in time. Only those packages are available tot your project, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using the checkpoint \code{\link[=checkpoint]{checkpoint()}} function can ensure the reproducibility of your scripts or projects at any time.
+To achieve reproducibility, the \code{\link{create_checkpoint}} function installs the packages required or called by your project and scripts to a local library exactly as they existed at the specified point in time. Only those packages are available tot your project, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using checkpoint can ensure the reproducibility of your scripts or projects at any time.
 
 To create the snapshot archives, once a day (at midnight UTC) we refresh the Austria CRAN mirror, on the checkpoint server (https://mran.microsoft.com/).  Immediately after completion of the `rsync`` mirror process, we take a snapshot, thus creating the archive.  Snapshot archives exist starting from 2014-09-17.
 
-\code{checkpoint} exposes functions for:
+\code{checkpoint} exposes the following functions:
 \itemize{
-\item Creating and using snapshots:
-\itemize{
-\item \code{\link[=checkpoint]{checkpoint()}}: Configures R session to use packages as they existed on CRAN at time of snapshot.
-\item \code{\link[=setSnapshot]{setSnapshot()}}: Set default CRAN repository to MRAN snapshot date.
-\item \code{\link[=getValidSnapshots]{getValidSnapshots()}}: Read list of available snapshot dates from MRAN.
-}
-\item Managing local archives:
-\itemize{
-\item \code{\link[=checkpointArchives]{checkpointArchives()}}: List checkpoint archives on disk.
-\item \code{\link[=checkpointRemove]{checkpointRemove()}}: Remove checkpoint archive from disk.
-\item \code{\link[=getAccessDate]{getAccessDate()}}: Returns the date the snapshot was last accessed.
-}
-\item Other:
-\itemize{
-\item \code{\link[=unCheckpoint]{unCheckpoint()}}: (Experimental) Reset the \code{.libPath} to the user library
-}
+\item \code{\link{create_checkpoint}}: Creates a checkpoint by scanning a project folder and downloading and installing any packages required from MRAN.
+\item \code{\link{use_checkpoint}}: Uses a previously created checkpoint.
+\item \code{\link{delete_checkpoint}}: Deletes an existing checkpoint.
+\item \code{\link{delete_all_checkpoints}}: Deletes \emph{all} existing checkpoints.
+\item \code{\link{uncheckpoint_session}}: Stops using a checkpoint, restores the library search path and CRAN mirror to their original state.
+\item \code{\link{list_mran_snapshots}}: Returns all valid snapshot dates found on MRAN.
 }
 }
 \keyword{package}
