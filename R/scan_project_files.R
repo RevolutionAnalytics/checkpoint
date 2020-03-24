@@ -1,5 +1,7 @@
 #' Scan R files for package dependencies
 #'
+#' This function scans all files containing R code, including scripts, Sweave documents and Rmarkdown-based files, for references to packages. It parses the code and looks for calls to `library` and `require`, as well as the namespacing operators `::` and `:::`.
+#'
 #' @param project_dir A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`. Defaults to the current working directory.
 #'
 #' @param scan_r_only If `TRUE`, limits the scanning of project files to R scripts only (those with the extension ".R").
@@ -9,7 +11,7 @@
 #' @param scan_rprofile if `TRUE`, includes the `~/.Rprofile` startup file in the scan. See [`Startup`].
 #'
 #' @return
-#' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned.
+#' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned. The package listing includes third-party packages, as well as those that are distributed with R and have "Recommended" priority. Base-priority packages (utils, graphics, methods and so forth) are not included.
 #' @export
 scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with_knitr=TRUE, scan_rprofile=TRUE)
 {
@@ -27,16 +29,7 @@ scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with
     r_files <- dir(project_dir, pattern=r_pat, recursive=TRUE, ignore.case=TRUE, full.names=TRUE)
     if(scan_rprofile && file.exists("~/.Rprofile"))
         r_files <- c(r_files, "~/.Rprofile")
-    exclude <- c(
-        # this package
-        "checkpoint",
-        # while developing
-        "pkgdepends",
-        # all base priority packages, not on CRAN or MRAN
-        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
-          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
-          "tools", "utils")
-    )
+
     pkgs <- character(0)
     errors <- character(0)
 
@@ -56,6 +49,16 @@ scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with
     if(length(errors) > 0)
         warning("Following files could not be scanned:\n", paste(errors, collapse="\n"), call.=FALSE)
 
+    exclude <- c(
+        # this package
+        "checkpoint",
+        # while developing
+        "pkgdepends",
+        # all base priority packages, not on CRAN or MRAN
+        c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
+          "methods", "parallel", "splines", "stats", "stats4", "tcltk",
+          "tools", "utils")
+    )
     pkgs <- setdiff(unique(pkgs), exclude)
     list(pkgs=pkgs, errors=errors)
 }
@@ -84,7 +87,7 @@ scan_r <- function(filename)
     {
         dep_e <- find_dependencies(e)
         if(length(dep_e) > 0)
-        deps <- c(deps, dep_e)
+            deps <- c(deps, dep_e)
     }
     unique(deps)
 }

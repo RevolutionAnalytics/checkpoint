@@ -45,9 +45,9 @@ delete_all_checkpoints(checkpoint_location = "~")
 uncheckpoint_session()
 }
 \arguments{
-\item{snapshot_date}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2014-09-17"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use \code{\link{list_mran_snapshots}}.}
+\item{snapshot_date}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2020-01-01"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN, use \code{\link{list_mran_snapshots}}.}
 
-\item{r_version}{Optional character string, e.g. \code{"3.6.2"}.  If specified, compares the current \code{\link{R.version}} to the specified version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.}
+\item{r_version}{Optional character string, e.g. \code{"3.6.2"}. If specified, compares the current \code{\link{R.version}} to the specified version. If these differ, stops processing with an error, making no changes to the system. This argument lets you .}
 
 \item{project_dir}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}. Defaults to the current working directory.}
 
@@ -71,35 +71,26 @@ uncheckpoint_session()
 
 \item{config}{Further configuration parameters to pass to \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}.}
 
-\item{prepend}{If \code{TRUE}, adds the checkpoint directory to the beginning of \code{\link{.libPaths}}. The default is \code{FALSE}, where the checkpoint directory replaces all but the last entry in \code{.libPaths}; this is to reduce the chances of accidentally calling non-checkpointed code. Note that the packages shipped with R itself are never checkpointed, and always remain part of \code{.libPaths}.}
+\item{prepend}{If \code{TRUE}, adds the checkpoint directory to the beginning of \code{\link{.libPaths}}. The default is \code{FALSE}, where the checkpoint directory replaces all but the last entry in \code{.libPaths}; this is to reduce the chances of accidentally calling non-checkpointed code. Note that the R library directory itself always remains part of \code{.libPaths}.}
 
 \item{...}{Further object initialisation arguments to pass to \code{\link[pkgdepends:pkg_installation_proposal]{pkgdepends::pkg_installation_proposal}}.}
 }
 \value{
-Checkpoint is called for its side-effects (see the details section), but invisibly returns an object of class \code{pkgdepends::pkg_installation_proposal}.
+These functions are run mostly for their side-effects; however \code{create_checkpoint} invisibly returns an object of class \code{pkgdepends::pkg_installation_proposal} if \code{scan_now=TRUE}, and \code{NULL} otherwise.
 }
 \description{
-Together, the checkpoint package and the checkpoint server act as a CRAN time machine.  The \code{checkpoint()} function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the checkpoint \code{checkpoint()} function can ensure the reproducibility of your scripts or projects at any time.
+Together, the checkpoint package and the checkpoint server act as a CRAN time machine.  The \code{create_checkpoint} function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the \code{use_checkpoint} function can ensure the reproducibility of your scripts or projects at any time.
 }
 \section{Details}{
 
 
-\code{create_checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
+\code{create_checkpoint()} creates a local library (by default, located under your home directory) into which it installs copies of the packages required by your project as they existed on CRAN on the specified snapshot date. To determine the packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, \code{.Rnw}, \code{.Rhtml} and \code{.Rpres} files) for \code{\link{library}} and \code{\link{require}} statements, as well as the namespaceing operators \code{::} and \code{:::}. The package installation is carried out via the pkgdepends package, which has many features including cached installs, parallel installs, and robust reporting of outcomes.
 
-To determine the packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, \code{.Rnw}, \code{.Rhtml} and \code{.Rpres} files) for \code{\link[=library]{library()}} and \code{\link[=require]{require()}} statements. In addition, it scans for occurrences of code that accesses functions in namespaces using \verb{package[::]foo()} and \verb{package[:::]foo()}.
+\code{use_checkpoint} modifies your R session to use only the packages installed by \code{create_checkpoint}. Specifically, it changes your library search path via \code{.libPaths()} to point to the checkpointed library, and updates the options for your CRAN mirror to point to an MRAN snapshot using \code{options(repos)}. As a convenience feature, \code{create_checkpoint} can also call \code{use_checkpoint} immediately after creating a checkpoint.
 
-Specifically, the function will:
-\itemize{
-\item Create a new local snapshot library to install packages.  By default this library folder is at \verb{~/.checkpoint} but you can modify the path using the \code{checkpointLocation} argument.
-\item Update the options for your CRAN mirror and point to an MRAN snapshot using \link{options}\code{(repos)}
-\item Scan your project folder for all required packages and install them from the snapshot using \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}
-}
-}
+\code{delete_checkpoint} deletes a checkpoint, after ensuring that it is no longer in use. \code{delete_all_checkpoints} deletes \emph{all} checkpoints under the given checkpoint location.
 
-\section{Resetting the checkpoint}{
-
-
-To reset the checkpoint, call \code{uncheckpoint_session()}.
+\code{uncheckpoint_session} is the reverse of \code{use_checkpoint}. It restores your library search path and CRAN mirror option to their original values, before checkpoint was loaded.
 }
 
 \section{Last accessed date}{

@@ -21,8 +21,8 @@ scan_project_files(
 \item{scan_rprofile}{if \code{TRUE}, includes the \verb{~/.Rprofile} startup file in the scan. See \code{\link{Startup}}.}
 }
 \value{
-A list with 2 components: \code{pkgs}, a vector of package names, and \code{errors}, a vector of files that could not be scanned.
+A list with 2 components: \code{pkgs}, a vector of package names, and \code{errors}, a vector of files that could not be scanned. The package listing includes third-party packages, as well as those that are distributed with R and have "Recommended" priority. Base-priority packages (utils, graphics, methods and so forth) are not included.
 }
 \description{
-Scan R files for package dependencies
+This function scans all files containing R code, including scripts, Sweave documents and Rmarkdown-based files, for references to packages. It parses the code and looks for calls to \code{library} and \code{require}, as well as the namespacing operators \code{::} and \code{:::}.
 }
