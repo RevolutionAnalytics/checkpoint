@@ -19,6 +19,7 @@ Version: 0.9.9.9000
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role=c("aut", "cre")),
     person("Andrie", "de Vries", role="aut"),
+    person("Gábor", "Csárdi", role="ctb", comment="Assistance with pkgdepends"),
     person("Microsoft", role=c("aut", "cph"))
     )
 License: GPL-2
@@ -42,5 +43,6 @@ Suggests:
 Remotes:
     r-lib/pkgdepends
 VignetteBuilder: knitr
+Encoding: UTF-8
 RoxygenNote: 7.0.2.9000
 Roxygen: list(markdown = TRUE)
