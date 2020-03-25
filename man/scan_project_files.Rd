@@ -22,6 +22,8 @@ scan_project_files(
 }
 \value{
 A list with 2 components: \code{pkgs}, a vector of package names, and \code{errors}, a vector of files that could not be scanned. The package listing includes third-party packages, as well as those that are distributed with R and have "Recommended" priority. Base-priority packages (utils, graphics, methods and so forth) are not included.
+
+In addition, if any Rmarkdown-based files are found (those with extension \code{.Rmd}, \code{.Rpres} or \code{Rhtml}), the package listing will include rmarkdown. This allows you to continue rendering them in a checkpointed session.
 }
 \description{
 This function scans all files containing R code, including scripts, Sweave documents and Rmarkdown-based files, for references to packages. It parses the code and looks for calls to \code{library} and \code{require}, as well as the namespacing operators \code{::} and \code{:::}.

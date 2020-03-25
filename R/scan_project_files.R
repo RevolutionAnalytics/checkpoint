@@ -12,6 +12,8 @@
 #'
 #' @return
 #' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned. The package listing includes third-party packages, as well as those that are distributed with R and have "Recommended" priority. Base-priority packages (utils, graphics, methods and so forth) are not included.
+#'
+#' In addition, if any Rmarkdown-based files are found (those with extension `.Rmd`, `.Rpres` or `Rhtml`), the package listing will include rmarkdown. This allows you to continue rendering them in a checkpointed session.
 #' @export
 scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with_knitr=TRUE, scan_rprofile=TRUE)
 {
@@ -59,7 +61,8 @@ scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with
           "methods", "parallel", "splines", "stats", "stats4", "tcltk",
           "tools", "utils")
     )
-    pkgs <- setdiff(unique(pkgs), exclude)
+    any_rmd <- any(grepl("\\.(rmd|rpres|rhtml)$", r_files))
+    pkgs <- setdiff(unique(c(pkgs, if(any_rmd) "rmarkdown")), exclude)
     list(pkgs=pkgs, errors=errors)
 }
 
