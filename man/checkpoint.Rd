@@ -79,7 +79,7 @@ uncheckpoint_session()
 
 \item{config}{Further configuration parameters to pass to \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}; possible parameters are listed at \code{\link[pkgdepends:pkg_config]{pkgdepends::pkg_config}}. Note that \code{create_checkpoint} will automatically pass the cran-mirror, library and r-version parameters, which are taken from the other arguments above.}
 
-\item{prepend}{If \code{TRUE}, adds the checkpoint directory to the beginning of \code{\link{.libPaths}}. The default is \code{FALSE}, where the checkpoint directory replaces all but the last entry in \code{.libPaths}; this is to reduce the chances of accidentally calling non-checkpointed code. Note that the R library directory itself always remains part of \code{.libPaths}.}
+\item{prepend}{If \code{TRUE}, adds the checkpoint directory to the beginning of the library search path. The default is \code{FALSE}, where the checkpoint directory replaces all but the system entries (the values of \code{.Library} and \code{.Library.site}) in the search path; this is to reduce the chances of accidentally calling non-checkpointed code. See \code{\link{.libPaths}}.}
 }
 \value{
 These functions are run mostly for their side-effects; however \code{create_checkpoint} invisibly returns an object of class \code{pkgdepends::pkg_installation_proposal} if \code{scan_now=TRUE}, and \code{NULL} otherwise. \code{checkpoint} returns the result of \code{create_checkpoint} if the checkpoint had to be created, otherwise \code{NULL}.

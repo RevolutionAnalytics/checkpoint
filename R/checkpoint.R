@@ -50,7 +50,7 @@
 #'
 #' @param ... For `checkpoint`, further arguments to pass to `create_checkpoint` and `use_checkpoint`. Ignored for `create_checkpoint` and `use_checkpoint`.
 #'
-#' @param prepend If `TRUE`, adds the checkpoint directory to the beginning of [`.libPaths`]. The default is `FALSE`, where the checkpoint directory replaces all but the last entry in `.libPaths`; this is to reduce the chances of accidentally calling non-checkpointed code. Note that the R library directory itself always remains part of `.libPaths`.
+#' @param prepend If `TRUE`, adds the checkpoint directory to the beginning of the library search path. The default is `FALSE`, where the checkpoint directory replaces all but the system entries (the values of `.Library` and `.Library.site`) in the search path; this is to reduce the chances of accidentally calling non-checkpointed code. See [`.libPaths`].
 #'
 #' @return
 #' These functions are run mostly for their side-effects; however `create_checkpoint` invisibly returns an object of class `pkgdepends::pkg_installation_proposal` if `scan_now=TRUE`, and `NULL` otherwise. `checkpoint` returns the result of `create_checkpoint` if the checkpoint had to be created, otherwise `NULL`.
@@ -127,8 +127,9 @@ use_checkpoint <- function(snapshot_date,
         stop("R version does not match")
 
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+    message("Using checkpoint directory ", libdir)
     if(!dir.exists(libdir))
-        stop("Checkpoint directory not found", call.=FALSE)
+        stop("Directory not found", call.=FALSE)
 
     set_access_date(snapshot_date, checkpoint_location)
 
@@ -146,7 +147,7 @@ use_checkpoint <- function(snapshot_date,
 
     if(prepend)
         .libPaths(c(libdir, .libPaths()))
-    else .libPaths(c(libdir, .libPaths()[length(.libPaths())]))  # .Library/.libPaths()[n] may be a symlink
+    else .libPaths(libdir)
     invisible(NULL)
 }
 
