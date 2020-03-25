@@ -12,9 +12,9 @@
 #'
 #' The package installation is carried out via the [pkgdepends] package, which has many features including cached installs, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
 #'
-#' `checkpoint` is a convenience function that calls `create_checkpoint` if the checkpoint directory does not exist, and then `use_checkpoint`.
+#' `use_checkpoint` modifies your R session to use only the packages installed by `create_checkpoint`. Specifically, it changes your library search path via `.libPaths()` to point to the checkpointed library, and then calls [`use_mran_snapshot`] to set the CRAN mirror for the session.
 #'
-#' `use_checkpoint` modifies your R session to use only the packages installed by `create_checkpoint`. Specifically, it changes your library search path via `.libPaths()` to point to the checkpointed library, and updates the options for your CRAN mirror to point to an MRAN snapshot using `options(repos)`.
+#' `checkpoint` is a convenience function that calls `create_checkpoint` if the checkpoint directory does not exist, and then `use_checkpoint`.
 #'
 #' `delete_checkpoint` deletes a checkpoint, after ensuring that it is no longer in use. `delete_all_checkpoints` deletes _all_ checkpoints under the given checkpoint location.
 #'
@@ -58,8 +58,12 @@
 #' @rdname checkpoint
 #' @export
 #' @family checkpoint functions
-#' @example /inst/examples/example_checkpoint.R
-checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint_location="~", ...)
+#' @example /inst/examples/example_checkpoint.Rex
+checkpoint <- function(snapshot_date,
+                       r_version=getRversion(),
+                       checkpoint_location="~",
+                       ...
+                      )
 {
     inst <- NULL
     if(!dir.exists(checkpoint_dir(snapshot_date, checkpoint_location, r_version)))
@@ -83,7 +87,6 @@ create_checkpoint <- function(snapshot_date,
                               log=TRUE,
                               num_workers=NULL,
                               config=list(),
-                              prepend=FALSE,
                               ...
                              )
 {
@@ -132,22 +135,10 @@ use_checkpoint <- function(snapshot_date,
         stop("Directory not found", call.=FALSE)
 
     set_access_date(snapshot_date, checkpoint_location)
-
-    # replace all unnamed repos and CRAN-repos
-    repos <- getOption("repos")
-    repo_names <- names(repos)
-    if(is.null(repo_names))
-        options(repos=c(CRAN=snapshot_url(snapshot_date, mran_url)))
-    else
-    {
-        unnamed_or_cran <- repo_names %in% c("", "CRAN")
-        repos <- c(CRAN=snapshot_url(snapshot_date, mran_url), repos[!unnamed_or_cran])
-        options(repos=repos)
-    }
-
     if(prepend)
         .libPaths(c(libdir, .libPaths()))
     else .libPaths(libdir)
+    use_mran_snapshot(snapshot_date, mran_url)
     invisible(NULL)
 }
 
@@ -180,18 +171,4 @@ uncheckpoint_session <- function()
     .libPaths(.checkpoint$old_libpath)
     invisible(NULL)
 }
-
-
-verify_date <- function(date)
-{
-    realdate <- try(as.Date(date), silent=TRUE)
-    if(inherits(realdate, "try-error"))
-        stop("Invalid date, must be in the format YYYY-MM-DD", call.=FALSE)
-    if(realdate < as.Date("2014-09-17"))
-        stop("Snapshots are only available after 2014-09-17", call.=FALSE)
-    if(realdate > Sys.Date())
-        stop("Snapshot date later than current date", call.=FALSE)
-    date
-}
-
 

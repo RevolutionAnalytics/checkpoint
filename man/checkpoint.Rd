@@ -29,7 +29,6 @@ create_checkpoint(
   log = TRUE,
   num_workers = NULL,
   config = list(),
-  prepend = FALSE,
   ...
 )
 
@@ -99,9 +98,9 @@ Checkpoint only installs packages that can be found on CRAN. This includes third
 
 The package installation is carried out via the \link{pkgdepends} package, which has many features including cached installs, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
 
-\code{checkpoint} is a convenience function that calls \code{create_checkpoint} if the checkpoint directory does not exist, and then \code{use_checkpoint}.
+\code{use_checkpoint} modifies your R session to use only the packages installed by \code{create_checkpoint}. Specifically, it changes your library search path via \code{.libPaths()} to point to the checkpointed library, and then calls \code{\link{use_mran_snapshot}} to set the CRAN mirror for the session.
 
-\code{use_checkpoint} modifies your R session to use only the packages installed by \code{create_checkpoint}. Specifically, it changes your library search path via \code{.libPaths()} to point to the checkpointed library, and updates the options for your CRAN mirror to point to an MRAN snapshot using \code{options(repos)}.
+\code{checkpoint} is a convenience function that calls \code{create_checkpoint} if the checkpoint directory does not exist, and then \code{use_checkpoint}.
 
 \code{delete_checkpoint} deletes a checkpoint, after ensuring that it is no longer in use. \code{delete_all_checkpoints} deletes \emph{all} checkpoints under the given checkpoint location.
 
@@ -122,33 +121,41 @@ The \code{create_checkpoint} and \code{use_checkpoint} functions store a marker 
 example_project <- paste0("~/checkpoint_example_project_", Sys.Date())
 
 dir.create(example_project, recursive = TRUE)
-oldwd <- setwd(example_project)
 
 
 # Write dummy code file to project
 
-cat("library(MASS)", "library(foreach)",
-    sep="\n",
-    file="checkpoint_example_code.R")
+cat("
+library(MASS)
+library(foreach)
+", file="checkpoint_example_code.R")
 
 
 # Create a checkpoint by specifying a snapshot date
+# recommended practice is to specify the R version explicitly
+ver <- getRversion()
+create_checkpoint("2014-09-17", r_version=ver, project_dir=example_project)
+use_checkpoint("2014-09-17", r_version=ver)
 
-library(checkpoint)
-checkpoint("2014-09-17")
+# more terse alternative is checkpoint(), which is equivalent to
+# calling create_checkpoint() and then use_checkpoint() in sequence
+checkpoint("2014-09-17", r_version=ver, project_dir=example_project)
+
 
 # Check that CRAN mirror is set to MRAN snapshot
 getOption("repos")
 
-# Check that library path is set to ~/.checkpoint
+
+# Check that (1st) library path is set to ~/.checkpoint
 .libPaths()
+
 
 # Check which packages are installed in checkpoint library
 installed.packages()
 
-# cleanup
-unlink(example_project, recursive = TRUE)
-setwd(oldwd)
+
+# restore initial state
+uncheckpoint_session()
 
 }
 

@@ -9,8 +9,9 @@ This is a **major refactoring/rewrite** of checkpoint, aimed at solving many lon
   - Comprehensive reporting of all aspects of the install process: dependency resolution, creating an install plan, downloading packages, and actual installation.
   - Reliable detection of installation outcomes (no more having to screen-scrape the R terminal!)
 - New functions `create_checkpoint` and `use_checkpoint`, reflecting the two main objectives of the package. The `checkpoint` function calls out to these, based on whether the checkpoint directory exists.
-- New functions `uncheckpoint_session` (which is the reverse of `use_checkpoint`), `delete_checkpoint` and `delete_all_checkpoints` to manage checkpointing.
-- Function `getValidSnapshots` renamed to `list_mran_snapshots` to clarify that it lists the snapshots on the MRAN server.
+  - A side-effect of this is that calling `checkpoint` in your home directory should result in checkpointing very many packages only once.
+- New functions `uncheckpoint_session` (which is the reverse of `use_checkpoint`), `delete_checkpoint` and `delete_all_checkpoints` to manage checkpointing. They replace `checkpointRemove`, `checkpointArchives` and `unCheckpoint`.
+- Function `getValidSnapshots` renamed to `list_mran_snapshots` to clarify that it lists the snapshots on the MRAN server. Similarly, `setSnapshot` renamed to `use_mran_snapshot` for consistency with other function names.
 - Function `scanForPackages` renamed to `scan_project_files` to match grammatical pattern of other function names; now automatically includes rmarkdown (not knitr) in the list of dependencies if Rmarkdown-based files are found.
 - Consistent use of snake_case for all object names and function arguments.
 - Remove obsolete workarounds for lack of HTTPS support in ancient versions of R.
