@@ -14,7 +14,7 @@ This is a **major refactoring/rewrite** of checkpoint, aimed at solving many lon
 - Function `getValidSnapshots` renamed to `list_mran_snapshots` to clarify that it lists the snapshots on the MRAN server. Similarly, `setSnapshot` renamed to `use_mran_snapshot` for consistency with other function names.
 - Function `scanForPackages` renamed to `scan_project_files` to match grammatical pattern of other function names; now automatically includes rmarkdown (not knitr) in the list of dependencies if Rmarkdown-based files are found.
 - Consistent use of snake_case for all object names and function arguments.
-- Remove obsolete workarounds for lack of HTTPS support in ancient versions of R.
+- Remove obsolete workarounds for lack of HTTPS support in ancient versions of R. (Note that MRAN now only supports HTTPS access.)
 - Other bug fixes and general tidying.
 
 # checkpoint 0.4.9
