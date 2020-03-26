@@ -11,6 +11,6 @@ test_that("Scanning R works",
 test_that("Scanning R+Rmd works",
 {
     expect_is(res <- scan_project_files("../project", scan_r_only=FALSE, scan_rprofile=FALSE), "list")
-    expect_identical(res$pkg, c("magrittr", "rlang", "darts"))
+    expect_identical(res$pkg, c("magrittr", "rlang", "darts", "rmarkdown"))
 })
 

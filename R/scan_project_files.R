@@ -4,9 +4,9 @@
 #'
 #' @param project_dir A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`. Defaults to the current working directory.
 #'
-#' @param scan_r_only If `TRUE`, limits the scanning of project files to R scripts only (those with the extension ".R").
+#' @param scan_r_only If `TRUE`, limits the scanning of project files to R scripts only (those with the extension `.R`).
 #'
-#' @param scan_rnw_with_knitr If `TRUE`, scans Sweave files (those with extension ".Rnw") with [`knitr::knitr`], otherwise with [`utils::Stangle`]. Ignored if `scan_r_only=TRUE`.
+#' @param scan_rnw_with_knitr If `TRUE`, scans Sweave files (those with extension `.Rnw`) with [`knitr::knitr`], otherwise with [`utils::Stangle`]. Ignored if `scan_r_only=TRUE`.
 #'
 #' @param scan_rprofile if `TRUE`, includes the `~/.Rprofile` startup file in the scan. See [`Startup`].
 #'
@@ -14,6 +14,9 @@
 #' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned. The package listing includes third-party packages, as well as those that are distributed with R and have "Recommended" priority. Base-priority packages (utils, graphics, methods and so forth) are not included.
 #'
 #' In addition, if any Rmarkdown-based files are found (those with extension `.Rmd`, `.Rpres` or `Rhtml`), the package listing will include rmarkdown. This allows you to continue rendering them in a checkpointed session.
+#' @examples
+#'
+#' scan_project_files()
 #' @export
 scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with_knitr=TRUE, scan_rprofile=TRUE)
 {
@@ -61,7 +64,7 @@ scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with
           "methods", "parallel", "splines", "stats", "stats4", "tcltk",
           "tools", "utils")
     )
-    any_rmd <- any(grepl("\\.(rmd|rpres|rhtml)$", r_files))
+    any_rmd <- any(grepl("\\.(rmd|rpres|rhtml)$", r_files, ignore.case=TRUE))
     pkgs <- setdiff(unique(c(pkgs, if(any_rmd) "rmarkdown")), exclude)
     list(pkgs=pkgs, errors=errors)
 }

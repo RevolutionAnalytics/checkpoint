@@ -30,7 +30,7 @@ test_that("Creating checkpoint works",
     expect_true(dir.exists(checkpoint_dir))
 
     inst <- create_checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc,
-                              scan_now=TRUE)
+                              scan_now=TRUE, scan_r_only=TRUE)
     expect_is(inst, "pkg_installation_proposal")
     expect_true(length(dir(checkpoint_dir)) > 0)
 
@@ -44,7 +44,7 @@ test_that("Creating checkpoint with different snapshot works",
     checkpoint_dir2 <- checkpoint_dir(snapshot2, checkpoint_loc, getRversion())
 
     inst <- create_checkpoint(snapshot2, project_dir="../project", checkpoint_location=checkpoint_loc,
-                              scan_now=TRUE)
+                              scan_now=TRUE, scan_r_only=TRUE)
     expect_is(inst, "pkg_installation_proposal")
     expect_true(length(dir(checkpoint_dir2)) > 0)
 

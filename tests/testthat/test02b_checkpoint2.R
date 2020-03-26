@@ -21,7 +21,7 @@ test_that("Checkpoint umbrella function works for create",
 
     expect_error(checkpoint(snapshot, r_version="0.0.1"))
 
-    inst <- checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc)
+    inst <- checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc, scan_r_only=TRUE)
     expect_is(inst, "pkg_installation_proposal")
     expect_true(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
