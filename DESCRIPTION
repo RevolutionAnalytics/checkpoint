@@ -30,6 +30,7 @@ Imports:
     tools,
     httr,
     jsonlite,
+    yaml,
     withr,
     pkgdepends
 Depends:

@@ -67,7 +67,7 @@ checkpoint("2020-01-01")  # replace with desired date
 
 Then send this script to your collaborators.  When they run this script on their machine for the first time, `checkpoint` will perform the same steps of scanning for package dependencies, creating the checkpoint directory, installing the necessary packages, and setting your session to use the checkpoint. On subsequent runs, `checkpoint` will find and use the created checkpoint, so the packages don't have to be installed again.
 
-If you have more than one script in your project, you can place the above snippet in a script of its own, and run it before running any other script.
+If you have more than one script in your project, you can place the above snippet in every standalone script. Alternatively, you can put it in a script of its own, and run it before running any other script.
 
 ### Note on projects
 
@@ -109,7 +109,7 @@ Each time `create_checkpoint()` is run, it saves a series of json files in the m
 5. `<date>_<time>_install_plan.json`: Package install plan
 6. `<date>_<time>_installs.json`: Final installation result
 
-For more information, see the help for `pkgdepends`.
+For more information, see the help for `pkgdepends::pkg_installation_proposal`.
 
 
 ## Worked example

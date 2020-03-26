@@ -13,6 +13,7 @@ This is a **major refactoring/rewrite** of checkpoint, aimed at solving many lon
 - New functions `uncheckpoint_session` (which is the reverse of `use_checkpoint`), `delete_checkpoint` and `delete_all_checkpoints` to manage checkpointing. They replace `checkpointRemove`, `checkpointArchives` and `unCheckpoint`.
 - Function `getValidSnapshots` renamed to `list_mran_snapshots` to clarify that it lists the snapshots on the MRAN server. Similarly, `setSnapshot` renamed to `use_mran_snapshot` for consistency with other function names.
 - Function `scanForPackages` renamed to `scan_project_files` to match grammatical pattern of other function names; now automatically includes rmarkdown (not knitr) in the list of dependencies if Rmarkdown-based files are found.
+- Experimental support for a `checkpoint.yml` manifest file, to specify packages to include or exclude.
 - Consistent use of snake_case for all object names and function arguments.
 - Remove obsolete code to handle lack of HTTPS support in ancient versions of R. (Note that the MRAN site now requires HTTPS.)
 - Other bug fixes and general tidying.

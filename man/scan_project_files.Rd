@@ -16,18 +16,35 @@ scan_project_files(
 
 \item{scan_r_only}{If \code{TRUE}, limits the scanning of project files to R scripts only (those with the extension \code{.R}).}
 
-\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files (those with extension \code{.Rnw}) with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}. Ignored if \code{scan_r_only=TRUE}.}
+\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}. Ignored if \code{scan_r_only=TRUE}.}
 
 \item{scan_rprofile}{if \code{TRUE}, includes the \verb{~/.Rprofile} startup file in the scan. See \code{\link{Startup}}.}
 }
 \value{
 A list with 2 components: \code{pkgs}, a vector of package names, and \code{errors}, a vector of files that could not be scanned. The package listing includes third-party packages, as well as those that are distributed with R and have "Recommended" priority. Base-priority packages (utils, graphics, methods and so forth) are not included.
 
-In addition, if any Rmarkdown-based files are found (those with extension \code{.Rmd}, \code{.Rpres} or \code{Rhtml}), the package listing will include rmarkdown. This allows you to continue rendering them in a checkpointed session.
+In addition, if any Rmarkdown files are found, the package listing will include rmarkdown. This allows you to continue rendering them in a checkpointed session.
 }
 \description{
-This function scans all files containing R code, including scripts, Sweave documents and Rmarkdown-based files, for references to packages. It parses the code and looks for calls to \code{library} and \code{require}, as well as the namespacing operators \code{::} and \code{:::}.
+This function scans the R files in your project, including scripts, Sweave documents and Rmarkdown-based files, for references to packages.
 }
+\details{
+\code{scan_project_files} recursively builds a list of all the R files in your project. This includes regular R scripts, as well as Sweave files (those with extension \code{.Rnw}) and Rmarkdown-based files (those with extension \code{.Rmd}, \code{.Rpres} or \code{Rhtml}). It then parses the code in each file and looks for calls to \code{library} and \code{require}, as well as the namespacing operators \code{::} and \code{:::}.
+}
+\section{Manifest}{
+
+
+As an \strong{experimental feature}, you can specify additional packages to include or exclude via an optional \code{checkpoint.yml} manifest file located in your project directory. This should be a valid YAML file with 2 components:
+\itemize{
+\item \code{refs}: An array of package references, that can be parsed by \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}. See \code{\link[pkgdepends:pkg_refs]{pkgdepends::pkg_refs}} for a description of the reference syntax.
+\item \code{exclude}: An array of package names (without decorations) that should be excluded from the final list of dependencies.
+}
+
+A manifest file allows you to include packages from BioConductor or GitHub in the checkpoint. You should use this feature with caution, as checkpoint does not check the versions of these packages. While pkgdepends allows you to specify a package version as part of a reference, it currently ignores the version during the download and installation process.
+
+A use case for exclusions might be if your workflow requires packages that are not available from CRAN or other public repositories. For example, Microsoft Machine Learning Server (MMLS) comes with a number of proprietary packages for big data and in-database analytics. You can exclude these packages from checkpointing by listing them in the \code{exclude} list in the manifest. In this case, you must ensure that your packages are still visible to the checkpointed session, generally by modifying the value of \code{.libPaths()} manually. (For MMLS, this is easy as the proprietary packages live in the base library directory, which is always part of \code{.libPaths()}.)
+}
+
 \examples{
 
 scan_project_files()

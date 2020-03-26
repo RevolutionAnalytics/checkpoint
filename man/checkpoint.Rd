@@ -101,7 +101,7 @@ The \code{checkpoint} function serves as a simple umbrella interface to these fu
 
 Checkpoint only installs packages that can be found on CRAN. This includes third-party packages, as well as those distributed as part of R that have the "Recommends" priority. Base-priority packages (the workhorse engine of R, including utils, graphics, methods and so forth) are not checkpointed (but see the \code{r_version} argument above). A future update may add the ability to install non-CRAN packages, such as those found on BioConductor or GitHub.
 
-The package installation is carried out via the \link{pkgdepends} package, which has many features including cached installs, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
+The package installation is carried out via the \link{pkgdepends} package, which has many features including cached downloads, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
 
 \code{use_checkpoint} modifies your R session to use only the packages installed by \code{create_checkpoint}. Specifically, it changes your library search path via \code{.libPaths()} to point to the checkpointed library, and then calls \code{\link{use_mran_snapshot}} to set the CRAN mirror for the session.
 
