@@ -133,13 +133,13 @@ library(foreach)
 
 # Create a checkpoint by specifying a snapshot date
 # recommended practice is to specify the R version explicitly
-ver <- getRversion()
-create_checkpoint("2014-09-17", r_version=ver, project_dir=example_project)
-use_checkpoint("2014-09-17", r_version=ver)
+rver <- getRversion()
+create_checkpoint("2014-09-17", r_version=rver, project_dir=example_project)
+use_checkpoint("2014-09-17", r_version=rver)
 
 # more terse alternative is checkpoint(), which is equivalent to
 # calling create_checkpoint() and then use_checkpoint() in sequence
-checkpoint("2014-09-17", r_version=ver, project_dir=example_project)
+checkpoint("2014-09-17", r_version=rver, project_dir=example_project)
 
 
 # Check that CRAN mirror is set to MRAN snapshot
@@ -156,6 +156,10 @@ installed.packages()
 
 # restore initial state
 uncheckpoint_session()
+
+
+# delete the checkpoint
+delete_checkpoint("2014-09-17", r_version=rver)
 
 }
 

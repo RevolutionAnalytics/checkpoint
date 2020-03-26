@@ -14,9 +14,9 @@ scan_project_files(
 \arguments{
 \item{project_dir}{A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for \code{snapshotDate}. Defaults to the current working directory.}
 
-\item{scan_r_only}{If \code{TRUE}, limits the scanning of project files to R scripts only (those with the extension ".R").}
+\item{scan_r_only}{If \code{TRUE}, limits the scanning of project files to R scripts only (those with the extension \code{.R}).}
 
-\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files (those with extension ".Rnw") with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}. Ignored if \code{scan_r_only=TRUE}.}
+\item{scan_rnw_with_knitr}{If \code{TRUE}, scans Sweave files (those with extension \code{.Rnw}) with \code{\link[knitr:knitr]{knitr::knitr}}, otherwise with \code{\link[utils:Stangle]{utils::Stangle}}. Ignored if \code{scan_r_only=TRUE}.}
 
 \item{scan_rprofile}{if \code{TRUE}, includes the \verb{~/.Rprofile} startup file in the scan. See \code{\link{Startup}}.}
 }
@@ -27,4 +27,8 @@ In addition, if any Rmarkdown-based files are found (those with extension \code{
 }
 \description{
 This function scans all files containing R code, including scripts, Sweave documents and Rmarkdown-based files, for references to packages. It parses the code and looks for calls to \code{library} and \code{require}, as well as the namespacing operators \code{::} and \code{:::}.
+}
+\examples{
+
+scan_project_files()
 }
