@@ -167,14 +167,14 @@ getSnapshotUrl <- function(snapshotDate, mranRootUrl=mranUrl(), online=TRUE)
 {
     snapshot.url <- paste(gsub("/$", "", mranRootUrl), snapshotDate, sep="/")
     if(!online) return(snapshot.url)
-    if(is.404(mranRootUrl))
-    {
-        warning("Unable to reach MRAN root at ", mranRootUrl, call.=FALSE)
-        return(snapshot.url)
-    }
+    # if(is.404(mranRootUrl))
+    # {
+    #     warning("Unable to reach MRAN root at ", mranRootUrl, call.=FALSE)
+    #     return(snapshot.url)
+    # }
 
-    if(is.404(snapshot.url))
-      warning("Unable to find snapshot on MRAN at ", snapshot.url, call.=FALSE)
+    # if(is.404(snapshot.url))
+    #   warning("Unable to find snapshot on MRAN at ", snapshot.url, call.=FALSE)
 
     snapshot.url
 }
