@@ -44,6 +44,8 @@
 #'
 #' @param scan_rprofile if `TRUE`, includes the `~/.Rprofile` startup file in the scan. See [Startup].
 #'
+#' @param force If `TRUE`, suppresses the confirmation prompt if `create_checkpoint` is run with project directory set to the user home directory.
+#'
 #' @param log If `TRUE`, writes logging information (mostly the output from the methods of [`pkgdepends::pkg_installation_proposal`]) to the checkpoint directory.
 #'
 #' @param num_workers The number of parallel workers to use for installing packages. Defaults to the minimum of 3 and the number of physical cores on the machine.
@@ -98,7 +100,7 @@ create_checkpoint <- function(snapshot_date,
         stop("R version does not match")
 
     # sanity check if run in home dir
-    if((force &&
+    if((!force &&
         interactive() &&
         normalizePath(project_dir, "/", mustWork=FALSE) == normalizePath("~", "/")))
     {

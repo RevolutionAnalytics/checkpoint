@@ -77,7 +77,7 @@ The `checkpoint` package is designed to be used with _projects_, which are direc
 
 When it is run, `create_checkpoint` scans all R files inside a given project to determine what packages your code requires. The default project is the current directory `"."`.
 
-If you do not have an actual project open, this will usually expand to your R user directory (`"~/<username>"` on Unices and MacOS, or `"C:\Users\<username>\Documents"` on Windows). For most people, this means that the function will scan through _all_ the projects they have on their machine, which can lead to checkpointing a very large number of packages. Because of this, you should ensure that you are not in your user directory when you run `checkpoint`. A mitigating factor is that this should happen only once, as long as the checkpoint directory remains intact.
+If you do not have an actual project open, this will usually expand to your R user directory (`~/<username>` on Unix/Linux and MacOS, or `C:\Users\<username>\Documents` on Windows). For most people, this means that the function will scan through _all_ the projects they have on their machine, which can lead to checkpointing a very large number of packages. Because of this, you should ensure that you are not in your user directory when you run `checkpoint`. A mitigating factor is that this should happen only once, as long as the checkpoint directory remains intact.
 
 ### Checkpointing the R version
 

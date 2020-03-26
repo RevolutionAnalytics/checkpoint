@@ -73,6 +73,8 @@ uncheckpoint_session()
 
 \item{scan_rprofile}{if \code{TRUE}, includes the \verb{~/.Rprofile} startup file in the scan. See \link{Startup}.}
 
+\item{force}{If \code{TRUE}, suppresses the confirmation prompt if \code{create_checkpoint} is run with project directory set to the user home directory.}
+
 \item{log}{If \code{TRUE}, writes logging information (mostly the output from the methods of \code{\link[pkgdepends:pkg_installation_proposal]{pkgdepends::pkg_installation_proposal}}) to the checkpoint directory.}
 
 \item{num_workers}{The number of parallel workers to use for installing packages. Defaults to the minimum of 3 and the number of physical cores on the machine.}
