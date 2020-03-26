@@ -26,6 +26,7 @@ create_checkpoint(
   scan_r_only = FALSE,
   scan_rnw_with_knitr = TRUE,
   scan_rprofile = TRUE,
+  force = FALSE,
   log = TRUE,
   num_workers = NULL,
   config = list(),
@@ -93,6 +94,8 @@ The \code{checkpoint} function serves as a simple umbrella interface to these fu
 
 
 \code{create_checkpoint} creates a local library (by default, located under your home directory) into which it installs copies of the packages required by your project as they existed on CRAN on the specified snapshot date. To determine the packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, \code{.Rnw}, \code{.Rhtml} and \code{.Rpres} files) for \code{\link{library}} and \code{\link{require}} statements, as well as the namespacing operators \code{::} and \code{:::}.
+
+\code{create_checkpoint} will automatically add the \code{rmarkdown} package as a dependency if it finds any Rmarkdown-based files (those with extension \code{.Rmd}, \code{.Rpres} or \code{.Rhtml}) in your project. This allows you to continue working with such documents after checkpointing.
 
 Checkpoint only installs packages that can be found on CRAN. This includes third-party packages, as well as those distributed as part of R that have the "Recommends" priority. Base-priority packages (the workhorse engine of R, including utils, graphics, methods and so forth) are not checkpointed (but see the \code{r_version} argument above). A future update may add the ability to install non-CRAN packages, such as those found on BioConductor or GitHub.
 

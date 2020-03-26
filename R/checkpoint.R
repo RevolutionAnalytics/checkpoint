@@ -8,6 +8,8 @@
 #'
 #' `create_checkpoint` creates a local library (by default, located under your home directory) into which it installs copies of the packages required by your project as they existed on CRAN on the specified snapshot date. To determine the packages used in your project, the function scans all R code (`.R`, `.Rmd`, `.Rnw`, `.Rhtml` and `.Rpres` files) for [`library`] and [`require`] statements, as well as the namespacing operators `::` and `:::`.
 #'
+#' `create_checkpoint` will automatically add the `rmarkdown` package as a dependency if it finds any Rmarkdown-based files (those with extension `.Rmd`, `.Rpres` or `.Rhtml`) in your project. This allows you to continue working with such documents after checkpointing.
+#'
 #' Checkpoint only installs packages that can be found on CRAN. This includes third-party packages, as well as those distributed as part of R that have the "Recommends" priority. Base-priority packages (the workhorse engine of R, including utils, graphics, methods and so forth) are not checkpointed (but see the `r_version` argument above). A future update may add the ability to install non-CRAN packages, such as those found on BioConductor or GitHub.
 #'
 #' The package installation is carried out via the [pkgdepends] package, which has many features including cached installs, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
@@ -66,10 +68,11 @@ checkpoint <- function(snapshot_date,
                       )
 {
     inst <- NULL
-    if(!dir.exists(checkpoint_dir(snapshot_date, checkpoint_location, r_version)))
+    libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+    if(!dir.exists(libdir))
         inst <- create_checkpoint(snapshot_date, r_version, checkpoint_location, ...)
-
-    use_checkpoint(snapshot_date, r_version, checkpoint_location, ...)
+    if(dir.exists(libdir))
+        use_checkpoint(snapshot_date, r_version, checkpoint_location, ...)
     invisible(inst)
 }
 
@@ -84,6 +87,7 @@ create_checkpoint <- function(snapshot_date,
                               scan_r_only=FALSE,
                               scan_rnw_with_knitr=TRUE,
                               scan_rprofile=TRUE,
+                              force=FALSE,
                               log=TRUE,
                               num_workers=NULL,
                               config=list(),
@@ -92,6 +96,21 @@ create_checkpoint <- function(snapshot_date,
 {
     if(package_version(r_version) != getRversion())
         stop("R version does not match")
+
+    # sanity check if run in home dir
+    if((force &&
+        interactive() &&
+        normalizePath(project_dir, "/", mustWork=FALSE) == normalizePath("~", "/")))
+    {
+        msg <- paste(
+            "Running create_checkpoint in the home directory may result",
+            "in checkpointing very many packages. Continue? (Y/n) ",
+            sep="\n"
+        )
+        resp <- readline(msg)
+        if(!(nchar(resp) == "" || tolower(substr(resp, 1, 1)) == "y"))
+            return(invisible(NULL))
+    }
 
     # create checkpoint dir
     snapshot_date <- verify_date(snapshot_date)

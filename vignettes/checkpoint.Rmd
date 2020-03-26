@@ -1,18 +1,17 @@
 ---
 title: "Using checkpoint for reproducible research"
-author: "Andrie de Vries"
+author: "Hong Ooi and Andrie de Vries"
 output:
   rmarkdown::html_vignette:
     toc: true
     number_sections: true
-    keep_md: yes
 vignette: >
   %\VignetteIndexEntry{Using checkpoint for reproducible research}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-# The Reproducible R Toolkit (RRT)
+## The Reproducible R Toolkit (RRT)
 
 The **Reproducible R Toolkit** provides tools to ensure the results of R code are repeatable over time, by anyone. Most R scripts rely on packages, but new versions of packages are released daily. To ensure that results from R are reproducible, it's important to run R scripts using exactly the same package version in use when the script was written.
 
@@ -26,7 +25,7 @@ RRT is a collection of R packages and the checkpoint server that together make y
 
 ### The checkpoint server
 
-To achieve reproducibility, daily snapshots of CRAN are stored on our checkpoint server. At midnight UTC each day, we refresh our mirror of [CRAN](https://cran.r-project.org/) is refreshed. When the rsync process is complete, the checkpoint server takes and stores a snapshot of the CRAN mirror as it was at that very moment. These daily snapshots can then be accessed on the [MRAN website](https://mran.microsoft.com/snapshot) or using the `checkpoint` package, which installs and consistently use these packages just as they existed at midnight UTC on a specified snapshot date. Daily snapshots are available as far back as `2014-09-17`. For more information, visit the [checkpoint server GitHub site](https://github.com/RevolutionAnalytics/checkpoint-server).
+To achieve reproducibility, daily snapshots of CRAN are stored on our checkpoint server. At midnight UTC each day, we refresh our mirror of [CRAN](https://cran.r-project.org/) is refreshed. When the rsync process is complete, the checkpoint server takes and stores a snapshot of the CRAN mirror as it was at that very moment. These daily snapshots can then be accessed on the [MRAN website](https://mran.microsoft.com/timemachine) or using the `checkpoint` package, which installs and consistently use these packages just as they existed at midnight UTC on a specified snapshot date. Daily snapshots are available as far back as `2014-09-17`. For more information, visit the [checkpoint server GitHub site](https://github.com/RevolutionAnalytics/checkpoint-server).
 
 ![checkpoint server](checkpoint-server.png)
 
@@ -37,134 +36,131 @@ The goal of the `checkpoint` package is to solve the problem of package reproduc
 ![checkpoint package](checkpoint-pkg.png)
 
 
+## Using checkpoint
 
-# Using checkpoint
+The `checkpoint` package has 3 main functions.
 
-Using `checkpoint` is simple:
+The `create_checkpoint` function
 
-- `checkpoint` has only a single function, `checkpoint()` where you specify the snapshot date.
+- Creates a checkpoint directory to install packages. This directory is located underneath `~/.checkpoint` by default, but you can change its location.
+- Scans your project directory for all packages used. Specifically, it looks in your code for instances of `library()` and `require()` calls, as well as the namespacing operators `::` and `:::`.
+- Installs these packages from the MRAN snapshot for a specified date, into your checkpoint directory.
 
-## Using the checkpoint function
+The `use_checkpoint` function
 
-When you create a checkpoint, the `checkpoint()` function:
+- Sets the CRAN mirror for your R session to point to a MRAN snapshot, i.e. modifies `options(repos)`
+- Sets your library search path to point to the folder created by `create_checkpoint`, i.e. modifies (`.libPaths()`)
 
-- Creates a snapshot folder to install packages. This library folder is located at `~/.checkpoint`
-- Scans your project folder for all packages used. Specifically, it searches for all instances of `library()` and `require()` in your code.
-- Installs these packages from the MRAN snapshot into your snapshot folder using `install.packages()`
-- Sets options for your CRAN mirror to point to a MRAN snapshot, i.e. modify `options(repos)`
+This means the remainder of your script will run with the packages from your specified date.
 
-This means the remainder of your script will run with the packages from a specific date.
-
-
-## Sharing your scripts for reproducibility
-
-Sharing your script to be reproducible is as easy as:
-
-- Load the `checkpoint` package using `library(checkpoint)`
-- Ensure you specify `checkpoint()` with your checkpoint date, e.g. `checkpoint("2014-09-17")`
-
-Then send this script to your collaborators.  When they run this script on their machine, `checkpoint` will perform the same steps of installing the necessary packages, creating the `checkpoint` snapshot folder and producing the same results.
+Finally, the `checkpoint` function serves as a unified interface to `create_checkpoint` and `use_checkpoint`. It looks for a pre-existing checkpoint directory, and if not found, creates it with `create_checkpoint`. It then calls `use_checkpoint` to put the checkpoint into use.
 
 
-## Resetting the checkpoint
+## Sharing your scripts and projects for reproducibility
 
-To reset the checkpoint, simply restart your R session.
+Sharing a script to be reproducible is as easy as placing the following snippet at the top:
 
+```r
+library(checkpoint)
+checkpoint("2020-01-01")  # replace with desired date
+```
+
+Then send this script to your collaborators.  When they run this script on their machine for the first time, `checkpoint` will perform the same steps of scanning for package dependencies, creating the checkpoint directory, installing the necessary packages, and setting your session to use the checkpoint. On subsequent runs, `checkpoint` will find and use the created checkpoint, so the packages don't have to be installed again.
+
+If you have more than one script in your project, you can place the above snippet in a script of its own, and run it before running any other script.
+
+### Note on projects
+
+The `checkpoint` package is designed to be used with _projects_, which are directories that contain the R code and output associated with the tasks you're working on. If you use RStudio, you will probably be aware of the concept, but the same applies for many other programming editors and IDEs including Visual Studio Code, Notepad++ and Sublime Text.
+
+When it is run, `create_checkpoint` scans all R files inside a given project to determine what packages your code requires. The default project is the current directory `"."`.
+
+If you do not have an actual project open, this will usually expand to your R user directory (`"~/<username>"` on Unices and MacOS, or `"C:\Users\<username>\Documents"` on Windows). For most people, this means that the function will scan through _all_ the projects they have on their machine, which can lead to checkpointing a very large number of packages. Because of this, you should ensure that you are not in your user directory when you run `checkpoint`. A mitigating factor is that this should happen only once, as long as the checkpoint directory remains intact.
+
+### Checkpointing the R version
+
+For an even _more stringent_ form of reproducibility, you can use the following:
+
+```r
+library(checkpoint)
+checkpoint("2020-01-01", r_version="3.6.2")  # replace with desired date and R version
+```
+
+This requires that anyone running the script must be using the specified version of R. The benefit of this is because changes in R over time can affect reproducibility just like changes in third-party packages, so by restricting the script to only one R version, we remove another possible source of variation. However, R itself is usually very stable, and requiring a specific version can be excessively demanding especially in locked-down IT environments. For this reason, specifying the R version is optional.
+
+### Using knitr and rmarkdown with checkpoint
+
+`checkpoint` will automatically add the `rmarkdown` package as a dependency if it finds any Rmarkdown-based files (those with extension `.Rmd`, `.Rpres` or `.Rhtml`) in your project. This allows you to continue working with such documents after checkpointing.
+
+## Resetting your session
+
+To reset your session to the way it was before checkpointing, call `uncheckpoint_session()`. Alternatively, you can simply restart R.
+
+## Managing checkpoints
+
+The functions `delete_checkpoint()` and `delete_all_checkpoints()` allow you to remove checkpoint directories that are no longer required. They check that the checkpoint(s) in question are not actually in use before deleting.
+
+Each time `create_checkpoint()` is run, it saves a series of json files in the main checkpoint directory. These are outputs from the `pkgdepends` package, which `checkpoint` uses to perform the actual package installation, and can help you debug any problems that may occur.
+
+1. `<date>_<time>_config.json`: Configuration parameters for the checkpoint
+2. `<date>_<time>_resolution.json`: Dependency resolution result
+3. `<date>_<time>_solution.json`: Solution to package dependencies
+4. `<date>_<time>_downloads.json`: Download result
+5. `<date>_<time>_install_plan.json`: Package install plan
+6. `<date>_<time>_installs.json`: Final installation result
+
+For more information, see the help for `pkgdepends`.
 
 
 ## Worked example
 
-To create a checkpoint project, you do:
+First, create a new folder and change your working directory to this folder.  If you use an IDE like RStudio, this is identical to creating a new RStudio project. Otherwise, or alternatively, you can do it in code:
 
-1. Create a new folder and change your working directory to this folder.  If you use an IDE like RStudio, this is identical to creating a new RStudio project.
-2. Add your R script files to this folder.
-3. Add a checkpoint to the top of the script:
+```r
+dir.create("~/temp_project")
+setwd("~/temp_project")
+```
 
-    ```r
-    library(checkpoint)
-    checkpoint("<checkpoint date>")
-    ```
-
-4. Run the script.
-
-### Create a checkpoint project
-
-For example, your script may look like this:
+Next, add a script to the project folder, adding the snippet mentioned above to the top. Here's a simple example, using the `darts` package. Save this file in the `~/temp_project` folder as `script1.R`.
 
 ```r
 library(checkpoint)
-checkpoint("2017-04-01")
+checkpoint("2020-01-01")
 
 # Example from ?darts
 library(darts)
-x = c(12,16,19,3,17,1,25,19,17,50,18,1,3,17,2,2,13,18,16,2,25,5,5,
+x <- c(12,16,19,3,17,1,25,19,17,50,18,1,3,17,2,2,13,18,16,2,25,5,5,
       1,5,4,17,25,25,50,3,7,17,17,3,3,3,7,11,10,25,1,19,15,4,1,5,12,17,16,
       50,20,20,20,25,50,2,17,3,20,20,20,5,1,18,15,2,3,25,12,9,3,3,19,16,20,
       5,5,1,4,15,16,5,20,16,2,25,6,12,25,11,25,7,2,5,19,17,17,2,12)
-mod = simpleEM(x, niter=100)
-e = simpleExpScores(mod$s.final)
+mod <- simpleEM(x, niter=100)
+e <- simpleExpScores(mod$s.final)
 oldpar <- par(mfrow=c(1, 2))
 drawHeatmap(e)
-drawBoard(new=TRUE)
-drawAimSpot(e, cex = 5)
+drawBoard(new <- TRUE)
+drawAimSpot(e, cex=5)
 par(oldpar)
 ```
 
+When you run this script, `checkpoint` will create the checkpoint by scanning your project for packages, and then downloading them from the MRAN snapshot for `2020-01-01`. As this happens, you should see a number of messages appear in your R window that tell how the installation is proceeding. It then sets the library search path and CRAN mirror for your session, to point to the local checkpoint directory and MRAN snapshot respectively.
 
-### Run the checkpoint code
-
-Next you want to run the script.  Here is what `checkpoint` does:
-
-```r
-## Create a folder to contain the checkpoint
-## This is optional - the default is to use ~/.checkpoint
-
-dir.create(file.path(tempdir(), ".checkpoint"), recursive = TRUE, showWarnings = FALSE)
-
-## Create a checkpoint by specifying a snapshot date
-
-library(checkpoint)
-checkpoint("2017-04-01", project = example_project, 
-           checkpointLocation = tempdir())
-```
-
-```
-## Scanning for packages used in this project
-## - Discovered 2 packages
-## Installing packages used in this project
-##  - Installing 'darts'
-## darts
-## Package which is only available in source form, and may need
-##   compilation of C/C++/Fortran: 'darts'
-## installing the source package 'darts'
-## checkpoint process complete
-## ---
-```
-
-### Inspecting the results
-
-Now inspect the results. First, check that your CRAN mirror is set to MRAN snapshot:
-
+After running the above script, you can verify that the checkpointing has succeeded:
 
 ```r
 getOption("repos")
 ```
 ```
-## [1] "https://mran.microsoft.com/snapshot/2017-04-01"
+##                                             CRAN
+## "https://mran.microsoft.com/snapshot/2020-01-01"
 ```
-
-Next, check that the library path is set to `~/.checkpoint`:
 
 ```r
-normalizePath(.libPaths(), winslash = "/")
+.libPaths()
 ```
 ```
-## [1] "C:/Users/hongo/AppData/Local/Temp/RtmpEPckx0/.checkpoint/2017-04-01/lib/x86_64-w64-mingw32/3.6.1"
-## [2] "C:/Users/hongo/AppData/Local/Temp/RtmpEPckx0/.checkpoint/R-3.6.1"                                
-## [3] "C:/Program Files/R/R-3.6.1/library"
+## [1] "C:/Users/hongo/Documents/.checkpoint/2020-01-01/lib/x86_64-w64-mingw32/3.6.2"    
+## [2] "C:/Program Files/R/R-3.6.2/library"
 ```
-
-Finally, check which packages are installed in checkpoint library:
 
 ```r
 installed.packages(.libPaths()[1])[, "Package"]
