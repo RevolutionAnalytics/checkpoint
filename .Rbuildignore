@@ -3,3 +3,4 @@
 ^\.Rproj\.user$
 README.Rmd
 README.html
+^azure-pipelines\.yml
