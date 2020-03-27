@@ -4,7 +4,7 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
         return()
 
     config <- utils::modifyList(list(
-        `cran-mirror`=snapshot_url(snapshot_date, mran_url),
+        `cran-mirror`=snapshot_url(mran_url, snapshot_date),
         library=checkpoint_dir(snapshot_date, checkpoint_location, r_version),
         `r-versions`=as.character(r_version)
     ), config)

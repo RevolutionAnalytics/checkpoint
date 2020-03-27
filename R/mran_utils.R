@@ -21,11 +21,11 @@ use_mran_snapshot <- function(snapshot_date,
     repos <- getOption("repos")
     repo_names <- names(repos)
     if(is.null(repo_names))
-        options(repos=c(CRAN=snapshot_url(snapshot_date, mran_url)))
+        options(repos=c(CRAN=snapshot_url(mran_url, snapshot_date)))
     else
     {
         unnamed_or_cran <- repo_names %in% c("", "CRAN")
-        repos <- c(CRAN=snapshot_url(snapshot_date, mran_url), repos[!unnamed_or_cran])
+        repos <- c(CRAN=snapshot_url(mran_url, snapshot_date), repos[!unnamed_or_cran])
         options(repos=repos)
     }
     invisible(getOption("repos"))
@@ -35,18 +35,15 @@ use_mran_snapshot <- function(snapshot_date,
 #' @export
 list_mran_snapshots <- function(mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"))
 {
-    snapshot_url <- httr::parse_url(mran_url)
-    snapshot_url$path <- file.path(snapshot_url$path, "snapshot")
-
-    if(grepl("^http", snapshot_url$scheme))
+    if(grepl("^http", mran_url))
     {
-        lines <- try(readLines(httr::build_url(snapshot_url)), silent=TRUE)
+        lines <- try(readLines(snapshot_url(mran_url=mran_url)), silent=TRUE)
         if(inherits(lines, "try-error"))
             stop("Unable to contact MRAN host", call.=FALSE)
     }
-    else if(snapshot_url$scheme == "file")
+    else if(grepl("^file://", mran_url))
     {
-        f <- file(httr::build_url(snapshot_url))
+        f <- file(snapshot_url(mran_url=mran_url))
         on.exit(close(f))
         lines <- dir(summary(f))
     }
@@ -57,11 +54,11 @@ list_mran_snapshots <- function(mran_url=getOption("checkpoint.mranUrl", "https:
     gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", date_pat), "\\1", lines)
 }
 
-snapshot_url <- function(snapshot_date, mran_url)
+snapshot_url <- function(mran_url, snapshot_date=NULL)
 {
-    snapshot_url <- httr::parse_url(mran_url)
-    snapshot_url$path <- file.path(snapshot_url$path, "snapshot", snapshot_date)
-    httr::build_url(snapshot_url)
+    if(length(snapshot_date) == 0)
+        file.path(sub("/$", "", mran_url), "snapshot")
+    else file.path(sub("/$", "", mran_url), "snapshot", snapshot_date)
 }
 
 verify_date <- function(date, validate=FALSE)

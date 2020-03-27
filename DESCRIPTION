@@ -28,7 +28,6 @@ BugReports: https://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
     utils,
     tools,
-    httr,
     jsonlite,
     yaml,
     withr,
