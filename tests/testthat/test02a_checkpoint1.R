@@ -63,7 +63,7 @@ test_that("Using checkpoint works",
 
 test_that("Uncheckpointing works",
 {
-    uncheckpoint_session()
+    uncheckpoint()
     expect_identical(getOption("repos"), repos)
     expect_identical(.libPaths(), libs)
 })

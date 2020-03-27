@@ -6,7 +6,7 @@
 \alias{use_checkpoint}
 \alias{delete_checkpoint}
 \alias{delete_all_checkpoints}
-\alias{uncheckpoint_session}
+\alias{uncheckpoint}
 \title{Configures R session to use packages as they existed on CRAN at time of snapshot.}
 \usage{
 checkpoint(
@@ -50,7 +50,7 @@ delete_checkpoint(
 
 delete_all_checkpoints(checkpoint_location = "~")
 
-uncheckpoint_session()
+uncheckpoint()
 }
 \arguments{
 \item{snapshot_date}{Date of snapshot to use in \code{YYYY-MM-DD} format, e.g. \code{"2020-01-01"}.  Specify a date on or after \code{"2014-09-17"}.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN, use \code{\link{list_mran_snapshots}}.}
@@ -106,7 +106,7 @@ The package installation is carried out via the \link{pkgdepends} package, which
 
 \code{delete_checkpoint} deletes a checkpoint, after ensuring that it is no longer in use. \code{delete_all_checkpoints} deletes \emph{all} checkpoints under the given checkpoint location.
 
-\code{uncheckpoint_session} is the reverse of \code{use_checkpoint}. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling \code{delete_checkpoint} and \code{delete_all_checkpoints}.
+\code{uncheckpoint} is the reverse of \code{use_checkpoint}. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling \code{delete_checkpoint} and \code{delete_all_checkpoints}.
 }
 \section{Last accessed date}{
 

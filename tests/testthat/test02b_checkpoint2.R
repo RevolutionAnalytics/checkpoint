@@ -39,7 +39,7 @@ test_that("Checkpoint umbrella function works for create",
 
 test_that("Checkpoint umbrella function works for use",
 {
-    uncheckpoint_session()
+    uncheckpoint()
     expect_identical(getOption("repos"), repos)
     expect_identical(.libPaths(), libs)
 
@@ -51,7 +51,7 @@ test_that("Checkpoint umbrella function works for use",
 
 test_that("Deleting checkpoint works",
 {
-    uncheckpoint_session()
+    uncheckpoint()
     expect_identical(getOption("repos"), repos)
     expect_identical(.libPaths(), libs)
 

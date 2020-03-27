@@ -94,7 +94,7 @@ This requires that anyone running the script must be using the specified version
 
 ## Resetting your session
 
-To reset your session to the way it was before checkpointing, call `uncheckpoint_session()`. Alternatively, you can simply restart R.
+To reset your session to the way it was before checkpointing, call `uncheckpoint()`. Alternatively, you can simply restart R.
 
 ## Managing checkpoints
 

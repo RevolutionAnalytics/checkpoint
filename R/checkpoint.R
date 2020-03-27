@@ -51,7 +51,7 @@
 #'
 #' `delete_checkpoint` deletes a checkpoint, after ensuring that it is no longer in use. `delete_all_checkpoints` deletes _all_ checkpoints under the given checkpoint location.
 #'
-#' `uncheckpoint_session` is the reverse of `use_checkpoint`. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling `delete_checkpoint` and `delete_all_checkpoints`.
+#' `uncheckpoint` is the reverse of `use_checkpoint`. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling `delete_checkpoint` and `delete_all_checkpoints`.
 #'
 #' @section Last accessed date:
 #'
@@ -171,7 +171,7 @@ delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint
     # stop if checkpoint in use
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
     if(libdir %in% .libPaths())
-        stop("Cannot delete checkpoint while in use, call uncheckpoint_session() first", call.=FALSE)
+        stop("Cannot delete checkpoint while in use, call uncheckpoint() first", call.=FALSE)
     unlink(libdir, recursive=TRUE)
 }
 
@@ -181,13 +181,13 @@ delete_all_checkpoints <- function(checkpoint_location="~")
 {
     checkpoint_root <- normalizePath(file.path(checkpoint_location, ".checkpoint"), winslash="/", mustWork=FALSE)
     if(any(grepl(checkpoint_root, .libPaths(), fixed=TRUE)))
-        stop("Cannot delete checkpoint while in use, call uncheckpoint_session() first", call.=FALSE)
+        stop("Cannot delete checkpoint while in use, call uncheckpoint() first", call.=FALSE)
     unlink(checkpoint_root, recursive=TRUE)
 }
 
 #' @rdname checkpoint
 #' @export
-uncheckpoint_session <- function()
+uncheckpoint <- function()
 {
     options(repos=.checkpoint$old_repos)
     .libPaths(.checkpoint$old_libpath)

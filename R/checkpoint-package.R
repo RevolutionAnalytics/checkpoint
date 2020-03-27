@@ -12,7 +12,7 @@
 #' * [`use_checkpoint`]: Uses a previously created checkpoint, by setting the library search path to the checkpoint path, and the CRAN mirror to MRAN.
 #' * [`delete_checkpoint`]: Deletes an existing checkpoint.
 #' * [`delete_all_checkpoints`]: Deletes _all_ existing checkpoints.
-#' * [`uncheckpoint_session`]: Stops using a checkpoint, restoring the library search path and CRAN mirror to their original state.
+#' * [`uncheckpoint`]: Stops using a checkpoint, restoring the library search path and CRAN mirror to their original state.
 #' * [`scan_project_files`]: Scans a project for any required packages.
 #' * [`list_mran_snapshots`]: Returns all valid snapshot dates found on MRAN.
 #'

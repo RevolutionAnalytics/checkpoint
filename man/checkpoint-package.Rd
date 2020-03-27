@@ -18,7 +18,7 @@ To create the snapshot archives, once a day (at midnight UTC) we refresh the Aus
 \item \code{\link{use_checkpoint}}: Uses a previously created checkpoint, by setting the library search path to the checkpoint path, and the CRAN mirror to MRAN.
 \item \code{\link{delete_checkpoint}}: Deletes an existing checkpoint.
 \item \code{\link{delete_all_checkpoints}}: Deletes \emph{all} existing checkpoints.
-\item \code{\link{uncheckpoint_session}}: Stops using a checkpoint, restoring the library search path and CRAN mirror to their original state.
+\item \code{\link{uncheckpoint}}: Stops using a checkpoint, restoring the library search path and CRAN mirror to their original state.
 \item \code{\link{scan_project_files}}: Scans a project for any required packages.
 \item \code{\link{list_mran_snapshots}}: Returns all valid snapshot dates found on MRAN.
 }
