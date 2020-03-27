@@ -1,30 +1,9 @@
 #' Configures R session to use packages as they existed on CRAN at time of snapshot.
 #'
-#' Together, the checkpoint package and the checkpoint server act as a CRAN time machine. The `create_checkpoint` function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using the `use_checkpoint` function can ensure the reproducibility of your scripts or projects at any time.
+#' @description
+#' Together, the checkpoint package and the checkpoint server act as a CRAN time machine.
 #'
-#' The `checkpoint` function serves as a simple umbrella interface to these functions. It first tests if the checkpoint exists, creates if necessary with `create_checkpoint`, and then calls `use_checkpoint`.
-#'
-#' @section Details:
-#'
-#' `create_checkpoint` creates a local library (by default, located under your home directory) into which it installs copies of the packages required by your project as they existed on CRAN on the specified snapshot date. To determine the packages used in your project, the function scans all R code (`.R`, `.Rmd`, `.Rnw`, `.Rhtml` and `.Rpres` files) for [`library`] and [`require`] statements, as well as the namespacing operators `::` and `:::`.
-#'
-#' `create_checkpoint` will automatically add the `rmarkdown` package as a dependency if it finds any Rmarkdown-based files (those with extension `.Rmd`, `.Rpres` or `.Rhtml`) in your project. This allows you to continue working with such documents after checkpointing.
-#'
-#' Checkpoint only installs packages that can be found on CRAN. This includes third-party packages, as well as those distributed as part of R that have the "Recommends" priority. Base-priority packages (the workhorse engine of R, including utils, graphics, methods and so forth) are not checkpointed (but see the `r_version` argument above).
-#'
-#' The package installation is carried out via the [pkgdepends] package, which has many features including cached downloads, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
-#'
-#' `use_checkpoint` modifies your R session to use only the packages installed by `create_checkpoint`. Specifically, it changes your library search path via `.libPaths()` to point to the checkpointed library, and then calls [`use_mran_snapshot`] to set the CRAN mirror for the session.
-#'
-#' `checkpoint` is a convenience function that calls `create_checkpoint` if the checkpoint directory does not exist, and then `use_checkpoint`.
-#'
-#' `delete_checkpoint` deletes a checkpoint, after ensuring that it is no longer in use. `delete_all_checkpoints` deletes _all_ checkpoints under the given checkpoint location.
-#'
-#' `uncheckpoint_session` is the reverse of `use_checkpoint`. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling `delete_checkpoint` and `delete_all_checkpoints`.
-#'
-#' @section Last accessed date:
-#'
-#' The `create_checkpoint` and `use_checkpoint` functions store a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.
+#' The `create_checkpoint` function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using the `use_checkpoint` function can ensure the reproducibility of your scripts or projects at any time. The `checkpoint` function serves as a simple umbrella interface to these functions. It first tests if the checkpoint exists, creates it if necessary with `create_checkpoint`, and then calls `use_checkpoint`.
 #'
 #' @param snapshot_date Date of snapshot to use in `YYYY-MM-DD` format, e.g. `"2020-01-01"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN, use [`list_mran_snapshots`].
 #'
@@ -55,6 +34,28 @@
 #' @param ... For `checkpoint`, further arguments to pass to `create_checkpoint` and `use_checkpoint`. Ignored for `create_checkpoint` and `use_checkpoint`.
 #'
 #' @param prepend If `TRUE`, adds the checkpoint directory to the beginning of the library search path. The default is `FALSE`, where the checkpoint directory replaces all but the system entries (the values of `.Library` and `.Library.site`) in the search path; this is to reduce the chances of accidentally calling non-checkpointed code. See [`.libPaths`].
+#'
+#' @details
+#'
+#' `create_checkpoint` creates a local library (by default, located under your home directory) into which it installs copies of the packages required by your project as they existed on CRAN on the specified snapshot date. To determine the packages used in your project, the function scans all R code (`.R`, `.Rmd`, `.Rnw`, `.Rhtml` and `.Rpres` files) for [`library`] and [`require`] statements, as well as the namespacing operators `::` and `:::`.
+#'
+#' `create_checkpoint` will automatically add the `rmarkdown` package as a dependency if it finds any Rmarkdown-based files (those with extension `.Rmd`, `.Rpres` or `.Rhtml`) in your project. This allows you to continue working with such documents after checkpointing.
+#'
+#' Checkpoint only installs packages that can be found on CRAN. This includes third-party packages, as well as those distributed as part of R that have the "Recommends" priority. Base-priority packages (the workhorse engine of R, including utils, graphics, methods and so forth) are not checkpointed (but see the `r_version` argument above).
+#'
+#' The package installation is carried out via the [pkgdepends] package, which has many features including cached downloads, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
+#'
+#' `use_checkpoint` modifies your R session to use only the packages installed by `create_checkpoint`. Specifically, it changes your library search path via `.libPaths()` to point to the checkpointed library, and then calls [`use_mran_snapshot`] to set the CRAN mirror for the session.
+#'
+#' `checkpoint` is a convenience function that calls `create_checkpoint` if the checkpoint directory does not exist, and then `use_checkpoint`.
+#'
+#' `delete_checkpoint` deletes a checkpoint, after ensuring that it is no longer in use. `delete_all_checkpoints` deletes _all_ checkpoints under the given checkpoint location.
+#'
+#' `uncheckpoint_session` is the reverse of `use_checkpoint`. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling `delete_checkpoint` and `delete_all_checkpoints`.
+#'
+#' @section Last accessed date:
+#'
+#' The `create_checkpoint` and `use_checkpoint` functions store a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.
 #'
 #' @return
 #' These functions are run mostly for their side-effects; however `create_checkpoint` invisibly returns an object of class `pkgdepends::pkg_installation_proposal` if `scan_now=TRUE`, and `NULL` otherwise. `checkpoint` returns the result of `create_checkpoint` if the checkpoint had to be created, otherwise `NULL`.

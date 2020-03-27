@@ -87,14 +87,11 @@ uncheckpoint_session()
 These functions are run mostly for their side-effects; however \code{create_checkpoint} invisibly returns an object of class \code{pkgdepends::pkg_installation_proposal} if \code{scan_now=TRUE}, and \code{NULL} otherwise. \code{checkpoint} returns the result of \code{create_checkpoint} if the checkpoint had to be created, otherwise \code{NULL}.
 }
 \description{
-Together, the checkpoint package and the checkpoint server act as a CRAN time machine. The \code{create_checkpoint} function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using the \code{use_checkpoint} function can ensure the reproducibility of your scripts or projects at any time.
+Together, the checkpoint package and the checkpoint server act as a CRAN time machine.
+
+The \code{create_checkpoint} function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using the \code{use_checkpoint} function can ensure the reproducibility of your scripts or projects at any time. The \code{checkpoint} function serves as a simple umbrella interface to these functions. It first tests if the checkpoint exists, creates it if necessary with \code{create_checkpoint}, and then calls \code{use_checkpoint}.
 }
 \details{
-The \code{checkpoint} function serves as a simple umbrella interface to these functions. It first tests if the checkpoint exists, creates if necessary with \code{create_checkpoint}, and then calls \code{use_checkpoint}.
-}
-\section{Details}{
-
-
 \code{create_checkpoint} creates a local library (by default, located under your home directory) into which it installs copies of the packages required by your project as they existed on CRAN on the specified snapshot date. To determine the packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, \code{.Rnw}, \code{.Rhtml} and \code{.Rpres} files) for \code{\link{library}} and \code{\link{require}} statements, as well as the namespacing operators \code{::} and \code{:::}.
 
 \code{create_checkpoint} will automatically add the \code{rmarkdown} package as a dependency if it finds any Rmarkdown-based files (those with extension \code{.Rmd}, \code{.Rpres} or \code{.Rhtml}) in your project. This allows you to continue working with such documents after checkpointing.
@@ -111,7 +108,6 @@ The package installation is carried out via the \link{pkgdepends} package, which
 
 \code{uncheckpoint_session} is the reverse of \code{use_checkpoint}. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling \code{delete_checkpoint} and \code{delete_all_checkpoints}.
 }
-
 \section{Last accessed date}{
 
 
