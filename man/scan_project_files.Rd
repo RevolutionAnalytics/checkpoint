@@ -36,16 +36,17 @@ This function scans the R files in your project, including scripts, Sweave docum
 
 As an \strong{experimental feature}, you can specify additional packages to include or exclude via an optional \code{checkpoint.yml} manifest file located in your project directory. This should be a valid YAML file with 2 components:
 \itemize{
-\item \code{refs}: An array of package references, that can be parsed by \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}. See \code{\link[pkgdepends:pkg_refs]{pkgdepends::pkg_refs}} for a description of the reference syntax.
-\item \code{exclude}: An array of package names (without decorations) that should be excluded from the final list of dependencies.
+\item \code{refs}: An array of package references to include in the checkpoint, that can be parsed by \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}.
+\item \code{exclude}: An array of package names (without decorations) to exclude from the checkpoint, despite showing up in the scan.
 }
 
-A manifest file allows you to include packages from BioConductor or GitHub in the checkpoint. You should use this feature with caution, as checkpoint does not check the versions of these packages. While pkgdepends allows you to specify a package version as part of a reference, it currently ignores the version during the download and installation process.
+A manifest file allows you to include packages from sources other than CRAN/MRAN in the checkpoint. You can include a Bioconductor package with a \verb{bioc::} reference: \code{bioc::BiocGenerics}. A GitHub reference begins with \verb{github::}, for example \code{github::RevolutionAnalytics/checkpoint@v1.0}. A \verb{local::} reference can point to a package \code{.tar.gz} file, or to a directory containing the package source code.
 
-A use case for exclusions might be if your workflow requires packages not on CRAN or other public repositories. For example, Microsoft Machine Learning Server (MMLS) comes with a number of proprietary packages for big data and in-database analytics. You can exclude these packages from checkpointing by listing them in the \code{exclude} list in the manifest. In this case, you must ensure that your packages are still visible to the checkpointed session, for example by setting the \code{prepend} argument to \code{use_checkpoint} to \code{TRUE}. If you share your project with collaborators, they will also need to have these packages installed on their machines beforehand.
+You should use this feature with caution, as checkpoint does not check the versions of these packages. It's recommended that you use a version number or tag in a reference, so that you always obtain the same version of the package. See \code{\link[pkgdepends:pkg_refs]{pkgdepends::pkg_refs}} for a full description of the reference syntax; note that \verb{installed::} references are \emph{not} currently supported by checkpoint.
+
+A use case for exclusions is if your workflow loads packages that are not on CRAN or other public repositories. For example, Microsoft Machine Learning Server (MMLS) comes with a number of proprietary packages for big data and in-database analytics. You can exclude these packages from checkpointing by listing them in the \code{exclude} entry in the manifest. In this case, you must ensure that your packages are still visible to the checkpointed session, for example by specifying \code{prepend=TRUE} in the \code{use_checkpoint} call. If you share your project with collaborators, they will also need to have these packages separately installed on their machines.
 }
 
 \examples{
-
 scan_project_files()
 }

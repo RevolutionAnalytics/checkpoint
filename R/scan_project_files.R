@@ -16,18 +16,19 @@
 #' @section Manifest:
 #'
 #' As an **experimental feature**, you can specify additional packages to include or exclude via an optional `checkpoint.yml` manifest file located in your project directory. This should be a valid YAML file with 2 components:
-#' - `refs`: An array of package references, that can be parsed by [`pkgdepends::new_pkg_installation_proposal`]. See [`pkgdepends::pkg_refs`] for a description of the reference syntax.
-#' - `exclude`: An array of package names (without decorations) that should be excluded from the final list of dependencies.
+#' - `refs`: An array of package references to include in the checkpoint, that can be parsed by [`pkgdepends::new_pkg_installation_proposal`].
+#' - `exclude`: An array of package names (without decorations) to exclude from the checkpoint, despite showing up in the scan.
 #'
-#' A manifest file allows you to include packages from BioConductor or GitHub in the checkpoint. You should use this feature with caution, as checkpoint does not check the versions of these packages. While pkgdepends allows you to specify a package version as part of a reference, it currently ignores the version during the download and installation process.
+#' A manifest file allows you to include packages from sources other than CRAN/MRAN in the checkpoint. You can include a Bioconductor package with a `bioc::` reference: `bioc::BiocGenerics`. A GitHub reference begins with `github::`, for example `github::RevolutionAnalytics/checkpoint@v1.0`. A `local::` reference can point to a package `.tar.gz` file, or to a directory containing the package source code.
 #'
-#' A use case for exclusions might be if your workflow requires packages not on CRAN or other public repositories. For example, Microsoft Machine Learning Server (MMLS) comes with a number of proprietary packages for big data and in-database analytics. You can exclude these packages from checkpointing by listing them in the `exclude` list in the manifest. In this case, you must ensure that your packages are still visible to the checkpointed session, for example by setting the `prepend` argument to `use_checkpoint` to `TRUE`. If you share your project with collaborators, they will also need to have these packages installed on their machines beforehand.
+#' You should use this feature with caution, as checkpoint does not check the versions of these packages. It's recommended that you use a version number or tag in a reference, so that you always obtain the same version of the package. See [`pkgdepends::pkg_refs`] for a full description of the reference syntax; note that `installed::` references are _not_ currently supported by checkpoint.
+#'
+#' A use case for exclusions is if your workflow loads packages that are not on CRAN or other public repositories. For example, Microsoft Machine Learning Server (MMLS) comes with a number of proprietary packages for big data and in-database analytics. You can exclude these packages from checkpointing by listing them in the `exclude` entry in the manifest. In this case, you must ensure that your packages are still visible to the checkpointed session, for example by specifying `prepend=TRUE` in the `use_checkpoint` call. If you share your project with collaborators, they will also need to have these packages separately installed on their machines.
 #' @return
 #' A list with 2 components: `pkgs`, a vector of package names, and `errors`, a vector of files that could not be scanned. The package listing includes third-party packages, as well as those that are distributed with R and have "Recommended" priority. Base-priority packages (utils, graphics, methods and so forth) are not included.
 #'
 #' In addition, if any Rmarkdown files are found, the package listing will include rmarkdown. This allows you to continue rendering them in a checkpointed session.
 #' @examples
-#'
 #' scan_project_files()
 #' @export
 scan_project_files <- function(project_dir=".", scan_r_only=FALSE, scan_rnw_with_knitr=TRUE, scan_rprofile=TRUE)
