@@ -9,9 +9,6 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
         `r-versions`=as.character(r_version)
     ), config)
 
-    if(is.null(num_workers))
-        num_workers <- min(parallel::detectCores(logical=FALSE), 3)
-
     logtime <- Sys.time()
 
     withr::with_options(list(Ncpus=num_workers, repos=NULL),

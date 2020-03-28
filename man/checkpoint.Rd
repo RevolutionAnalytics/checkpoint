@@ -28,7 +28,7 @@ create_checkpoint(
   scan_rprofile = TRUE,
   force = FALSE,
   log = TRUE,
-  num_workers = NULL,
+  num_workers = getOption("Ncpus", 1),
   config = list(),
   ...
 )
@@ -77,7 +77,7 @@ uncheckpoint()
 
 \item{log}{If \code{TRUE}, writes logging information (mostly the output from the methods of \code{\link[pkgdepends:pkg_installation_proposal]{pkgdepends::pkg_installation_proposal}}) to the checkpoint directory.}
 
-\item{num_workers}{The number of parallel workers to use for installing packages. Defaults to the minimum of 3 and the number of physical cores on the machine.}
+\item{num_workers}{The number of parallel workers to use for installing packages. Defaults to the value of the system option \code{Ncpus}, or if this is unset, 1.}
 
 \item{config}{Further configuration parameters to pass to \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}; possible parameters are listed at \code{\link[pkgdepends:pkg_config]{pkgdepends::pkg_config}}. Note that \code{create_checkpoint} will automatically pass the cran-mirror, library and r-version parameters, which are taken from the other arguments above.}
 
