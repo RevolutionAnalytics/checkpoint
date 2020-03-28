@@ -27,5 +27,6 @@ steps:
   displayName: 'Installing package dependencies'
 
 - bash: |
+    export NOT_CRAN=true
     Rscript -e "f <- pkgbuild::build(dest_path='$(Build.ArtifactStagingDirectory)'); rcmdcheck::rcmdcheck(f, args='--no-manual', error_on='warning', check_dir='check')"
   displayName: 'Checking package'
