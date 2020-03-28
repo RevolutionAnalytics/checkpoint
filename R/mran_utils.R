@@ -17,6 +17,9 @@ use_mran_snapshot <- function(snapshot_date,
 {
     snapshot_date <- verify_date(snapshot_date, validate)
 
+    if(!grepl("^(https?|file)://", mran_url))
+        stop("Not a HTTP[S] or file URL", call.=FALSE)
+
     # replace all unnamed repos and CRAN-repos
     repos <- getOption("repos")
     repo_names <- names(repos)
@@ -35,15 +38,15 @@ use_mran_snapshot <- function(snapshot_date,
 #' @export
 list_mran_snapshots <- function(mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"))
 {
-    if(grepl("^http", mran_url))
+    if(grepl("^https?://", mran_url))
     {
-        lines <- try(readLines(snapshot_url(mran_url=mran_url)), silent=TRUE)
+        lines <- try(readLines(snapshot_url(mran_url)), silent=TRUE)
         if(inherits(lines, "try-error"))
             stop("Unable to contact MRAN host", call.=FALSE)
     }
     else if(grepl("^file://", mran_url))
     {
-        f <- file(snapshot_url(mran_url=mran_url))
+        f <- file(snapshot_url(mran_url))
         on.exit(close(f))
         lines <- dir(summary(f))
     }
@@ -51,7 +54,7 @@ list_mran_snapshots <- function(mran_url=getOption("checkpoint.mranUrl", "https:
 
     date_pat <- "\\d{4}-\\d{2}-\\d{2}"
     lines <- grep(date_pat, lines, value=TRUE)
-    gsub(sprintf("^<a href=.*?>(%s).*?</a>.*$", date_pat), "\\1", lines)
+    gsub(sprintf("<a href=.*?>(%s).*?</a>.*$", date_pat), "\\1", lines)
 }
 
 snapshot_url <- function(mran_url, snapshot_date=NULL)
