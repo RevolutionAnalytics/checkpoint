@@ -108,10 +108,10 @@ create_checkpoint <- function(snapshot_date,
         "in checkpointing very many packages. Continue? (Y/n) ",
         sep="\n"
     )
-    if((!force &&
-        interactive() &&
-        normalizePath(project_dir, "/", mustWork=FALSE) == normalizePath("~", "/")) &&
-        get_confirmation(msg))
+    if(!force &&
+       interactive() &&
+       normalizePath(project_dir, "/", mustWork=FALSE) == normalizePath("~", "/") &&
+       !get_confirmation(msg))
         return(invisible(NULL))
 
     # create checkpoint dir
