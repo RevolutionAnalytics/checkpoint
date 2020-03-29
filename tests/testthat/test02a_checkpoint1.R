@@ -69,6 +69,21 @@ test_that("Uncheckpointing works",
 })
 
 
+test_that("Updating checkpoint works",
+{
+    expect_identical(getOption("repos"), repos)
+    expect_identical(.libPaths(), libs)
+
+    expect_false(file.exists("../project/script2.R"))
+    writeLines("library(R6)", "../project/script2.R")
+
+    inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project",
+                              scan_now=TRUE, scan_r_only=TRUE)
+    dl <- inst$get_downloads()
+    expect_true(sum(!is.na(dl$filesize)) == 1)
+})
+
+
 test_that("Deleting checkpoint works",
 {
     delete_checkpoint(snapshot, checkpoint_location=checkpoint_loc)
@@ -77,6 +92,7 @@ test_that("Deleting checkpoint works",
 
 
 teardown({
+    file.remove("../project/script2.R")
     unlink(checkpoint_loc, recursive=TRUE)
     options(repos=repos)
     .libPaths(libs)

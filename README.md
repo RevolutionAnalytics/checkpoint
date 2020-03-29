@@ -99,6 +99,8 @@ To reset your session to the way it was before checkpointing, call `uncheckpoint
 
 ## Managing checkpoints
 
+To update an existing checkpoint, for example if you need new packages installed, call `create_checkpoint()` again. Any existing packages will remain untouched.
+
 The functions `delete_checkpoint()` and `delete_all_checkpoints()` allow you to remove checkpoint directories that are no longer required. They check that the checkpoint(s) in question are not actually in use before deleting.
 
 Each time `create_checkpoint()` is run, it saves a series of json files in the main checkpoint directory. These are outputs from the `pkgdepends` package, which `checkpoint` uses to perform the actual package installation, and can help you debug any problems that may occur.
