@@ -2,7 +2,7 @@
 # checkpoint - Install Packages from Snapshots on the Checkpoint Server for Reproducibility
 
 [![Licence](https://img.shields.io/badge/licence-GPL--2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
-![R-CMD-check](https://github.com/RevolutionAnalytics/checkpoint/workflows/R-CMD-check/badge.svg)
+![R-CMD-check](https://github.com/RevolutionAnalytics/checkpoint/workflows/R-CMD-check/badge.svg?branch=master)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/checkpoint)](https://cran.r-project.org/package=checkpoint)
 
 ## Overview
