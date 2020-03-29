@@ -4,7 +4,7 @@ skip_on_cran()
 
 mran <- getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
 snapshot <- "2020-01-01"
-snapshot2 <- "2019-01-01"
+snapshot2 <- "2019-03-01"
 checkpoint_loc <- tempfile()
 
 repos <- getOption("repos")
