@@ -55,7 +55,7 @@ test_that("Deleting checkpoint works",
     expect_identical(getOption("repos"), repos)
     expect_identical(.libPaths(), libs)
 
-    delete_checkpoint(snapshot, checkpoint_location=checkpoint_loc)
+    delete_checkpoint(snapshot, checkpoint_location=checkpoint_loc, confirm=FALSE)
     expect_false(dir.exists(checkpoint_dir(snapshot, checkpoint_loc, getRversion())))
 })
 

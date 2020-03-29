@@ -33,6 +33,8 @@
 #'
 #' @param ... For `checkpoint`, further arguments to pass to `create_checkpoint` and `use_checkpoint`. Ignored for `create_checkpoint` and `use_checkpoint`.
 #'
+#' @param confirm For `delete_checkpoint` and `delete_all_checkpoints`, whether to ask for confirmation first.
+#'
 #' @param prepend If `TRUE`, adds the checkpoint directory to the beginning of the library search path. The default is `FALSE`, where the checkpoint directory replaces all but the system entries (the values of `.Library` and `.Library.site`) in the search path; this is to reduce the chances of accidentally calling non-checkpointed code. See [`.libPaths`].
 #'
 #' @details
@@ -101,19 +103,16 @@ create_checkpoint <- function(snapshot_date,
         stop("R version does not match")
 
     # sanity check if run in home dir
+    msg <- paste(
+        "Running create_checkpoint in the home directory may result",
+        "in checkpointing very many packages. Continue? (Y/n) ",
+        sep="\n"
+    )
     if((!force &&
         interactive() &&
-        normalizePath(project_dir, "/", mustWork=FALSE) == normalizePath("~", "/")))
-    {
-        msg <- paste(
-            "Running create_checkpoint in the home directory may result",
-            "in checkpointing very many packages. Continue? (Y/n) ",
-            sep="\n"
-        )
-        resp <- readline(msg)
-        if(!(nchar(resp) == "" || tolower(substr(resp, 1, 1)) == "y"))
-            return(invisible(NULL))
-    }
+        normalizePath(project_dir, "/", mustWork=FALSE) == normalizePath("~", "/")) &&
+        get_confirmation(msg))
+        return(invisible(NULL))
 
     # create checkpoint dir
     snapshot_date <- verify_date(snapshot_date)
@@ -166,10 +165,15 @@ use_checkpoint <- function(snapshot_date,
 
 #' @rdname checkpoint
 #' @export
-delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint_location="~")
+delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint_location="~", confirm=TRUE)
 {
-    # stop if checkpoint in use
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+
+    msg <- paste("Are you sure you want to delete checkpoint directory", libdir, "(y/N)? ")
+    if(confirm && interactive() && !get_confirmation(msg, FALSE))
+        return(invisible(NULL))
+
+    # stop if checkpoint in use
     if(libdir %in% .libPaths())
         stop("Cannot delete checkpoint while in use, call uncheckpoint() first", call.=FALSE)
     unlink(libdir, recursive=TRUE)
@@ -177,8 +181,14 @@ delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint
 
 #' @rdname checkpoint
 #' @export
-delete_all_checkpoints <- function(checkpoint_location="~")
+delete_all_checkpoints <- function(checkpoint_location="~", confirm=TRUE)
 {
+    msg <- paste("Are you sure you want to delete all checkpoints under",
+                 normalizePath(file.path(checkpoint_location, ".checkpoint"), "/", FALSE),
+                 "(y/N)? ")
+    if(confirm && interactive() && !get_confirmation(msg, FALSE))
+        return(invisible(NULL))
+
     checkpoint_root <- normalizePath(file.path(checkpoint_location, ".checkpoint"), winslash="/", mustWork=FALSE)
     if(any(grepl(checkpoint_root, .libPaths(), fixed=TRUE)))
         stop("Cannot delete checkpoint while in use, call uncheckpoint() first", call.=FALSE)

@@ -86,7 +86,7 @@ test_that("Updating checkpoint works",
 
 test_that("Deleting checkpoint works",
 {
-    delete_checkpoint(snapshot, checkpoint_location=checkpoint_loc)
+    delete_checkpoint(snapshot, checkpoint_location=checkpoint_loc, confirm=FALSE)
     expect_false(dir.exists(checkpoint_dir(snapshot, checkpoint_loc, getRversion())))
 })
 
