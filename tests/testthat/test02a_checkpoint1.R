@@ -19,7 +19,8 @@ test_that("Creating checkpoint works",
     expect_true(dir.exists(checkpoint_loc))
     expect_false(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
-    expect_error(create_checkpoint(snapshot, r_version="0.0.1"))
+    expect_error(expect_warning(create_checkpoint(snapshot, r_version="0.0.1",
+                                                  checkpoint_location=checkpoint_loc, scan_r_only=TRUE)))
 
     inst <- create_checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc,
                               scan_now=FALSE)

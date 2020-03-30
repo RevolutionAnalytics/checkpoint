@@ -7,7 +7,7 @@
 #'
 #' @param snapshot_date Date of snapshot to use in `YYYY-MM-DD` format, e.g. `"2020-01-01"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN, use [`list_mran_snapshots`].
 #'
-#' @param r_version Optional character string, e.g. `"3.6.2"`. If specified, compares the current [`R.version`] to the specified version. If these differ, `create_checkpoint` and `use_checkpoint` will throw an error without making any changes. The benefit of supplying this argument is that checkpoint can alert you when your R version changes while you are working on a project; this can just as easily lead to reproducibility issues as changes in third-party code. It's recommended that you supply an explicit value for this argument, although checkpoint will still function without it.
+#' @param r_version Optional character string, e.g. `"3.6.2"`. If specified, this is compared to the current [`R.version`], and if they differ, a warning is issued. The benefit of supplying this argument is that checkpoint can alert you when your R version changes while you are working on a project; this can just as easily lead to reproducibility issues as changes in third-party code. Consider supplying an explicit value for this argument, although checkpoint will still function without it.
 #'
 #' @param checkpoint_location File path where the checkpoint library is stored.  Default is `"~"`, i.e. your home directory. Use cases for changing this include creating a checkpoint library on a portable drive (e.g. USB drive), or creating per-project checkpoints. The actual checkpoints will be created under a `.checkpoint` directory at this location.
 #'
@@ -100,7 +100,7 @@ create_checkpoint <- function(snapshot_date,
                              )
 {
     if(package_version(r_version) != getRversion())
-        stop("R version does not match")
+        warning("Specified R version not the same as current R version")
 
     # sanity check if run in home dir
     msg <- paste(
@@ -148,7 +148,7 @@ use_checkpoint <- function(snapshot_date,
                           )
 {
     if(package_version(r_version) != getRversion())
-        stop("R version does not match")
+        warning("Specified R version not the same as current R version")
 
     libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
     message("Using checkpoint directory ", libdir)
