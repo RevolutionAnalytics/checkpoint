@@ -19,7 +19,7 @@ test_that("Creating checkpoint works",
     expect_false(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
     inst <- create_checkpoint(snapshot, project_dir="../project_mft", checkpoint_location=checkpoint_loc,
-                              scan_now=TRUE, scan_r_only=TRUE)
+                            scan_now=TRUE, scan_r_only=TRUE)
     expect_is(inst, "pkg_installation_proposal")
     expect_true(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
