@@ -4,7 +4,7 @@ skip_on_cran()
 
 mran <- getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
 snapshot <- "2018-01-01"
-rver <- "3.5.0"
+rver <- "3.4.0"
 checkpoint_loc <- tempfile()
 
 repos <- getOption("repos")
@@ -16,6 +16,7 @@ pkgcache::pkg_cache_delete_files()
 
 test_that("Creating checkpoint works",
 {
+    expect_true(package_version(rver) != getRversion())
     expect_true(dir.exists(checkpoint_loc))
     expect_false(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
