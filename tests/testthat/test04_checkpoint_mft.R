@@ -19,8 +19,8 @@ test_that("Creating checkpoint works",
     expect_false(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
     inst <- create_checkpoint(snapshot, project_dir="../project_mft", checkpoint_location=checkpoint_loc,
-                              scan_now=FALSE, scan_r_only=TRUE)
-    expect_null(inst)
+                              scan_now=TRUE, scan_r_only=TRUE)
+    expect_is(inst, "pkg_installation_proposal")
     expect_true(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
     checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, getRversion())
@@ -28,7 +28,7 @@ test_that("Creating checkpoint works",
     pkg_srcs <- list_pkgsrc(checkpoint_dir)
     pkg_refs <- list_pkgref(checkpoint_dir)
     is_snapshot <- grepl(snapshot, pkg_srcs)
-    is_gh <- grepl("github::RevolutionAnalytics/checkpoint@testpkg", pkg_refs)
+    is_gh <- grepl("^RemotePkgRef: github::", pkg_refs)
     expect_true(all(is_snapshot | is_gh))
 })
 
