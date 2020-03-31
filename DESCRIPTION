@@ -15,27 +15,34 @@ Description: The goal of checkpoint is to solve the problem of package
     server (<https://mran.microsoft.com/>). Immediately after completion
     of the rsync mirror process, the process takes a snapshot, thus creating the
     archive. Snapshot archives exist starting from 2014-09-17.
-Version: 0.4.9
+Version: 0.9.9.9000
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role=c("aut", "cre")),
     person("Andrie", "de Vries", role="aut"),
+    person("Gábor", "Csárdi", role="ctb", comment="Assistance with pkgdepends"),
     person("Microsoft", role=c("aut", "cph"))
     )
 License: GPL-2
 URL: https://github.com/RevolutionAnalytics/checkpoint
 BugReports: https://www.github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
-    utils
+    utils,
+    tools,
+    jsonlite,
+    yaml,
+    withr,
+    pkgdepends
 Depends:
-    R(>= 3.0.0)
+    R (>= 3.3.0)
 Suggests:
+    pkgcache,
     knitr,
     rmarkdown,
-    testthat(>= 0.9),
-    MASS,
-    darts,
-    mockery,
-    cli
+    testthat,
+    darts
+Remotes:
+    r-lib/pkgdepends
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+Encoding: UTF-8
+RoxygenNote: 7.0.2.9000
 Roxygen: list(markdown = TRUE)

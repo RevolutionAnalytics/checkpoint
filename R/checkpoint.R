@@ -1,267 +1,206 @@
 #' Configures R session to use packages as they existed on CRAN at time of snapshot.
 #'
-#' Together, the checkpoint package and the checkpoint server act as a CRAN time machine.  The `checkpoint()` function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results.  In this way, anyone using the checkpoint `checkpoint()` function can ensure the reproducibility of your scripts or projects at any time.
+#' @description
+#' Together, the checkpoint package and the checkpoint server act as a CRAN time machine.
 #'
-#' @section Details:
+#' The `create_checkpoint` function installs the packages referenced in the specified project to a local library exactly as they existed at the specified point in time.  Only those packages are available to your session, thereby avoiding any package updates that came later and may have altered your results. In this way, anyone using the `use_checkpoint` function can ensure the reproducibility of your scripts or projects at any time. The `checkpoint` function serves as a simple umbrella interface to these functions. It first tests if the checkpoint exists, creates it if necessary with `create_checkpoint`, and then calls `use_checkpoint`.
 #'
-#' `checkpoint()` creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
+#' @param snapshot_date Date of snapshot to use in `YYYY-MM-DD` format, e.g. `"2020-01-01"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN, use [`list_mran_snapshots`].
 #'
-#' To automatically determine all packages used in your project, the function scans all R code (`.R`, `.Rmd`, and `.Rpres` files) for [library()] and [require()] statements. In addition, scans for occurrences of code that accesses functions in namespaces using `package[::]foo()` and `package[:::]foo()`. Finally, any occurrences of the functions [methods::setClass], [methods::setRefClass], [methods::setMethod] or [methods::setGeneric] will also identify the `methods` package as a dependency.
+#' @param r_version Optional character string, e.g. `"3.6.2"`. If specified, this is compared to the current [`R.version`], and if they differ, a warning is issued. The benefit of supplying this argument is that checkpoint can alert you when your R version changes while you are working on a project; this can just as easily lead to reproducibility issues as changes in third-party code. Consider supplying an explicit value for this argument, although checkpoint will still function without it.
 #'
-#' Specifically, the function will:
+#' @param checkpoint_location File path where the checkpoint library is stored.  Default is `"~"`, i.e. your home directory. Use cases for changing this include creating a checkpoint library on a portable drive (e.g. USB drive), or creating per-project checkpoints. The actual checkpoints will be created under a `.checkpoint` directory at this location.
 #'
-#' * Create a new local snapshot library to install packages.  By default this library folder is at `~/.checkpoint` but you can modify the path using the `checkpointLocation` argument.
-#' * Update the options for your CRAN mirror and point to an MRAN snapshot using [options]`(repos)`
-#' * Scan your project folder for all required packages and install them from the snapshot using [utils::install.packages()]
+#' @param project_dir A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`. Defaults to the current working directory.
 #'
-#' @section Resetting the checkpoint:
-#' 
-#' To reset the checkpoint, simply restart your R session.
-#' 
-#' You can also use the experimental function [unCheckpoint()]
-#' 
-#' @section Changing the default MRAN url:
-#' 
-#' By default, `checkpoint()` uses https to download packages. The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
-#' 
-#' You can modify the default URL. To change the URL, use `options(checkpoint.mranUrl = ...)`.
-#' 
-#' @section Log file:
-#' 
-#' As a side effect, the `checkpoint` function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the `checkpointLocation`. For example, if `checkpointLocation` is the user home folder (the default) then the log file is at `~/.checkpoint/checkpoint_log.csv`. This file contains columns for:
-#' 
-#' * `timestamp`
-#' * `snapshotDate`
-#' * `pkg`
-#' * `bytes`
-#' 
+#' @param mran_url The base MRAN URL. The default is taken from the system option `checkpoint.mranUrl`, or if this is unset, `https://mran.microsoft.com`. Currently checkpoint 1.0 does not support local MRAN mirrors.
+#'
+#' @param scan_now If `TRUE`, scans for packages in the project folder (see 'Details'). If `FALSE`, skips the scanning process. Set this to `FALSE` if you only want to create the checkpoint subdirectory structure.
+#'
+#' @param scan_r_only If `TRUE`, limits the scanning of project files to R scripts only (those with the extension ".R").
+#'
+#' @param scan_rnw_with_knitr If `TRUE`, scans Sweave files (those with extension ".Rnw") with [`knitr::knitr`], otherwise with [`utils::Stangle`]. Ignored if `scan_r_only=TRUE`.
+#'
+#' @param scan_rprofile if `TRUE`, includes the `~/.Rprofile` startup file in the scan. See [Startup].
+#'
+#' @param force If `TRUE`, suppresses the confirmation prompt if `create_checkpoint` is run with project directory set to the user home directory.
+#'
+#' @param log If `TRUE`, writes logging information (mostly the output from the methods of [`pkgdepends::pkg_installation_proposal`]) to the checkpoint directory.
+#'
+#' @param num_workers The number of parallel workers to use for installing packages. Defaults to the value of the system option `Ncpus`, or if this is unset, 1.
+#'
+#' @param config Further configuration parameters to pass to [`pkgdepends::new_pkg_installation_proposal`]; possible parameters are listed at [`pkgdepends::pkg_config`]. Note that `create_checkpoint` will automatically pass the cran-mirror, library and r-version parameters, which are taken from the other arguments above.
+#'
+#' @param ... For `checkpoint`, further arguments to pass to `create_checkpoint` and `use_checkpoint`. Ignored for `create_checkpoint` and `use_checkpoint`.
+#'
+#' @param confirm For `delete_checkpoint` and `delete_all_checkpoints`, whether to ask for confirmation first.
+#'
+#' @param prepend If `TRUE`, adds the checkpoint directory to the beginning of the library search path. The default is `FALSE`, where the checkpoint directory replaces all but the system entries (the values of `.Library` and `.Library.site`) in the search path; this is to reduce the chances of accidentally calling non-checkpointed code. See [`.libPaths`].
+#'
+#' @details
+#'
+#' `create_checkpoint` creates a local library (by default, located under your home directory) into which it installs copies of the packages required by your project as they existed on CRAN on the specified snapshot date. To determine the packages used in your project, the function scans all R code (`.R`, `.Rmd`, `.Rnw`, `.Rhtml` and `.Rpres` files) for [`library`] and [`require`] statements, as well as the namespacing operators `::` and `:::`.
+#'
+#' `create_checkpoint` will automatically add the `rmarkdown` package as a dependency if it finds any Rmarkdown-based files (those with extension `.Rmd`, `.Rpres` or `.Rhtml`) in your project. This allows you to continue working with such documents after checkpointing.
+#'
+#' Checkpoint only installs packages that can be found on CRAN. This includes third-party packages, as well as those distributed as part of R that have the "Recommends" priority. Base-priority packages (the workhorse engine of R, including utils, graphics, methods and so forth) are not checkpointed (but see the `r_version` argument above).
+#'
+#' The package installation is carried out via the [pkgdepends] package, which has many features including cached downloads, parallel installs, and comprehensive reporting of outcomes. It also solves many problems that previous versions of checkpoint struggled with, such as being able to install packages that are in use, and reliably detecting the outcome of the installation process.
+#'
+#' `use_checkpoint` modifies your R session to use only the packages installed by `create_checkpoint`. Specifically, it changes your library search path via `.libPaths()` to point to the checkpointed library, and then calls [`use_mran_snapshot`] to set the CRAN mirror for the session.
+#'
+#' `checkpoint` is a convenience function that calls `create_checkpoint` if the checkpoint directory does not exist, and then `use_checkpoint`.
+#'
+#' `delete_checkpoint` deletes a checkpoint, after ensuring that it is no longer in use. `delete_all_checkpoints` deletes _all_ checkpoints under the given checkpoint location.
+#'
+#' `uncheckpoint` is the reverse of `use_checkpoint`. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling `delete_checkpoint` and `delete_all_checkpoints`.
+#'
 #' @section Last accessed date:
-#' 
-#' The [checkpoint()] function stores a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.  See also [getAccessDate()]. To remove snapshots that have not been used since a given date, use [checkpointRemove()]
 #'
-#' @param snapshotDate Date of snapshot to use in `YYYY-MM-DD` format, e.g. `"2014-09-17"`.  Specify a date on or after `"2014-09-17"`.  MRAN takes one snapshot per day. To list all valid snapshot dates on MRAN use [getValidSnapshots()]
+#' The `create_checkpoint` and `use_checkpoint` functions store a marker in the snapshot folder every time the function gets called. This marker contains the system date, thus indicating the the last time the snapshot was accessed.
 #'
-#' @param project A project path.  This is the path to the root of the project that references the packages to be installed from the MRAN snapshot for the date specified for `snapshotDate`.  Defaults to current working directory using [getwd()].
+#' @return
+#' These functions are run mostly for their side-effects; however `create_checkpoint` invisibly returns an object of class `pkgdepends::pkg_installation_proposal` if `scan_now=TRUE`, and `NULL` otherwise. `checkpoint` returns the result of `create_checkpoint` if the checkpoint had to be created, otherwise `NULL`.
 #'
-#' @param R.version Optional character string, e.g. `"3.1.2"`.  If specified, compares the current [R.version] to the specified R.version. If these differ, stops processing with an error, making no changes to the system. Specifically, if the check fails, the library path is NOT modified. This argument allows the original script author to specify a specific version of R to obtain the desired results.
-#'
-#' @param scanForPackages If `TRUE`, scans for packages in project folder (see details). If FALSE, skips the scanning process.  A use case for `scanForPackages = FALSE` is to skip the scanning and installation process, e.g. in production environments with a large number of R scripts in the project.  Only set `scanForPackages = FALSE` if you are certain that all package dependencies are already in the checkpoint folder.
-#'
-#' @param checkpointLocation File path where the checkpoint library is stored.  Default is `"~/"`, i.e. the user's home directory. A use case for changing this is to create a checkpoint library on a portable drive (e.g. USB drive).
-#'
-#' @param use.knitr If `TRUE`,  parses all `Rmarkdown` files using the `knitr` package.
-#' 
-#' @param auto.install.knitr If `TRUE` and the project contains rmarkdown files, then automatically included the packages `knitr` in packages to install.
-#' 
-#' @param scan.rnw.with.knitr If `TRUE`, uses [knitr::knit()] to parse `.Rnw` files, otherwise use [utils::Sweave()]
-#'
-#' @param verbose If `TRUE`, displays progress messages.
-#' 
-#' @param forceInstall If `TRUE`, forces the re-installation of all discovered packages and their dependencies. This is useful if, for some reason, the checkpoint archive becomes corrupted.
-#'
-#' @param forceProject If `TRUE`, forces the checkpoint process, even if the provided project folder doesn't look like an R project. A commonly reported user problem is that they accidentally trigger the checkpoint process from their home folder, resulting in scanning many R files and downloading many packages. To prevent this, we use a heuristic to determine if the project folder looks like an R project. If the project folder is the home folder, and also contains no R files, then `checkpoint()` asks for confirmation to continue.
-#'
-#' @param use.lock if `FALSE`, sets the `--no-lock` argument to `R CMD INSTALL`.
-#'
-#' @return Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
-#' * `files_not_scanned`
-#' * `pkgs_found`
-#' * `pkgs_not_on_mran`
-#' * `pkgs_installed`
-#' 
-#'
+#' @rdname checkpoint
 #' @export
-#' 
 #' @family checkpoint functions
-#'
-#' @example /inst/examples/example_checkpoint.R
-#'
-#' @importFrom utils install.packages
-
-checkpoint <- function(snapshotDate, project = getwd(),
-                       R.version, 
-                       scanForPackages = TRUE,
-                       checkpointLocation = "~/",
-                       verbose=TRUE,
-                       use.knitr, 
-                       auto.install.knitr = TRUE,
-                       scan.rnw.with.knitr = FALSE,
-                       forceInstall = FALSE, 
-                       forceProject = FALSE,
-                       use.lock = TRUE) {
-  
-  if(interactive()) validateProjectFolder(project)
-  
-  # Perform validation on dates
-  stopIfInvalidDate(snapshotDate, online = scanForPackages)
-  if(!scanForPackages){
-    mssg(verbose, "Skipping package scanning")
-    if(!snapshotDate %in% localSnapshots(checkpointLocation = checkpointLocation))
-      stop("Local snapshot location does not exist")
-  }
-  
-  if(missing(use.knitr) || is.null(use.knitr)) {
-    use.knitr <- knitr.is.installed()
-  }
-  
-  # Enforce R version, if not missing
-  if(!missing("R.version") && !is.null(R.version)){
-    if(!correctR(as.character(R.version))){
-      message <- sprintf(
-        "Specified R.version %s does not match current R (%s)",
-        R.version, utils::packageVersion("base"))
-      mssg(verbose, message)
-      mssg(verbose, "Terminating checkpoint")
-      mssg(verbose, "---")
-      stop(message)
-    }
-  }
-  
-  fixRstudioBug()
-  
-  
-  # Create checkpoint folders
-  authorizeFileSystemUse(checkpointLocation)
-  if(!createFolders(snapshotDate = snapshotDate, 
-                    checkpointLocation = checkpointLocation))
-    stop("Unable to create checkpoint folders at checkpointLocation = \"",
-         checkpointLocation, "\"")
-  
-  # Set URLs
-  mran <- mranUrl()
-  snapshoturl <- getSnapshotUrl(snapshotDate = snapshotDate, online = scanForPackages)
-  
-  # Set library paths
-  compiler.path <- system.file(package = "compiler", lib.loc = .Library[1])
-  
-  libPath <- checkpointPath(snapshotDate, type = "lib", 
-                            checkpointLocation = checkpointLocation)
-  installMissingBasePackages(checkpointLocation = checkpointLocation)
-  
-  # Set lib path
-  setLibPaths(checkpointLocation = checkpointLocation, libPath = libPath)
-  
-  # Scan for packages used
-  exclude.packages = c(
-    # this very package
-    "checkpoint", 
-    # all base priority packages, not on CRAN or MRAN
-    c("base", "compiler", "datasets", "graphics", "grDevices", "grid",
-      "methods", "parallel", "splines", "stats", "stats4", "tcltk",
-      "tools", "utils")
-  )  
-  packages.installed <- unname(utils::installed.packages(.libPaths()[1:2], noCache = TRUE)[, "Package"])
-  
-  if(isTRUE(scanForPackages)){
-    mssg(verbose, "Scanning for packages used in this project")
-    pkgs <- scanForPackages(project, use.knitr = use.knitr, 
-                            scan.rnw.with.knitr = scan.rnw.with.knitr,
-                            auto.install.knitr = auto.install.knitr,
-                            verbose = verbose
-    )
-    packages.detected <- pkgs[["pkgs"]]
-    mssg(verbose, "- Discovered ", length(packages.detected), " packages")
-    
-    if(length(pkgs[["error"]]) > 0){
-      files.not.parsed <- pkgs[["error"]]
-      mssg(verbose, "Unable to parse ", length(pkgs[["error"]]), " files:")
-      for(file in files.not.parsed)  mssg(verbose, "- ", file)
-    } else {
-      files.not.parsed <- character(0)
-    }
-  } else {
-    packages.detected <- character(0)
-    files.not.parsed <- character(0)
-  }
-  
-  if(forceInstall && length(packages.detected) > 0){
-    mssg(verbose, "Removing packages to force re-install")
-    to_remove <- as.vector(unlist(
-      tools::package_dependencies(packages.detected, db = available.packages())
-    ))
-    to_remove <- c(packages.detected, to_remove)
-    to_remove <- setdiff(to_remove, "checkpoint")
-    tryCatch(
-      suppressMessages(suppressWarnings(
-        utils::remove.packages(to_remove)
-      )),
-      error = function(e)e
-    )
-    packages.to.install <- setdiff(packages.detected, "checkpoint")
-    packages.installed <- character(0)
-  } else {
-    packages.to.install <- setdiff(packages.detected, c(packages.installed, exclude.packages))
-  }
-  
-  # Detach checkpointed pkgs already loaded
-  packages.in.search <- findInSearchPath(packages.to.install)
-  detachFromSearchPath(packages.in.search)
-  
-  # Check if packages are available in snapshot
-  if(length(packages.to.install) > 0) {
-    # set repos
-    setMranMirror(snapshotUrl = snapshoturl)
-    not.available <- !packages.to.install %in% available.packages()[, "Package"]
-    if(sum(not.available) > 0){
-      mssg(verbose, 
-           "Packages not available in repository and won't be installed:")
-      for(pkg in packages.to.install[not.available]) mssg(verbose, " - ", pkg)
-      packages.to.install <- packages.to.install[!not.available]
-    }
-  } else {
-    not.available <- character(0)
-  }
-  
-  # Install missing packages
-  if(length(packages.to.install) > 0) {
-    mssg(verbose, "Installing packages used in this project ")
-    for(pkg in packages.to.install){
-      if(length(find.package(pkg, lib.loc = .libPaths()[1:2], quiet = TRUE)) > 0) {
-        mssg(verbose, " - Previously installed ", sQuote(pkg))
-      } else {
-        mssg(verbose, " - Installing ", sQuote(pkg))
-        mssg(verbose, pkg)
-        download_messages <- capture.output({ 
-          install.packages(pkgs = pkg, verbose = FALSE, 
-                           quiet = FALSE,
-                           INSTALL_opts = if(use.lock) "" else "--no-lock")  # --no-lock fails on R-devel
-        }, type = "message")
-        checkpoint_log(
-          download_messages,
-          snapshotDate = snapshotDate,
-          pkg,
-          file = file.path(
-            checkpointPath(snapshotDate, checkpointLocation, type = "root"),
-            "checkpoint_log.csv")
-        )
-      }
-    }
-  } else if(length(packages.detected) > 0){
-    mssg(verbose, "All detected packages already installed")
-  } else {
-    if(isTRUE(scanForPackages)) mssg(verbose, "No packages found to install")
-  }
-  
-  # Reload detached packages
-  if(length(packages.in.search) > 0){
-    lapply(packages.in.search, library, character.only = TRUE, quietly = TRUE)
-  }
-  
-  # Set last accessed date
-  setAccessDate(snapshotDate = snapshotDate, 
-                checkpointLocation = checkpointLocation)
-  
-  # All done
-  mssg(verbose, "checkpoint process complete")
-  mssg(verbose, "---")
-  
-  z <- list(
-    files_not_scanned = files.not.parsed,
-    pkgs_found = packages.detected,
-    pkgs_not_on_mran = names(not.available)[not.available],
-    pkgs_installed = packages.to.install
-  )
-  invisible(z)
+#' @example /inst/examples/example_checkpoint.Rex
+checkpoint <- function(snapshot_date,
+                       r_version=getRversion(),
+                       checkpoint_location="~",
+                       ...
+                      )
+{
+    inst <- NULL
+    libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+    if(!dir.exists(libdir))
+        inst <- create_checkpoint(snapshot_date, r_version, checkpoint_location, ...)
+    if(dir.exists(libdir))
+        use_checkpoint(snapshot_date, r_version, checkpoint_location, ...)
+    invisible(inst)
 }
 
+#' @rdname checkpoint
+#' @export
+create_checkpoint <- function(snapshot_date,
+                              r_version=getRversion(),
+                              checkpoint_location="~",
+                              project_dir=".",
+                              mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
+                              scan_now=TRUE,
+                              scan_r_only=FALSE,
+                              scan_rnw_with_knitr=TRUE,
+                              scan_rprofile=TRUE,
+                              force=FALSE,
+                              log=TRUE,
+                              num_workers=getOption("Ncpus", 1),
+                              config=list(),
+                              ...
+                             )
+{
+    if(package_version(r_version) != getRversion())
+        warning("Specified R version not the same as current R version")
+
+    # sanity check if run in home dir
+    msg <- paste(
+        "Running create_checkpoint in the home directory may result",
+        "in checkpointing very many packages. Continue? (Y/n) ",
+        sep="\n"
+    )
+    if(!force &&
+       interactive() &&
+       normalizePath(project_dir, "/", mustWork=FALSE) == normalizePath("~", "/") &&
+       !get_confirmation(msg))
+        return(invisible(NULL))
+
+    # create checkpoint dir
+    snapshot_date <- verify_date(snapshot_date)
+    create_checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+
+    if(!scan_now)
+        return(invisible(NULL))
+
+    # scan files
+    dep_list <- scan_project_files(project_dir, scan_r_only, scan_rnw_with_knitr, scan_rprofile)
+    if(length(dep_list$pkgs) == 0)
+    {
+        warning("No package dependencies found", call.=FALSE)
+        return(invisible(NULL))
+    }
+
+    # install packages
+    inst <- install_pkgs(dep_list$pkgs, snapshot_date, checkpoint_location, mran_url, r_version, log, num_workers,
+                         config)
+
+    set_access_date(snapshot_date, checkpoint_location)
+    invisible(inst)
+}
+
+#' @rdname checkpoint
+#' @export
+use_checkpoint <- function(snapshot_date,
+                           r_version=getRversion(),
+                           checkpoint_location="~",
+                           mran_url=getOption("checkpoint.mranUrl", "https://mran.microsoft.com"),
+                           prepend=FALSE,
+                           ...
+                          )
+{
+    if(package_version(r_version) != getRversion())
+        warning("Specified R version not the same as current R version")
+
+    libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+    message("Using checkpoint directory ", libdir)
+    if(!dir.exists(libdir))
+        stop("Directory not found", call.=FALSE)
+
+    set_access_date(snapshot_date, checkpoint_location)
+    if(prepend)
+        .libPaths(c(libdir, .libPaths()))
+    else .libPaths(libdir)
+    use_mran_snapshot(snapshot_date, mran_url)
+    invisible(NULL)
+}
+
+#' @rdname checkpoint
+#' @export
+delete_checkpoint <- function(snapshot_date, r_version=getRversion(), checkpoint_location="~", confirm=TRUE)
+{
+    libdir <- checkpoint_dir(snapshot_date, checkpoint_location, r_version)
+
+    msg <- paste("Are you sure you want to delete checkpoint directory", libdir, "(y/N)? ")
+    if(confirm && interactive() && !get_confirmation(msg, FALSE))
+        return(invisible(NULL))
+
+    # stop if checkpoint in use
+    if(libdir %in% .libPaths())
+        stop("Cannot delete checkpoint while in use, call uncheckpoint() first", call.=FALSE)
+    unlink(libdir, recursive=TRUE)
+}
+
+#' @rdname checkpoint
+#' @export
+delete_all_checkpoints <- function(checkpoint_location="~", confirm=TRUE)
+{
+    msg <- paste("Are you sure you want to delete all checkpoints under",
+                 normalizePath(file.path(checkpoint_location, ".checkpoint"), "/", FALSE),
+                 "(y/N)? ")
+    if(confirm && interactive() && !get_confirmation(msg, FALSE))
+        return(invisible(NULL))
+
+    checkpoint_root <- normalizePath(file.path(checkpoint_location, ".checkpoint"), winslash="/", mustWork=FALSE)
+    if(any(grepl(checkpoint_root, .libPaths(), fixed=TRUE)))
+        stop("Cannot delete checkpoint while in use, call uncheckpoint() first", call.=FALSE)
+    unlink(checkpoint_root, recursive=TRUE)
+}
+
+#' @rdname checkpoint
+#' @export
+uncheckpoint <- function()
+{
+    options(repos=.checkpoint$old_repos)
+    .libPaths(.checkpoint$old_libpath)
+    invisible(NULL)
+}
 

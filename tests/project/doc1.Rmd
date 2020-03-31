@@ -1,0 +1,14 @@
+---
+title: "Test document"
+output: html_document
+---
+
+# Header
+
+Text.
+
+```{r}
+require(magrittr)
+
+pi %>% base::sin
+```
