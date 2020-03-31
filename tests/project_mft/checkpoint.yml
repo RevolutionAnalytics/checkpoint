@@ -2,3 +2,4 @@ refs:
     - github::RevolutionAnalytics/checkpoint@testpkg
 exclude:
     - dummypkg
+    - testpkg
