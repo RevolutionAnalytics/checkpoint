@@ -18,5 +18,5 @@ test_that("Scanning R+Rmd works",
 test_that("Scanning with manifest works",
 {
     expect_is(res <- scan_project_files("../project_mft", scan_r_only=TRUE, scan_rprofile=FALSE), "list")
-    expect_identical(res$pkg, c("rlang", "darts", "testpkg", "github::RevolutionAnalytics/checkpoint@testpkg"))
+    expect_identical(res$pkg, c("rlang", "darts", "github::RevolutionAnalytics/checkpoint@testpkg"))
 })
