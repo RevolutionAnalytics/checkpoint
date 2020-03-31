@@ -29,11 +29,11 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-      - name: Cache R packages
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION') }}
+      # - name: Cache R packages
+      #   uses: actions/cache@v1
+      #   with:
+      #     path: ${{ env.R_LIBS_USER }}
+      #     key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('DESCRIPTION') }}
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
