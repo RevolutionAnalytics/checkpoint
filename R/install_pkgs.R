@@ -18,6 +18,7 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
     withr::with_options(list(Ncpus=num_workers, repos=NULL),
     {
         inst <- pkgdepends::new_pkg_installation_proposal(pkgs, config=config, ...)
+        write_checkpoint_log(inst$get_refs(), "refs", checkpoint_location, logtime, log)
         write_checkpoint_log(inst$get_config(), "config", checkpoint_location, logtime, log)
 
         inst$resolve()
@@ -47,7 +48,6 @@ write_checkpoint_log <- function(object, name, checkpoint_location, logtime, do_
     logtime <- strftime(logtime, "%Y%m%d_%H%M%S")
     name <- paste0(logtime, "_", name, ".json")
     pathname <- file.path(checkpoint_location, ".checkpoint", name)
-    # workaround for condition objects appearing in results while pkgdepends in beta
     object <- rm_conditions(object)
 
     writeLines(jsonlite::toJSON(object, auto_unbox=TRUE, pretty=TRUE, null="null", force=TRUE), pathname)
@@ -65,7 +65,7 @@ warn_for_install_error <- function(install_result)
     NULL
 }
 
-# workaround for condition objects appearing in results while pkgdepends in beta
+# remove condition objects in results before logging
 rm_conditions <- function(x)
 {
     x[] <- if(!is.list(x))
