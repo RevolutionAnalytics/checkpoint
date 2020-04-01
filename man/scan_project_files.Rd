@@ -29,7 +29,7 @@ In addition, if any Rmarkdown files are found, the package listing will include 
 This function scans the R files in your project, including scripts, Sweave documents and Rmarkdown-based files, for references to packages.
 }
 \details{
-\code{scan_project_files} recursively builds a list of all the R files in your project. This includes regular R scripts, as well as Sweave files (those with extension \code{.Rnw}) and Rmarkdown-based files (those with extension \code{.Rmd}, \code{.Rpres} or \code{Rhtml}). It then parses the code in each file and looks for calls to \code{library} and \code{require}, as well as the namespacing operators \code{::} and \code{:::}.
+\code{scan_project_files} recursively builds a list of all the R files in your project. This includes regular R scripts, as well as Sweave files (those with extension \code{.Rnw}) and Rmarkdown-based files (those with extension \code{.Rmd}, \code{.Rpres} or \code{Rhtml}). It then parses the code in each file and looks for calls to \code{library} and \code{require}, as well as the namespacing operators \code{::} and \code{:::}. The detected packages are assumed to be available from CRAN/MRAN.
 }
 \section{Manifest}{
 

@@ -11,7 +11,7 @@
 #' @param scan_rprofile if `TRUE`, includes the `~/.Rprofile` startup file in the scan. See [`Startup`].
 #'
 #' @details
-#' `scan_project_files` recursively builds a list of all the R files in your project. This includes regular R scripts, as well as Sweave files (those with extension `.Rnw`) and Rmarkdown-based files (those with extension `.Rmd`, `.Rpres` or `Rhtml`). It then parses the code in each file and looks for calls to `library` and `require`, as well as the namespacing operators `::` and `:::`.
+#' `scan_project_files` recursively builds a list of all the R files in your project. This includes regular R scripts, as well as Sweave files (those with extension `.Rnw`) and Rmarkdown-based files (those with extension `.Rmd`, `.Rpres` or `Rhtml`). It then parses the code in each file and looks for calls to `library` and `require`, as well as the namespacing operators `::` and `:::`. The detected packages are assumed to be available from CRAN/MRAN.
 #'
 #' @section Manifest:
 #'
