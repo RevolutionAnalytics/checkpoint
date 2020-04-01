@@ -3,6 +3,10 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
     if(length(pkgs) == 0)
         return()
 
+    # treat unadorned pkgnames as coming from CRAN (not BioConductor)
+    is_pkgname <- grepl("^[a-zA-Z][a-zA-Z0-9.]*[a-zA-Z0-9]$", pkgs)
+    pkgs[is_pkgname] <- paste0("cran::", pkgs[is_pkgname])
+
     config <- utils::modifyList(list(
         `cran-mirror`=snapshot_url(mran_url, snapshot_date),
         library=checkpoint_dir(snapshot_date, checkpoint_location, r_version),
@@ -55,6 +59,7 @@ warn_for_install_error <- function(install_result)
 
     success <- sapply(install_result$error, is_empty) & sapply(install_result$download_error, is_empty)
     if(!all(success))
-        warning("Some packages failed to install:\n ", paste(install_result$package[!success], sep=" "), call.=FALSE)
+        warning("Some packages failed to install:\n ", paste(install_result$package[!success], collapse=" "),
+                call.=FALSE)
     NULL
 }
