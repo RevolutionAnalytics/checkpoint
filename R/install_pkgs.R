@@ -39,7 +39,6 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
     inst
 }
 
-
 write_checkpoint_log <- function(object, name, checkpoint_location, logtime, do_logging)
 {
     if(!do_logging)
@@ -48,10 +47,12 @@ write_checkpoint_log <- function(object, name, checkpoint_location, logtime, do_
     logtime <- strftime(logtime, "%Y%m%d_%H%M%S")
     name <- paste0(logtime, "_", name, ".json")
     pathname <- file.path(checkpoint_location, ".checkpoint", name)
+    # workaround for condition objects appearing in results while pkgdepends in beta
+    object <- rm_conditions(object)
+
     writeLines(jsonlite::toJSON(object, auto_unbox=TRUE, pretty=TRUE, null="null", force=TRUE), pathname)
     invisible(object)
 }
-
 
 warn_for_install_error <- function(install_result)
 {
@@ -62,4 +63,17 @@ warn_for_install_error <- function(install_result)
         warning("Some packages failed to install:\n ", paste(install_result$package[!success], collapse=" "),
                 call.=FALSE)
     NULL
+}
+
+# workaround for condition objects appearing in results while pkgdepends in beta
+rm_conditions <- function(x)
+{
+    x[] <- if(!is.list(x))
+        x
+    else if(inherits(x, "condition"))
+        "<error>"
+    else if(is.recursive(x))
+        lapply(x, rm_conditions)
+    else x
+    x
 }
