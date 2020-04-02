@@ -19,7 +19,7 @@ specific snapshot date. In other words, `checkpoint` makes it possible
 to install package versions from a specific date in the past, as if you
 had a CRAN time machine.
 
-Version 1.0 of checkpoint is a **major refactoring/rewrite**, aimed at resolving many long-standing issues. You can provide feedback by [opening an issue](issues) or by [contacting me](mailto::hongooi@microsoft.com).
+Version 1.0 of checkpoint is a **major refactoring/rewrite**, aimed at resolving many long-standing issues. You can provide feedback by [opening an issue](https://github.com/RevolutionAnalytics/checkpoint/issues) or by [contacting me](mailto:hongooi@microsoft.com).
 
 ### Checkpoint Features
 
