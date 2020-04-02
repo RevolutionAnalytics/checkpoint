@@ -19,6 +19,8 @@ specific snapshot date. In other words, `checkpoint` makes it possible
 to install package versions from a specific date in the past, as if you
 had a CRAN time machine.
 
+Version 1.0 of checkpoint is a **major refactoring/rewrite**, aimed at resolving many long-standing issues. You can provide feedback by [opening an issue](https://github.com/RevolutionAnalytics/checkpoint/issues) or by [contacting me](mailto:hongooi@microsoft.com).
+
 ### Checkpoint Features
 
 With the `checkpoint` package, you can easily:
@@ -50,7 +52,7 @@ The `create_checkpoint` function
 The `use_checkpoint` function
 
 - Sets the CRAN mirror for your R session to point to a MRAN snapshot, i.e. modifies `options(repos)`
-- Sets your library search path to point to the folder created by `create_checkpoint`, i.e. modifies (`.libPaths()`)
+- Sets your library search path to point to the folder created by `create_checkpoint`, i.e. modifies `.libPaths()`
 
 This means the remainder of your script will run with the packages from your specified date.
 
@@ -105,12 +107,13 @@ The functions `delete_checkpoint()` and `delete_all_checkpoints()` allow you to 
 
 Each time `create_checkpoint()` is run, it saves a series of json files in the main checkpoint directory. These are outputs from the `pkgdepends` package, which `checkpoint` uses to perform the actual package installation, and can help you debug any problems that may occur.
 
-1. `<date>_<time>_config.json`: Configuration parameters for the checkpoint
-2. `<date>_<time>_resolution.json`: Dependency resolution result
-3. `<date>_<time>_solution.json`: Solution to package dependencies
-4. `<date>_<time>_downloads.json`: Download result
-5. `<date>_<time>_install_plan.json`: Package install plan
-6. `<date>_<time>_installs.json`: Final installation result
+1. `<date>_<time>_refs.json`: Packages to be installed into the checkpoint
+2. `<date>_<time>_config.json`: Configuration parameters for the checkpoint
+3. `<date>_<time>_resolution.json`: Dependency resolution result
+4. `<date>_<time>_solution.json`: Solution to package dependencies
+5. `<date>_<time>_downloads.json`: Download result
+6. `<date>_<time>_install_plan.json`: Package install plan
+7. `<date>_<time>_installs.json`: Final installation result
 
 For more information, see the help for `pkgdepends::pkg_installation_proposal`.
 
