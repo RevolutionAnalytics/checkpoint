@@ -3,7 +3,7 @@ context("Checkpointing from source")
 skip_on_cran()
 
 os <- Sys.info()["sysname"]
-if(!(os %in% c("Windows", "Darwin"))) skip("Skipping source checkpointing tests, not on Windows/MacOS")
+if(!(os %in% c("Windows"))) skip("Skipping source checkpointing tests, not on Windows")
 
 mran <- getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
 snapshot <- "2018-01-01"
@@ -25,4 +25,11 @@ test_that("Checkpointing from source works",
     expect_is(inst, "pkg_installation_proposal")
     checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, getRversion())
     expect_true(dir.exists(checkpoint_dir))
+})
+
+
+teardown({
+    unlink(checkpoint_loc, recursive=TRUE)
+    options(repos=repos)
+    .libPaths(libs)
 })
