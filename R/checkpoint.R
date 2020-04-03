@@ -29,7 +29,7 @@
 #'
 #' @param num_workers The number of parallel workers to use for installing packages. Defaults to the value of the system option `Ncpus`, or if this is unset, 1.
 #'
-#' @param config Further configuration parameters to pass to [`pkgdepends::new_pkg_installation_proposal`]; possible parameters are listed at [`pkgdepends::pkg_config`]. Note that `create_checkpoint` will automatically pass the cran-mirror, library and r-version parameters, which are taken from the other arguments above.
+#' @param config A named list of additional configuration options to pass to [`pkgdepends::new_pkg_installation_proposal`]. See 'Configuration' below.
 #'
 #' @param ... For `checkpoint`, further arguments to pass to `create_checkpoint` and `use_checkpoint`. Ignored for `create_checkpoint` and `use_checkpoint`.
 #'
@@ -54,6 +54,12 @@
 #' `delete_checkpoint` deletes a checkpoint, after ensuring that it is no longer in use. `delete_all_checkpoints` deletes _all_ checkpoints under the given checkpoint location.
 #'
 #' `uncheckpoint` is the reverse of `use_checkpoint`. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling `delete_checkpoint` and `delete_all_checkpoints`.
+#'
+#' @section Configuration:
+#'
+#' The pkgdepends package which powers checkpoint allows you to customise the installation process via a list of configuration options. When creating a checkpoint, you can pass these options to pkgdepends via the `config` argument. A full list of options can be found at [`pkgdepends::pkg_config`]; note that `create_checkpoint` automatically sets the values of `cran-mirror`, `library` and `r-version`.
+#'
+#' One important use case for the `config` argument is when you are using Windows or MacOS, and the snapshot date does not include binary packages for your version of R. This can occur if either your version of R is too old, or the snapshot date is too far in the past. In this case, you should specify `config=list(platforms="source")` to get checkpoint to download the _source_ packages instead (and then compile them locally). Note that if your packages include C, C++ or Fortran code, you will need to have the requisite compilers installed on your machine.
 #'
 #' @section Last accessed date:
 #'

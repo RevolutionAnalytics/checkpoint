@@ -80,7 +80,7 @@ uncheckpoint()
 
 \item{num_workers}{The number of parallel workers to use for installing packages. Defaults to the value of the system option \code{Ncpus}, or if this is unset, 1.}
 
-\item{config}{Further configuration parameters to pass to \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}; possible parameters are listed at \code{\link[pkgdepends:pkg_config]{pkgdepends::pkg_config}}. Note that \code{create_checkpoint} will automatically pass the cran-mirror, library and r-version parameters, which are taken from the other arguments above.}
+\item{config}{A named list of additional configuration options to pass to \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}. See 'Configuration' below.}
 
 \item{prepend}{If \code{TRUE}, adds the checkpoint directory to the beginning of the library search path. The default is \code{FALSE}, where the checkpoint directory replaces all but the system entries (the values of \code{.Library} and \code{.Library.site}) in the search path; this is to reduce the chances of accidentally calling non-checkpointed code. See \code{\link{.libPaths}}.}
 
@@ -111,6 +111,14 @@ The package installation is carried out via the \link{pkgdepends} package, which
 
 \code{uncheckpoint} is the reverse of \code{use_checkpoint}. It restores your library search path and CRAN mirror option to their original values, as they were before checkpoint was loaded. Call this before calling \code{delete_checkpoint} and \code{delete_all_checkpoints}.
 }
+\section{Configuration}{
+
+
+The pkgdepends package which powers checkpoint allows you to customise the installation process via a list of configuration options. When creating a checkpoint, you can pass these options to pkgdepends via the \code{config} argument. A full list of options can be found at \code{\link[pkgdepends:pkg_config]{pkgdepends::pkg_config}}; note that \code{create_checkpoint} automatically sets the values of \code{cran-mirror}, \code{library} and \code{r-version}.
+
+One important use case for the \code{config} argument is when you are using Windows or MacOS, and the snapshot date does not include binary packages for your version of R. This can occur if either your version of R is too old, or the snapshot date is too far in the past. In this case, you should specify \code{config=list(platforms="source")} to get checkpoint to download the \emph{source} packages instead (and then compile them locally). Note that if your packages include C, C++ or Fortran code, you will need to have the requisite compilers installed on your machine.
+}
+
 \section{Last accessed date}{
 
 

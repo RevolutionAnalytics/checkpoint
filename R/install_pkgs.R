@@ -7,11 +7,11 @@ install_pkgs <- function(pkgs, snapshot_date, checkpoint_location, mran_url, r_v
     is_pkgname <- grepl("^[a-zA-Z][a-zA-Z0-9.]*[a-zA-Z0-9]$", pkgs)
     pkgs[is_pkgname] <- paste0("cran::", pkgs[is_pkgname])
 
-    config <- utils::modifyList(list(
+    config <- utils::modifyList(config, list(
         `cran-mirror`=snapshot_url(mran_url, snapshot_date),
         library=checkpoint_dir(snapshot_date, checkpoint_location, r_version),
         `r-versions`=as.character(r_version)
-    ), config)
+    ))
 
     logtime <- Sys.time()
 
