@@ -3,7 +3,7 @@ context("Checkpointing from source")
 skip_on_cran()
 
 os <- Sys.info()["sysname"]
-if(!(os %in% c("Windows"))) skip("Skipping source checkpointing tests, not on Windows")
+if(!(os %in% c("Windows", "Darwin"))) skip("Skipping source checkpointing tests, not on Windows/MacOS")
 
 mran <- getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
 snapshot <- "2018-01-01"
@@ -18,7 +18,7 @@ pkgcache::pkg_cache_delete_files()
 
 test_that("Checkpointing from source works",
 {
-    expect_error(create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project_old"))
+    #expect_error(create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project_old"))
 
     inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project_old",
                               config=list(platforms="source"))
