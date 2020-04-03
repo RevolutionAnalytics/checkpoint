@@ -25,7 +25,7 @@ test_that("Checkpointing from source works",
     #expect_is(inst, "pkg_installation_proposal")
     checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, getRversion())
     expect_true(dir.exists(checkpoint_dir))
-    expect_identical(dir(checkpoint_dir), c("_cache", "R6"))
+    expect_true(setequal(dir(checkpoint_dir), c("_cache", "R6")))
 })
 
 
