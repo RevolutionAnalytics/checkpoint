@@ -22,9 +22,10 @@ test_that("Checkpointing from source works",
 
     inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project_old",
                               config=list(platforms="source"))
-    expect_is(inst, "pkg_installation_proposal")
+    #expect_is(inst, "pkg_installation_proposal")
     checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, getRversion())
     expect_true(dir.exists(checkpoint_dir))
+    expect_identical(dir(checkpoint_dir), c("_cache", "R6"))
 })
 
 
