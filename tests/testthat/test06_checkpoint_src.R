@@ -5,7 +5,6 @@ skip_on_cran()
 os <- Sys.info()["sysname"]
 if(!(os %in% c("Windows", "Darwin"))) skip("Skipping source checkpointing tests, not on Windows/MacOS")
 
-mran <- getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
 rver <- "3.6"
 snapshot <- "2018-01-01"
 checkpoint_loc <- tempfile()
