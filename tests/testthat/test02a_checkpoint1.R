@@ -3,6 +3,7 @@ context("Checkpointing 1")
 skip_on_cran()
 
 mran <- getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
+rver <- "3.6"
 snapshot <- "2020-01-01"
 snapshot2 <- "2019-03-01"
 checkpoint_loc <- tempfile()
@@ -16,22 +17,23 @@ pkgcache::pkg_cache_delete_files()
 
 test_that("Creating checkpoint works",
 {
+    expect_false(package_version(rver) == getRversion())
     expect_true(dir.exists(checkpoint_loc))
     expect_false(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
     expect_error(expect_warning(create_checkpoint(snapshot, r_version="0.0.1",
-                                                  checkpoint_location=checkpoint_loc, scan_r_only=TRUE)))
+        checkpoint_location=checkpoint_loc, scan_r_only=TRUE)))
 
-    inst <- create_checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc,
-                              scan_now=FALSE)
+    expect_warning(inst <- create_checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc,
+        r_version=rver, scan_now=FALSE))
     expect_null(inst)
     expect_true(dir.exists(file.path(checkpoint_loc, ".checkpoint")))
 
-    checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, getRversion())
+    checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, r_version=rver)
     expect_true(dir.exists(checkpoint_dir))
 
-    inst <- create_checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc,
-                              scan_now=TRUE, scan_r_only=TRUE)
+    expect_warning(inst <- create_checkpoint(snapshot, project_dir="../project", checkpoint_location=checkpoint_loc,
+        r_version=rver, scan_now=TRUE, scan_r_only=TRUE))
     expect_is(inst, "pkg_installation_proposal")
     expect_true(length(dir(checkpoint_dir)) > 0)
 
@@ -42,10 +44,10 @@ test_that("Creating checkpoint works",
 
 test_that("Creating checkpoint with different snapshot works",
 {
-    checkpoint_dir2 <- checkpoint_dir(snapshot2, checkpoint_loc, getRversion())
+    checkpoint_dir2 <- checkpoint_dir(snapshot2, checkpoint_loc, rver)
 
-    inst <- create_checkpoint(snapshot2, project_dir="../project", checkpoint_location=checkpoint_loc,
-                              scan_now=TRUE, scan_r_only=TRUE)
+    expect_warning(inst <- create_checkpoint(snapshot2, project_dir="../project", checkpoint_location=checkpoint_loc,
+        r_version=rver, scan_now=TRUE, scan_r_only=TRUE))
     expect_is(inst, "pkg_installation_proposal")
     expect_true(length(dir(checkpoint_dir2)) > 0)
 
@@ -56,9 +58,9 @@ test_that("Creating checkpoint with different snapshot works",
 
 test_that("Using checkpoint works",
 {
-    use_checkpoint(snapshot, checkpoint_location=checkpoint_loc)
+    expect_warning(use_checkpoint(snapshot, checkpoint_location=checkpoint_loc, r_version=rver))
     expect_identical(getOption("repos")[1], c(CRAN=file.path(mran, "snapshot", snapshot)))
-    expect_identical(.libPaths()[1], checkpoint_dir(snapshot, checkpoint_loc, getRversion()))
+    expect_identical(.libPaths()[1], checkpoint_dir(snapshot, checkpoint_loc, rver))
 })
 
 
@@ -78,8 +80,8 @@ test_that("Updating checkpoint works",
     expect_false(file.exists("../project/script2.R"))
     writeLines("library(R6)", "../project/script2.R")
 
-    inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project",
-                              scan_now=TRUE, scan_r_only=TRUE)
+    expect_warning(inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, r_version=rver,
+        project_dir="../project", scan_now=TRUE, scan_r_only=TRUE))
     dl <- inst$get_downloads()
     expect_true(sum(!is.na(dl$filesize)) == 1)
 })
@@ -87,8 +89,8 @@ test_that("Updating checkpoint works",
 
 test_that("Deleting checkpoint works",
 {
-    delete_checkpoint(snapshot, checkpoint_location=checkpoint_loc, confirm=FALSE)
-    expect_false(dir.exists(checkpoint_dir(snapshot, checkpoint_loc, getRversion())))
+    delete_checkpoint(snapshot, checkpoint_location=checkpoint_loc, r_version=rver, confirm=FALSE)
+    expect_false(dir.exists(checkpoint_dir(snapshot, checkpoint_loc, rver)))
 })
 
 
