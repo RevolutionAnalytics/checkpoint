@@ -3,9 +3,9 @@ context("Checkpointing from source")
 skip_on_cran()
 
 os <- Sys.info()["sysname"]
-if(!(os %in% c("Windows"))) skip("Skipping source checkpointing tests, not on Windows")
+if(!(os %in% c("Windows", "Darwin"))) skip("Skipping source checkpointing tests, not on Windows/MacOS")
 
-mran <- getOption("checkpoint.mranUrl", "https://mran.microsoft.com")
+rver <- "3.6"
 snapshot <- "2018-01-01"
 checkpoint_loc <- tempfile()
 
@@ -18,13 +18,12 @@ pkgcache::pkg_cache_delete_files()
 
 test_that("Checkpointing from source works",
 {
-    expect_error(create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project_old"))
+    expect_warning(inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc,
+        project_dir="../project_old", r_version=rver, config=list(platforms="source")))
 
-    inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, project_dir="../project_old",
-                              config=list(platforms="source"))
-    expect_is(inst, "pkg_installation_proposal")
-    checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, getRversion())
+    checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, rver)
     expect_true(dir.exists(checkpoint_dir))
+    expect_true("R6" %in% dir(checkpoint_dir))
 })
 
 
