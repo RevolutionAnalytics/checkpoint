@@ -23,7 +23,7 @@ test_that("Checkpointing from source works",
 
     checkpoint_dir <- checkpoint_dir(snapshot, checkpoint_loc, rver)
     expect_true(dir.exists(checkpoint_dir))
-    expect_true(setequal(dir(checkpoint_dir), c("_cache", "R6")))
+    expect_true("R6" %in% dir(checkpoint_dir))
 })
 
 
