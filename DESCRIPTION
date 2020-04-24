@@ -44,5 +44,5 @@ Remotes:
     r-lib/pkgdepends
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.0.2.9000
+RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)

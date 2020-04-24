@@ -39,7 +39,7 @@ installed.packages()
 
 
 # restore initial state
-uncheckpoint_session()
+uncheckpoint()
 
 
 # delete the checkpoint
