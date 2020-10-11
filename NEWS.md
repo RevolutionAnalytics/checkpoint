@@ -1,3 +1,7 @@
+# checkpoint 0.4.10
+
+* Maintainer change (Michelle Wallig; Michelle.Wallig@microsoft.com).
+
 # checkpoint 0.4.9
 
 * Make vignettes static to avoid CRAN check issues.
