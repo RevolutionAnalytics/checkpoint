@@ -18,6 +18,10 @@ This is a **major refactoring/rewrite** of checkpoint, aimed at solving many lon
 - Remove obsolete code to handle lack of HTTPS support in ancient versions of R. (Note that the MRAN site now requires HTTPS.)
 - Other bug fixes and general tidying.
 
+# checkpoint 0.4.10
+
+* Maintainer change (Michelle Wallig; Michelle.Wallig@microsoft.com).
+
 # checkpoint 0.4.9
 
 * Make vignettes static to avoid CRAN check issues.
