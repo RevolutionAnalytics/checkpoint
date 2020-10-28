@@ -7,7 +7,7 @@
 getValidSnapshots(mranRootUrl = mranUrl())
 }
 \arguments{
-\item{mranRootUrl}{MRAN root. This can be a URL, e.g. \code{https://mran.microsoft.com/snapshot/} or the path to a local MRAN repository, e.g.\code{file:///local/path}}
+\item{mranRootUrl}{MRAN root. This can be a URL, e.g. \verb{https://mran.microsoft.com/snapshot/} or the path to a local MRAN repository, e.g.\verb{file:///local/path}}
 }
 \value{
 Character vector with dates of valid snapshots
@@ -16,9 +16,13 @@ Character vector with dates of valid snapshots
 Returns vector of available dates from MRAN or local MRAN repository.
 }
 \seealso{
-Other checkpoint functions: \code{\link{checkpointArchives}},
-  \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
-  \code{\link{getAccessDate}}, \code{\link{mranUrl}},
-  \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
+Other checkpoint functions: 
+\code{\link{checkpointArchives}()},
+\code{\link{checkpointRemove}()},
+\code{\link{checkpoint}()},
+\code{\link{getAccessDate}()},
+\code{\link{mranUrl}()},
+\code{\link{setSnapshot}()},
+\code{\link{unCheckpoint}()}
 }
 \concept{checkpoint functions}

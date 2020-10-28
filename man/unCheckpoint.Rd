@@ -15,10 +15,13 @@ This is an experimental solution to the situation where a user no longer wants t
 Note that this does not undo any of the other side-effects of \code{\link[=checkpoint]{checkpoint()}}. Specifically, all loaded packages remain loaded, and the value of \code{getOption("repos")} remains unchanged.
 }
 \seealso{
-Other checkpoint functions: \code{\link{checkpointArchives}},
-  \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
-  \code{\link{getAccessDate}},
-  \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
-  \code{\link{setSnapshot}}
+Other checkpoint functions: 
+\code{\link{checkpointArchives}()},
+\code{\link{checkpointRemove}()},
+\code{\link{checkpoint}()},
+\code{\link{getAccessDate}()},
+\code{\link{getValidSnapshots}()},
+\code{\link{mranUrl}()},
+\code{\link{setSnapshot}()}
 }
 \concept{checkpoint functions}

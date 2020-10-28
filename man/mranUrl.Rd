@@ -10,7 +10,7 @@ mranUrl()
 Character string with URL
 }
 \description{
-This function returns the current MRAN URL. The default for this is \code{http(s)://mran.microsoft.com/}, and is defined by setting the \code{checkpoint.mranUrl} option.
+This function returns the current MRAN URL. The default for this is \verb{http(s)://mran.microsoft.com/}, and is defined by setting the \code{checkpoint.mranUrl} option.
 }
 \section{Defining a new MRAN URL}{
 
@@ -39,10 +39,13 @@ options(checkpoint.mranUrl = old_opts)
 }
 }
 \seealso{
-Other checkpoint functions: \code{\link{checkpointArchives}},
-  \code{\link{checkpointRemove}}, \code{\link{checkpoint}},
-  \code{\link{getAccessDate}},
-  \code{\link{getValidSnapshots}},
-  \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
+Other checkpoint functions: 
+\code{\link{checkpointArchives}()},
+\code{\link{checkpointRemove}()},
+\code{\link{checkpoint}()},
+\code{\link{getAccessDate}()},
+\code{\link{getValidSnapshots}()},
+\code{\link{setSnapshot}()},
+\code{\link{unCheckpoint}()}
 }
 \concept{checkpoint functions}

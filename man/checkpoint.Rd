@@ -32,7 +32,7 @@ checkpoint(snapshotDate, project = getwd(), R.version,
 
 \item{forceProject}{If \code{TRUE}, forces the checkpoint process, even if the provided project folder doesn't look like an R project. A commonly reported user problem is that they accidentally trigger the checkpoint process from their home folder, resulting in scanning many R files and downloading many packages. To prevent this, we use a heuristic to determine if the project folder looks like an R project. If the project folder is the home folder, and also contains no R files, then \code{checkpoint()} asks for confirmation to continue.}
 
-\item{use.lock}{if \code{FALSE}, sets the \code{--no-lock} argument to \code{R CMD INSTALL}.}
+\item{use.lock}{if \code{FALSE}, sets the \code{--no-lock} argument to \verb{R CMD INSTALL}.}
 }
 \value{
 Checkpoint is called for its side-effects (see the details section), but invisibly returns a list with elements:
@@ -51,11 +51,11 @@ Together, the checkpoint package and the checkpoint server act as a CRAN time ma
 
 \code{checkpoint()} creates a local library into which it installs a copy of the packages required by your project as they existed on CRAN on the specified snapshot date.  Your R session is updated to use only these packages.
 
-To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link[=library]{library()}} and \code{\link[=require]{require()}} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \code{package[::]foo()} and \code{package[:::]foo()}. Finally, any occurrences of the functions \link[methods:setClass]{methods::setClass}, \link[methods:setRefClass]{methods::setRefClass}, \link[methods:setMethod]{methods::setMethod} or \link[methods:setGeneric]{methods::setGeneric} will also identify the \code{methods} package as a dependency.
+To automatically determine all packages used in your project, the function scans all R code (\code{.R}, \code{.Rmd}, and \code{.Rpres} files) for \code{\link[=library]{library()}} and \code{\link[=require]{require()}} statements. In addition, scans for occurrences of code that accesses functions in namespaces using \verb{package[::]foo()} and \verb{package[:::]foo()}. Finally, any occurrences of the functions \link[methods:setClass]{methods::setClass}, \link[methods:refClass]{methods::setRefClass}, \link[methods:setMethod]{methods::setMethod} or \link[methods:setGeneric]{methods::setGeneric} will also identify the \code{methods} package as a dependency.
 
 Specifically, the function will:
 \itemize{
-\item Create a new local snapshot library to install packages.  By default this library folder is at \code{~/.checkpoint} but you can modify the path using the \code{checkpointLocation} argument.
+\item Create a new local snapshot library to install packages.  By default this library folder is at \verb{~/.checkpoint} but you can modify the path using the \code{checkpointLocation} argument.
 \item Update the options for your CRAN mirror and point to an MRAN snapshot using \link{options}\code{(repos)}
 \item Scan your project folder for all required packages and install them from the snapshot using \code{\link[utils:install.packages]{utils::install.packages()}}
 }
@@ -72,7 +72,7 @@ You can also use the experimental function \code{\link[=unCheckpoint]{unCheckpoi
 \section{Changing the default MRAN url}{
 
 
-By default, \code{checkpoint()} uses https to download packages. The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
+By default, \code{checkpoint()} uses https to download packages. The default MRAN snapshot defaults to \url{https://cran.microsoft.com/snapshot/} in R versions 3.2.0 and later, if https support is enabled.
 
 You can modify the default URL. To change the URL, use \code{options(checkpoint.mranUrl = ...)}.
 }
@@ -80,7 +80,7 @@ You can modify the default URL. To change the URL, use \code{options(checkpoint.
 \section{Log file}{
 
 
-As a side effect, the \code{checkpoint} function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the \code{checkpointLocation}. For example, if \code{checkpointLocation} is the user home folder (the default) then the log file is at \code{~/.checkpoint/checkpoint_log.csv}. This file contains columns for:
+As a side effect, the \code{checkpoint} function writes a log file with information about the downloaded files, in particular the package downloaded and the associated file size in bytes. The log is stored at the root of the \code{checkpointLocation}. For example, if \code{checkpointLocation} is the user home folder (the default) then the log file is at \verb{~/.checkpoint/checkpoint_log.csv}. This file contains columns for:
 \itemize{
 \item \code{timestamp}
 \item \code{snapshotDate}
@@ -109,7 +109,7 @@ oldwd <- setwd(example_project)
 # Write dummy code file to project
 
 cat("library(MASS)", "library(foreach)",
-    sep="\\n",
+    sep="\n",
     file="checkpoint_example_code.R")
 
 
@@ -135,10 +135,13 @@ setwd(oldwd)
 
 }
 \seealso{
-Other checkpoint functions: \code{\link{checkpointArchives}},
-  \code{\link{checkpointRemove}},
-  \code{\link{getAccessDate}},
-  \code{\link{getValidSnapshots}}, \code{\link{mranUrl}},
-  \code{\link{setSnapshot}}, \code{\link{unCheckpoint}}
+Other checkpoint functions: 
+\code{\link{checkpointArchives}()},
+\code{\link{checkpointRemove}()},
+\code{\link{getAccessDate}()},
+\code{\link{getValidSnapshots}()},
+\code{\link{mranUrl}()},
+\code{\link{setSnapshot}()},
+\code{\link{unCheckpoint}()}
 }
 \concept{checkpoint functions}

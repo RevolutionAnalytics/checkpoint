@@ -22,7 +22,7 @@
 #' 
 #' @section Changing the default MRAN url:
 #' 
-#' By default, `checkpoint()` uses https to download packages. The default MRAN snapshot defaults to \url{https://mran.microsoft.com/snapshot} in R versions 3.2.0 and later, if https support is enabled.
+#' By default, `checkpoint()` uses https to download packages. The default MRAN snapshot defaults to \url{https://cran.microsoft.com/snapshot/} in R versions 3.2.0 and later, if https support is enabled.
 #' 
 #' You can modify the default URL. To change the URL, use `options(checkpoint.mranUrl = ...)`.
 #' 
