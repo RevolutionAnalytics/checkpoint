@@ -83,7 +83,7 @@ test_that("Updating checkpoint works",
     expect_warning(inst <- create_checkpoint(snapshot, checkpoint_location=checkpoint_loc, r_version=rver,
         project_dir="../project", scan_now=TRUE, scan_r_only=TRUE))
     dl <- inst$get_downloads()
-    expect_true(sum(!is.na(dl$filesize)) == 1)
+    expect_true(any(grepl("R6", dl$package)))
 })
 
 
