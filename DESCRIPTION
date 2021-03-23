@@ -40,8 +40,6 @@ Suggests:
     rmarkdown,
     testthat,
     darts
-Remotes:
-    r-lib/pkgdepends
 VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 7.1.0
