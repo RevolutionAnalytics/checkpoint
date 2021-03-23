@@ -1,4 +1,4 @@
-# checkpoint 0.9.9.9000 (to be 1.0.0)
+# checkpoint 1.0.0
 
 This is a **major refactoring/rewrite** of checkpoint, aimed at solving many long-standing issues.
 
