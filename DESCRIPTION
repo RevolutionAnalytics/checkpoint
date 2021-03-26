@@ -17,7 +17,8 @@ Description: The goal of checkpoint is to solve the problem of package
     archive. Snapshot archives exist starting from 2014-09-17.
 Version: 1.0.0
 Authors@R: c(
-    person("Hong", "Ooi", , "hongooi73@gmail.com", role="cre"),
+    person("Michelle", "Wallig", role="cre", email="Michelle.Wallig@microsoft.com"),
+    person("Hong", "Ooi", role="aut"),
     person("Andrie", "de Vries", role="aut"),
     person("Gábor", "Csárdi", role="ctb", comment="Assistance with pkgdepends"),
     person("Microsoft", role=c("aut", "cph"))
