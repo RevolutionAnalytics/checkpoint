@@ -82,7 +82,7 @@ If you do not have an actual project open, this will usually expand to your R us
 
 ### Checkpointing the R version
 
-For an even _more stringent_ form of reproducibility, you can use the following:
+For an even more stringent form of reproducibility, you can use the following:
 
 ```r
 library(checkpoint)
