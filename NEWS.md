@@ -17,6 +17,7 @@ This is a **major refactoring/rewrite** of checkpoint, aimed at solving many lon
 - Consistent use of snake_case for all object names and function arguments.
 - Remove obsolete code to handle lack of HTTPS support in ancient versions of R. (Note that the MRAN site now requires HTTPS.)
 - Other bug fixes and general tidying.
+- Maintainer change (James Rowland-Jones; jrj@microsoft.com).
 
 # checkpoint 0.4.10
 
