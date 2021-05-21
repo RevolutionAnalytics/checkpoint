@@ -17,7 +17,7 @@ Description: The goal of checkpoint is to solve the problem of package
     archive. Snapshot archives exist starting from 2014-09-17.
 Version: 1.0.0
 Authors@R: c(
-    person("Michelle", "Wallig", role="cre", email="Michelle.Wallig@microsoft.com"),
+    person("James", "Rowland-Jones", role="cre", email="jrj@microsoft.com"),
     person("Hong", "Ooi", role="aut"),
     person("Andrie", "de Vries", role="aut"),
     person("Gábor", "Csárdi", role="ctb", comment="Assistance with pkgdepends"),
@@ -25,7 +25,7 @@ Authors@R: c(
     )
 License: GPL-2
 URL: https://github.com/RevolutionAnalytics/checkpoint
-BugReports: https://www.github.com/RevolutionAnalytics/checkpoint/issues
+BugReports: https://github.com/RevolutionAnalytics/checkpoint/issues
 Imports:
     utils,
     tools,
