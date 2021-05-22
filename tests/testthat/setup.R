@@ -1,3 +1,6 @@
+withr::local_envvar(R_USER_CACHE_DIR=tempfile(), .local_envir=teardown_env())
+
+
 list_pkgsrc <- function(snapshot_dir)
 {
     pkgs <- dir(snapshot_dir, full.names=TRUE)
