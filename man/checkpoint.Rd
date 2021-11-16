@@ -30,6 +30,7 @@ create_checkpoint(
   log = TRUE,
   num_workers = getOption("Ncpus", 1),
   config = list(),
+  ignore_packages = getOption("checkpoint.ignorePackages"),
   ...
 )
 
@@ -81,6 +82,8 @@ uncheckpoint()
 \item{num_workers}{The number of parallel workers to use for installing packages. Defaults to the value of the system option \code{Ncpus}, or if this is unset, 1.}
 
 \item{config}{A named list of additional configuration options to pass to \code{\link[pkgdepends:new_pkg_installation_proposal]{pkgdepends::new_pkg_installation_proposal}}. See 'Configuration' below.}
+
+\item{ignore_packages}{A character vector of packages to ignore when creating a checkpoint. This can also be set globally using \code{options('checkpoint.ignorePackages' = c('package'))}.}
 
 \item{prepend}{If \code{TRUE}, adds the checkpoint directory to the beginning of the library search path. The default is \code{FALSE}, where the checkpoint directory replaces all but the system entries (the values of \code{.Library} and \code{.Library.site}) in the search path; this is to reduce the chances of accidentally calling non-checkpointed code. See \code{\link{.libPaths}}.}
 

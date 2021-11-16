@@ -31,6 +31,8 @@
 #'
 #' @param config A named list of additional configuration options to pass to [`pkgdepends::new_pkg_installation_proposal`]. See 'Configuration' below.
 #'
+#' @param ignore_packages A character vector of packages to ignore when creating a checkpoint. This can also be set globally using `options('checkpoint.ignorePackages' = c('package'))`.
+#'
 #' @param ... For `checkpoint`, further arguments to pass to `create_checkpoint` and `use_checkpoint`. Ignored for `create_checkpoint` and `use_checkpoint`.
 #'
 #' @param confirm For `delete_checkpoint` and `delete_all_checkpoints`, whether to ask for confirmation first.
@@ -102,6 +104,7 @@ create_checkpoint <- function(snapshot_date,
                               log=TRUE,
                               num_workers=getOption("Ncpus", 1),
                               config=list(),
+                              ignore_packages=getOption("checkpoint.ignorePackages"),
                               ...
                              )
 {
@@ -133,6 +136,11 @@ create_checkpoint <- function(snapshot_date,
     {
         warning("No package dependencies found", call.=FALSE)
         return(invisible(NULL))
+    }
+    # ignore select packages
+    if(!is.null(ignore_packages))
+    {
+        dep_list$pkgs = setdiff(dep_list$pkgs, ignore_packages)
     }
 
     # install packages
