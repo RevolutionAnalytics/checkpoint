@@ -1,3 +1,7 @@
+# checkpoint 1.0.1
+
+* Maintainer change (Folashade Daniel; fdaniel@microsoft.com).
+
 # checkpoint 1.0.0
 
 This is a **major refactoring/rewrite** of checkpoint, aimed at solving many long-standing issues.
